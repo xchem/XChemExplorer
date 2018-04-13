@@ -2985,10 +2985,13 @@ class XChemExplorer(QtGui.QApplication):
 
     def convert_event_maps_to_SF(self):
         self.update_log.insert('converting all event maps in {0!s} to mtz files'.format(self.initial_model_directory))
-        self.work_thread = XChemPANDDA.convert_all_event_maps_in_database(self.initial_model_directory,
-                                                                          self.xce_logfile,
-                                                                          os.path.join(self.database_directory,
-                                                                                       self.data_source_file))
+#        self.work_thread = XChemPANDDA.convert_all_event_maps_in_database(self.initial_model_directory,
+#                                                                          self.xce_logfile,
+#                                                                          os.path.join(self.database_directory,
+#                                                                                       self.data_source_file))
+        self.work_thread = XChemPANDDA.find_event_map_for_ligand(self.initial_model_directory,
+                                                                          self.xce_logfile)
+
         self.explorer_active = 1
         self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
         self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
