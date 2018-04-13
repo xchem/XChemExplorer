@@ -305,24 +305,26 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
     def run(self):
 
-        if self.structureType=='apo':
-            # remove apo entries for structures to be deposited
-            self.Logfile.insert('removing apo structures from depositTable which have a ligand bound structure ready for deposition')
-            toDelete=self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
-            toDeleteList=[]
-            for xtal in toDelete:
-                toDeleteList.append(str(xtal[0]))
-            if toDeleteList != []:
-                self.db.remove_selected_apo_structures_from_depositTable(self.xce_logfile,toDeleteList)
-            self.Logfile.insert('checking for apo structures in depositTable')
-            toDeposit=self.db.execute_statement("select CrystalName from depositTable where StructureType is 'apo';")
-
-        elif self.structureType=='ligand_bound':
-            self.Logfile.insert('checking for models in mainTable that are ready for deposition')
-            toDeposit=self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
-
-        self.n_toDeposit=len(toDeposit)
-        self.depositLog.text('trying to prepare mmcif files for '+str(len(toDeposit))+' structures')
+#        if self.structureType=='apo':
+#            # remove apo entries for structures to be deposited
+#            self.Logfile.insert('removing apo structures from depositTable which have a ligand bound structure ready for deposition')
+#            toDelete=self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
+#            toDeleteList=[]
+#            for xtal in toDelete:
+#                toDeleteList.append(str(xtal[0]))
+#            if toDeleteList != []:
+#                self.db.remove_selected_apo_structures_from_depositTable(self.xce_logfile,toDeleteList)
+#            self.Logfile.insert('checking for apo structures in depositTable')
+#            toDeposit=self.db.execute_statement("select CrystalName from depositTable where StructureType is 'apo';")
+#
+#        elif self.structureType=='ligand_bound':
+#            self.Logfile.insert('checking for models in mainTable that are ready for deposition')
+#            toDeposit=self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
+#
+        self.Logfile.insert('======= preparing mmcif files for wwPDB deposition =======')
+        self.Logfile.insert('checking DB for structures to deposit...')
+        toDeposit = self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
+        self.depositLog.text('found '+str(len(toDeposit))+' structures which are ready for deposition')
 
         progress_step=1
         if len(toDeposit) != 0:
@@ -333,32 +335,68 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
 
-
         for item in sorted(toDeposit):
             xtal=str(item[0])
-            eventMtz=[]
-            preparation_can_go_ahead=True
             self.data_template_dict={}
 
-            self.depositLog.modelInfo(xtal,self.structureType)
+            if not self.refine_bound_exists(xtal):
+                continue
 
-            if self.structureType=='apo':
-                self.out=xtal+'-apo'
-            elif self.structureType=='ligand_bound':
-                self.out=xtal+'-bound'
+            if not self.ligand_in_pdb_file(xtal):
+                continue
 
-            if self.structureType=='ligand_bound':
-                self.Logfile.insert(xtal+' is ready for deposition')
-                self.Logfile.insert('checking refinement stage of respective PanDDA sites...')
+            # check if event mtz exisits
 
-                sqlite = (
-                    "select CrystalName,RefinementOutcome,PANDDA_site_event_map_mtz from panddaTable "
-                    "where CrystalName is '%s' and PANDDA_site_ligand_placed is 'True' and " %xtal+
-                    "(PANDDA_site_confidence like '1%' or PANDDA_site_confidence like '2%' or PANDDA_site_confidence like '3%' or PANDDA_site_confidence like '4%')"
-                )
+
+
+
+
+    def refine_bound_exists(self,xtal):
+        self.Logfile.insert('%s: checking if refine.split.bound-state.pdb exists' %xtal)
+        fileStatus = False
+        if os.path.isfile(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')):
+            self.Logfile.insert('%s: found refine.split.bound-state.pdb' %xtal)
+            fileStatus = True
+        else:
+            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb; moving to next dataset...' %xtal)
+        return  fileStatus
+
+
+    def ligand_in_pdb_file(self,xtal):
+        self.Logfile.insert('%s: checking if refine.split.bound-state.pdb contains ligands of type LIG')
+        ligandStatus = False
+        ligList = pdbtools(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')).get_residues_with_resname('LIG')
+
+    def
+
+
+
+
+
+
+
+
+
+
+#            self.depositLog.modelInfo(xtal,self.structureType)
+
+#            if self.structureType=='apo':
+#                self.out=xtal+'-apo'
+#            elif self.structureType=='ligand_bound':
+#                self.out=xtal+'-bound'
+#
+#            if self.structureType=='ligand_bound':
+#                self.Logfile.insert(xtal+' is ready for deposition')
+#                self.Logfile.insert('checking refinement stage of respective PanDDA sites...')
+
+#                sqlite = (
+#                    "select CrystalName,RefinementOutcome,PANDDA_site_event_map_mtz from panddaTable "
+#                    "where CrystalName is '%s' and PANDDA_site_ligand_placed is 'True' and " %xtal+
+#                    "(PANDDA_site_confidence like '1%' or PANDDA_site_confidence like '2%' or PANDDA_site_confidence like '3%' or PANDDA_site_confidence like '4%')"
+#                )
 
 #                panddaSites=self.db.execute_statement("select CrystalName,RefinementOutcome,PANDDA_site_event_map_mtz from panddaTable where CrystalName is '%s' and PANDDA_site_ligand_placed is 'True' and (PANDDA_site_confidence like '1%' or PANDDA_site_confidence like '2%' or PANDDA_site_confidence like '3%' or PANDDA_site_confidence like '4%')" %xtal)
-                panddaSites=self.db.execute_statement(sqlite)
+#                panddaSites=self.db.execute_statement(sqlite)
                 self.Logfile.insert('found '+str(len(panddaSites))+' ligands')
                 for site in panddaSites:
                     if os.path.isfile(str(site[2])):

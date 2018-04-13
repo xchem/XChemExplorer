@@ -1300,7 +1300,7 @@ class find_event_map_for_ligand(QtCore.QThread):
 
     def run(self):
         self.Logfile.insert('======== checking ligand CC in event maps ========')
-        for dirs in glob.glob(os.path.join(self.project_directory,'*')):
+        for dirs in sorted(glob.glob(os.path.join(self.project_directory,'*'))):
             xtal = dirs[dirs.rfind('/')+1:]
             if os.path.isfile(os.path.join(dirs,'refine.pdb')) and \
                os.path.isfile(os.path.join(dirs,'refine.mtz')):
