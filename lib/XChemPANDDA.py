@@ -1299,13 +1299,16 @@ class find_event_map_for_ligand(QtCore.QThread):
         self.project_directory=project_directory
 
     def run(self):
+        self.Logfile.insert('======== checking ligand CC in event maps ========')
         for dirs in glob.glob(os.path.join(self.project_directory,'*')):
             xtal = dirs[dirs.rfind('/')+1:]
             if os.path.isfile(os.path.join(dirs,'refine.pdb')) and \
                os.path.isfile(os.path.join(dirs,'refine.mtz')):
+                self.Logfile.insert('%s: found refine.pdb' %xtal)
                 os.chdir(dirs)
                 reso = XChemUtils.mtztools('refine.mtz').get_dmin()
                 ligList = XChemUtils.pdbtools('refine.pdb').save_residues_with_resname(dirs,'LIG')
+                self.Logfile.insert('%s: found %s ligands of type LIG in refine.pdb' %(xtal,str(len(ligList))))
 
                 for maps in glob.glob(os.path.join(dirs,'*event*.native.ccp4')):
                     self.expand_map_to_p1(maps)
@@ -1314,6 +1317,9 @@ class find_event_map_for_ligand(QtCore.QThread):
                 for lig in ligList:
                     for mtz in glob.glob(os.path.join(dirs,'*event*.native*P1.mtz')):
                         self.get_lig_cc(mtz,lig)
+                        cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
+                        self.Logfile.insert('event map: %s' %mtz)
+                        self.Logfile.insert('%s LIG CC = %s' %(lig,cc))
 
     def expand_map_to_p1(self,emap):
         self.Logfile.insert('expanding map to P1: %s' %emap)
@@ -1335,11 +1341,23 @@ class find_event_map_for_ligand(QtCore.QThread):
         cmd = ( 'module load phenix\n'
                 'phenix.map_to_structure_factors %s d_min=%s\n' %(emap,reso)+
                 '/bin/mv map_to_structure_factors.mtz %s' %emap.replace('.ccp4', '.mtz') )
-        print cmd
         os.system(cmd)
 
     def get_lig_cc(self,mtz,lig):
         self.Logfile.insert('calculating CC for %s in %s' %(lig,mtz))
+        if os.path.isfile(mtz.replace('.mtz', '_CC.log')):
+            self.Logfile.warning('logfile of CC analysis exists; skipping...')
+            return
         cmd = ( 'module load phenix\n'
                 'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC.log')) )
         os.system(cmd)
+
+    def check_lig_cc(self,log):
+        cc = 'n/a'
+        if os.path.isfile(log)
+            for line in open(log):
+                if line.startswith('local'):
+                    cc = line.split()[len(line.split()) - 1]
+        else:
+            self.Logfile.error('logfile does not exist: %s' %log)
+        return cc
