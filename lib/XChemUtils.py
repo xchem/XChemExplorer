@@ -15,6 +15,10 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import Draw
 
+import iotbx.pdb
+
+from iotbx.reflection_file_reader import any_reflection_file
+
 sys.path.append(os.getenv('XChemExplorer_DIR')+'/lib')
 import XChemDB
 import XChemLog
@@ -896,6 +900,10 @@ class mtztools:
 
     def __init__(self,mtzfile):
         self.mtzfile=mtzfile
+        self.hkl = any_reflection_file(file_name=self.mtzfile)
+        self.miller_arrays = self.hkl.as_miller_arrays()
+        self.mtz = self.miller_arrays[0]
+
         self.space_group_dict=   {  'triclinic':    [1],
 #                                    'monoclinic':   [3,4,5],
                                     'monoclinic_P': [3,4],
@@ -987,6 +995,9 @@ class mtztools:
                             'DataProcessingAlert':                          '#FF0000',
                             'DataCollectionWavelength':                     'n/a',
                             'DataProcessingScore':                          'n/a'             }
+
+    def get_dmin(self):
+        return str(round(float(self.mtz.d_min()), 2))
 
     def get_information_for_datasource(self):
         db_dict={}
@@ -1532,6 +1543,10 @@ class pdbtools(object):
 
     def __init__(self,pdb):
         self.pdb = pdb
+        self.pdb_inp = iotbx.pdb.input(file_name=self.pdb)
+        self.hierarchy = self.pdb_inp.construct_hierarchy()
+
+
         self.AminoAcids = ['ALA','ARG','ASN','ASP','CYS','GLU','GLN','GLY','HIS',
                            'ILE','LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL']
         self.Solvents = ['DMS','EDO','GOL','HOH']
@@ -1594,6 +1609,29 @@ class pdbtools(object):
                                                         '23':           12,
                                                         '432':          24  }
 
+    def save_residues_with_resname(self,outDir,resname):
+        ligands = []
+        for model in self.hierarchy.models():
+            for chain in model.chains():
+                for conformer in chain.conformers():
+                    for residue in conformer.residues():
+                        if residue.resname == resname:
+                            if [residue.resname, residue.resseq, chain.id] not in ligands:
+                                ligands.append([residue.resname, residue.resseq, chain.id])
+        ligList = []
+        for l in ligands:
+            sel_cache = self.hierarchy.atom_selection_cache()
+            lig_sel = sel_cache.selection("(resname %s and resseq %s and chain %s)" % (l[0], l[1], l[2]))
+            hierarchy_lig = self.hierarchy.select(lig_sel)
+
+            ligName = (l[0] + '-' + l[1] + '-' + l[2] + '.pdb').replace(' ', '')
+            ligList.append(ligName)
+
+            f = open(os.path.join(outDir,ligName), "w")
+            f.write(hierarchy_lig.as_pdb_string(crystal_symmetry=self.pdb_inp.crystal_symmetry()))
+            f.close()
+
+        return ligList
 
     def GetRefinementProgram(self):
         program=''
