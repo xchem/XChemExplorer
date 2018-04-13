@@ -1314,12 +1314,13 @@ class find_event_map_for_ligand(QtCore.QThread):
                     self.expand_map_to_p1(maps)
                     self.convert_map_to_sf(maps.replace('.ccp4','.P1.ccp4'),reso)
 
-                for lig in ligList:
-                    for mtz in glob.glob(os.path.join(dirs,'*event*.native*P1.mtz')):
+                summary = ''
+                for lig in sorted(ligList):
+                    for mtz in sorted(glob.glob(os.path.join(dirs,'*event*.native*P1.mtz'))):
                         self.get_lig_cc(mtz,lig)
                         cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
-                        self.Logfile.insert('event map: %s' %mtz)
-                        self.Logfile.insert('%s LIG CC = %s' %(lig,cc))
+                        summary += '%s: %s LIG CC = %s (%s)\n' %(xtal,lig,cc,mtz[mtz.rfind('/')+1:])
+                self.Logfile.insert('\nsummary of CC analysis:\n======================:\n'+summary)
 
     def expand_map_to_p1(self,emap):
         self.Logfile.insert('expanding map to P1: %s' %emap)
