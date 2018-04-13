@@ -1332,9 +1332,13 @@ class find_event_map_for_ligand(QtCore.QThread):
         if os.path.isfile(emap.replace('.ccp4','.mtz')):
             self.Logfile.warning('mtz file of event map exists; skipping...')
             return
-        os.system('phenix.map_to_structure_factors %s d_min=%s' %(emap,reso))
-        os.system('/bin/mv map_to_structure_factors.mtz %s' %emap.replace('.ccp4','.mtz'))
+        cmd = ( 'module load phenix\n'
+                'phenix.map_to_structure_factors %s d_min=%s' %(emap,reso)+
+                '/bin/mv map_to_structure_factors.mtz %s' %emap.replace('.ccp4', '.mtz') )
+        os.system(cmd)
 
     def get_lig_cc(self,mtz,lig):
         self.Logfile.insert('calculating CC for %s in %s' %(lig,mtz))
-        os.system('phenix.get_cc_mtz_pdb %s %s > %s' %(mtz,lig,mtz.replace('.mtz','_CC.log')))
+        cmd = ( 'module load phenix\n'
+                'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC.log')) )
+        os.system(cmd)
