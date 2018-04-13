@@ -1293,12 +1293,10 @@ class check_number_of_modelled_ligands(QtCore.QThread):
 
 class find_event_map_for_ligand(QtCore.QThread):
 
-    def __init__(self,project_directory,xce_logfile,db_file):
+    def __init__(self,project_directory,xce_logfile):
         QtCore.QThread.__init__(self)
         self.Logfile=XChemLog.updateLog(xce_logfile)
         self.project_directory=project_directory
-        self.db=XChemDB.data_source(db_file)
-        self.errorDict={}
 
     def run(self):
         for dirs in glob.glob(os.path.join(self.project_directory,'*')):
