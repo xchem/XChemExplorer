@@ -1354,7 +1354,7 @@ class find_event_map_for_ligand(QtCore.QThread):
 
     def check_lig_cc(self,log):
         cc = 'n/a'
-        if os.path.isfile(log)
+        if os.path.isfile(log):
             for line in open(log):
                 if line.startswith('local'):
                     cc = line.split()[len(line.split()) - 1]
