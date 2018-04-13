@@ -1609,7 +1609,41 @@ class pdbtools(object):
                                                         '23':           12,
                                                         '432':          24  }
 
-    def save_residues_with_resname(self,outDir,resname):
+    def get_pdb_hierarchy_level(self,level):
+        objectList = []
+        if level == 'model':
+            for model in self.hierarchy.models():
+                objectList.append(model)
+        elif level == 'chain':
+            for model in self.hierarchy.models():
+                for chain in model.chains():
+                    objectList.append(chain)
+        elif level == 'conformer':
+            for model in self.hierarchy.models():
+                for chain in model.chains():
+                    for conformer in chain.conformers():
+                        objectList.append(conformer)
+        elif level == 'residue':
+            for model in self.hierarchy.models():
+                for chain in model.chains():
+                    for conformer in chain.conformers():
+                        for residue in conformer.residues():
+                            objectList.append(residue)
+        elif level == 'atom':
+            for model in self.hierarchy.models():
+                for chain in model.chains():
+                    for conformer in chain.conformers():
+                        for residue in conformer.residues():
+                            for atom in residue.atoms():
+                                objectList.append(atom)
+        return objectList
+
+    def get_resi_with_resname(self,resname):
+        for residue in self.get_pdb_hierarchy_level('residue'):
+            if residue.resname == resname:
+                print '>>>>>', residue.resname, residue.resseq
+
+    def get_residues_with_resname(self,resname):
         ligands = []
         for model in self.hierarchy.models():
             for chain in model.chains():
@@ -1618,6 +1652,10 @@ class pdbtools(object):
                         if residue.resname == resname:
                             if [residue.resname, residue.resseq, chain.id] not in ligands:
                                 ligands.append([residue.resname, residue.resseq, chain.id])
+        return ligands
+
+    def save_residues_with_resname(self,outDir,resname):
+        ligands = self.get_residues_with_resname(resname)
         ligList = []
         for l in ligands:
             sel_cache = self.hierarchy.atom_selection_cache()
