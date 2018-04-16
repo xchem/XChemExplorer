@@ -1609,39 +1609,15 @@ class pdbtools(object):
                                                         '23':           12,
                                                         '432':          24  }
 
-    def get_pdb_hierarchy_level(self,level):
-        objectList = []
-        if level == 'model':
-            for model in self.hierarchy.models():
-                objectList.append(model)
-        elif level == 'chain':
-            for model in self.hierarchy.models():
-                for chain in model.chains():
-                    objectList.append(chain)
-        elif level == 'conformer':
-            for model in self.hierarchy.models():
-                for chain in model.chains():
-                    for conformer in chain.conformers():
-                        objectList.append(conformer)
-        elif level == 'residue':
-            for model in self.hierarchy.models():
-                for chain in model.chains():
-                    for conformer in chain.conformers():
-                        for residue in conformer.residues():
-                            objectList.append(residue)
-        elif level == 'atom':
-            for model in self.hierarchy.models():
-                for chain in model.chains():
-                    for conformer in chain.conformers():
-                        for residue in conformer.residues():
-                            for atom in residue.atoms():
-                                objectList.append(atom)
-        return objectList
-
-    def get_resi_with_resname(self,resname):
-        for residue in self.get_pdb_hierarchy_level('residue'):
-            if residue.resname == resname:
-                print '>>>>>', residue.resname, residue.resseq
+    def get_refinement_program(self):
+        program = 'unknown'
+        for remark in self.pdb_inp.remark_section():
+            if 'PROGRAM' in line:
+                if 'refmac' in remark.lower():
+                    program = 'REFMAC'
+                elif 'phenix' in remark.lower():
+                    program = 'PHENIX'
+        return  program
 
     def get_residues_with_resname(self,resname):
         ligands = []

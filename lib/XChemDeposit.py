@@ -302,25 +302,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.n_toDeposit=0
         self.counter=1
 
+        self.errorList = []
+        self.eventList = []
+        self.pdb = None
 
     def run(self):
 
-#        if self.structureType=='apo':
-#            # remove apo entries for structures to be deposited
-#            self.Logfile.insert('removing apo structures from depositTable which have a ligand bound structure ready for deposition')
-#            toDelete=self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
-#            toDeleteList=[]
-#            for xtal in toDelete:
-#                toDeleteList.append(str(xtal[0]))
-#            if toDeleteList != []:
-#                self.db.remove_selected_apo_structures_from_depositTable(self.xce_logfile,toDeleteList)
-#            self.Logfile.insert('checking for apo structures in depositTable')
-#            toDeposit=self.db.execute_statement("select CrystalName from depositTable where StructureType is 'apo';")
-#
-#        elif self.structureType=='ligand_bound':
-#            self.Logfile.insert('checking for models in mainTable that are ready for deposition')
-#            toDeposit=self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
-#
         self.Logfile.insert('======= preparing mmcif files for wwPDB deposition =======')
         self.Logfile.insert('checking DB for structures to deposit...')
         toDeposit = self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
@@ -334,10 +321,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         progress=0
         self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
-
         for item in sorted(toDeposit):
             xtal=str(item[0])
-            self.data_template_dict={}
+            self.Logfile.insert('%s: reading information from depositTable for sample')
+            data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
 
             if not self.refine_bound_exists(xtal):
                 continue
@@ -345,29 +332,186 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             if not self.ligand_in_pdb_file(xtal):
                 continue
 
-            # check if event mtz exisits
+            if not self.eventMTZ_exists((xtal)):
+                continue
+
+            if not self.find_matching_event_map(xtal):
+                continue
 
 
+
+        self.print_errorlist()
+        self.Logfile.insert('======= finished preparing mmcif files for wwPDB deposition =======')
 
 
 
     def refine_bound_exists(self,xtal):
+        self.pdb = None
         self.Logfile.insert('%s: checking if refine.split.bound-state.pdb exists' %xtal)
         fileStatus = False
         if os.path.isfile(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')):
             self.Logfile.insert('%s: found refine.split.bound-state.pdb' %xtal)
+            self.pdb = pdbtools(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb'))
             fileStatus = True
         else:
             self.Logfile.error('%s: cannot find refine.split.bound-state.pdb; moving to next dataset...' %xtal)
+            self.add_to_errorList(xtal)
+        return  fileStatus
+
+    def mtzFree_exisits(self,xtal):
+        self.Logfile.insert('%s: checking if %s.free.mtz exists' %(xtal,xtal))
+        fileStatus = False
+        if os.path.isfile(os.path.join(self.projectDir,xtal,'%s.free.mtz' %xtal)):
+            self.Logfile.insert('%s: found %s.free.mtz' %(xtal,xtal))
+            fileStatus = True
+        else:
+            self.Logfile.error('%s: cannot find %s.free.mtz; moving to next dataset...' %(xtal,xtal))
+            self.add_to_errorList(xtal)
         return  fileStatus
 
 
     def ligand_in_pdb_file(self,xtal):
-        self.Logfile.insert('%s: checking if refine.split.bound-state.pdb contains ligands of type LIG')
+        self.Logfile.insert('%s: checking if refine.split.bound-state.pdb contains ligands of type LIG' %xtal)
         ligandStatus = False
         ligList = pdbtools(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')).get_residues_with_resname('LIG')
+        if ligList is []:
+            self.Logfile.error('%s: refine.split.bound-state.pdb does not contain any modelled ligands of type LIG' %xtal)
+            self.add_to_errorList(xtal)
+        else:
+            self.Logfile.insert(xtal + ': found ' + str(len(ligList)) + ' ligands of type LIG')
+            ligandStatus = True
+        return ligandStatus
 
-    def
+    def eventMTZ_exists(self,xtal):
+        self.Logfile.insert('%s: checking if mtz of event maps exists' %s)
+        eventMTZlist = []
+        eventMTZexists = False
+        for mtz in glob.glob(os.path.join(self.projectDir,xtal,'*event*.native*P1.mtz')):
+            eventMTZlist.append(mtz[mtz.rfind('/')+1:])
+        if eventMTZlist is []:
+            self.Logfile.error('%s: MTZ files of event maps do not exists! Go to PANDDA tab and run "Event Map -> SF"' %xtal)
+            self.add_to_errorList()
+        else:
+            self.Logfile.insert(xtal + ': found ' + str(len(eventMTZlist)) + ' MTZ files of event maps')
+            eventMTZexists = True
+        return eventMTZexists
+
+
+    def find_matching_event_map(self,xtal):
+        self.eventList = []
+        ligList = XChemUtils.pdbtools('refine.pdb').save_residues_with_resname(dirs, 'LIG')
+        foundMatchingMap = None
+        for lig in sorted(ligList):
+            ligCC = []
+            for mtz in sorted(glob.glob(os.path.join(self.projectDir,xtal, '*event*.native*P1.mtz'))):
+                self.get_lig_cc(mtz, lig)
+                cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
+                try:
+                    ligCC.append([mtz,float(cc)])
+                except ValueError:
+                    ligCC.append([mtz, 0.00])
+            highestCC = max(ligCC, key=lambda x: x[1])[0]
+            if highestCC == 0.00 or ligCC is []:
+                self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
+                self.add_to_errorList(xtal)
+                foundMatchingMap = False
+            else:
+                self.Logfile.insert('%s: CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
+                if mtz not in self.eventList:
+                    self.eventList.append(mtz)
+                if foundMatchingMap is None:
+                    foundMatchingMap = True
+        return foundMatchingMap
+
+
+    def get_lig_cc(self, mtz, lig):
+        self.Logfile.insert('calculating CC for %s in %s' %(lig,mtz))
+        if os.path.isfile(mtz.replace('.mtz', '_CC.log')):
+            self.Logfile.warning('logfile of CC analysis exists; skipping...')
+            return
+        cmd = ( 'module load phenix\n'
+                'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC.log')) )
+        os.system(cmd)
+
+    def check_lig_cc(self,log):
+        cc = 'n/a'
+        if os.path.isfile(log):
+            for line in open(log):
+                if line.startswith('local'):
+                    cc = line.split()[len(line.split()) - 1]
+        else:
+            self.Logfile.error('logfile does not exist: %s' %log)
+        return cc
+
+
+    def add_to_errorList(self,xtal):
+        if xtal not in self.errorList:
+            self.errorList.append(xtal)
+
+    def print_errorlist(self):
+        if self.errorList is []:
+            self.Logfile.insert('XCE did not detect any problems during mmcif file preparation'
+                                'Nevertheless, check the details above')
+        else:
+            self.Logfile.warning('The following samples had problems during mmcif creation.'
+                                 'Please check the logfile!')
+            for xtal in self.errorList:
+                self.Logfile.error(xtal)
+
+
+    def save_data_template_dict(self):
+        # check if file exists
+        error = False
+        if self.overwrite_existing_mmcif:
+            os.chdir(os.path.join(self.projectDir, xtal))
+            data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
+
+            # edit title
+            data_template_dict['group_title'] = data_template_dict['group_deposition_title'].replace('$ProteinName',
+                                                                                                     data_template_dict[
+                                                                                                         'Source_organism_gene']).replace(
+                '$CompoundName', compoundID)
+
+            title = data_template_dict['structure_title'].replace('$ProteinName', data_template_dict[
+                    'Source_organism_gene']).replace('$CompoundName', compoundID)
+            data_template_dict[
+                    'group_title'] = 'PanDDA analysis group deposition of models with modelled events (e.g. bound ligands)'
+            data_template_dict['group_description'] = data_template_dict['group_description'].replace('$ProteinName',
+                                                                                                      data_template_dict[
+                                                                                                          'Source_organism_gene'])
+            data_template_dict['title'] = data_template_dict['group_title'] + ' -- ' + title
+
+            if ('$ProteinName' or '$CompoundName') in data_template_dict['title']:
+                self.Logfile.error('%s: data_template - title not correctly formatted')
+                error = True
+
+            # mutations
+            mutations = data_template_dict['fragment_name_one_specific_mutation']
+            if mutations.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
+                data_template_dict['fragment_name_one_specific_mutation'] = '?'
+            else:
+                data_template_dict['fragment_name_one_specific_mutation'] = '"' + mutations.replace(' ', '') + '"'
+
+            # get protein chains
+            data_template_dict['protein_chains'] = ''
+            chains = pdbtools(pdb).GetProteinChains()
+            for item in chains:
+                data_template_dict['protein_chains'] += item + ','
+            data_template_dict['protein_chains'] = data_template_dict['protein_chains'][:-1]
+
+            data_template_dict['group_type'] = ''
+            data_template_dict['group_type'] = 'changed state'
+            data_template = templates().data_template_cif(data_template_dict)
+            site_details = self.make_site_description(xtal)
+            data_template += site_details
+            f = open(os.path.join(self.projectDir, xtal, self.data_template_bound), 'w')
+
+            self.data_template_dict = data_template_dict
+            f.write(data_template)
+            f.close()
+
+            wavelength = data_template_dict['radiation_wavelengths']
+            return wavelength
 
 
 
@@ -378,7 +522,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
 
 
-#            self.depositLog.modelInfo(xtal,self.structureType)
+
+            #            self.depositLog.modelInfo(xtal,self.structureType)
 
 #            if self.structureType=='apo':
 #                self.out=xtal+'-apo'
@@ -415,69 +560,69 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #                        eventMtz.append(str(site[2]))
 #                        preparation_can_go_ahead=False
 
-            n_eventMtz = len(eventMtz)
-            if preparation_can_go_ahead:
-                self.depositLog.nEvents(xtal,n_eventMtz)
-                if self.structureType=='ligand_bound':
-                    ModelData=self.db.execute_statement("select RefinementPDB_latest,RefinementMTZ_latest,RefinementCIF,DataProcessingPathToLogfile,RefinementProgram,CompoundCode,CompoundSMILES,RefinementMTZfree from mainTable where CrystalName is '{0!s}'".format(xtal))
-                    pdb=str(ModelData[0][0])
-
-                    # check occupancies
-                    errorMsg=pdbtools(pdb).check_occupancies()
-                    if errorMsg[0] != '':
-                        self.Logfile.insert('problem with occpancies for '+xtal+'; skipping => ERROR\nDetails:\n'+errorMsg[0])
-                        self.depositLog.text('problem with occpancies for '+xtal+'; skipping => ERROR\nDetails:\n'+errorMsg[0])
-                        self.updateFailureDict(xtal,'occupancies of at least one residue with alternative conformations add up to > 1.00')
-                        continue
-                    mtzFinal=str(ModelData[0][1])
-                    if not os.path.isfile(mtzFinal):
-                        self.Logfile.insert('cannot find refine.mtz for bound structure of '+xtal+'; skipping => ERROR')
-                        self.depositLog.text('cannot find refine.mtz for bound structure of '+xtal+'; skipping => ERROR')
-                        self.updateFailureDict(xtal,'cannot find refine.mtz')
-                        continue
-                    mtzData=str(ModelData[0][7])
-                    if not os.path.isfile(mtzData):
-                        self.Logfile.insert('cannot find data.mtz for bound structure of '+xtal+'; skipping => ERROR')
-                        self.depositLog.text('cannot find data.mtz for bound structure of '+xtal+'; skipping => ERROR')
-                        self.updateFailureDict(xtal,'cannot find data.mtz')
-                        continue
-
-                if self.structureType=='apo':
-                    ModelData=self.db.execute_statement("select DimplePathToPDB,DimplePathToMTZ,RefinementCIF,DataProcessingPathToLogfile,RefinementProgram,CompoundCode,CompoundSMILES,ProjectDirectory,RefinementMTZfree from mainTable where CrystalName is '{0!s}'".format(xtal))
-
-                    if os.path.isfile(os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][0]))):
-                        pdb=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][0]))
-                    elif os.path.isfile(str(ModelData[0][0])):
-                        pdb=str(ModelData[0][0])
-                    else:
-                        self.Logfile.insert('cannot find PDB file for apo structure of '+xtal+'; skipping => ERROR')
-                        self.depositLog.text('cannot find PDB file for apo structure of '+xtal+'; skipping => ERROR')
-                        self.updateFailureDict(xtal,'cannot find PDB file')
-                        continue
-
-                    if os.path.isfile(os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][1]))):
-                        mtzFinal=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][1]))
-                    elif os.path.isfile(str(ModelData[0][1])):
-                        mtzFinal=str(ModelData[0][1])
-                    else:
-                        self.Logfile.insert('cannot find dimple.mtz for apo structure of '+xtal+'; skipping => ERROR')
-                        self.depositLog.text('cannot find dimple.mtz for apo structure of '+xtal+'; skipping => ERROR')
-                        self.updateFailureDict(xtal,'cannot find dimple.mtz file')
-                        continue
-
-                    if os.path.isfile(os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][8]))):
-                        mtzData=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][8]))
-                    elif os.path.isfile(str(ModelData[0][8])):
-                        mtzData=str(ModelData[0][8])
-                    else:
-                        self.Logfile.insert('cannot find data.mtz for apo structure of '+xtal+'; skipping => ERROR')
-                        self.depositLog.text('cannot find data.mtz for apo structure of '+xtal+'; skipping => ERROR')
-                        self.updateFailureDict(xtal,'cannot find data.mtz file')
-                        continue
-
+#            n_eventMtz = len(eventMtz)
+#            if preparation_can_go_ahead:
+#                self.depositLog.nEvents(xtal,n_eventMtz)
+#                if self.structureType=='ligand_bound':
+#                    ModelData=self.db.execute_statement("select RefinementPDB_latest,RefinementMTZ_latest,RefinementCIF,DataProcessingPathToLogfile,RefinementProgram,CompoundCode,CompoundSMILES,RefinementMTZfree from mainTable where CrystalName is '{0!s}'".format(xtal))
+#                    pdb=str(ModelData[0][0])
+#
+#                    # check occupancies
+#                    errorMsg=pdbtools(pdb).check_occupancies()
+#                    if errorMsg[0] != '':
+#                        self.Logfile.insert('problem with occpancies for '+xtal+'; skipping => ERROR\nDetails:\n'+errorMsg[0])
+#                        self.depositLog.text('problem with occpancies for '+xtal+'; skipping => ERROR\nDetails:\n'+errorMsg[0])
+#                        self.updateFailureDict(xtal,'occupancies of at least one residue with alternative conformations add up to > 1.00')
+#                        continue
+#                    mtzFinal=str(ModelData[0][1])
+#                    if not os.path.isfile(mtzFinal):
+#                        self.Logfile.insert('cannot find refine.mtz for bound structure of '+xtal+'; skipping => ERROR')
+#                        self.depositLog.text('cannot find refine.mtz for bound structure of '+xtal+'; skipping => ERROR')
+#                        self.updateFailureDict(xtal,'cannot find refine.mtz')
+#                        continue
+#                    mtzData=str(ModelData[0][7])
+#                    if not os.path.isfile(mtzData):
+#                        self.Logfile.insert('cannot find data.mtz for bound structure of '+xtal+'; skipping => ERROR')
+#                        self.depositLog.text('cannot find data.mtz for bound structure of '+xtal+'; skipping => ERROR')
+#                        self.updateFailureDict(xtal,'cannot find data.mtz')
+#                        continue
+#
+#                if self.structureType=='apo':
+#                    ModelData=self.db.execute_statement("select DimplePathToPDB,DimplePathToMTZ,RefinementCIF,DataProcessingPathToLogfile,RefinementProgram,CompoundCode,CompoundSMILES,ProjectDirectory,RefinementMTZfree from mainTable where CrystalName is '{0!s}'".format(xtal))
+#
+#                    if os.path.isfile(os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][0]))):
+#                        pdb=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][0]))
+#                    elif os.path.isfile(str(ModelData[0][0])):
+#                        pdb=str(ModelData[0][0])
+#                    else:
+#                        self.Logfile.insert('cannot find PDB file for apo structure of '+xtal+'; skipping => ERROR')
+#                        self.depositLog.text('cannot find PDB file for apo structure of '+xtal+'; skipping => ERROR')
+#                        self.updateFailureDict(xtal,'cannot find PDB file')
+#                        continue
+#
 #                    if os.path.isfile(os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][1]))):
-#                        mtz=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][1]))
-
+#                        mtzFinal=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][1]))
+#                    elif os.path.isfile(str(ModelData[0][1])):
+#                        mtzFinal=str(ModelData[0][1])
+#                    else:
+#                        self.Logfile.insert('cannot find dimple.mtz for apo structure of '+xtal+'; skipping => ERROR')
+#                        self.depositLog.text('cannot find dimple.mtz for apo structure of '+xtal+'; skipping => ERROR')
+#                        self.updateFailureDict(xtal,'cannot find dimple.mtz file')
+#                        continue
+#
+#                    if os.path.isfile(os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][8]))):
+#                        mtzData=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][8]))
+#                    elif os.path.isfile(str(ModelData[0][8])):
+#                        mtzData=str(ModelData[0][8])
+#                    else:
+#                        self.Logfile.insert('cannot find data.mtz for apo structure of '+xtal+'; skipping => ERROR')
+#                        self.depositLog.text('cannot find data.mtz for apo structure of '+xtal+'; skipping => ERROR')
+#                        self.updateFailureDict(xtal,'cannot find data.mtz file')
+#                        continue
+#
+##                    if os.path.isfile(os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][1]))):
+##                        mtz=os.path.join(str(ModelData[0][7]),xtal,str(ModelData[0][1]))
+#
 
                 cif=str(ModelData[0][2])
                 if self.structureType=='ligand_bound':
@@ -606,6 +751,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
             wavelength=data_template_dict['radiation_wavelengths']
             return wavelength
+
 
 
 
