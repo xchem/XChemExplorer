@@ -999,6 +999,9 @@ class mtztools:
     def get_dmin(self):
         return str(round(float(self.mtz.d_min()), 2))
 
+    def get_wavelength(self):
+
+
     def get_information_for_datasource(self):
         db_dict={}
         mtz_dict=self.get_all_values_as_dict()
