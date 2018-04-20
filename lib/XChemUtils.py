@@ -1000,7 +1000,7 @@ class mtztools:
         return str(round(float(self.mtz.d_min()), 2))
 
     def get_wavelength(self):
-
+        print 'hallo'
 
     def get_information_for_datasource(self):
         db_dict={}
