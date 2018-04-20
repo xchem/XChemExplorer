@@ -810,8 +810,7 @@ class XChemExplorer(QtGui.QApplication):
             os.path.join(self.database_directory, self.data_source_file),
             self.xce_logfile,
             overwrite_existing_mmcif,
-            self.initial_model_directory,
-            structureType)
+            self.initial_model_directory)
         self.explorer_active = 1
         self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
         self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
