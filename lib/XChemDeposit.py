@@ -415,7 +415,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         return ligandStatus
 
     def eventMTZ_exists(self,xtal):
-        self.Logfile.insert('%s: checking if mtz of event maps exists' %s)
+        self.Logfile.insert('%s: checking if mtz of event maps exists' %xtal)
         eventMTZlist = []
         eventMTZexists = False
         for mtz in glob.glob('*event*.native*P1.mtz'):
