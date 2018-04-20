@@ -313,6 +313,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         for item in sorted(toDeposit):
             xtal=str(item[0])
+            os.chdir(os.path.join(self.projectDir, xtal))
             self.Logfile.insert('%s: ----- preparing files for deposition -----' %xtal)
 
             if not self.mmcif_files_can_be_replaced(xtal):
@@ -351,7 +352,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
     def mmcif_files_can_be_replaced(self,xtal):
         status = True
-        os.chdir(self.projectDir,xtal)
         if self.overwrite_existing_mmcif:
             self.Logfile.insert('%s: removing existing mmcif files as chosen by user')
             for mmcif in glob.glob('*.mmcif'):
@@ -368,9 +368,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.pdb = None
         self.Logfile.insert('%s: checking if refine.split.bound-state.pdb exists' %xtal)
         fileStatus = False
-        if os.path.isfile(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')):
+        if os.path.isfile('refine.split.bound-state.pdb'):
             self.Logfile.insert('%s: found refine.split.bound-state.pdb' %xtal)
-            self.pdb = pdbtools(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb'))
+            self.pdb = pdbtools('refine.split.bound-state.pdb')
             fileStatus = True
         else:
             self.Logfile.error('%s: cannot find refine.split.bound-state.pdb; moving to next dataset...' %xtal)
@@ -381,7 +381,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def aimless_logfile_exists(self,xtal):
         self.Logfile.insert('%s: checking if aimless logfile, i.e. %s.log, exists' %(xtal,xtal))
         fileStatus = False
-        if os.path.isfile(os.path.join(self.projectDir,xtal,'%s.log' %xtal)):
+        if os.path.isfile('%s.log' %xtal):
             self.Logfile.insert('%s: found %s.log' %(xtal,xtal))
             fileStatus = True
         else:
@@ -393,7 +393,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def mtzFree_exisits(self,xtal):
         self.Logfile.insert('%s: checking if %s.free.mtz exists' %(xtal,xtal))
         fileStatus = False
-        if os.path.isfile(os.path.join(self.projectDir,xtal,'%s.free.mtz' %xtal)):
+        if os.path.isfile('%s.free.mtz' %xtal):
             self.Logfile.insert('%s: found %s.free.mtz' %(xtal,xtal))
             fileStatus = True
         else:
@@ -405,7 +405,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def ligand_in_pdb_file(self,xtal):
         self.Logfile.insert('%s: checking if refine.split.bound-state.pdb contains ligands of type LIG' %xtal)
         ligandStatus = False
-        ligList = pdbtools(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')).get_residues_with_resname('LIG')
+        ligList = pdbtools('refine.split.bound-state.pdb').get_residues_with_resname('LIG')
         if ligList is []:
             self.Logfile.error('%s: refine.split.bound-state.pdb does not contain any modelled ligands of type LIG' %xtal)
             self.add_to_errorList(xtal)
@@ -418,7 +418,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: checking if mtz of event maps exists' %s)
         eventMTZlist = []
         eventMTZexists = False
-        for mtz in glob.glob(os.path.join(self.projectDir,xtal,'*event*.native*P1.mtz')):
+        for mtz in glob.glob('*event*.native*P1.mtz'):
             eventMTZlist.append(mtz[mtz.rfind('/')+1:])
         if eventMTZlist is []:
             self.Logfile.error('%s: MTZ files of event maps do not exists! Go to PANDDA tab and run "Event Map -> SF"' %xtal)
@@ -435,7 +435,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         foundMatchingMap = None
         for lig in sorted(ligList):
             ligCC = []
-            for mtz in sorted(glob.glob(os.path.join(self.projectDir,xtal, '*event*.native*P1.mtz'))):
+            for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
                 self.get_lig_cc(mtz, lig)
                 cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
                 try:
