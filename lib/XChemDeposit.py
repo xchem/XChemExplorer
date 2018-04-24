@@ -499,12 +499,14 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             os.chdir(os.path.join(self.projectDir, xtal))
             self.Logfile.insert('%s: reading information from depositTable for sample' %xtal)
             data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
+            self.Logfile.insert('%s: reading information from mainTable for sample' % xtal)
+            db_dict = self.db.get_db_dict_for_sample(xtal)
 
             # edit title
             data_template_dict['group_title'] = data_template_dict['group_deposition_title'].replace('$ProteinName',
                                                                                                      data_template_dict[
                                                                                                          'Source_organism_gene']).replace(
-                '$CompoundName', compoundID)
+                '$CompoundName', db_dict['CompoundCode'])
 
             title = data_template_dict['structure_title'].replace('$ProteinName', data_template_dict[
                     'Source_organism_gene']).replace('$CompoundName', compoundID)
