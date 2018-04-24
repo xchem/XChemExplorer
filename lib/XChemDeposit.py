@@ -443,8 +443,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     ligCC.append([mtz,float(cc)])
                 except ValueError:
                     ligCC.append([mtz, 0.00])
-            print '>>>>>>>>>>>>>>>>>>>>>>>>>>>',ligCC
-            highestCC = max(ligCC, key=lambda x: x[1])[0]
+            highestCC = max(ligCC, key=lambda x: x[0])[1]
             if highestCC == 0.00 or ligCC is []:
                 self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
                 self.add_to_errorList(xtal)
@@ -608,13 +607,13 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
                 sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
 
-            elif n == softwareLine:
-                tmpText += ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
-                                                                                        self.data_template_dict[
-                                                                                            'data_integration_software']) +
-                            '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
-                                                                               self.data_template_dict[
-                                                                                   'phasing_software']) +
+#            elif n == softwareLine:
+#                tmpText += ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
+#                                                                                        self.data_template_dict[
+#                                                                                            'data_integration_software']) +
+#                            '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
+#                                                                               self.data_template_dict[
+#                                                                                   'phasing_software']) +
                             '#\n')
                 sys.stdout.write(tmpText)
 
