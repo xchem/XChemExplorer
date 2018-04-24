@@ -635,11 +635,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not line.startswith('_'):
                     try:
                         softwareEntry.append(int(line.split()[0]))
-#                        print 'hhhhhhhhhhhhhhh',softwareEntry
+                        print 'hhhhhhhhhhhhhhh',softwareEntry
                     except (ValueError,IndexError):
 #                        print line
                         pass
-                elif '#' in line:
+                if '#' in line:
                     print 'MMMMMMMMMMMMMMMMMMMMMMMMMMMMM'
                     amendSoftwareBlock = True
                     foundSoftwareBlock = False
