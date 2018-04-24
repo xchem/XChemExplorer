@@ -591,10 +591,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: updating header of model mmcif file')
         for i, line in enumerate(fileinput.input(xtal + '.mmcif', inplace=1)):
             #            if i == 4: sys.stdout.write('\n')  # write a blank line after the 5th line
-            if '_refine.pdbx_ls_cross_valid_method' in line and cross_validation == '?':
+            if '_refine.pdbx_ls_cross_valid_method' in line:
                 sys.stdout.write('_refine.pdbx_ls_cross_valid_method               THROUGHOUT \n')
 
-            elif '_refine.pdbx_starting_model' in line and starting_model == '?':
+            elif '_refine.pdbx_starting_model' in line:
                 sys.stdout.write('_refine.pdbx_starting_model                      {0!s} \n'.format(
                     self.data_template_dict['pdbx_starting_model']))
 
