@@ -1616,7 +1616,7 @@ class pdbtools(object):
     def get_refinement_program(self):
         program = 'unknown'
         for remark in self.pdb_inp.remark_section():
-            if 'PROGRAM' in line:
+            if 'PROGRAM' in remark:
                 if 'refmac' in remark.lower():
                     program = 'REFMAC'
                 elif 'phenix' in remark.lower():
