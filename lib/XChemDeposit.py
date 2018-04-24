@@ -569,7 +569,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                ' -iPDB {0!s}'.format('refine.split.bound-state.pdb') +
                 ' -e MR'
                ' -s AIMLESS'
-               ' -iLOG {0!s}.log'.fortmat(xtal) +
+               ' -iLOG {0!s}.log'.format(xtal) +
                ' -iENT data_template.cif'
                ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
 
