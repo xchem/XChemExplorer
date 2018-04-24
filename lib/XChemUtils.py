@@ -18,6 +18,7 @@ from rdkit.Chem import Draw
 import iotbx.pdb
 
 from iotbx.reflection_file_reader import any_reflection_file
+from iotbx import mtz
 
 sys.path.append(os.getenv('XChemExplorer_DIR')+'/lib')
 import XChemDB
@@ -903,6 +904,7 @@ class mtztools:
         self.hkl = any_reflection_file(file_name=self.mtzfile)
         self.miller_arrays = self.hkl.as_miller_arrays()
         self.mtz = self.miller_arrays[0]
+        self.iotbxMTZ = mtz.object(self.mtzfile)
 
         self.space_group_dict=   {  'triclinic':    [1],
 #                                    'monoclinic':   [3,4,5],
@@ -1000,8 +1002,13 @@ class mtztools:
         return str(round(float(self.mtz.d_min()), 2))
 
     def get_wavelength(self):
-        # assumes 1 dataset per mtz file
-        print 'hallo'
+        wavelength = 0.0
+        for crystal in self.iotbxMTZ.crystals():
+            for dataset in crystal.datasets():
+                if not dataset.wavelength() == 0.0:
+                    wavelength = str(round(dataset.wavelength(),5))
+                    break
+        return wavelength
 
     def get_information_for_datasource(self):
         db_dict={}

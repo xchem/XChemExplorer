@@ -298,6 +298,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.db_dict = None
         self.data_template_dict = None
         self.pdb = None
+        self.mtz = None
 
 
     def run(self):
@@ -330,6 +331,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 continue
 
             if not self.refine_bound_exists(xtal):
+                continue
+
+            if not self.refine_mtz_exists(xtal):
                 continue
 
             if not self.aimless_logfile_exists(xtal):
@@ -414,6 +418,18 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.add_to_errorList(xtal)
         return  fileStatus
 
+    def refine_mtz_exists(self,xtal):
+        self.mtz = None
+        self.Logfile.insert('%s: checking if refine.mtz exists' %xtal)
+        fileStatus = False
+        if os.path.isfile('refine.mtz'):
+            self.Logfile.insert('%s: found refine.mtz' %xtal)
+            self.pdb = mtztools('refine.mtz')
+            fileStatus = True
+        else:
+            self.Logfile.error('%s: cannot find refine.mtz; moving to next dataset...' %xtal)
+            self.add_to_errorList(xtal)
+        return  fileStatus
 
     def aimless_logfile_exists(self,xtal):
         self.Logfile.insert('%s: checking if aimless logfile, i.e. %s.log, exists' %(xtal,xtal))
@@ -728,6 +744,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                  "data for ligand evidence map (PanDDA event map), event_map_$.mtz"]
 
         block = -1
+
+        print '>>>>>>>>>>>>>> wl: ',self.mtz.get_wavelength()
 
         for i, line in enumerate(fileinput.input(xtal + '_sf.mmcif', inplace=1)):
 
