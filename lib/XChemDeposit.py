@@ -601,11 +601,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
 
-            elif '_reflns.d_resolution_low' in line and len(line.split()) == 2:
-                sys.stdout.write('_reflns.d_resolution_low             {0!s}\n'.format(min(low_reso_list)))
-
-            elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
-                sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
+#            elif '_reflns.d_resolution_low' in line and len(line.split()) == 2:
+#                sys.stdout.write('_reflns.d_resolution_low             {0!s}\n'.format(min(low_reso_list)))
+#
+#            elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
+#                sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
 
 #            elif n == softwareLine:
 #                tmpText += ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
