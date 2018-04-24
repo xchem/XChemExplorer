@@ -739,13 +739,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
 
     def update_sf_mmcif_file(self,xtal):
+        self.Logfile.insert('%s: updating %s_sf.mmcif' %(xtal,xtal))
         bound = ["data from final refinement with ligand, final.mtz",
                  "data from original reflections, data.mtz",
                  "data for ligand evidence map (PanDDA event map), event_map_$.mtz"]
 
         block = -1
-
-        print '>>>>>>>>>>>>>> wl: ',self.mtz.get_wavelength()
 
         for i, line in enumerate(fileinput.input(xtal + '_sf.mmcif', inplace=1)):
 
@@ -763,7 +762,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                             '_diffrn.details             "%s"\n' % bound[n]).replace('$',str(block-1))
                 sys.stdout.write(newLines)
             elif line.startswith('_diffrn_radiation_wavelength.wavelength'):
-                sys.stdout.write('_diffrn_radiation_wavelength.wavelength   {0!s}\n'.format(wavelength))
+                sys.stdout.write('_diffrn_radiation_wavelength.wavelength   {0!s}\n'.format(self.mtz.get_wavelength()))
             else:
                 sys.stdout.write(line)
 
