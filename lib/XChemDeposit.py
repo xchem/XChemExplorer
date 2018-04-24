@@ -614,8 +614,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #                            '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
 #                                                                               self.data_template_dict[
 #                                                                                   'phasing_software']) +
-                            '#\n')
-                sys.stdout.write(tmpText)
+#                            '#\n')
+#                sys.stdout.write(tmpText)
 
     #            else:
     #                tmpText+=line
