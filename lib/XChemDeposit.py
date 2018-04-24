@@ -295,7 +295,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         self.errorList = []
         self.eventList = []
+        self.db_dict = None
+        self.data_template_dict = None
         self.pdb = None
+
 
     def run(self):
 
@@ -317,6 +320,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.Logfile.insert('%s: ----- preparing files for deposition -----' %xtal)
 
             if not self.mmcif_files_can_be_replaced(xtal):
+                continue
+
+            if not self.data_template_dict_exists(xtal):
+                continue
+
+            if not self.db_dict_exists(xtal):
                 continue
 
             if not self.refine_bound_exists(xtal):
@@ -349,6 +358,32 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         self.print_errorlist()
         self.Logfile.insert('======= finished preparing mmcif files for wwPDB deposition =======')
+
+    def data_template_dict_exists(self,xtal):
+        dictStatus = False
+        self.data_template_dict = None
+        self.Logfile.insert('%s: reading information from depositTable for sample' % xtal)
+        self.data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
+        if self.data_template_dict is not {}:
+            self.Logfile.insert('%s: found data_template dictionary in depositTable' % xtal)
+            dictStatus = True
+        else:
+            self.Logfile.error('%s: cannot find data_template dictionary in depositTable; moving to next dataset...' %xtal)
+            self.add_to_errorList(xtal)
+        return  dictStatus
+
+    def db_dict_exists(self,xtal):
+        dictStatus = False
+        self.db_dict = None
+        self.Logfile.insert('%s: reading information from mainTable for sample' % xtal)
+        self.db_dict = self.db.get_db_dict_for_sample(xtal)
+        if self.db_dict is not {}:
+            self.Logfile.insert('%s: found db_dict dictionary in mainTable' % xtal)
+            dictStatus = True
+        else:
+            self.Logfile.error('%s: cannot find db_dict dictionary in mainTable; moving to next dataset...' %xtal)
+            self.add_to_errorList(xtal)
+        return  dictStatus
 
     def mmcif_files_can_be_replaced(self,xtal):
         status = True
@@ -498,53 +533,48 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         noError = True
         if self.overwrite_existing_mmcif:
             os.chdir(os.path.join(self.projectDir, xtal))
-            self.Logfile.insert('%s: reading information from depositTable for sample' %xtal)
-            data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
-            self.Logfile.insert('%s: reading information from mainTable for sample' % xtal)
-            db_dict = self.db.get_db_dict_for_sample(xtal)
 
             # edit title
-            data_template_dict['group_title'] = data_template_dict['group_deposition_title'].replace('$ProteinName',
-                                                                                                     data_template_dict[
+            self.data_template_dict['group_title'] = self.data_template_dict['group_deposition_title'].replace('$ProteinName',
+                                                                                                               self.data_template_dict[
                                                                                                          'Source_organism_gene']).replace(
-                '$CompoundName', db_dict['CompoundCode'])
+                '$CompoundName', self.db_dict['CompoundCode'])
 
-            title = data_template_dict['structure_title'].replace('$ProteinName', data_template_dict[
-                    'Source_organism_gene']).replace('$CompoundName', db_dict['CompoundCode'])
-            data_template_dict[
+            title = self.data_template_dict['structure_title'].replace('$ProteinName', self.data_template_dict[
+                    'Source_organism_gene']).replace('$CompoundName', self.db_dict['CompoundCode'])
+            self.data_template_dict[
                     'group_title'] = 'PanDDA analysis group deposition of models with modelled events (e.g. bound ligands)'
-            data_template_dict['group_description'] = data_template_dict['group_description'].replace('$ProteinName',
-                                                                                                      data_template_dict[
+            self.data_template_dict['group_description'] = self.data_template_dict['group_description'].replace('$ProteinName',
+                                                                                                                self.data_template_dict[
                                                                                                           'Source_organism_gene'])
-            data_template_dict['title'] = data_template_dict['group_title'] + ' -- ' + title
+            self.data_template_dict['title'] = self.data_template_dict['group_title'] + ' -- ' + title
 
-            if ('$ProteinName' or '$CompoundName') in data_template_dict['title']:
+            if ('$ProteinName' or '$CompoundName') in self.data_template_dict['title']:
                 self.Logfile.error('%s: data_template - title not correctly formatted')
                 self.add_to_errorList(xtal)
                 noError = False
 
             # mutations
-            mutations = data_template_dict['fragment_name_one_specific_mutation']
+            mutations = self.data_template_dict['fragment_name_one_specific_mutation']
             if mutations.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
-                data_template_dict['fragment_name_one_specific_mutation'] = '?'
+                self.data_template_dict['fragment_name_one_specific_mutation'] = '?'
             else:
-                data_template_dict['fragment_name_one_specific_mutation'] = '"' + mutations.replace(' ', '') + '"'
+                self.data_template_dict['fragment_name_one_specific_mutation'] = '"' + mutations.replace(' ', '') + '"'
 
             # get protein chains
-            data_template_dict['protein_chains'] = ''
+                self.data_template_dict['protein_chains'] = ''
             chains = self.pdb.GetProteinChains()
             for item in chains:
-                data_template_dict['protein_chains'] += item + ','
-            data_template_dict['protein_chains'] = data_template_dict['protein_chains'][:-1]
+                self.data_template_dict['protein_chains'] += item + ','
+                self.data_template_dict['protein_chains'] = self.data_template_dict['protein_chains'][:-1]
 
-            data_template_dict['group_type'] = ''
-            data_template_dict['group_type'] = 'changed state'
-            data_template = templates().data_template_cif(data_template_dict)
+                self.data_template_dict['group_type'] = ''
+                self.data_template_dict['group_type'] = 'changed state'
+            data_template = templates().data_template_cif(self.data_template_dict)
 #            site_details = self.make_site_description(xtal)
 #            data_template += site_details
             f = open(os.path.join(self.projectDir, xtal, 'data_template.cif'), 'w')
 
-            self.data_template_dict = data_template_dict
             f.write(data_template)
             f.close()
 
@@ -589,9 +619,23 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         return fileStatus
 
     def update_model_mmcif_header(self,xtal):
-        self.Logfile.insert('%s: updating header of model mmcif file')
+        self.Logfile.insert('%s: updating header of model mmcif file' %xtal)
+        foundSoftwareBlock = False
+        amendSoftwareBlock = False
+        softwareEntry = []
         for i, line in enumerate(fileinput.input(xtal + '.mmcif', inplace=1)):
             #            if i == 4: sys.stdout.write('\n')  # write a blank line after the 5th line
+            if '_software.pdbx_ordinal' in line:
+                foundSoftwareBlock = True
+            if foundSoftwareBlock:
+                if not line.startswith('_'):
+                    try:
+                        softwareEntry.append(int(line.split()[0]))
+                    except ValueError:
+                        pass
+                elif line.startswith('#'):
+                    amendSoftwareBlock = True
+                    foundSoftwareBlock = False
             if '_refine.pdbx_ls_cross_valid_method' in line:
                 sys.stdout.write('_refine.pdbx_ls_cross_valid_method               THROUGHOUT \n')
 
@@ -601,6 +645,16 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
+            elif amendSoftwareBlock:
+                tmpText += ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
+                                                                                        self.data_template_dict[
+                                                                                            'data_integration_software']) +
+                            '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
+                                                                               self.data_template_dict[
+                                                                                   'phasing_software']) +
+                            '#\n')
+                sys.stdout.write(tmpText)
+
             else:
                 sys.stdout.write(line)
 
@@ -610,15 +664,15 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #            elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
 #                sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
 
-#            elif n == softwareLine:
-#                tmpText += ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
-#                                                                                        self.data_template_dict[
-#                                                                                            'data_integration_software']) +
-#                            '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
-#                                                                               self.data_template_dict[
-#                                                                                   'phasing_software']) +
-#                            '#\n')
-#                sys.stdout.write(tmpText)
+            elif n == softwareLine:
+                tmpText = ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
+                                                                                        self.data_template_dict[
+                                                                                            'data_integration_software']) +
+                           '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
+                                                                               self.data_template_dict[
+                                                                                   'phasing_software']) +
+                           '#\n')
+                sys.stdout.write(tmpText)
 
     #            else:
     #                tmpText+=line
