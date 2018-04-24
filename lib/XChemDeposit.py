@@ -15,6 +15,7 @@ import XChemDB
 import XChemToolTips
 import XChemMain
 from XChemUtils import pdbtools
+from XChemUtils import mtztools
 from XChemUtils import smilestools
 
 
