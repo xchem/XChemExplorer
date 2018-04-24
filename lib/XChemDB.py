@@ -573,13 +573,15 @@ class data_source:
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
         cursor.execute("select * from depositTable where CrystalName='{0!s}';".format(sampleID))
-        print "select * from depositTable where CrystalName='{0!s}';".format(sampleID)
+
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
-        print data
-        for n,item in enumerate(data[0]):
-            db_dict[header[n]]=str(item)
+        try:
+            for n,item in enumerate(data[0]):
+                db_dict[header[n]]=str(item)
+        except IndexError:
+            pass
         return db_dict
 
     def get_db_pandda_dict_for_sample_and_site(self,sampleID,site_index):
