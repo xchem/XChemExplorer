@@ -305,6 +305,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('======= preparing mmcif files for wwPDB deposition =======')
         self.Logfile.insert('checking DB for structures to deposit...')
         toDeposit = self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
+        self.Logfile.insert('found ' + str(len(toDeposit)) + ' samples ready for deposition')
 
         progress_step=1
         if len(toDeposit) != 0:
@@ -626,6 +627,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         amendSoftwareBlock = False
         softwareEntry = []
         for i, line in enumerate(fileinput.input(xtal + '.mmcif', inplace=1)):
+            print line
             #            if i == 4: sys.stdout.write('\n')  # write a blank line after the 5th line
             if '_software.pdbx_ordinal' in line:
                 print 'OOOOOOOOOOOOOOOOOOOOO'
