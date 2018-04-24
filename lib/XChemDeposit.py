@@ -539,8 +539,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             data_template_dict['group_type'] = ''
             data_template_dict['group_type'] = 'changed state'
             data_template = templates().data_template_cif(data_template_dict)
-            site_details = self.make_site_description(xtal)
-            data_template += site_details
+#            site_details = self.make_site_description(xtal)
+#            data_template += site_details
             f = open(os.path.join(self.projectDir, xtal, 'data_template.cif'), 'w')
 
             self.data_template_dict = data_template_dict
