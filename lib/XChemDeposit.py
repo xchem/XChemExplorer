@@ -646,7 +646,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
             elif amendSoftwareBlock:
-                tmpText += ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
+                tmpText = ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
                                                                                         self.data_template_dict[
                                                                                             'data_integration_software']) +
                             '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
@@ -664,18 +664,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #            elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
 #                sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
 
-            elif n == softwareLine:
-                tmpText = ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
-                                                                                        self.data_template_dict[
-                                                                                            'data_integration_software']) +
-                           '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
-                                                                               self.data_template_dict[
-                                                                                   'phasing_software']) +
-                           '#\n')
-                sys.stdout.write(tmpText)
-
-    #            else:
-    #                tmpText+=line
 
     def create_sf_mmcif(self,xtal):
         fileStatus = False
