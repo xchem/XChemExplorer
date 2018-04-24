@@ -371,12 +371,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: reading information from depositTable for sample' % xtal)
         self.data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
         print 'BBBBBBBBBBBBB',self.data_template_dict
-        if self.data_template_dict is not {}:
-            self.Logfile.insert('%s: found data_template dictionary in depositTable' % xtal)
-            dictStatus = True
-        else:
+        if self.data_template_dict == {}:
             self.Logfile.error('%s: cannot find data_template dictionary in depositTable; moving to next dataset...' %xtal)
             self.add_to_errorList(xtal)
+        else:
+            self.Logfile.insert('%s: found data_template dictionary in depositTable' % xtal)
+            dictStatus = True
         return  dictStatus
 
     def db_dict_exists(self,xtal):
@@ -385,12 +385,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: reading information from mainTable for sample' % xtal)
         self.db_dict = self.db.get_db_dict_for_sample(xtal)
         print 'JJJJJJJJJJJJJJ',self.db_dict
-        if self.db_dict is not {}:
-            self.Logfile.insert('%s: found db_dict dictionary in mainTable' % xtal)
-            dictStatus = True
-        else:
+        if self.db_dict == {}:
             self.Logfile.error('%s: cannot find db_dict dictionary in mainTable; moving to next dataset...' %xtal)
             self.add_to_errorList(xtal)
+        else:
+            self.Logfile.insert('%s: found db_dict dictionary in mainTable' % xtal)
+            dictStatus = True
         return  dictStatus
 
     def mmcif_files_can_be_replaced(self,xtal):
