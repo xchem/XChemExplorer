@@ -573,6 +573,7 @@ class data_source:
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
         cursor.execute("select * from depositTable where CrystalName='{0!s}';".format(sampleID))
+        print "select * from depositTable where CrystalName='{0!s}';".format(sampleID)
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
