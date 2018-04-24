@@ -578,7 +578,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         self.update_model_mmcif_header(xtal)
 
-        if os.path.isfile(self.out+'.mmcif') and os.path.getsize(self.out+'.mmcif') > 20000 :
+        if os.path.isfile(xtal+'.mmcif') and os.path.getsize(xtal+'.mmcif') > 20000 :
             self.Logfile.insert('%s: model mmcif file successfully created' %xtal)
             fileStatus = True
         else:
