@@ -431,7 +431,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
     def find_matching_event_map(self,xtal):
         self.eventList = []
-        ligList = self.pdb.save_residues_with_resname(dirs, 'LIG')
+        ligList = self.pdb.save_residues_with_resname(os.path.join(self.projectDir,xtal), 'LIG')
         foundMatchingMap = None
         foundMatchingMap = None
         for lig in sorted(ligList):
