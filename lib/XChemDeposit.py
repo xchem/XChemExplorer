@@ -600,6 +600,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
+            else:
+                sys.stdout.write(line)
 
 #            elif '_reflns.d_resolution_low' in line and len(line.split()) == 2:
 #                sys.stdout.write('_reflns.d_resolution_low             {0!s}\n'.format(min(low_reso_list)))
@@ -695,8 +697,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                             '_diffrn.id                  1\n'
                             '_diffrn.details             "%s"\n' % bound[n]).replace('$',str(block-1))
                 sys.stdout.write(newLines)
-            if line.startswith('_diffrn_radiation_wavelength.wavelength'):
+            elif line.startswith('_diffrn_radiation_wavelength.wavelength'):
                 sys.stdout.write('_diffrn_radiation_wavelength.wavelength   {0!s}\n'.format(wavelength))
+            else:
+                sys.stdout.write(line)
 
 
 
