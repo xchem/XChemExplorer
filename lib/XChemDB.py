@@ -576,6 +576,7 @@ class data_source:
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
+        print data
         for n,item in enumerate(data[0]):
             db_dict[header[n]]=str(item)
         return db_dict
