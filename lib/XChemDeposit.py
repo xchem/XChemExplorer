@@ -626,10 +626,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         foundSoftwareBlock = False
         amendSoftwareBlock = False
         softwareEntry = []
-        for line in open(xtal + '.mmcif'):
-            print line
         for i, line in enumerate(fileinput.input(xtal + '.mmcif', inplace=1)):
-            print line
             #            if i == 4: sys.stdout.write('\n')  # write a blank line after the 5th line
             if '_software.pdbx_ordinal' in line:
                 print 'OOOOOOOOOOOOOOOOOOOOO'
