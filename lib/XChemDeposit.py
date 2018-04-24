@@ -509,7 +509,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 '$CompoundName', db_dict['CompoundCode'])
 
             title = data_template_dict['structure_title'].replace('$ProteinName', data_template_dict[
-                    'Source_organism_gene']).replace('$CompoundName', compoundID)
+                    'Source_organism_gene']).replace('$CompoundName', db_dict['CompoundCode'])
             data_template_dict[
                     'group_title'] = 'PanDDA analysis group deposition of models with modelled events (e.g. bound ligands)'
             data_template_dict['group_description'] = data_template_dict['group_description'].replace('$ProteinName',
