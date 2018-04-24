@@ -443,6 +443,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     ligCC.append([mtz,float(cc)])
                 except ValueError:
                     ligCC.append([mtz, 0.00])
+            print '>>>>>>>>>>>>>>>>>>>>>>>>>>>',ligCC
             highestCC = max(ligCC, key=lambda x: x[1])[0]
             if highestCC == 0.00 or ligCC is []:
                 self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
