@@ -531,7 +531,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
             # get protein chains
             data_template_dict['protein_chains'] = ''
-            chains = pdbtools(pdb).GetProteinChains()
+            chains = self.pdb.GetProteinChains()
             for item in chains:
                 data_template_dict['protein_chains'] += item + ','
             data_template_dict['protein_chains'] = data_template_dict['protein_chains'][:-1]
