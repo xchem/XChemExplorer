@@ -370,6 +370,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.data_template_dict = None
         self.Logfile.insert('%s: reading information from depositTable for sample' % xtal)
         self.data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
+        print 'BBBBBBBBBBBBB',self.data_template_dict
         if self.data_template_dict is not {}:
             self.Logfile.insert('%s: found data_template dictionary in depositTable' % xtal)
             dictStatus = True
@@ -383,6 +384,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.db_dict = None
         self.Logfile.insert('%s: reading information from mainTable for sample' % xtal)
         self.db_dict = self.db.get_db_dict_for_sample(xtal)
+        print 'JJJJJJJJJJJJJJ',self.db_dict
         if self.db_dict is not {}:
             self.Logfile.insert('%s: found db_dict dictionary in mainTable' % xtal)
             dictStatus = True
