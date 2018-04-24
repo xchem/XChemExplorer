@@ -629,18 +629,14 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         for i, line in enumerate(fileinput.input(xtal + '.mmcif', inplace=1)):
             #            if i == 4: sys.stdout.write('\n')  # write a blank line after the 5th line
             if '_software.pdbx_ordinal' in line:
-#                print 'OOOOOOOOOOOOOOOOOOOOO'
                 foundSoftwareBlock = True
             if foundSoftwareBlock:
                 if not line.startswith('_'):
                     try:
                         softwareEntry.append(int(line.split()[0]))
-                        print 'hhhhhhhhhhhhhhh',softwareEntry
                     except (ValueError,IndexError):
-#                        print line
                         pass
                 if '#' in line:
-                    print 'MMMMMMMMMMMMMMMMMMMMMMMMMMMMM'
                     amendSoftwareBlock = True
                     foundSoftwareBlock = False
             if '_refine.pdbx_ls_cross_valid_method' in line:
@@ -653,7 +649,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
             elif amendSoftwareBlock:
-                print 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
                 tmpText = ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
                                                                                         self.data_template_dict[
                                                                                             'data_integration_software']) +
@@ -662,6 +657,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                                                                                    'phasing_software']) +
                             '#\n')
                 sys.stdout.write(tmpText)
+                amendSoftwareBlock = False
 
             else:
                 sys.stdout.write(line)
