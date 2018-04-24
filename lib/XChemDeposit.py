@@ -370,7 +370,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.data_template_dict = None
         self.Logfile.insert('%s: reading information from depositTable for sample' % xtal)
         self.data_template_dict = self.db.get_deposit_dict_for_sample(xtal)
-        print 'BBBBBBBBBBBBB',self.data_template_dict
         if self.data_template_dict == {}:
             self.Logfile.error('%s: cannot find data_template dictionary in depositTable; moving to next dataset...' %xtal)
             self.add_to_errorList(xtal)
@@ -384,7 +383,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.db_dict = None
         self.Logfile.insert('%s: reading information from mainTable for sample' % xtal)
         self.db_dict = self.db.get_db_dict_for_sample(xtal)
-        print 'JJJJJJJJJJJJJJ',self.db_dict
         if self.db_dict == {}:
             self.Logfile.error('%s: cannot find db_dict dictionary in mainTable; moving to next dataset...' %xtal)
             self.add_to_errorList(xtal)
@@ -540,11 +538,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
     def print_errorlist(self):
         if self.errorList is []:
-            self.Logfile.insert('XCE did not detect any problems during mmcif file preparation'
-                                'Nevertheless, check the details above')
+            self.Logfile.insert('XCE did not detect any problems during mmcif file preparation. '
+                                'It is however recommended to check the logfile.')
         else:
-            self.Logfile.warning('The following samples had problems during mmcif creation.'
-                                 'Please check the logfile!')
+            self.Logfile.warning('The following samples had problems during mmcif creation. '
+                                 'Please check the logfile for details!')
             for xtal in self.errorList:
                 self.Logfile.error(xtal)
 
