@@ -353,7 +353,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def mmcif_files_can_be_replaced(self,xtal):
         status = True
         if self.overwrite_existing_mmcif:
-            self.Logfile.insert('%s: removing existing mmcif files as chosen by user')
+            self.Logfile.insert('%s: removing existing mmcif files as chosen by user' %xtal)
             for mmcif in glob.glob('*.mmcif'):
                 os.system('/bin/rm ' + mmcif)
         else:
@@ -431,7 +431,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
     def find_matching_event_map(self,xtal):
         self.eventList = []
-        ligList = XChemUtils.pdbtools('refine.pdb').save_residues_with_resname(dirs, 'LIG')
+        ligList = self.pdb.save_residues_with_resname(dirs, 'LIG')
+        foundMatchingMap = None
         foundMatchingMap = None
         for lig in sorted(ligList):
             ligCC = []
