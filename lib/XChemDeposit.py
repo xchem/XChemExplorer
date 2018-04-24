@@ -390,6 +390,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         if self.overwrite_existing_mmcif:
             self.Logfile.insert('%s: removing existing mmcif files as chosen by user' %xtal)
             for mmcif in glob.glob('*.mmcif'):
+                self.Logfile.warning('%s: removing %s' %(xtal,mmcif))
                 os.system('/bin/rm ' + mmcif)
         else:
             for mmcif in glob.glob('*.mmcif'):
@@ -635,6 +636,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                         print line
                         pass
                 elif line.startswith('#'):
+                    print 'MMMMMMMMMMMMMMMMMMMMMMMMMMMMM'
                     amendSoftwareBlock = True
                     foundSoftwareBlock = False
             if '_refine.pdbx_ls_cross_valid_method' in line:
@@ -647,6 +649,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
             elif amendSoftwareBlock:
+                print 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
                 tmpText = ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
                                                                                         self.data_template_dict[
                                                                                             'data_integration_software']) +
