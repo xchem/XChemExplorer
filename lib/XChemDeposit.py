@@ -431,6 +431,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
     def find_matching_event_map(self,xtal):
         self.eventList = []
+        self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
         ligList = self.pdb.save_residues_with_resname(os.path.join(self.projectDir,xtal), 'LIG')
         foundMatchingMap = None
         foundMatchingMap = None
@@ -449,7 +450,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 self.add_to_errorList(xtal)
                 foundMatchingMap = False
             else:
-                self.Logfile.insert('%s: CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
+                self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
                 if mtz not in self.eventList:
                     self.eventList.append(mtz)
                 if foundMatchingMap is None:
