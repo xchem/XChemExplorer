@@ -474,8 +474,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         for lig in sorted(ligList):
             ligCC = []
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
-                self.get_lig_cc(mtz, lig)
+                self.get_lig_cc(xtal, mtz, lig)
                 cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
+                self.Logfile.insert('%s: CC = %s for %s' %(xtal,cc,mtz))
                 try:
                     ligCC.append([mtz,float(cc)])
                 except ValueError:
@@ -494,8 +495,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         return foundMatchingMap
 
 
-    def get_lig_cc(self, mtz, lig):
-        self.Logfile.insert('calculating CC for %s in %s' %(lig,mtz))
+    def get_lig_cc(self, xtal, mtz, lig):
+        self.Logfile.insert('%s: calculating CC for %s in %s' %(xtal,lig,mtz))
         if os.path.isfile(mtz.replace('.mtz', '_CC.log')):
             self.Logfile.warning('logfile of CC analysis exists; skipping...')
             return
@@ -627,11 +628,13 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         for i, line in enumerate(fileinput.input(xtal + '.mmcif', inplace=1)):
             #            if i == 4: sys.stdout.write('\n')  # write a blank line after the 5th line
             if '_software.pdbx_ordinal' in line:
+                print 'OOOOOOOOOOOOOOOOOOOOO'
                 foundSoftwareBlock = True
             if foundSoftwareBlock:
                 if not line.startswith('_'):
                     try:
                         softwareEntry.append(int(line.split()[0]))
+                        print 'hhhhhhhhhhhhhhh',softwareEntry
                     except (ValueError,IndexError):
                         print line
                         pass
