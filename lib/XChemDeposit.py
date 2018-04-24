@@ -425,7 +425,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         fileStatus = False
         if os.path.isfile('refine.mtz'):
             self.Logfile.insert('%s: found refine.mtz' %xtal)
-            self.pdb = mtztools('refine.mtz')
+            self.mtz = mtztools('refine.mtz')
             fileStatus = True
         else:
             self.Logfile.error('%s: cannot find refine.mtz; moving to next dataset...' %xtal)
@@ -487,7 +487,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.eventList = []
         self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
         ligList = self.pdb.save_residues_with_resname(os.path.join(self.projectDir,xtal), 'LIG')
-        foundMatchingMap = None
         foundMatchingMap = None
         for lig in sorted(ligList):
             ligCC = []
