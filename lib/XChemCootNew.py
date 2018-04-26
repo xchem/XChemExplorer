@@ -970,9 +970,7 @@ class GUI(object):
             self.mol_dict['protein']=imol
 
             # read any one event map if present
-            print 'UUUUUUUUUUUUU'
             for event_map in glob.glob(os.path.join(self.project_directory,self.xtalID,self.xtalID+'-event_*.native.ccp4')):
-                print '>>>>>>>>>>',event_map
                 coot.handle_read_ccp4_map((event_map),0)
                 coot.set_contour_level_in_sigma(imol,2)
                 coot.set_last_map_colour(0.74,0.44,0.02)

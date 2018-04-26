@@ -298,6 +298,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.eventList = []
         self.db_dict = None
         self.data_template_dict = None
+        self.zenodo_dict = None
         self.pdb = None
         self.mtz = None
 
@@ -329,6 +330,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 continue
 
             if not self.db_dict_exists(xtal):
+                continue
+
+            if not self.zenodo_dict_exists(xtal):
                 continue
 
             if not self.refine_bound_exists(xtal):
@@ -391,10 +395,25 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             dictStatus = True
         return  dictStatus
 
+    def zenodo_dict_exists(self,xtal):
+        dictStatus = False
+        self.zenodo_dict = None
+        self.Logfile.insert('%s: reading information from zenodoTable for pandda run: %s' % (xtal,self.db_dict['DimplePANDDApath']))
+        self.zenodo_dict = self.db.get_zenodo_dict_for_pandda_analysis(self.db_dict['DimplePANDDApath'])
+        if self.zenodo_dict == {}:
+            self.Logfile.error('%s: cannot find information about zenodo deposition in zenodoTable; moving to next dataset...' %xtal)
+            self.add_to_errorList(xtal)
+        else:
+            self.Logfile.insert('%s: found zenodo_dict dictionary in zenodoTable' % xtal)
+            dictStatus = True
+        return  dictStatus
+
+
     def mmcif_files_can_be_replaced(self,xtal):
         status = True
         if self.overwrite_existing_mmcif:
             self.Logfile.insert('%s: removing existing mmcif files as chosen by user' %xtal)
+            self.db.execute_statement("update depositTable set mmCIF_model_file='',mmCIF_SF_file='' where CrystalName is '{0!s}'".format(xtal))
             for mmcif in glob.glob('*.mmcif'):
                 self.Logfile.warning('%s: removing %s' %(xtal,mmcif))
                 os.system('/bin/rm ' + mmcif)
@@ -630,6 +649,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         if os.path.isfile(xtal+'.mmcif') and os.path.getsize(xtal+'.mmcif') > 20000 :
             self.Logfile.insert('%s: model mmcif file successfully created' %xtal)
+            self.db.execute_statement("update depositTable set mmCIF_model_file='{0!s}.mmcif' where CrystalName is '{1!s}'".format(xtal,xtal))
             fileStatus = True
         else:
             self.Logfile.error('%s: model mmcif file was not created successfully')
@@ -665,18 +685,35 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
             elif amendSoftwareBlock:
-                tmpText = ("{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
+                cifItem = (
+                    "{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
                                                                                         self.data_template_dict[
                                                                                             'data_integration_software']) +
-                            '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
+                    '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
                                                                                self.data_template_dict[
                                                                                    'phasing_software']) +
-                            '#\n')
-                sys.stdout.write(tmpText)
+                    '#\n'
+                    "loop_\n"
+                    "     _pdbx_related_exp_data_set.ordinal\n"
+                    "     _pdbx_related_exp_data_set.data_reference\n"
+                    "     _pdbx_related_exp_data_set.metadata_reference\n"
+                    "     _pdbx_related_exp_data_set.data_set_type\n"
+                    "     _pdbx_related_exp_data_set.details\n"
+                    "     1  "
+                    " '%s' "  %self.zenodo_dict['ZenodoDOI']+
+                    " '%s' "  %self.zenodo_dict['ZenodoDOI']+
+                    " 'other data'  "                 # 'other data' is only thing wwPDB accepts at the moment
+                    " 'MTZ, PDB & CIF files for PanDDA analysis'\n"
+                    "\n" )
+
+                sys.stdout.write(cifItem)
                 amendSoftwareBlock = False
 
             else:
                 sys.stdout.write(line)
+
+
+
 
 #            elif '_reflns.d_resolution_low' in line and len(line.split()) == 2:
 #                sys.stdout.write('_reflns.d_resolution_low             {0!s}\n'.format(min(low_reso_list)))
@@ -715,6 +752,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         if os.path.isfile(xtal+'_sf.mmcif') and os.path.getsize(xtal+'_sf.mmcif') > 20000 :
             self.Logfile.insert('%s: SF mmcif file successfully created' %xtal)
+            self.db.execute_statement("update depositTable set mmCIF_SF_file='{0!s}_sf.mmcif' where CrystalName is '{1!s}'".format(xtal,xtal))
             fileStatus = True
         else:
             self.Logfile.error('%s: SF mmcif file was not created successfully')

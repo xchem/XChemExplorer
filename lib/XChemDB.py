@@ -443,6 +443,18 @@ class data_source:
         ]
 
 
+        self.zenodo_table_columns = [
+            ['ID',                          'ID',                           'INTEGER PRIMARY KEY'   ],
+            ['DimplePANDDApath',            'DimplePANDDApath',             'TEXT'                  ],
+            ['ZenodoTitle',                 'ZenodoTitle',                  'TEXT'                  ],
+            ['ZenodoHTTPS',                 'ZenodoHTTPS',                  'TEXT'                  ],
+            ['ZenodoDOI',                   'ZenodoDOI',                    'TEXT'                  ],
+            ['LastUpdated',                 'LastUpdated',                  'TEXT'                  ],
+            ['LastUpdated_by',              'LastUpdated_by',               'TEXT'                  ]
+        ]
+
+
+
     def columns_not_to_display(self):
         do_not_display = []
         for column in self.column_list:
@@ -466,7 +478,8 @@ class data_source:
         tableDict = {   'mainTable':        self.column_list,
                         'panddaTable':      self.pandda_table_columns,
                         'depositTable':     self.deposition_table_columns,
-                        'collectionTable':  self.data_collection_columns      }
+                        'collectionTable':  self.data_collection_columns,
+                        'zenodoTable':      self.zenodo_table_columns   }
 
         for table in tableDict:
             cursor.execute("create table if not exists "+table+" (ID INTEGER);")
@@ -583,6 +596,26 @@ class data_source:
         except IndexError:
             pass
         return db_dict
+
+    def get_zenodo_dict_for_pandda_analysis(self,panddaPath):
+        db_dict={}
+        header=[]
+        data=[]
+        connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
+        cursor = connect.cursor()
+        cursor.execute("select * from depositTable where DimplePANDDApath='{0!s}';".format(panddaPath))
+
+        for column in cursor.description:
+            header.append(column[0])
+        data = cursor.fetchall()
+        try:
+            for n,item in enumerate(data[0]):
+                db_dict[header[n]]=str(item)
+        except IndexError:
+            pass
+        return db_dict
+
+
 
     def get_db_pandda_dict_for_sample_and_site(self,sampleID,site_index):
         db_dict={}
