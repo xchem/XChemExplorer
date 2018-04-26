@@ -4,6 +4,7 @@ import gobject
 import sys
 import os
 import pickle
+import glob
 
 from matplotlib.figure import Figure
 #from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
