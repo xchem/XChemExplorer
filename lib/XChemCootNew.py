@@ -969,6 +969,15 @@ class GUI(object):
                 self.go_to_next_xtal()
             self.mol_dict['protein']=imol
 
+            # read any one event map if present
+            print 'UUUUUUUUUUUUU'
+            for event_map in glob.glob(os.path.join(self.project_directory,self.xtalID,self.xtalID+'-event_*.native.ccp4')):
+                print '>>>>>>>>>>',event_map
+                coot.handle_read_ccp4_map((event_map),0)
+                coot.set_contour_level_in_sigma(imol,2)
+                coot.set_last_map_colour(0.74,0.44,0.02)
+                break
+
         for item in coot_utils_XChem.molecule_number_list():
             if coot.molecule_name(item).endswith(self.pdb_style.replace('.pdb','')+'.split.bound-state.pdb') or coot.molecule_name(item).endswith(self.pdb_style):
                 coot.set_show_symmetry_master(1)    # master switch to show symmetry molecules
@@ -995,19 +1004,10 @@ class GUI(object):
 #                        os.symlink(self.xtalID+'-pandda-input.mtz',self.mtz_style)
 #                    elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
 #                        os.symlink('dimple.mtz',self.mtz_style)
-            print 'BBBBBBBBBBBBBBB'
             if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.mtz_style)):
                 coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory,self.xtalID,self.mtz_style))
             elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
                 coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory,self.xtalID,'dimple.mtz'))
-            # read any one event map if present
-            print 'UUUUUUUUUUUUU'
-            for event_map in glob.glob(os.path.join(self.project_directory,self.xtalID,self.xtalID+'-event_*.native.ccp4')):
-                print '>>>>>>>>>>',event_map
-                coot.handle_read_ccp4_map((event_map),0)
-                coot.set_contour_level_in_sigma(imol,2)
-                coot.set_last_map_colour(0.74,0.44,0.02)
-                break
 
         #########################################################################################
         # update Quality Indicator table
