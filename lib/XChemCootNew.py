@@ -994,6 +994,7 @@ class GUI(object):
 #                        os.symlink(self.xtalID+'-pandda-input.mtz',self.mtz_style)
 #                    elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
 #                        os.symlink('dimple.mtz',self.mtz_style)
+            print 'BBBBBBBBBBBBBBB'
             if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.mtz_style)):
                 coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory,self.xtalID,self.mtz_style))
             elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
