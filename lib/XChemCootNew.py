@@ -885,7 +885,7 @@ class GUI(object):
         # initialize Refinement library
         self.Refine=XChemRefine.Refine(self.project_directory,self.xtalID,self.compoundID,self.data_source)
         self.Serial=XChemRefine.GetSerial(self.project_directory,self.xtalID)
-	self.panddaSerial=panddaSerial=m=(4-len(str(self.Serial)))*'0'+str(self.Serial)
+        self.panddaSerial=panddaSerial=m=(4-len(str(self.Serial)))*'0'+str(self.Serial)
 #        self.Serial=self.Refine.GetSerial()
         if self.Serial==1:
             # i.e. no refinement has been done; data is probably straight out of dimple
@@ -974,7 +974,7 @@ class GUI(object):
                 coot.set_show_symmetry_molecule(item,1) # show symm for model
 
         #########################################################################################
-        # read fofo maps
+        # read fofc maps
         # - read ccp4 map: 0 - 2fofc map, 1 - fofc.map
         # read 2fofc map last so that one can change its contour level
         if os.path.isfile(os.path.join(self.project_directory,self.xtalID,'2fofc.map')):
@@ -998,6 +998,12 @@ class GUI(object):
                 coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory,self.xtalID,self.mtz_style))
             elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
                 coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory,self.xtalID,'dimple.mtz'))
+            # read any one event map if present
+            for event_map in glob.glob(os.path.join(self.project_directory,self.xtalID,self.xtalID+'-event_*.native.ccp4')):
+                coot.handle_read_ccp4_map((event_map),0)
+                coot.set_contour_level_in_sigma(imol,2)
+                coot.set_last_map_colour(0.74,0.44,0.02)
+                break
 
         #########################################################################################
         # update Quality Indicator table
