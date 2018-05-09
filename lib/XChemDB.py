@@ -603,7 +603,6 @@ class data_source:
         data=[]
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
-        print "select * from zenodoTable where DimplePANDDApath='{0!s}';".format(panddaPath)
         try:
             cursor.execute("select * from zenodoTable where DimplePANDDApath='{0!s}';".format(panddaPath))
             for column in cursor.description:

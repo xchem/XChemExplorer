@@ -694,16 +694,16 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                                                                                    'phasing_software']) +
                     '#\n'
                     "loop_\n"
-                    "     _pdbx_related_exp_data_set.ordinal\n"
-                    "     _pdbx_related_exp_data_set.data_reference\n"
-                    "     _pdbx_related_exp_data_set.metadata_reference\n"
-                    "     _pdbx_related_exp_data_set.data_set_type\n"
-                    "     _pdbx_related_exp_data_set.details\n"
-                    "     1  "
-                    " '%s' "  %self.zenodo_dict['ZenodoDOI']+
-                    " '%s' "  %self.zenodo_dict['ZenodoDOI']+
+                    "_pdbx_related_exp_data_set.ordinal\n"
+                    "_pdbx_related_exp_data_set.data_reference\n"
+                    "_pdbx_related_exp_data_set.metadata_reference\n"
+                    "_pdbx_related_exp_data_set.data_set_type\n"
+                    "_pdbx_related_exp_data_set.details\n"
+                    " 1  "
+                    " 'doi:%s' "  %self.zenodo_dict['ZenodoDOI']+
+                    " 'doi:%s' "  %self.zenodo_dict['ZenodoDOI']+
                     " 'other data'  "                 # 'other data' is only thing wwPDB accepts at the moment
-                    " 'MTZ, PDB & CIF files for PanDDA analysis'\n"
+                    " 'Complete PanDDA analysis'\n"
                     "\n" )
 
                 sys.stdout.write(cifItem)
