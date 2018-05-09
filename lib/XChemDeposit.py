@@ -399,12 +399,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         dictStatus = False
         self.zenodo_dict = None
         self.Logfile.insert('%s: reading information from zenodoTable for pandda run: %s' % (xtal,self.db_dict['DimplePANDDApath']))
-        try:
-            self.zenodo_dict = self.db.get_zenodo_dict_for_pandda_analysis(self.db_dict['DimplePANDDApath'])
-        except sqlite3.OperationalError:
-            self.Logfile.error(
-                '%s: cannot find information about zenodo deposition in zenodoTable; moving to next dataset...' % xtal)
-            self.add_to_errorList(xtal)
+        self.zenodo_dict = self.db.get_zenodo_dict_for_pandda_analysis(self.db_dict['DimplePANDDApath'])
         if self.zenodo_dict == {}:
             self.Logfile.error('%s: cannot find information about zenodo deposition in zenodoTable; moving to next dataset...' %xtal)
             self.add_to_errorList(xtal)

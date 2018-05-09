@@ -603,16 +603,18 @@ class data_source:
         data=[]
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
-        cursor.execute("select * from depositTable where DimplePANDDApath='{0!s}';".format(panddaPath))
-
-        for column in cursor.description:
-            header.append(column[0])
-        data = cursor.fetchall()
         try:
-            for n,item in enumerate(data[0]):
-                db_dict[header[n]]=str(item)
-        except IndexError:
-            pass
+            cursor.execute("select * from depositTable where DimplePANDDApath='{0!s}';".format(panddaPath))
+            for column in cursor.description:
+                header.append(column[0])
+            data = cursor.fetchall()
+            try:
+                for n,item in enumerate(data[0]):
+                    db_dict[header[n]]=str(item)
+            except IndexError:
+                pass
+        except sqlite3.OperationalError:
+            db_dict = {}
         return db_dict
 
 
