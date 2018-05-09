@@ -491,14 +491,18 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: checking if mtz of event maps exists' %xtal)
         eventMTZlist = []
         eventMTZexists = False
-        for mtz in glob.glob('*event*.native*P1.mtz'):
-            eventMTZlist.append(mtz[mtz.rfind('/')+1:])
-        if eventMTZlist is []:
-            self.Logfile.error('%s: MTZ files of event maps do not exists! Go to PANDDA tab and run "Event Map -> SF"' %xtal)
-            self.add_to_errorList(xtal)
-        else:
-            self.Logfile.insert(xtal + ': found ' + str(len(eventMTZlist)) + ' MTZ files of event maps')
+        if os.path.isfile('no_pandda_analysis_performed'):
+            self.Logfile.warning('%s: found empty file named "no_pandda_analysis_performed" which suggests we will ignore event maps for this sample' %xtal)
             eventMTZexists = True
+        else:
+            for mtz in glob.glob('*event*.native*P1.mtz'):
+                eventMTZlist.append(mtz[mtz.rfind('/')+1:])
+            if eventMTZlist is []:
+                self.Logfile.error('%s: MTZ files of event maps do not exists! Go to PANDDA tab and run "Event Map -> SF"' %xtal)
+                self.add_to_errorList(xtal)
+            else:
+                self.Logfile.insert(xtal + ': found ' + str(len(eventMTZlist)) + ' MTZ files of event maps')
+                eventMTZexists = True
         return eventMTZexists
 
 
@@ -508,6 +512,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         ligList = self.pdb.save_residues_with_resname(os.path.join(self.projectDir,xtal), 'LIG')
         foundMatchingMap = None
         for lig in sorted(ligList):
+            if os.path.isfile('no_pandda_analysis_performed'):
+                self.Logfile.warning('%s: no pandda analysis performed; skipping this step...')
+                break
             ligCC = []
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
                 self.get_lig_cc(xtal, mtz, lig)
@@ -763,16 +770,20 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def event_maps_exist_in_sf_mmcif(self,xtal):
         fileOK = False
         n_eventMTZ_found = -2  # set to -2 since first two data blocks are initial/final.mtz and data.mtz
-        for line in open(xtal + '_sf.mmcif'):
-            if line.startswith('_refln.crystal_id'):
-                n_eventMTZ_found += 1
-        if n_eventMTZ_found == len(self.eventList):
+        if os.path.isfile('no_pandda_analysis_performed'):
+            self.Logfile.warning('%s: no pandda analysis performed; skipping this step...')
             fileOK = True
-            self.Logfile.insert('%s: %s_sf.mmcif should contains %s of %s event maps' %(xtal,xtal,n_eventMTZ_found,len(self.eventList)))
         else:
-            self.Logfile.error('%s: %s_sf.mmcif should contains only %s of %s event maps' % (
-            xtal, xtal, n_eventMTZ_found, len(self.eventList)))
-            self.add_to_errorList(xtal)
+            for line in open(xtal + '_sf.mmcif'):
+                if line.startswith('_refln.crystal_id'):
+                    n_eventMTZ_found += 1
+            if n_eventMTZ_found == len(self.eventList):
+                fileOK = True
+                self.Logfile.insert('%s: %s_sf.mmcif should contains %s of %s event maps' %(xtal,xtal,n_eventMTZ_found,len(self.eventList)))
+            else:
+                self.Logfile.error('%s: %s_sf.mmcif should contains only %s of %s event maps' % (
+                xtal, xtal, n_eventMTZ_found, len(self.eventList)))
+                self.add_to_errorList(xtal)
         return fileOK
 
 
