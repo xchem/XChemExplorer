@@ -576,6 +576,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def save_data_template_dict(self,xtal):
         # check if file exists
         noError = True
+        self.Logfile.insert('%s: preparing data_template.cif file' %xtal)
         if self.overwrite_existing_mmcif:
             os.chdir(os.path.join(self.projectDir, xtal))
 
@@ -771,7 +772,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         fileOK = False
         n_eventMTZ_found = -2  # set to -2 since first two data blocks are initial/final.mtz and data.mtz
         if os.path.isfile('no_pandda_analysis_performed'):
-            self.Logfile.warning('%s: no pandda analysis performed; skipping this step...')
+            self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
             fileOK = True
         else:
             for line in open(xtal + '_sf.mmcif'):
