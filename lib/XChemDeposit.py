@@ -1411,12 +1411,13 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
 class prepare_for_group_deposition_upload(QtCore.QThread):
 
-    def __init__(self,database,xce_logfile,depositDir):
+    def __init__(self,database,xce_logfile,depositDir,projectDir):
         QtCore.QThread.__init__(self)
         self.database=database
         self.Logfile=XChemLog.updateLog(xce_logfile)
         self.db=XChemDB.data_source(database)
         self.depositDir=depositDir
+        self.projectDir=projectDir
 
 
 
@@ -1429,15 +1430,15 @@ class prepare_for_group_deposition_upload(QtCore.QThread):
         toDeposit=self.db.execute_statement("select CrystalName,mmCIF_model_file,mmCIF_SF_file from depositTable where StructureType is 'ligand_bound';")
         for item in sorted(toDeposit):
             xtal=str(item[0])
-            mmcif=str(item[1])
-            mmcif_sf=str(item[2])
+            mmcif=os.path.join(self.projectDir,xtal,str(item[1]))
+            mmcif_sf=os.path.join(self.projectDir,xtal,str(item[2]))
             if os.path.isfile(mmcif) and os.path.isfile(mmcif_sf):
                 self.Logfile.insert('copying {0!s} to {1!s}'.format(mmcif, self.depositDir))
                 os.system('/bin/cp {0!s} .'.format(mmcif))
                 self.Logfile.insert('copying {0!s} to {1!s}'.format(mmcif_sf, self.depositDir))
                 os.system('/bin/cp {0!s} .'.format(mmcif_sf))
             else:
-                self.Logfile.insert('cannot find apo mmcif file for '+xtal+' => ERROR')
+                self.Logfile.error('cannot find ligand_bound mmcif file for '+xtal)
 
             text = (    'label: {0!s}-ligand_bound\n'.format(xtal)+
                         'description: ligand_bound structure of {0!s}\n'.format(xtal)+
@@ -1459,39 +1460,39 @@ class prepare_for_group_deposition_upload(QtCore.QThread):
 
 
 
-        # apo structures
-        TextIndex=''
-        toDeposit=self.db.execute_statement("select CrystalName,mmCIF_model_file,mmCIF_SF_file from depositTable where StructureType is 'apo';")
-        for item in sorted(toDeposit):
-            xtal=str(item[0])
-            mmcif=str(item[1])
-            mmcif_sf=str(item[2])
-            if os.path.isfile(mmcif) and os.path.isfile(mmcif_sf):
-                self.Logfile.insert('copying {0!s} to {1!s}'.format(mmcif, self.depositDir))
-                os.system('/bin/cp {0!s} .'.format(mmcif))
-                self.Logfile.insert('copying {0!s} to {1!s}'.format(mmcif_sf, self.depositDir))
-                os.system('/bin/cp {0!s} .'.format(mmcif_sf))
-            else:
-                self.Logfile.insert('cannot find apo mmcif file for '+xtal+' => ERROR')
-
-            text = (    'label: {0!s}-apo\n'.format(xtal)+
-                        'description: apo structure of {0!s}\n'.format(xtal)+
-                        'model: {0!s}\n'.format(mmcif[mmcif.rfind('/')+1:])+
-                        'sf: {0!s}\n\n'.format(mmcif_sf[mmcif_sf.rfind('/')+1:])          )
-            TextIndex+=text
-
-        f = open('index.txt','w')
-        f.write(TextIndex)
-        f.close()
-
-        self.Logfile.insert('preparing tar archive...')
-        os.system('tar -cvf apo_structures.tar *apo* index.txt')
-        self.Logfile.insert('bzipping archive...')
-        os.system('bzip2 apo_structures.tar')
-        self.Logfile.insert('removing all apo mmcif files and index.txt file from '+self.depositDir)
-        os.system('/bin/rm -f *apo*mmcif index.txt')
-        self.Logfile.insert('done!')
-
+#        # apo structures
+#        TextIndex=''
+#        toDeposit=self.db.execute_statement("select CrystalName,mmCIF_model_file,mmCIF_SF_file from depositTable where StructureType is 'apo';")
+#        for item in sorted(toDeposit):
+#            xtal=str(item[0])
+#            mmcif=str(item[1])
+#            mmcif_sf=str(item[2])
+#            if os.path.isfile(mmcif) and os.path.isfile(mmcif_sf):
+#                self.Logfile.insert('copying {0!s} to {1!s}'.format(mmcif, self.depositDir))
+#                os.system('/bin/cp {0!s} .'.format(mmcif))
+#                self.Logfile.insert('copying {0!s} to {1!s}'.format(mmcif_sf, self.depositDir))
+#                os.system('/bin/cp {0!s} .'.format(mmcif_sf))
+#            else:
+#                self.Logfile.insert('cannot find apo mmcif file for '+xtal+' => ERROR')
+#
+#            text = (    'label: {0!s}-apo\n'.format(xtal)+
+#                        'description: apo structure of {0!s}\n'.format(xtal)+
+#                        'model: {0!s}\n'.format(mmcif[mmcif.rfind('/')+1:])+
+#                        'sf: {0!s}\n\n'.format(mmcif_sf[mmcif_sf.rfind('/')+1:])          )
+#            TextIndex+=text
+#
+#        f = open('index.txt','w')
+#        f.write(TextIndex)
+#        f.close()
+#
+#        self.Logfile.insert('preparing tar archive...')
+#        os.system('tar -cvf apo_structures.tar *apo* index.txt')
+#        self.Logfile.insert('bzipping archive...')
+#        os.system('bzip2 apo_structures.tar')
+#        self.Logfile.insert('removing all apo mmcif files and index.txt file from '+self.depositDir)
+#        os.system('/bin/rm -f *apo*mmcif index.txt')
+#        self.Logfile.insert('done!')
+#
 
 
 
