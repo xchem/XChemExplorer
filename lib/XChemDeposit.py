@@ -513,7 +513,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         foundMatchingMap = None
         for lig in sorted(ligList):
             if os.path.isfile('no_pandda_analysis_performed'):
-                self.Logfile.warning('%s: no pandda analysis performed; skipping this step...')
+                self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
+                foundMatchingMap = True
                 break
             ligCC = []
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
@@ -563,7 +564,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.errorList.append(xtal)
 
     def print_errorlist(self):
-        if self.errorList is []:
+        if self.errorList == []:
             self.Logfile.insert('XCE did not detect any problems during mmcif file preparation. '
                                 'It is however recommended to check the logfile.')
         else:
@@ -1452,11 +1453,11 @@ class prepare_for_group_deposition_upload(QtCore.QThread):
         f.close()
 
         self.Logfile.insert('preparing tar archive...')
-        os.system('tar -cvf ligand_bound_structures.tar *bound* index.txt')
+        os.system('tar -cvf ligand_bound_structures.tar *mmcif index.txt')
         self.Logfile.insert('bzipping archive...')
         os.system('bzip2 ligand_bound_structures.tar')
         self.Logfile.insert('removing all bound mmcif files and index.txt file from '+self.depositDir)
-        os.system('/bin/rm -f *bound*mmcif index.txt')
+        os.system('/bin/rm -f *mmcif index.txt')
         self.Logfile.insert('done!')
 
 
