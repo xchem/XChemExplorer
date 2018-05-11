@@ -609,14 +609,14 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 self.data_template_dict['fragment_name_one_specific_mutation'] = '"' + mutations.replace(' ', '') + '"'
 
             # get protein chains
-                self.data_template_dict['protein_chains'] = ''
+            self.data_template_dict['protein_chains'] = ''
             chains = self.pdb.GetProteinChains()
             for item in chains:
                 self.data_template_dict['protein_chains'] += item + ','
-                self.data_template_dict['protein_chains'] = self.data_template_dict['protein_chains'][:-1]
+            self.data_template_dict['protein_chains'] = self.data_template_dict['protein_chains'][:-1]
 
-                self.data_template_dict['group_type'] = ''
-                self.data_template_dict['group_type'] = 'changed state'
+            self.data_template_dict['group_type'] = ''
+            self.data_template_dict['group_type'] = 'changed state'
             data_template = templates().data_template_cif(self.data_template_dict)
 #            site_details = self.make_site_description(xtal)
 #            data_template += site_details
