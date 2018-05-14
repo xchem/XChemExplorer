@@ -581,6 +581,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         if self.overwrite_existing_mmcif:
             os.chdir(os.path.join(self.projectDir, xtal))
 
+            # edit wavelength
+            self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
+
             # edit title
             self.data_template_dict['group_title'] = self.data_template_dict['group_deposition_title'].replace('$ProteinName',
                                                                                                                self.data_template_dict[
@@ -797,6 +800,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         block = -1
 
+        self.Logfile.insert('%s: reading wavelength from mtz file; lambda = %s' %(xtal,self.mtz.get_wavelength()))
         for i, line in enumerate(fileinput.input(xtal + '_sf.mmcif', inplace=1)):
 
             if line.startswith('_cell.length_a'):
