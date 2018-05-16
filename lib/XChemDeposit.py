@@ -512,6 +512,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         ligList = self.pdb.save_residues_with_resname(os.path.join(self.projectDir,xtal), 'LIG')
         foundMatchingMap = None
         for lig in sorted(ligList):
+            ligID = lig.replace('.pdb','')
             if os.path.isfile('no_pandda_analysis_performed'):
                 self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
                 foundMatchingMap = True
@@ -519,8 +520,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             ligCC = []
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
                 self.get_lig_cc(xtal, mtz, lig)
-                cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
-                self.Logfile.insert('%s: CC = %s for %s' %(xtal,cc,mtz))
+                cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
+                self.Logfile.insert('%s: %s -> CC = %s for %s' %(xtal,ligID,cc,mtz))
                 try:
                     ligCC.append([mtz,float(cc)])
                 except ValueError:
@@ -540,12 +541,13 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
 
     def get_lig_cc(self, xtal, mtz, lig):
+        ligID = lig.replace('.pdb','')
         self.Logfile.insert('%s: calculating CC for %s in %s' %(xtal,lig,mtz))
-        if os.path.isfile(mtz.replace('.mtz', '_CC.log')):
+        if os.path.isfile(mtz.replace('.mtz', '_CC'+ligID+'.log')):
             self.Logfile.warning('logfile of CC analysis exists; skipping...')
             return
         cmd = ( 'module load phenix\n'
-                'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC.log')) )
+                'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC'+ligID+'.log')) )
         os.system(cmd)
 
     def check_lig_cc(self,log):
