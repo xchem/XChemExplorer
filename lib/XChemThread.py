@@ -1152,7 +1152,10 @@ class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
             miller_arrays = hkl.as_miller_arrays()
             mtzFile = miller_arrays[0]
 
-            symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
+            if mtzFile.space_group_info().symbol_and_number() ==  'R 3 :H (No. 146)':
+                symNoAbsence = 'H3'
+            else:
+                symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
 
             Cmds = (
                     '{0!s}\n'.format(top_line)+
