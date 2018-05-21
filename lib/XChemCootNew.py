@@ -941,15 +941,24 @@ class GUI(object):
             os.chdir(os.path.join(self.project_directory,self.xtalID))
 
         if self.refinementProtocol.startswith('pandda'):
+            print '=> XCE: looking for ground-state model',os.path.join(self.project_directory,self.xtalID,self.pdb_style.replace('.pdb','')+'.split.ground-state.pdb')
             if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.pdb_style.replace('.pdb','')+'.split.ground-state.pdb')):
+                print '=> XCE: found ground-state model'
                 os.chdir(os.path.join(self.project_directory,self.xtalID))
                 coot.set_colour_map_rotation_on_read_pdb(0)
-                color_wheel_rotation=160/float(imol+2)
+                try:
+                    color_wheel_rotation=160/float(imol+2)
+                except UnboundLocalError:
+                    color_wheel_rotation=80
                 coot.set_colour_map_rotation_on_read_pdb(color_wheel_rotation)
                 imol=coot.handle_read_draw_molecule_with_recentre(os.path.join(self.project_directory,self.xtalID,self.pdb_style.replace('.pdb','')+'.split.ground-state.pdb'),0)
                 coot.set_colour_by_molecule(imol)
                 coot.set_mol_active(imol,0)
+            else:
+                print '=> XCE - ERROR: cannot find ground-state model'
+            print '=> XCE: looking for bound-state model',os.path.join(self.project_directory,self.xtalID,self.pdb_style.replace('.pdb','')+'.split.bound-state.pdb')
             if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.pdb_style.replace('.pdb','')+'.split.bound-state.pdb')):
+                print '=> XCE: found bound-state model'
                 os.chdir(os.path.join(self.project_directory,self.xtalID))
                 coot.set_colour_map_rotation_on_read_pdb(0)
                 color_wheel_rotation=21/float(imol+2)
@@ -957,6 +966,8 @@ class GUI(object):
                 imol=coot.handle_read_draw_molecule_with_recentre(os.path.join(self.project_directory,self.xtalID,self.pdb_style.replace('.pdb','')+'.split.bound-state.pdb'),0)
                 self.mol_dict['protein']=imol
             else:
+                print '=> XCE - ERROR: cannot find bound-state model'
+                print '=> XCE: moving to next crystal...'
                 self.go_to_next_xtal()
         else:
             if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.pdb_style)):
