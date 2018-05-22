@@ -195,13 +195,13 @@ class export_to_html:
             self.Logfile.insert('%s: copying 2fofc.map to html directory' %xtal)
             os.system('/bin/cp %s/2fofc.map %s_2fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
         else:
-            self.Logfile.error('%s: cannot find 2fofc.map')
+            self.Logfile.error('%s: cannot find 2fofc.map' %xtal)
 
         if os.path.isfile(os.path.join(self.projectDir,xtal,'fofc.map')):
             self.Logfile.insert('%s: copying fofc.map to html directory' %xtal)
             os.system('/bin/cp %s/fofc.map %s_fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
         else:
-            self.Logfile.error('%s: cannot find fofc.map')
+            self.Logfile.error('%s: cannot find fofc.map' %xtal)
 
     def copy_ligand_files(self,xtal):
         os.chdir(os.path.join(self.htmlDir,'compoundFiles'))
@@ -210,13 +210,13 @@ class export_to_html:
             self.Logfile.insert('%s: copying compound cif file' %xtal)
             os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.cif'),xtal,self.db_dict['CompoundCode']+'.cif'))
         else:
-            self.Logfile.error('%s: cannot find compound cif file')
+            self.Logfile.error('%s: cannot find compound cif file' %xtal)
 
         if os.path.isfile(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.png')):
             self.Logfile.insert('%s: copying compound png file' %xtal)
             os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.png'),xtal,self.db_dict['CompoundCode']+'.png'))
         else:
-            self.Logfile.error('%s: cannot find compound png file')
+            self.Logfile.error('%s: cannot find compound png file' %xtal)
 
     def ligands_in_pdbFile(self,xtal):
         os.chdir(os.path.join(self.projectDir,xtal))
@@ -226,9 +226,9 @@ class export_to_html:
         if os.path.isfile('refine.split.bound-state.pdb'):
             ligPDB = self.pdb.save_residues_with_resname(os.path.join(self.projectDir, xtal), 'LIG')
         else:
-            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb')
+            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb' %xtal)
         if ligPDB == []:
-            self.Logfile.error('%s; cannot find any ligands of type LIG in refine.split.bound-state.pdb')
+            self.Logfile.error('%s; cannot find any ligands of type LIG in refine.split.bound-state.pdb' %xtal)
         else:
             for lig in sorted(ligPDB):
                 ligList.append(lig.replace('.pdb', ''))
@@ -252,9 +252,9 @@ class export_to_html:
                 ligCC.append([mtz, 0.00])
         highestCC = max(ligCC, key=lambda x: x[0])[1]
         if highestCC == 0.00 or ligCC is []:
-            self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
+            self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,ligID))
         else:
-            self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
+            self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,ligID,highestCC,mtz[mtz.rfind('/')+1:]))
             print '====>',xtal.ligID,mtz
 
 
