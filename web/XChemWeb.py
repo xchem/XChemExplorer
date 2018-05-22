@@ -178,7 +178,7 @@ class export_to_html:
     def copy_pdb(self,xtal):
         os.chdir(os.path.join(self.htmlDir, 'pdbs'))
 
-        if os.path.isfile(self.projectDir,xtal,'refine.split.bound-state.pdb'):
+        if os.path.isfile(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')):
             self.Logfile.insert('%s: copying refine.split.bound-state.pdb to html directory' %xtal)
             os.system('/bin/cp %s/refine.split.bound-state.pdb %s.pdb' %(os.path.join(self.projectDir,xtal),xtal))
         else:
@@ -187,13 +187,13 @@ class export_to_html:
     def copy_electron_density(self,xtal):
         os.chdir(os.path.join(self.htmlDir, 'maps'))
 
-        if os.path.isfile(self.projectDir,xtal,'2fofc.map'):
+        if os.path.isfile(os.path.join(self.projectDir,xtal,'2fofc.map')):
             self.Logfile.insert('%s: copying 2fofc.map to html directory' %xtal)
             os.system('/bin/cp %s/2fofc.map %s_2fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
         else:
             self.Logfile.error('%s: cannot find 2fofc.map')
 
-        if os.path.isfile(self.projectDir,xtal,'fofc.map'):
+        if os.path.isfile(os.path.join(self.projectDir,xtal,'fofc.map')):
             self.Logfile.insert('%s: copying fofc.map to html directory' %xtal)
             os.system('/bin/cp %s/fofc.map %s_fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
         else:
