@@ -153,7 +153,7 @@ class export_to_html:
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
                 self.copy_spider_plot(xtal,ligand)
                 html += XChemMain.html_table_row()
-                self.make_thumbnail()
+                self.make_thumbnail(xtal,x,y,z,ligand,eventMap)
 #        self.write_html_file(html)
 
 
