@@ -151,7 +151,7 @@ class export_to_html:
             for ligand in self.ligands_in_pdbFile(xtal):
                 eventMap = self.find_matching_event_map(xtal, ligand)
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
-                print '--->'ligand,x,y,z
+                print '--->',ligand,x,y,z
                 quit()
                 self.copy_spider_plot(xtal,ligand)
 #                html += XChemMain.html_table_row()
