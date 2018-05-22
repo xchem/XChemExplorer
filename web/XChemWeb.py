@@ -149,7 +149,7 @@ class export_to_html:
             self.copy_electron_density(xtal)
             self.copy_ligand_files(xtal)
             for ligand in self.ligands_in_pdbFile(xtal):
-                self.find_matching_event_map(xtal, ligand)
+                eventMap = self.find_matching_event_map(xtal, ligand)
 
 
 
@@ -237,6 +237,7 @@ class export_to_html:
 
     def find_matching_event_map(self,xtal,ligID):
         os.chdir(os.path.join(self.projectDir, xtal))
+        eventMAP = []
         self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
         if os.path.isfile('no_pandda_analysis_performed'):
             self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
@@ -255,8 +256,17 @@ class export_to_html:
             self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,ligID))
         else:
             self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,ligID,highestCC,mtz[mtz.rfind('/')+1:]))
-            print '====>',xtal,ligID,mtz
+            eventMAP = mtz[mtz.rfind('/')+1:].replace('.P1.mtz','.ccp4')
+            if not os.path.isfile(eventMAP):
+                eventMAP = []
+            else:
+                self.copy_eventMap(xtal,ligID,eventMAP)
+        return eventMAP
 
+    def copy_eventMap(self,xtal,ligID,eventMAP):
+        os.chdir(os.path.join(self.htmlDir,'maps'))
+        self.Logfile.insert('%s: copying event map for %s' %(xtal,ligID))
+        os.system('/bin/cp %s %s_%s.ccp4' %(os.path.join(self.projectDir,xtal,eventMAP),xtal,ligID))
 
     def get_lig_cc(self, xtal, mtz, lig):
         ligID = lig.replace('.pdb','')
