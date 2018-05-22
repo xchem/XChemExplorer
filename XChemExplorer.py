@@ -476,20 +476,25 @@ class XChemExplorer(QtGui.QApplication):
     #                                                                                                                  #
     ####################################################################################################################
     def export_to_html(self):
-        self.update_log.insert('exporting contents of SQLite database into ' + self.html_export_directory)
-        os.system(
-            'ccp4-python ' + os.getenv('XChemExplorer_DIR') + '/web/process_sqlite.py -t Summary -s ' + os.path.join(
-                self.database_directory, self.data_source_file) + ' -d ' + self.html_export_directory)
-        XChemWeb.create_ICM_input_file(self.html_export_directory,
-                                       os.path.join(self.database_directory, self.data_source_file))
-        self.update_log.insert('open ICMpro:')
-        self.update_log.insert('/dls/science/groups/i04-1/software/icm-3.8-5/icm64 -g')
-        self.update_log.insert('open file browser and navigate to ' + self.html_export_directory)
-        self.update_log.insert('drag and drop dsEvent_sqlite.icm into the main window')
-        self.update_log.insert('the script will appear in the Workspace Panel')
-        self.update_log.insert('right click on the script and select RUN')
-        self.update_log.insert('be patient, this may take a while, depending on the number of events')
-        self.status_bar.showMessage('please check terminal window for further information')
+        XChemWeb.export_to_html(self.html_export_directory,
+                                self.initial_model_directory,
+                                os.path.join(self.database_directory, self.data_source_file),
+                                self.xce_logfile).prepare()
+
+#        self.update_log.insert('exporting contents of SQLite database into ' + self.html_export_directory)
+#        os.system(
+#            'ccp4-python ' + os.getenv('XChemExplorer_DIR') + '/web/process_sqlite.py -t Summary -s ' + os.path.join(
+#                self.database_directory, self.data_source_file) + ' -d ' + self.html_export_directory)
+#        XChemWeb.create_ICM_input_file(self.html_export_directory,
+#                                       os.path.join(self.database_directory, self.data_source_file))
+#        self.update_log.insert('open ICMpro:')
+#        self.update_log.insert('/dls/science/groups/i04-1/software/icm-3.8-5/icm64 -g')
+#        self.update_log.insert('open file browser and navigate to ' + self.html_export_directory)
+#        self.update_log.insert('drag and drop dsEvent_sqlite.icm into the main window')
+#        self.update_log.insert('the script will appear in the Workspace Panel')
+#        self.update_log.insert('right click on the script and select RUN')
+#        self.update_log.insert('be patient, this may take a while, depending on the number of events')
+#        self.status_bar.showMessage('please check terminal window for further information')
 
     def open_icm(self):
         self.update_log.insert('starting ICM...')

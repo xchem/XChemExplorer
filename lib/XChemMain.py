@@ -629,6 +629,9 @@ def phasing_software():
 
     return software
 
+def html_header():
+    header = 'hallo'
+    return header
 
 class find_diffraction_image_directory(QtCore.QThread):
     def __init__(self,diffraction_data_directory):

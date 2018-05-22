@@ -2,6 +2,15 @@
 
 import os,sys
 
+sys.path.append(os.getenv('XChemExplorer_DIR')+'/lib')
+import XChemLog
+import XChemDB
+import XChemMain
+
+from XChemUtils import pdbtools
+from XChemUtils import mtztools
+
+
 def create_ICM_input_file(html_export_directory,database):
 
     if os.getcwd().startswith('/work'):
@@ -118,3 +127,150 @@ def create_ICM_input_file(html_export_directory,database):
     f=open('%s/dsEvent_sqlite.icm' %html_export_directory,'w')
     f.write(icm_in)
     f.close()
+
+class export_to_html:
+
+    def __init__(self,htmlDir,projectDir,database,xce_logfile):
+        self.htmlDir = htmlDir
+        self.projectDir = projectDir
+        self.Logfile=XChemLog.updateLog(xce_logfile)
+        self.db=XChemDB.data_source(database)
+        self.db_dict = None
+
+    def prepare(self):
+        self.Logfile.insert('======== preparing HTML summary ========')
+        self.makeFolders()
+        self.write_HTML_header()
+        for xtal in self.db.samples_for_html_summary():
+            self.db_dict = self.db.get_db_dict_for_sample(xtal)
+            self.copy_pdb(xtal)
+            self.copy_electron_density(xtal)
+            self.copy_ligand_files(xtal)
+            for ligand in self.ligands_in_pdbFile(xtal):
+                print ligand
+
+
+    def makeFolders(self):
+        self.Logfile.insert('preparing folders in html directory')
+        os.chdir(self.htmlDir)
+        if not os.path.isdir('js'):
+            os.mkdir('js')
+        if not os.path.isdir('css'):
+            os.mkdir('css')
+        if not os.path.isdir('compoundFiles'):
+            os.mkdir('compoundFiles')
+        if not os.path.isdir('residueplots'):
+            os.mkdir('residueplots')
+        if not os.path.isdir('pdbs'):
+            os.mkdir('pdbs')
+        if not os.path.isdir('maps'):
+            os.mkdir('maps')
+
+    def write_HTML_header(self):
+        os.chdir(self.htmlDir)
+        self.Logfile.insert('writing html header')
+        if os.path.isfile('index.html'):
+            os.system('/bin/rm -f index.html')
+        f = open('index.html','w')
+        f.write(XChemMain.html_header)
+        f.close()
+
+    def copy_pdb(self,xtal):
+        os.chdir(os.path.join(self.htmlDir, 'pdbs'))
+
+        if os.path.isfile(self.projectDir,xtal,'refine.split.bound-state.pdb'):
+            self.Logfile.insert('%s: copying refine.split.bound-state.pdb to html directory' %xtal)
+            os.system('/bin/cp %s/refine.split.bound-state.pdb %s.pdb' %(os.path.join(self.projectDir,xtal),xtal))
+        else:
+            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb')
+
+    def copy_electron_density(self,xtal):
+        os.chdir(os.path.join(self.htmlDir, 'maps'))
+
+        if os.path.isfile(self.projectDir,xtal,'2fofc.map'):
+            self.Logfile.insert('%s: copying 2fofc.map to html directory' %xtal)
+            os.system('/bin/cp %s/2fofc.map %s_2fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
+        else:
+            self.Logfile.error('%s: cannot find 2fofc.map')
+
+        if os.path.isfile(self.projectDir,xtal,'fofc.map'):
+            self.Logfile.insert('%s: copying fofc.map to html directory' %xtal)
+            os.system('/bin/cp %s/fofc.map %s_fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
+        else:
+            self.Logfile.error('%s: cannot find fofc.map')
+
+    def copy_ligand_files(self,xtal):
+        os.chdir(os.path.join(self.htmlDir,'compoundFiles'))
+
+        if os.path.isfile(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.cif')):
+            self.Logfile.insert('%s: copying compound cif file' %xtal)
+            os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.cif'),xtal,self.db_dict['CompoundCode']+'.cif'))
+        else:
+            self.Logfile.error('%s: cannot find compound cif file')
+
+        if os.path.isfile(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.png')):
+            self.Logfile.insert('%s: copying compound png file' %xtal)
+            os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.png'),xtal,self.db_dict['CompoundCode']+'.png'))
+        else:
+            self.Logfile.error('%s: cannot find compound png file')
+
+    def ligands_in_pdbFile(self,xtal):
+        os.chdir(self.projectDir,xtal)
+        ligPDB = []
+        ligList = []
+        self.Logfile.insert('%s: reading ligands to type LIG in refine.split.bound-state.pdb' %xtal)
+        if os.path.isfile('refine.split.bound-state.pdb'):
+            ligPDB = self.pdb.save_residues_with_resname(os.path.join(self.projectDir, xtal), 'LIG')
+        else:
+            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb')
+        if ligPDB == []:
+            self.Logfile.error('%s; cannot find any ligands of type LIG in refine.split.bound-state.pdb')
+        else:
+            for lig in sorted(ligPDB):
+                ligList.append(lig.replace('.pdb', ''))
+        return ligList
+
+
+    def find_matching_event_map(self,xtal,ligID):
+        os.chdir(self.projectDir, xtal)
+        self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
+        if os.path.isfile('no_pandda_analysis_performed'):
+            self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
+            return
+        ligCC = []
+        for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
+            self.get_lig_cc(xtal, mtz, ligID+'.pdb')
+            cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
+            self.Logfile.insert('%s: %s -> CC = %s for %s' %(xtal,ligID,cc,mtz))
+            try:
+                ligCC.append([mtz,float(cc)])
+            except ValueError:
+                ligCC.append([mtz, 0.00])
+        highestCC = max(ligCC, key=lambda x: x[0])[1]
+        if highestCC == 0.00 or ligCC is []:
+            self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
+        else:
+            self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
+            print '====>',xtal.ligID,mtz
+
+
+    def get_lig_cc(self, xtal, mtz, lig):
+        ligID = lig.replace('.pdb','')
+        self.Logfile.insert('%s: calculating CC for %s in %s' %(xtal,lig,mtz))
+        if os.path.isfile(mtz.replace('.mtz', '_CC'+ligID+'.log')):
+            self.Logfile.warning('logfile of CC analysis exists; skipping...')
+            return
+        cmd = ( 'module load phenix\n'
+                'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC'+ligID+'.log')) )
+        os.system(cmd)
+
+    def check_lig_cc(self,log):
+        cc = 'n/a'
+        if os.path.isfile(log):
+            for line in open(log):
+                if line.startswith('local'):
+                    cc = line.split()[len(line.split()) - 1]
+        else:
+            self.Logfile.error('logfile does not exist: %s' %log)
+        return cc
+

@@ -1803,3 +1803,14 @@ class data_source:
             imageDict[xtal]=[str(img[1]),str(img[2]),str(img[3]),str(img[4])]
         return imageDict
 
+    def samples_for_html_summary(self):
+        connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
+        cursor = connect.cursor()
+        cursor.execute("select CrystalName from mainTable where RefinementOutcome like '5%' or RefinementOutcome like '6%' order by CrystalName ASC")
+        xtalList=[]
+        samples = cursor.fetchall()
+        for sample in samples:
+            if str(sample[0]) not in xtalList:
+                xtalList.append(str(sample[0]))
+        return xtalList
+
