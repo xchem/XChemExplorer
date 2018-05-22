@@ -140,7 +140,7 @@ class export_to_html:
     def prepare(self):
         self.Logfile.insert('======== preparing HTML summary ========')
         self.makeFolders()
-        self.write_HTML_header()
+#        self.write_HTML_header()
         for xtal in self.db.samples_for_html_summary():
             self.db_dict = self.db.get_db_dict_for_sample(xtal)
             self.copy_pdb(xtal)
