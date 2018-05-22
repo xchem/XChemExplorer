@@ -673,7 +673,7 @@ def coot_prepare_input(x,y,z,ligID,sampleDir,eventMap):
         'coot.raster3d("%s.r3d")\n' %ligID +
         'coot_real_exit(0)\n'
     )
-    f = open(%s+'.py' %ligID, 'w')
+    f = open(ligID+'.py', 'w')
     f.write(cmd)
     f.close()
 
