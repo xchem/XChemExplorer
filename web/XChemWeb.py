@@ -1,6 +1,7 @@
 # last edited: 05/07/2017, 15:00
 
 import os,sys
+import glob
 
 sys.path.append(os.getenv('XChemExplorer_DIR')+'/lib')
 import XChemLog
