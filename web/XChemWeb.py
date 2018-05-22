@@ -255,7 +255,7 @@ class export_to_html:
             self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,ligID))
         else:
             self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,ligID,highestCC,mtz[mtz.rfind('/')+1:]))
-            print '====>',xtal.ligID,mtz
+            print '====>',xtal,ligID,mtz
 
 
     def get_lig_cc(self, xtal, mtz, lig):
