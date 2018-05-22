@@ -1648,7 +1648,7 @@ class pdbtools(object):
         x = []
         y = []
         z = []
-        for model in h.models():
+        for model in self.hierarchy.models():
             for chain in model.chains():
                 for conformer in chain.conformers():
                     for residue in conformer.residues():
