@@ -666,7 +666,7 @@ def coot_prepare_input(x,y,z,ligID,sampleDir,eventMap):
         'set_rotation_centre(%s, %s, %s)\n' %(x,y,z) +
         'set_zoom(30.)\n'
         'set_view_quaternion(-0.180532, -0.678828, 0, 0.711759)\n'
-        'coot.handle_read_ccp4_map((%s),0)\n' %eventMap +
+        'coot.handle_read_ccp4_map(("%s"),0)\n' %eventMap +
 #        'mtz = "final.mtz"\n'
 #        'map21 = make_and_draw_map(mtz, "FWT", "PHWT", "", 0, 0)\n'
 #        'map11 = make_and_draw_map(mtz, "DELFWT", "PHDELWT", "", 0, 1)\n'
