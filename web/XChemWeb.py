@@ -136,6 +136,7 @@ class export_to_html:
         self.Logfile=XChemLog.updateLog(xce_logfile)
         self.db=XChemDB.data_source(database)
         self.db_dict = None
+        self.pdb = None
 
     def prepare(self):
         self.Logfile.insert('======== preparing HTML summary ========')
@@ -177,8 +178,9 @@ class export_to_html:
 
     def copy_pdb(self,xtal):
         os.chdir(os.path.join(self.htmlDir, 'pdbs'))
-
+        self.pdb = None
         if os.path.isfile(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')):
+            self.pdb = pdbtools('refine.split.bound-state.pdb')
             self.Logfile.insert('%s: copying refine.split.bound-state.pdb to html directory' %xtal)
             os.system('/bin/cp %s/refine.split.bound-state.pdb %s.pdb' %(os.path.join(self.projectDir,xtal),xtal))
         else:
