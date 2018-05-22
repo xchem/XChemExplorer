@@ -1645,6 +1645,7 @@ class pdbtools(object):
         resname_x = resname_resseq_chain.split('-')[0]
         resseq_x = resname_resseq_chain.split('-')[1]
         chain_x = resname_resseq_chain.split('-')[2]
+        print '===>',resname_x,resseq_x,chain_x
         x = []
         y = []
         z = []
