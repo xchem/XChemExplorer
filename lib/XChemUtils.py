@@ -1654,7 +1654,7 @@ class pdbtools(object):
                 for conformer in chain.conformers():
                     for residue in conformer.residues():
                         print residue.resname,residue.resseq,chain.id
-                        if residue.resname == resname_x and residue.resseq == resseq_x and chain.id == chain_x:
+                        if residue.resname.replace(' ','') == resname_x and residue.resseq.replace(' ','') == resseq_x and chain.id.replace(' ','') == chain_x:
                             for atom in residue.atoms():
                                 x.append(atom.xyz[0])
                                 y.append(atom.xyz[1])
