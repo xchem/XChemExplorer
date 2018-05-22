@@ -1641,6 +1641,30 @@ class pdbtools(object):
                                 ligands.append([residue.resname, residue.resseq, chain.id])
         return ligands
 
+    def get_centre_of_gravity_of_residue(self,resname_resseq_chain):
+        resname_x = resname_resseq_chain.split('-')[0]
+        resseq_x = resname_resseq_chain.split('-')[1]
+        chain_x = resname_resseq_chain.split('-')[2]
+        x = []
+        y = []
+        z = []
+        for model in h.models():
+            for chain in model.chains():
+                for conformer in chain.conformers():
+                    for residue in conformer.residues():
+                        if residue.resname == resname_x and residue.resseq == resseq_x and chain.id == chain_x:
+                            for atom in residue.atoms():
+                                x.append(atom.xyz[0])
+                                y.append(atom.xyz[1])
+                                z.append(atom.xyz[2])
+
+        if x != [] and y != [] and z != []:
+            x = ((max(x) - min(x)) / 2) + min(x)
+            y = ((max(y) - min(y)) / 2) + min(y)
+            z = ((max(z) - min(z)) / 2) + min(z)
+
+        return x,y,z
+
     def save_residues_with_resname(self,outDir,resname):
         ligands = self.get_residues_with_resname(resname)
         ligList = []

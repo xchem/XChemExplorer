@@ -142,7 +142,7 @@ class export_to_html:
     def prepare(self):
         self.Logfile.insert('======== preparing HTML summary ========')
         self.makeFolders()
-#        self.write_HTML_header()
+        html = ''
         for xtal in self.db.samples_for_html_summary():
             self.db_dict = self.db.get_db_dict_for_sample(xtal)
             self.copy_pdb(xtal)
@@ -150,8 +150,25 @@ class export_to_html:
             self.copy_ligand_files(xtal)
             for ligand in self.ligands_in_pdbFile(xtal):
                 eventMap = self.find_matching_event_map(xtal, ligand)
+                x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
+                self.copy_spider_plot(xtal,ligand)
+                html += XChemMain.html_table_row()
+                self.make_thumbnail()
+#        self.write_html_file(html)
 
 
+    def make_thumbnail(self,xtal,x,y,z,ligID,eventMap):
+        self.Logfile.insert('%s: making thumbnail of for %s and %s' %(xtal,ligID,eventMap))
+        sampleDir = os.path.join(self.projectDir,xtal)
+        os.chdir(sampleDir)
+        XChemMain.coot_prepare_input(x, y, z, ligID, sampleDir, eventMap)
+        XChemMain.coot_write_raster_file(ligID,sampleDir)
+        XChemMain.render_scene(xtal,ligID,sampleDir)
+        XChemMain.make_thumbnail(xtal, ligID, sampleDir)
+        if os.path.isfile('%s_%s_thumb.png' %(xtal,ligID)):
+            self.Logfile.insert('%s: managed to prepare %s_%s_thumb.png' %(xtal,xtal,ligID))
+        else:
+            self.Logfile.error('%s: could not generate %s_%s_thumb.png' %(xtal,xtal,ligID))
 
     def makeFolders(self):
         self.Logfile.insert('preparing folders in html directory')
@@ -169,15 +186,6 @@ class export_to_html:
         if not os.path.isdir('maps'):
             os.mkdir('maps')
 
-    def write_HTML_header(self):
-        os.chdir(self.htmlDir)
-        self.Logfile.insert('writing html header')
-        if os.path.isfile('index.html'):
-            os.system('/bin/rm -f index.html')
-        f = open('index.html','w')
-        f.write(XChemMain.html_header)
-        f.close()
-
     def copy_pdb(self,xtal):
         os.chdir(os.path.join(self.htmlDir, 'pdbs'))
         self.pdb = None
@@ -186,7 +194,7 @@ class export_to_html:
             self.Logfile.insert('%s: copying refine.split.bound-state.pdb to html directory' %xtal)
             os.system('/bin/cp %s/refine.split.bound-state.pdb %s.pdb' %(os.path.join(self.projectDir,xtal),xtal))
         else:
-            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb')
+            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb' %xtal)
 
     def copy_electron_density(self,xtal):
         os.chdir(os.path.join(self.htmlDir, 'maps'))
@@ -217,6 +225,16 @@ class export_to_html:
             os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.png'),xtal,self.db_dict['CompoundCode']+'.png'))
         else:
             self.Logfile.error('%s: cannot find compound png file' %xtal)
+
+    def copy_spider_plot(self,xtal,ligID):
+        os.chdir(os.path.join(self.htmlDir, 'residueplots'))
+        self.pdb = None
+        if os.path.isfile(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png')):
+            self.Logfile.insert('%s: copying spider plot for %s' %(xtal,ligID))
+            os.system('/bin/cp %s %s_%s.pdb' %(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png'),xtal,ligID))
+        else:
+            self.Logfile.error('%s: cannot find spider plot for %s' %(xtal,ligID))
+
 
     def ligands_in_pdbFile(self,xtal):
         os.chdir(os.path.join(self.projectDir,xtal))
@@ -287,4 +305,13 @@ class export_to_html:
         else:
             self.Logfile.error('logfile does not exist: %s' %log)
         return cc
+
+    def write_html_file(self):
+        os.chdir(self.htmlDir)
+        self.Logfile.insert('writing html header')
+        if os.path.isfile('index.html'):
+            os.system('/bin/rm -f index.html')
+        f = open('index.html','w')
+        f.write(XChemMain.html_header)
+        f.close()
 
