@@ -215,7 +215,7 @@ class export_to_html:
             self.Logfile.error('%s: cannot find compound png file')
 
     def ligands_in_pdbFile(self,xtal):
-        os.chdir(self.projectDir,xtal)
+        os.chdir(os.path.join(self.projectDir,xtal))
         ligPDB = []
         ligList = []
         self.Logfile.insert('%s: reading ligands to type LIG in refine.split.bound-state.pdb' %xtal)
@@ -232,7 +232,7 @@ class export_to_html:
 
 
     def find_matching_event_map(self,xtal,ligID):
-        os.chdir(self.projectDir, xtal)
+        os.chdir(os.path.join(self.projectDir, xtal))
         self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
         if os.path.isfile('no_pandda_analysis_performed'):
             self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
