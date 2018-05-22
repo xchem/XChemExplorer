@@ -148,7 +148,8 @@ class export_to_html:
             self.copy_electron_density(xtal)
             self.copy_ligand_files(xtal)
             for ligand in self.ligands_in_pdbFile(xtal):
-                print ligand
+                self.find_matching_event_map(self, xtal, ligand)
+
 
 
     def makeFolders(self):
