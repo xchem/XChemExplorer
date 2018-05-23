@@ -167,9 +167,15 @@ class export_to_html:
         XChemMain.make_thumbnail(xtal, ligID, sampleDir)
         if os.path.isfile('%s_%s_thumb.png' %(xtal,ligID)):
             self.Logfile.insert('%s: managed to prepare %s_%s_thumb.png' %(xtal,xtal,ligID))
+            self.copy_thumbnail(xtal,sampleDir,ligID)
         else:
             self.Logfile.error('%s: could not generate %s_%s_thumb.png' %(xtal,xtal,ligID))
-        quit()
+
+    def copy_thumbnail(self,xtal,sampleDir,ligID):
+        os.chdir(os.path.join(self.htmlDir, 'thumbnails'))
+        self.Logfile.insert('%s: copying %s_%s_thumb.png to html thumbnails' %(xtal,xtal,ligID))
+        os.system('/bin/cp %s/%s_%s_thumb.png .' %(sampleDir,xtal,ligID))
+
 
     def makeFolders(self):
         self.Logfile.insert('preparing folders in html directory')
@@ -178,14 +184,16 @@ class export_to_html:
             os.mkdir('js')
         if not os.path.isdir('css'):
             os.mkdir('css')
-        if not os.path.isdir('compoundFiles'):
-            os.mkdir('compoundFiles')
+        if not os.path.isdir('compoundfiles'):
+            os.mkdir('compoundfiles')
         if not os.path.isdir('residueplots'):
             os.mkdir('residueplots')
         if not os.path.isdir('pdbs'):
             os.mkdir('pdbs')
         if not os.path.isdir('maps'):
             os.mkdir('maps')
+        if not os.path.isdir('thumbnails'):
+            os.mkdir('thumbnails')
 
     def copy_pdb(self,xtal):
         os.chdir(os.path.join(self.htmlDir, 'pdbs'))
@@ -213,7 +221,7 @@ class export_to_html:
             self.Logfile.error('%s: cannot find fofc.map' %xtal)
 
     def copy_ligand_files(self,xtal):
-        os.chdir(os.path.join(self.htmlDir,'compoundFiles'))
+        os.chdir(os.path.join(self.htmlDir,'compoundfiles'))
 
         if os.path.isfile(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.cif')):
             self.Logfile.insert('%s: copying compound cif file' %xtal)
