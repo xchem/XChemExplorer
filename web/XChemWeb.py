@@ -237,7 +237,6 @@ class export_to_html:
 
     def copy_spider_plot(self,xtal,ligID):
         os.chdir(os.path.join(self.htmlDir, 'residueplots'))
-        self.pdb = None
         if os.path.isfile(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png')):
             self.Logfile.insert('%s: copying spider plot for %s' %(xtal,ligID))
             os.system('/bin/cp %s %s_%s.pdb' %(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png'),xtal,ligID))
