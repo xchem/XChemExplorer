@@ -696,10 +696,10 @@ def html_table_row(pdbID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,
         '<td>2 - Correct ligand, weak density</td>\n'
         '<td>4 - CompChem ready</td>\n'
         "<td><img src='png/%s' width=150px></td>\n" %residuePlot +
-        "<td><div id='%s'><a href='javascript:create_view('viewport','%s','%s','LIG');'><img src='thumbnails/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
+        "<td><div id='%s'><a href='javascript:create_view('viewport','%s','%s','LIG');'><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
         '<td>%s</td>\n' %resoHigh +
         '<td>%s %s</td>\n' %(spg,unitCell) +
-        "<td><a href='pdbs/NUDT22A-x0161_event2.pdb'>Save</a></td>\n"
+        "<td><a href='files/%s'>Save</a></td>\n" %pdb +
         '</tr>\n'
     )
 
