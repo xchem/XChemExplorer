@@ -142,6 +142,7 @@ class export_to_html:
     def prepare(self):
         self.Logfile.insert('======== preparing HTML summary ========')
         self.makeFolders()
+        self.copy_jscss()
         html = XChemMain.html_header()
         for xtal in self.db.samples_for_html_summary():
             self.db_dict = self.db.get_db_dict_for_sample(xtal)
@@ -197,10 +198,10 @@ class export_to_html:
     def makeFolders(self):
         self.Logfile.insert('preparing folders in html directory')
         os.chdir(self.htmlDir)
-        if not os.path.isdir('js'):
-            os.mkdir('js')
-        if not os.path.isdir('css'):
-            os.mkdir('css')
+#        if not os.path.isdir('js'):
+#            os.mkdir('js')
+#        if not os.path.isdir('css'):
+#            os.mkdir('css')
         if not os.path.isdir('png'):
             os.mkdir('png')
         if not os.path.isdir('files'):
