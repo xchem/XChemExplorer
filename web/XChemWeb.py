@@ -168,7 +168,7 @@ class export_to_html:
 
     def copy_jscss(self):
         os.chdir(self.htmlDir)
-        self.Logfile('copying css and js files to ' + self.htmlDir)
+        self.Logfile.insert('copying css and js files to ' + self.htmlDir)
         os.system('/bin/cp -r %s/web/jscss/css .' %os.getenv('XChemExplorer_DIR'))
         os.system('/bin/cp -r %s/web/jscss/js .' %os.getenv('XChemExplorer_DIR'))
 
