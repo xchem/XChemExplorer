@@ -142,7 +142,7 @@ class export_to_html:
     def prepare(self):
         self.Logfile.insert('======== preparing HTML summary ========')
         self.makeFolders()
-        html = ''
+        html = XChemMain.html_header()
         for xtal in self.db.samples_for_html_summary():
             self.db_dict = self.db.get_db_dict_for_sample(xtal)
             self.copy_pdb(xtal)
@@ -152,19 +152,30 @@ class export_to_html:
                 eventMap = self.find_matching_event_map(xtal, ligand)
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
                 self.copy_spider_plot(xtal,ligand)
-#                html += XChemMain.html_table_row()
+                pdbID = self.db_dict['Deposition_PDB_ID']
+                compoundImage = xtal + '_' + self.db_dict['CompoundCode'] + '.cif'
+                residuePlot = xtal + '_' + ligand + '.png'
+                pdb = xtal + '.pdb'
+                event = xtal + '_' + ligand + '.ccp4'
+                thumbNail = xtal + '_' + ligand + '_thumb.png'
+                resoHigh = self.db_dict['DataProcessingResolutionHigh']
+                spg = self.db_dict['RefinementSpaceGroup']
+                unitCell = self.db_dict['DataProcessingUnitCell']
+                html += XChemMain.html_table_row(pdbID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell)
                 self.make_thumbnail(xtal,x,y,z,ligand,eventMap)
-#        self.write_html_file(html)
+        self.write_html_file(html)
 
 
     def make_thumbnail(self,xtal,x,y,z,ligID,eventMap):
         self.Logfile.insert('%s: making thumbnail of for %s and %s' %(xtal,ligID,eventMap))
         sampleDir = os.path.join(self.projectDir,xtal)
         os.chdir(sampleDir)
-        XChemMain.coot_prepare_input(x, y, z, ligID, sampleDir, eventMap)
-        XChemMain.coot_write_raster_file(ligID,sampleDir)
-        XChemMain.render_scene(xtal,ligID,sampleDir)
-        XChemMain.make_thumbnail(xtal, ligID, sampleDir)
+        if not os.path.isfile('%s_%s_thumb.png' %(xtal,ligID)):
+            self.Logfile.insert('%s: preparing thumbnail image of %s' %(xtal,ligID))
+            XChemMain.coot_prepare_input(x, y, z, ligID, sampleDir, eventMap)
+            XChemMain.coot_write_raster_file(ligID,sampleDir)
+            XChemMain.render_scene(xtal,ligID,sampleDir)
+            XChemMain.make_thumbnail(xtal, ligID, sampleDir)
         if os.path.isfile('%s_%s_thumb.png' %(xtal,ligID)):
             self.Logfile.insert('%s: managed to prepare %s_%s_thumb.png' %(xtal,xtal,ligID))
             self.copy_thumbnail(xtal,sampleDir,ligID)
@@ -172,8 +183,8 @@ class export_to_html:
             self.Logfile.error('%s: could not generate %s_%s_thumb.png' %(xtal,xtal,ligID))
 
     def copy_thumbnail(self,xtal,sampleDir,ligID):
-        os.chdir(os.path.join(self.htmlDir, 'thumbnails'))
-        self.Logfile.insert('%s: copying %s_%s_thumb.png to html thumbnails' %(xtal,xtal,ligID))
+        os.chdir(os.path.join(self.htmlDir, 'png'))
+        self.Logfile.insert('%s: copying %s_%s_thumb.png to html png' %(xtal,xtal,ligID))
         os.system('/bin/cp %s/%s_%s_thumb.png .' %(sampleDir,xtal,ligID))
 
 
@@ -184,19 +195,15 @@ class export_to_html:
             os.mkdir('js')
         if not os.path.isdir('css'):
             os.mkdir('css')
-        if not os.path.isdir('compoundfiles'):
-            os.mkdir('compoundfiles')
-        if not os.path.isdir('residueplots'):
-            os.mkdir('residueplots')
-        if not os.path.isdir('pdbs'):
-            os.mkdir('pdbs')
-        if not os.path.isdir('maps'):
-            os.mkdir('maps')
-        if not os.path.isdir('thumbnails'):
-            os.mkdir('thumbnails')
+        if not os.path.isdir('png'):
+            os.mkdir('png')
+        if not os.path.isdir('files'):
+            os.mkdir('files')
+#        if not os.path.isdir('thumbnails'):
+#            os.mkdir('thumbnails')
 
     def copy_pdb(self,xtal):
-        os.chdir(os.path.join(self.htmlDir, 'pdbs'))
+        os.chdir(os.path.join(self.htmlDir, 'files'))
         self.pdb = None
         if os.path.isfile(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb')):
             self.pdb = pdbtools(os.path.join(self.projectDir,xtal,'refine.split.bound-state.pdb'))
@@ -206,7 +213,7 @@ class export_to_html:
             self.Logfile.error('%s: cannot find refine.split.bound-state.pdb' %xtal)
 
     def copy_electron_density(self,xtal):
-        os.chdir(os.path.join(self.htmlDir, 'maps'))
+        os.chdir(os.path.join(self.htmlDir, 'files'))
 
         if os.path.isfile(os.path.join(self.projectDir,xtal,'2fofc.map')):
             self.Logfile.insert('%s: copying 2fofc.map to html directory' %xtal)
@@ -221,13 +228,15 @@ class export_to_html:
             self.Logfile.error('%s: cannot find fofc.map' %xtal)
 
     def copy_ligand_files(self,xtal):
-        os.chdir(os.path.join(self.htmlDir,'compoundfiles'))
+        os.chdir(os.path.join(self.htmlDir,'files'))
 
         if os.path.isfile(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.cif')):
             self.Logfile.insert('%s: copying compound cif file' %xtal)
             os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.cif'),xtal,self.db_dict['CompoundCode']+'.cif'))
         else:
             self.Logfile.error('%s: cannot find compound cif file' %xtal)
+
+        os.chdir(os.path.join(self.htmlDir,'png'))
 
         if os.path.isfile(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.png')):
             self.Logfile.insert('%s: copying compound png file' %xtal)
@@ -236,10 +245,10 @@ class export_to_html:
             self.Logfile.error('%s: cannot find compound png file' %xtal)
 
     def copy_spider_plot(self,xtal,ligID):
-        os.chdir(os.path.join(self.htmlDir, 'residueplots'))
+        os.chdir(os.path.join(self.htmlDir, 'png'))
         if os.path.isfile(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png')):
             self.Logfile.insert('%s: copying spider plot for %s' %(xtal,ligID))
-            os.system('/bin/cp %s %s_%s.pdb' %(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png'),xtal,ligID))
+            os.system('/bin/cp %s %s_%s.png' %(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png'),xtal,ligID))
         else:
             self.Logfile.error('%s: cannot find spider plot for %s' %(xtal,ligID))
 
@@ -290,7 +299,7 @@ class export_to_html:
         return eventMAP
 
     def copy_eventMap(self,xtal,ligID,eventMAP):
-        os.chdir(os.path.join(self.htmlDir,'maps'))
+        os.chdir(os.path.join(self.htmlDir,'files'))
         self.Logfile.insert('%s: copying event map for %s' %(xtal,ligID))
         os.system('/bin/cp %s %s_%s.ccp4' %(os.path.join(self.projectDir,xtal,eventMAP),xtal,ligID))
 
@@ -314,12 +323,13 @@ class export_to_html:
             self.Logfile.error('logfile does not exist: %s' %log)
         return cc
 
-    def write_html_file(self):
+    def write_html_file(self,html):
         os.chdir(self.htmlDir)
-        self.Logfile.insert('writing html header')
+        self.Logfile.insert('writing index.html')
+        html += XChemMain.html_footer()
         if os.path.isfile('index.html'):
             os.system('/bin/rm -f index.html')
         f = open('index.html','w')
-        f.write(XChemMain.html_header)
+        f.write(html)
         f.close()
 
