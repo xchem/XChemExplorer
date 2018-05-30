@@ -153,7 +153,7 @@ class export_to_html:
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
                 self.copy_spider_plot(xtal,ligand)
                 pdbID = self.db_dict['Deposition_PDB_ID']
-                compoundImage = xtal + '_' + self.db_dict['CompoundCode'] + '.cif'
+                compoundImage = xtal + '_' + self.db_dict['CompoundCode'] + '.png'
                 residuePlot = xtal + '_' + ligand + '.png'
                 pdb = xtal + '.pdb'
                 event = xtal + '_' + ligand + '.ccp4'
@@ -164,6 +164,12 @@ class export_to_html:
                 html += XChemMain.html_table_row(pdbID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell)
                 self.make_thumbnail(xtal,x,y,z,ligand,eventMap)
         self.write_html_file(html)
+
+    def copy_jscss(self):
+        os.chdir(self.htmlDir)
+        self.Logfile('copying css and js files to ' + self.htmlDir)
+        os.system('/bin/cp -r %s/web/jscss/css .' %os.getenv('XChemExplorer_DIR'))
+        os.system('/bin/cp -r %s/web/jscss/js .' %os.getenv('XChemExplorer_DIR'))
 
 
     def make_thumbnail(self,xtal,x,y,z,ligID,eventMap):
