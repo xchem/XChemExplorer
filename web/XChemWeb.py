@@ -241,7 +241,7 @@ class export_to_html:
             self.Logfile.insert('%s: copying compound cif file' %xtal)
             os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.cif'),xtal,self.db_dict['CompoundCode']+'.cif'))
         else:
-            self.Logfile.error('%s: cannot find compound cif file' %xtal)
+            self.Logfile.error('%s: cannot find compound cif file -> %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
 
         os.chdir(os.path.join(self.htmlDir,'png'))
 
@@ -249,13 +249,13 @@ class export_to_html:
             self.Logfile.insert('%s: copying compound png file' %xtal)
             os.system('/bin/cp %s %s_%s' %(os.path.join(self.projectDir,xtal,self.db_dict['CompoundCode']+'.png'),xtal,self.db_dict['CompoundCode']+'.png'))
         else:
-            self.Logfile.error('%s: cannot find compound png file' %xtal)
+            self.Logfile.error('%s: cannot find compound png file -> %s' %(xtal,self.db_dict['CompoundCode']+'.png'))
 
     def copy_spider_plot(self,xtal,ligID):
         os.chdir(os.path.join(self.htmlDir, 'png'))
-        if os.path.isfile(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png')):
+        if os.path.isfile(os.path.join(self.projectDir,xtal,'residue_plots',ligID.replace('LIG-','')+'.png')):
             self.Logfile.insert('%s: copying spider plot for %s' %(xtal,ligID))
-            os.system('/bin/cp %s %s_%s.png' %(os.path.join(self.projectDir,xtal,'residue_plots',ligID+'.png'),xtal,ligID))
+            os.system('/bin/cp %s %s_%s.png' %(os.path.join(self.projectDir,xtal,'residue_plots',ligID.replace('LIG-','')+'.png'),xtal,ligID))
         else:
             self.Logfile.error('%s: cannot find spider plot for %s' %(xtal,ligID))
 
