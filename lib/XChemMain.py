@@ -643,7 +643,7 @@ def html_header():
         '</script>\n'
         '<script type="text/javascript" class="init">\n'
         "$(document).ready(function() {\n"
-        "'$('#example').DataTable( {\n"
+        "$('#example').DataTable( {\n"
         "'bautoWidth': false,\n"
         "'columns': [\n"
         "{ 'width': '6%' },\n"
