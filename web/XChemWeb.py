@@ -253,6 +253,9 @@ class export_to_html:
 
     def copy_spider_plot(self,xtal,ligID):
         os.chdir(os.path.join(self.htmlDir, 'png'))
+        self.Logfile.insert(xtal + ': looking for ' + os.path.join(self.projectDir,xtal,'residue_plots',ligID.replace('LIG-','')+'.png')))
+        for plot in glob.glob(os.path.join(self.projectDir,xtal,'residue_plots','*')):
+            self.Logfile.insert('%s: found %s' %(xtal,plot))
         if os.path.isfile(os.path.join(self.projectDir,xtal,'residue_plots',ligID.replace('LIG-','')+'.png')):
             self.Logfile.insert('%s: copying spider plot for %s' %(xtal,ligID))
             os.system('/bin/cp %s %s_%s.png' %(os.path.join(self.projectDir,xtal,'residue_plots',ligID.replace('LIG-','')+'.png'),xtal,ligID))
