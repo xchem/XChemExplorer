@@ -1673,7 +1673,8 @@ class pdbtools(object):
             lig_sel = sel_cache.selection("(resname %s and resseq %s and chain %s)" % (l[0], l[1], l[2]))
             hierarchy_lig = self.hierarchy.select(lig_sel)
 
-            ligName = (l[0] + '-' + l[1] + '-' + l[2] + '.pdb').replace(' ', '')
+#            ligName = (l[0] + '-' + l[1] + '-' + l[2] + '.pdb').replace(' ', '')
+            ligName = (l[0] + '-' + l[2] + '-' + l[1] + '.pdb').replace(' ', '')
             ligList.append(ligName)
 
             f = open(os.path.join(outDir,ligName), "w")
