@@ -1,4 +1,4 @@
-function create_view(div_name,pdb_bound,event_name,lig_name) {
+function create_view(div_name,pdb_bound,event_name,lig_name,data_dir) {
 // Create NGL Stage object
 var stage = new NGL.Stage(div_name);
 // Handle window resizing
@@ -9,8 +9,8 @@ window.addEventListener( "resize", function( event ){
 Promise.all( [
     //stage.loadFile( "data://"+event_name+".ccp4" ),
     //stage.loadFile( "data://"+event_name+".pdb" )
-    stage.loadFile( event_name ),
-    stage.loadFile( pdb_bound ),
+    stage.loadFile( data_dir+event_name ),
+    stage.loadFile( data_dir+pdb_bound ),
 
 ] ).then( function( ol ){
     var map = ol[ 0 ];
