@@ -1641,10 +1641,11 @@ class pdbtools(object):
                                 ligands.append([residue.resname, residue.resseq, chain.id])
         return ligands
 
-    def get_centre_of_gravity_of_residue(self,resname_resseq_chain):
-        resname_x = resname_resseq_chain.split('-')[0]
-        resseq_x = resname_resseq_chain.split('-')[1]
-        chain_x = resname_resseq_chain.split('-')[2]
+#    def get_centre_of_gravity_of_residue(self,resname_resseq_chain):
+    def get_centre_of_gravity_of_residue(self,resname_chain_resseq):
+        resname_x = resname_chain_resseq.split('-')[0]
+        chain_x = resname_chain_resseq.split('-')[1]
+        resseq_x = resname_chain_resseq.split('-')[2]
         x = []
         y = []
         z = []
