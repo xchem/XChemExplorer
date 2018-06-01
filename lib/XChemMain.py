@@ -660,7 +660,7 @@ def html_header():
         "} );\n"
         'stage = undefined;\n'
         '</script>\n'
-        '<script src="https://unpkg.com/ngl"></script>\n'
+        '<script src="https://unpkg.com/ngl@next"></script>\n'
         '</head>\n'
         '<body>\n'
         '    <script >'+"""
