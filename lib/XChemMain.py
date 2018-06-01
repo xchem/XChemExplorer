@@ -649,7 +649,6 @@ def html_header():
         "{ 'width': '6%' },\n"
         "{ 'width': '7%' },\n"
         "{ 'width': '6%' },\n"
-        "{ 'width': '6%' },\n"
         "{ 'width': '9%' },\n"
         "{ 'width': '9%' },\n"
         "{ 'width': '4%' },\n"
@@ -671,10 +670,9 @@ def html_header():
         '</ul><table id="example" class="display" cellspacing="0">\n'
         '<thead>\n'
         '<tr>\n'
-        '<th>Model Name</th>\n'
-        '<th>Compound Structure</th>\n'
-        '<th>Ligand Confidence</th>\n'
-        '<th>Model Status</th>\n'
+        '<th>PDB ID</th>\n'
+        '<th>Ligand ID</th>\n'
+        '<th>Compound</th>\n'
         '<th>Ligand Validation</th>\n'
         '<th>Event Map 3D</th>\n'
         '<th>Resol</th>\n'
@@ -688,17 +686,16 @@ def html_header():
     return header
 
 
-def html_table_row(pdbID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell):
+def html_table_row(pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell):
 
     row = (
-        '<tr><td>%s</td>\n' %pdbID +
+        '<tr><td><a href="http://www.rcsb.org/structure/%s">%s</a></td>\n' %(pdbID,pdbID) +
+        '<td>%s</td>\n' %ligID +
         "<td><img src='png/%s' height=150px></td>\n" %compoundImage +
-        '<td>2 - Correct ligand, weak density</td>\n'
-        '<td>4 - CompChem ready</td>\n'
         "<td><img src='png/%s' width=150px></td>\n" %residuePlot +
         "<td><div id='%s'><a href='javascript:create_view('viewport','%s','%s','LIG','http://localhost:8000/');'><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
         '<td>%s</td>\n' %resoHigh +
-        '<td>%s %s</td>\n' %(spg,unitCell) +
+        '<td>%s </br> %s</td>\n' %(spg,unitCell) +
         "<td><a href='files/%s'>Save</a></td>\n" %pdb +
         '</tr>\n'
     )
