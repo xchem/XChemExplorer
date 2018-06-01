@@ -170,7 +170,7 @@ class export_to_html:
 
     def prepare_for_download(self,xtal,pdb,event,compoundCIF,ligID):
         os.chdir(os.path.join(self.htmlDir,'tmp'))
-        self.Logfile.insert('%: preparing files for download')
+        self.Logfile.insert('%s: preparing files for download' %xtal)
         zip_in = ''
 
         if os.path.isfile('../files/%s' %pdb):
