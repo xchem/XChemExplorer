@@ -673,11 +673,8 @@ def html_header():
     }, false );
     // Code for example: test/map-shift
     Promise.all( [
-        //stage.loadFile( "data://"+event_name+".ccp4" ),
-        //stage.loadFile( "data://"+event_name+".pdb" )
-        stage.loadFile( event_name ),
-        stage.loadFile( pdb_bound ),
-    
+    stage.loadFile( window.location.href.replace("index.html",event_name)),
+    stage.loadFile( window.location.href.replace("index.html",pdb_bound))
     ] ).then( function( ol ){
         var map = ol[ 0 ];
         var struc = ol[ 1 ];
