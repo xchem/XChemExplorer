@@ -661,7 +661,7 @@ def html_header():
         '</script>\n'
         '</head>\n'
         '<body>\n'
-        '    <script src="js/ngl.js"></script>\n'
+        '    <script src="https://unpkg.com/ngl"></script>\n'
         '    <script src="js/create_view.js"></script>\n'
         '\n'
         '    <div id="viewport" style="width:500px;height:500px"></div>\n'
@@ -696,7 +696,7 @@ def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbN
         '<td>%s</td>\n' %ligID +
         "<td><img src='png/%s' height=150px></td>\n" %compoundImage +
         "<td><img src='png/%s' width=150px></td>\n" %residuePlot +
-        "<td><div id='%s'><a href='javascript:create_view('viewport','%s','%s','LIG','http://localhost:8000/');'><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
+        "<td><div id='%s'><a href='javascript:create_view('viewport','files/%s','files/%s','LIG');'><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
         '<td>%s</td>\n' %resoHigh +
         '<td>%s </br> %s</td>\n' %(spg,unitCell) +
         "<td><a href='download/%s_%s.zip'>Save</a></td>\n" %(pdb.replace('.pdb',''),ligID) +
