@@ -658,20 +658,31 @@ def html_header():
         "]\n"
         "} )\n"
         "} );\n"
+        'stage = undefined;\n'
         '</script>\n'
         '<script src="https://unpkg.com/ngl"></script>\n'
         '</head>\n'
         '<body>\n'
         '    <script >'+"""
-        
-            function create_view(div_name,pdb_bound,event_name,lig_name) {
-    // Create NGL Stage object
-    var stage = new NGL.Stage(div_name);
+    function create_stage(){// Create NGL Stage object
+    stage = new NGL.Stage("viewport");
     // Handle window resizing
     window.addEventListener( "resize", function( event ){
         stage.handleResize();
-    }, false );
+    }, false );        
+}
+
+            function create_view(div_name,pdb_bound,event_name,lig_name) {
     // Code for example: test/map-shift
+    if (stage==undefined){
+     create_stage();
+    }
+    else{
+      var components = stage.getComponentsByName();
+      for (var component in components.list) {
+        stage.removeComponent(components.list[component]);
+     } 
+    }
     Promise.all( [
     stage.loadFile( window.location.href.replace("index.html",event_name)),
     stage.loadFile( window.location.href.replace("index.html",pdb_bound))
