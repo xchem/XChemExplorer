@@ -659,7 +659,7 @@ def html_header():
         "} )\n"
         "} );\n"
         '</script>\n'
-        '<script src="https://raw.githubusercontent.com/arose/ngl/master/dist/ngl.js"></script>\n'
+        '<script src="https://unpkg.com/ngl"></script>\n'
         '</head>\n'
         '<body>\n'
         '    <script >'+"""
