@@ -659,9 +659,9 @@ def html_header():
         "} )\n"
         "} );\n"
         '</script>\n'
+        '<script src="https://raw.githubusercontent.com/arose/ngl/master/dist/ngl.js"></script>\n'
         '</head>\n'
         '<body>\n'
-        '    <script src="https://unpkg.com/ngl"></script>\n'
         '    <script >'+"""
         
             function create_view(div_name,pdb_bound,event_name,lig_name) {
@@ -733,7 +733,7 @@ def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbN
         '<td>%s</td>\n' %ligID +
         "<td><img src='png/%s' height=150px></td>\n" %compoundImage +
         "<td><img src='png/%s' width=150px></td>\n" %residuePlot +
-        "<td><div id='%s'><a href='javascript:create_view('viewport','files/%s','files/%s','LIG');'><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
+        "<td><div id='%s'><a onclick=create_view('viewport','files/%s','files/%s','LIG')><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
         '<td>%s</td>\n' %resoHigh +
         '<td>%s </br> %s</td>\n' %(spg,unitCell) +
         "<td><a href='download/%s_%s.zip'>Save</a></td>\n" %(pdb.replace('.pdb',''),ligID) +
