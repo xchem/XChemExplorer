@@ -670,6 +670,7 @@ def html_header():
         '</ul><table id="example" class="display" cellspacing="0">\n'
         '<thead>\n'
         '<tr>\n'
+        '<th>Crystal ID</th>\n'
         '<th>PDB ID</th>\n'
         '<th>Ligand ID</th>\n'
         '<th>Compound</th>\n'
@@ -686,10 +687,12 @@ def html_header():
     return header
 
 
-def html_table_row(pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell):
+def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell):
 
     row = (
-        '<tr><td><a href="http://www.rcsb.org/structure/%s">%s</a></td>\n' %(pdbID,pdbID) +
+        '<tr>\n'
+        '<td>%s</td>\n' %xtalID +
+        '<td><a target="_blank" href="http://www.rcsb.org/structure/%s">%s</a></td>\n' %(pdbID,pdbID) +
         '<td>%s</td>\n' %ligID +
         "<td><img src='png/%s' height=150px></td>\n" %compoundImage +
         "<td><img src='png/%s' width=150px></td>\n" %residuePlot +
