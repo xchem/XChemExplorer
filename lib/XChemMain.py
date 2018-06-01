@@ -699,7 +699,7 @@ def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbN
         "<td><div id='%s'><a href='javascript:create_view('viewport','%s','%s','LIG','http://localhost:8000/');'><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
         '<td>%s</td>\n' %resoHigh +
         '<td>%s </br> %s</td>\n' %(spg,unitCell) +
-        "<td><a href='files/%s'>Save</a></td>\n" %pdb +
+        "<td><a href='download/%s_%s.zip'>Save</a></td>\n" %(pdb,ligID) +
         '</tr>\n'
     )
 
