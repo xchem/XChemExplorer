@@ -666,13 +666,35 @@ def html_header():
         '    <script >'+"""
     function create_stage(){// Create NGL Stage object
     stage = new NGL.Stage("viewport");
+
+	stage.setParameters({
+	  cameraType: 'orthographic',
+	  mousePreset: 'coot'
+	})
+
     // Handle window resizing
     window.addEventListener( "resize", function( event ){
         stage.handleResize();
     }, false );        
 }
 
-            function create_view(div_name,pdb_bound,event_name,lig_name) {
+		function addElement (el) {
+		  Object.assign(el.style, {
+		    position: 'absolute',
+		    zIndex: 10
+		  })
+		  stage.viewer.container.appendChild(el)
+		}
+
+		function createElement (name, properties, style) {
+		  var el = document.createElement(name)
+		  Object.assign(el, properties)
+		  Object.assign(el.style, style)
+		  return el
+		}
+
+
+            function create_view(div_name,pdb_bound,event_name,FWT,DELFWT,lig_name) {
     // Code for example: test/map-shift
     if (stage==undefined){
      create_stage();
@@ -685,28 +707,60 @@ def html_header():
     }
     Promise.all( [
     stage.loadFile( window.location.href.replace("index.html",event_name)),
-    stage.loadFile( window.location.href.replace("index.html",pdb_bound))
-    ] ).then( function( ol ){
+    stage.loadFile( window.location.href.replace("index.html",pdb_bound)),
+    stage.loadFile( window.location.href.replace("index.html",FWT)),
+    stage.loadFile( window.location.href.replace("index.html",DELFWT))
+        ] ).then( function( ol ){
         var map = ol[ 0 ];
         var struc = ol[ 1 ];
+        var 2fofc = ol[ 1 ];
+        var fofc = ol[ 1 ];
         struc.autoView(lig_name)
-        var surfRepr = map.addRepresentation( "surface", {
+        var eventMap = map.addRepresentation( "surface", {
             boxSize: 10,
             useWorker: false,
             wrap: true,
-            color: "skyblue",
+            color: "purple",
             contour: true
         } );
-        struc.addRepresentation( "cartoon" );
+        
+        struc.addRepresentation( "ball+stick" );
         struc.addRepresentation( "ball+stick", { sele: "hetero" } );
         stage.setFocus( 95 );
         stage.mouseObserver.signals.scrolled.add( function( delta ){
             if( stage.mouseObserver.altKey ){
                 var d = Math.sign( delta ) / 5;
                 var l = surfRepr.getParameters().isolevel;
-                surfRepr.setParameters( { isolevel: l + d } );
+                eventMap.setParameters( { isolevel: l + d } );
             }
         } );
+        
+		var toggleEventButton = createElement('input', {
+		  type: 'button',
+		  value: 'toggle Event Map',
+		  onclick: function (e) {
+		    surfRepr.toggleVisibility()
+		  }
+			}, { top: '194px', left: '12px' })
+		addElement(toggleEventButton)
+
+		var screenshotButton = createElement('input', {
+		  type: 'button',
+		  value: 'screenshot',
+		  onclick: function () {
+		    stage.makeImage({
+		      factor: 1,
+		      antialias: false,
+		      trim: false,
+		      transparent: false
+		    }).then(function (blob) {
+		      NGL.download(blob, 'ngl-xray-viewer-screenshot.png')
+		    })
+		  }
+		}, { top: '282px', left: '12px' })
+		addElement(screenshotButton)
+        
+        
     } );
     };
         """+
@@ -735,7 +789,7 @@ def html_header():
     return header
 
 
-def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell):
+def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell,FWT,DELFWT):
 
     row = (
         '<tr>\n'
@@ -744,7 +798,7 @@ def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbN
         '<td>%s</td>\n' %ligID +
         "<td><img src='png/%s' height=150px></td>\n" %compoundImage +
         "<td><img src='png/%s' width=150px></td>\n" %residuePlot +
-        "<td><div id='%s'><a onclick=create_view('viewport','files/%s','files/%s','LIG')><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,thumbNail) +
+        "<td><div id='%s'><a onclick=create_view('viewport','files/%s','files/%s','files/%s','files/%s','LIG')><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,FWT,DELFWT,thumbNail) +
         '<td>%s</td>\n' %resoHigh +
         '<td>%s </br> %s</td>\n' %(spg,unitCell) +
         "<td><a href='download/%s_%s.zip'>Save</a></td>\n" %(pdb.replace('.pdb',''),ligID) +

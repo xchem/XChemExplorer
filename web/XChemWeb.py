@@ -163,7 +163,9 @@ class export_to_html:
                 resoHigh = self.db_dict['DataProcessingResolutionHigh']
                 spg = self.db_dict['RefinementSpaceGroup']
                 unitCell = self.db_dict['DataProcessingUnitCell']
-                html += XChemMain.html_table_row(xtal,pdbID,ligand,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell)
+                FWT = xtal + '_2fofc.ccp4'
+                DELFWT = xtal + '_fofc.ccp4'
+                html += XChemMain.html_table_row(xtal,pdbID,ligand,compoundImage,residuePlot,pdb,event,thumbNail,resoHigh,spg,unitCell,FWT,DELFWT)
                 self.make_thumbnail(xtal,x,y,z,ligand,eventMap)
                 self.prepare_for_download(xtal, pdb, event, compoundCIF, ligand)
         self.write_html_file(html)
