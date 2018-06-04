@@ -757,8 +757,10 @@ def html_header():
 
 
 		var strucSurfdispay = strucSurf.addRepresentation("surface", {
-	    sele: "polymer",
-    	surfaceType: "av"
+	        sele: "polymer",
+	        colorScheme: "electrostatic",
+            colorDomain: [ -0.3, 0.3 ],
+    	    surfaceType: "av"
 		  })
 		strucSurfdispay.toggleVisibility()
 
