@@ -713,8 +713,8 @@ def html_header():
         ] ).then( function( ol ){
         var map = ol[ 0 ];
         var struc = ol[ 1 ];
-        var 2fofc = ol[ 1 ];
-        var fofc = ol[ 1 ];
+        var fwt = ol[ 2 ];
+        var delfwt = ol[ 3 ];
         struc.autoView(lig_name)
         var eventMap = map.addRepresentation( "surface", {
             boxSize: 10,
@@ -723,6 +723,33 @@ def html_header():
             color: "purple",
             contour: true
         } );
+        var fwtMap = fwt.addRepresentation( "surface", {
+            boxSize: 10,
+            useWorker: false,
+            wrap: true,
+            color: "skyblue",
+            isolevel: 1.0,
+            contour: true
+        } );
+
+        var surfFofc = delfwt.addRepresentation('surface', {
+            color: 'lightgreen',
+            isolevel: 3,
+            boxSize: 10,
+            useWorker: false,
+            contour: true,
+            opaqueBack: false
+            });
+
+        var surfFofcNeg = delfwt.addRepresentation('surface', {
+            color: 'tomato',
+            isolevel: 3,
+            negateIsolevel: true,
+            boxSize: 10,
+            useWorker: false,
+            contour: true,
+            opaqueBack: false
+            });
         
         struc.addRepresentation( "ball+stick" );
         struc.addRepresentation( "ball+stick", { sele: "hetero" } );
@@ -739,10 +766,30 @@ def html_header():
 		  type: 'button',
 		  value: 'toggle Event Map',
 		  onclick: function (e) {
-		    surfRepr.toggleVisibility()
+		    eventMap.toggleVisibility()
+		  }
+			}, { top: '170px', left: '12px' })
+		addElement(toggleEventButton)
+
+		var toggleFWTButton = createElement('input', {
+		  type: 'button',
+		  value: 'toggle 2fofc Map',
+		  onclick: function (e) {
+		    fwtMap.toggleVisibility()
 		  }
 			}, { top: '194px', left: '12px' })
 		addElement(toggleEventButton)
+
+        var toggleFofcButton = createElement('input', {
+          type: 'button',
+          value: 'toggle fofc',
+          onclick: function (e) {
+          surfFofc.toggleVisibility()
+          surfFofcNeg.toggleVisibility()
+          }
+        }, { top: '218px', left: '12px' })
+        addElement(toggleFofcButton)
+
 
 		var screenshotButton = createElement('input', {
 		  type: 'button',
