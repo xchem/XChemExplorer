@@ -737,8 +737,7 @@ def html_header():
             isolevel: 3,
             boxSize: 10,
             useWorker: false,
-            contour: true,
-            opaqueBack: false
+            contour: true
             });
 
         var surfFofcNeg = delfwt.addRepresentation('surface', {
@@ -747,12 +746,25 @@ def html_header():
             negateIsolevel: true,
             boxSize: 10,
             useWorker: false,
-            contour: true,
-            opaqueBack: false
+            contour: true
             });
         
         struc.addRepresentation( "ball+stick" );
         struc.addRepresentation( "ball+stick", { sele: "hetero" } );
+
+		var selection = new NGL.Selection("(( not polymer or hetero ) and not ( water or ion ))");
+		var radius = 5;
+		var atomSet = struc.structure.getAtomSetWithinSelection( selection, radius );
+		var atomSet2 = struc.structure.getAtomSetWithinGroup( atomSet );
+		var sele2 = atomSet2.toSeleString();            
+
+		var interaction = struc.addRepresentation('contact', {masterModelIndex: 0,
+			weakHydrogenBond: true,
+			maxHbondDonPlaneAngle: 35,
+			linewidth: 1,
+			sele: sele2 + " or LIG"
+			});
+
         stage.setFocus( 95 );
         stage.mouseObserver.signals.scrolled.add( function( delta ){
             if( stage.mouseObserver.altKey ){
@@ -764,7 +776,7 @@ def html_header():
         
 		var toggleEventButton = createElement('input', {
 		  type: 'button',
-		  value: 'toggle Event Map',
+		  value: 'toggle Event map',
 		  onclick: function (e) {
 		    eventMap.toggleVisibility()
 		  }
@@ -778,17 +790,26 @@ def html_header():
 		    fwtMap.toggleVisibility()
 		  }
 			}, { top: '194px', left: '12px' })
-		addElement(toggleEventButton)
+		addElement(toggleFWTButton)
 
         var toggleFofcButton = createElement('input', {
           type: 'button',
-          value: 'toggle fofc',
+          value: 'toggle fofc nao',
           onclick: function (e) {
           surfFofc.toggleVisibility()
           surfFofcNeg.toggleVisibility()
           }
         }, { top: '218px', left: '12px' })
         addElement(toggleFofcButton)
+
+        var toggleInteractionButton = createElement('input', {
+          type: 'button',
+          value: 'toggle Interactions',
+          onclick: function (e) {
+          interaction.toggleVisibility()
+          }
+        }, { top: '232px', left: '12px' })
+        addElement(toggleInteractionButton)
 
 
 		var screenshotButton = createElement('input', {
