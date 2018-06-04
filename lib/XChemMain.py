@@ -732,6 +732,7 @@ def html_header():
             isolevel: 1.0,
             contour: true
         } );
+        fwtMap.toggleVisibility()
 
         var surfFofc = delfwt.addRepresentation('surface', {
             boxSize: 10,
@@ -741,6 +742,7 @@ def html_header():
             isolevel: 3.0,
             contour: true
             });
+          surfFofc.toggleVisibility()
 
         var surfFofcNeg = delfwt.addRepresentation('surface', {
             boxSize: 10,
@@ -751,15 +753,18 @@ def html_header():
             negateIsolevel: true,
             contour: true
             });
+          surfFofcNeg.toggleVisibility()
+
 
 		var strucSurfdispay = strucSurf.addRepresentation("surface", {
 	    sele: "polymer",
     	surfaceType: "av"
 		  })
+		strucSurfdispay.toggleVisibility()
 
         
-        struc.addRepresentation( "ball+stick" );
-        struc.addRepresentation( "ball+stick", { sele: "hetero" } );
+        struc.addRepresentation( "licorice" );
+        struc.addRepresentation( "licorice", { sele: "hetero" } );
 
 		var selection = new NGL.Selection("(( not polymer or hetero ) and not ( water or ion ))");
 		var radius = 5;
