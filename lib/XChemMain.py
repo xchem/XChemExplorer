@@ -715,6 +715,7 @@ def html_header():
         var struc = ol[ 1 ];
         var fwt = ol[ 2 ];
         var delfwt = ol[ 3 ];
+		var strucSurf = ol[1];
         struc.autoView(lig_name)
         var eventMap = map.addRepresentation( "surface", {
             boxSize: 10,
@@ -733,21 +734,29 @@ def html_header():
         } );
 
         var surfFofc = delfwt.addRepresentation('surface', {
-            color: 'lightgreen',
-            isolevel: 3,
             boxSize: 10,
             useWorker: false,
+            wrap: true,
+            color: "green",
+            isolevel: 3.0,
             contour: true
             });
 
         var surfFofcNeg = delfwt.addRepresentation('surface', {
-            color: 'tomato',
-            isolevel: 3,
-            negateIsolevel: true,
             boxSize: 10,
             useWorker: false,
+            wrap: true,
+            color: "red",
+            isolevel: 3.0,
+            negateIsolevel: true,
             contour: true
             });
+
+		var strucSurfdispay = strucSurf.addRepresentation("surface", {
+	    sele: "polymer",
+    	surfaceType: "av"
+		  })
+
         
         struc.addRepresentation( "ball+stick" );
         struc.addRepresentation( "ball+stick", { sele: "hetero" } );
@@ -759,20 +768,23 @@ def html_header():
 		var sele2 = atomSet2.toSeleString();            
 
 		var interaction = struc.addRepresentation('contact', {masterModelIndex: 0,
-			weakHydrogenBond: true,
 			maxHbondDonPlaneAngle: 35,
 			linewidth: 1,
 			sele: sele2 + " or LIG"
 			});
 
         stage.setFocus( 95 );
-        stage.mouseObserver.signals.scrolled.add( function( delta ){
-            if( stage.mouseObserver.altKey ){
-                var d = Math.sign( delta ) / 5;
-                var l = surfRepr.getParameters().isolevel;
-                eventMap.setParameters( { isolevel: l + d } );
-            }
-        } );
+
+		stage.mouseControls.add('scroll', function () {
+		  if (fwtMap) {
+		    var level2fofc = fwtMap.getParameters().isolevel.toFixed(1)
+		    isolevel2fofcText.innerText = '2fofc level: ' + level2fofc + '\u03C3'
+		  }
+		  if (surfFofc) {
+		    var levelFofc = surfFofc.getParameters().isolevel.toFixed(1)
+		    isolevelFofcText.innerText = 'fofc level: ' + levelFofc + '\u03C3'
+		  }
+		})
         
 		var toggleEventButton = createElement('input', {
 		  type: 'button',
@@ -780,7 +792,7 @@ def html_header():
 		  onclick: function (e) {
 		    eventMap.toggleVisibility()
 		  }
-			}, { top: '170px', left: '12px' })
+			}, { top: '420px', left: '12px' })
 		addElement(toggleEventButton)
 
 		var toggleFWTButton = createElement('input', {
@@ -789,17 +801,17 @@ def html_header():
 		  onclick: function (e) {
 		    fwtMap.toggleVisibility()
 		  }
-			}, { top: '194px', left: '12px' })
+			}, { top: '450px', left: '12px' })
 		addElement(toggleFWTButton)
 
         var toggleFofcButton = createElement('input', {
           type: 'button',
-          value: 'toggle fofc nao',
+          value: 'toggle fofc map',
           onclick: function (e) {
           surfFofc.toggleVisibility()
           surfFofcNeg.toggleVisibility()
           }
-        }, { top: '218px', left: '12px' })
+        }, { top: '480px', left: '12px' })
         addElement(toggleFofcButton)
 
         var toggleInteractionButton = createElement('input', {
@@ -808,9 +820,17 @@ def html_header():
           onclick: function (e) {
           interaction.toggleVisibility()
           }
-        }, { top: '232px', left: '12px' })
+        }, { top: '510px', left: '12px' })
         addElement(toggleInteractionButton)
 
+        var surfaceButton = createElement('input', {
+          type: 'button',
+          value: 'toggle surface',
+          onclick: function (e) {
+          strucSurfdispay.toggleVisibility()
+          }
+        }, { top: '540px', left: '12px' })
+        addElement(surfaceButton)
 
 		var screenshotButton = createElement('input', {
 		  type: 'button',
@@ -825,7 +845,7 @@ def html_header():
 		      NGL.download(blob, 'ngl-xray-viewer-screenshot.png')
 		    })
 		  }
-		}, { top: '282px', left: '12px' })
+		}, { top: '570px', left: '12px' })
 		addElement(screenshotButton)
         
         
@@ -834,7 +854,7 @@ def html_header():
         """+
         '</script>\n'
         '\n'
-        '    <div id="viewport" style="width:500px;height:500px"></div>\n'
+        '    <div id="viewport" style="width:800px;height:600px"></div>\n'
         '\n'
         '<p></p>\n'
         '</ul><table id="example" class="display" cellspacing="0">\n'
