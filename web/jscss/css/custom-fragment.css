@@ -1,0 +1,37 @@
+
+.xchem .viewport-wrapper {
+	max-width: 1210px;
+	margin: 0 auto;
+}
+
+.xchem #example_wrapper {
+	max-width: 1210px;
+	margin: 0 auto;
+}
+
+.xchem #example {
+	max-height: 1700px;
+	overflow-y: scroll;
+}
+
+.xchem #example thead tr th {
+  font-size: 14px;
+  //text-transform: uppercase;
+}
+
+.xchem #example tbody tr td {
+	text-align: center;
+	font-size: 14px;
+}
+
+.xchem #example tbody tr td #map {
+	background: red;
+}
+
+.xchem #example tbody tr td .map img {
+	max-width: 130px;
+}
+
+.xchem #example_info, .xchem #example_paginate {
+	margin-top: 3%;
+}

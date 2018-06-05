@@ -634,6 +634,7 @@ def html_header():
         '<html>\n'
         '<head>\n'
         '<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.min.css">\n'
+        '<link rel="stylesheet" type="text/css" href="css/custom-fragment.css">\n'
         '<meta http-equiv="Content-type" content="text/html; charset=utf-8">\n'
         '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
         '<title>Summary Fragment Hits</title>\n'
@@ -644,17 +645,20 @@ def html_header():
         '<script type="text/javascript" class="init">\n'
         "$(document).ready(function() {\n"
         "$('#example').DataTable( {\n"
+        "scrollY:        '90vh',\n"
+        "scrollCollapse: true,\n"
+        "paging:         false,\n"
         "'bautoWidth': false,\n"
         "'columns': [\n"
-        "{ 'width': '6%' },\n"
+        "{ 'width': '12%' },\n"
+        "{ 'width': '10%' },\n"
+        "{ 'width': '9%' },\n"
+        "{ 'width': '14%' },\n"
+        "{ 'width': '14%' },\n"
+        "{ 'width': '9%' },\n"
         "{ 'width': '7%' },\n"
-        "{ 'width': '6%' },\n"
-        "{ 'width': '9%' },\n"
-        "{ 'width': '9%' },\n"
-        "{ 'width': '4%' },\n"
-        "{ 'width': '6%' },\n"
-        "{ 'width': '6%' },\n"
-        "{ 'width': '3%' },\n"
+        "{ 'width': '17%' },\n"
+        "{ 'width': '8%' },\n"
         "]\n"
         "} )\n"
         "} );\n"
@@ -662,7 +666,7 @@ def html_header():
         '</script>\n'
         '<script src="https://unpkg.com/ngl@next"></script>\n'
         '</head>\n'
-        '<body>\n'
+        '<body class="xchem">\n'
         '    <script >'+"""
     function create_stage(){// Create NGL Stage object
     stage = new NGL.Stage("viewport");
@@ -861,7 +865,9 @@ def html_header():
         """+
         '</script>\n'
         '\n'
+        '    <div class="viewport-wrapper">\n'
         '    <div id="viewport" style="width:800px;height:600px"></div>\n'
+        '    </div>\n'
         '\n'
         '<p></p>\n'
         '</ul><table id="example" class="display" cellspacing="0">\n'
@@ -891,9 +897,9 @@ def html_table_row(xtalID,pdbID,ligID,compoundImage,residuePlot,pdb,event,thumbN
         '<td>%s</td>\n' %xtalID +
         '<td><a target="_blank" href="http://www.rcsb.org/structure/%s">%s</a></td>\n' %(pdbID,pdbID) +
         '<td>%s</td>\n' %ligID +
-        "<td><img src='png/%s' height=150px></td>\n" %compoundImage +
-        "<td><img src='png/%s' width=150px></td>\n" %residuePlot +
-        "<td><div id='%s'><a onclick=create_view('viewport','files/%s','files/%s','files/%s','files/%s','LIG')><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,FWT,DELFWT,thumbNail) +
+        "<td><img src='png/%s' height=130px></td>\n" %compoundImage +
+        "<td><img src='png/%s' height=153px></td>\n" %residuePlot +
+        "<td><div id='%s' class='map'><a onclick=create_view('viewport','files/%s','files/%s','files/%s','files/%s','LIG')><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,FWT,DELFWT,thumbNail) +
         '<td>%s</td>\n' %resoHigh +
         '<td>%s </br> %s</td>\n' %(spg,unitCell) +
         "<td><a href='download/%s_%s.zip'>Save</a></td>\n" %(pdb.replace('.pdb',''),ligID) +
