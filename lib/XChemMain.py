@@ -489,18 +489,16 @@ def linkAutoProcessingResult(xtal,dbDict,projectDir,xce_logfile):
     os.chdir(os.path.join(projectDir,xtal))
 
     # MTZ file
-    if os.path.isfile(xtal+'.mtz'):
-        Logfile.warning('removing %s.mtz' %xtal)
-        os.system('/bin/rm %s.mtz' %xtal)
+    Logfile.warning('removing %s.mtz' %xtal)
+    os.system('/bin/rm %s.mtz' %xtal)
     print xtal,os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile)
     if os.path.isfile(os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile)):
         os.symlink(os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile), xtal + '.mtz')
         Logfile.insert('linking MTZ file from different auto-processing pipeline:')
         Logfile.insert('ln -s ' + os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile) + ' ' + xtal + '.mtz')
     # LOG file
-    if os.path.isfile(xtal+'.log'):
-        Logfile.warning('removing %s.log'  %xtal)
-        os.system('/bin/rm %s.log' %xtal)
+    Logfile.warning('removing %s.log'  %xtal)
+    os.system('/bin/rm %s.log' %xtal)
     if os.path.isfile(os.path.join('autoprocessing', visit + '-' + run + autoproc, logfile)):
         os.symlink(os.path.join('autoprocessing', visit + '-' + run + autoproc, logfile), xtal + '.log')
         Logfile.insert('linking LOG file from different auto-processing pipeline:')
