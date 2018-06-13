@@ -3525,19 +3525,19 @@ class XChemExplorer(QtGui.QApplication):
                 break
         self.dataset_outcome_dict[xtal] = outcome
         if xtal != '':
-            # need to also update if not yet done
-            user_already_changed_selection = False
-            for n, entry in enumerate(self.data_collection_dict[xtal]):
-                if entry[0] == 'user_changed_selection':
-                    user_already_changed_selection = True
-                if entry[0] == 'logfile':
-                    db_dict = entry[6]
-                    db_dict['DataCollectionOutcome'] = outcome
-                    entry[6] = db_dict
-                    self.data_collection_dict[xtal][n] = entry
-            if not user_already_changed_selection:
-                self.data_collection_dict[xtal].append(['user_changed_selection'])
-            # finally need to update outcome field in data source accordingly
+#            # need to also update if not yet done
+#            user_already_changed_selection = False
+#            for n, entry in enumerate(self.data_collection_dict[xtal]):
+#                if entry[0] == 'user_changed_selection':
+#                    user_already_changed_selection = True
+#                if entry[0] == 'logfile':
+#                    db_dict = entry[6]
+#                    db_dict['DataCollectionOutcome'] = outcome
+#                    entry[6] = db_dict
+#                    self.data_collection_dict[xtal][n] = entry
+#            if not user_already_changed_selection:
+#                self.data_collection_dict[xtal].append(['user_changed_selection'])
+#            # finally need to update outcome field in data source accordingly
             self.update_log.insert('updating dataset outcome in datasource for {0!s}'.format(xtal))
             update_dict = {}
             update_dict['DataCollectionOutcome'] = outcome
@@ -3577,182 +3577,182 @@ class XChemExplorer(QtGui.QApplication):
                 # un-check all other ones
                 self.datasets_summary_dict[key][3].setChecked(False)
 
-    def populate_datasets_summary_table(self):
-        self.status_bar.showMessage(
-            'Building summary table for data processing results; be patient this may take a while')
-        row = self.datasets_summary_table.rowCount()
-        column_name = self.db.translate_xce_column_list_to_sqlite(self.datasets_summary_table_columns)
-
-        pinList = self.db.execute_statement(
-            "Select CrystalName,PinBarcode,DataCollectionPinBarcode from mainTable where CrystalName is not ''")
-        pinDict = {}
-        for item in pinList:
-            pinDict[str(item[0])] = [str(item[1]), str(item[2])]
-
-        for xtal in sorted(self.data_collection_dict):
-            new_xtal = False
-            if xtal not in self.datasets_summary_dict:
-                row = self.datasets_summary_table.rowCount()
-                self.datasets_summary_table.insertRow(row)
-                self.datasets_summary_dict[xtal] = []
-                new_xtal = True
-
-            # check for dataset outcome
-            outcome = ''
-            logfile_found = False
-            too_low_resolution = True
-            db_dict = {}
-            for entry in self.data_collection_dict[xtal]:
-                if entry[0] == 'logfile':
-                    logfile_found = True
-                    if entry[8]:  # if this was auto-selected best resolution file
-                        db_dict = entry[6]
-                        try:
-                            if float(db_dict['DataProcessingResolutionHigh']) <= float(
-                                    self.acceptable_low_resolution_limit_for_data):
-                                too_low_resolution = False
-                        except ValueError:
-                            pass
-
-            try:
-                outcome = str(self.db.get_value_from_field(xtal, 'DataCollectionOutcome')[0])
-            except TypeError:
-                outcome = 'Failed - unknown'
-                self.update_log.insert('cannot find DataCollectionOutcome for {0!s}'.format(xtal))
-            self.dataset_outcome_dict[xtal] = outcome
-
-            # find latest run for crystal and diffraction images
-            tmp = []
-            for entry in self.data_collection_dict[xtal]:
-                if entry[0] == 'image':
-                    tmp.append([entry, datetime.strptime(entry[3], '%Y-%m-%d %H:%M:%S')])
-            latest_run = max(tmp, key=lambda x: x[1])[0]
-
-            new_run_for_exisiting_crystal_or_new_sample = True
-            if new_xtal:
-                self.datasets_summary_dict[xtal] = [outcome, db_dict, latest_run]
-            else:
-                # check if newer run appeared
-                old_run_timestamp = self.datasets_summary_dict[xtal][2][3]
-                new_run_timestamp = latest_run[3]
-                if old_run_timestamp == new_run_timestamp:
-                    new_run_for_exisiting_crystal_or_new_sample = False
-                else:
-                    checkbox_for_details = self.datasets_summary_dict[xtal][3]
-                    self.datasets_summary_dict[xtal] = [outcome, db_dict, latest_run, checkbox_for_details]
-
-            if new_xtal:
-                current_row = row
-            else:
-                allRows = self.datasets_summary_table.rowCount()
-                for table_row in range(allRows):
-                    if self.datasets_summary_table.item(table_row, 0).text() == xtal:
-                        current_row = table_row
-                        break
-
-            image_number = 0
-            for column, header in enumerate(column_name):
-                if header[0] == 'Sample ID':
-                    cell_text = QtGui.QTableWidgetItem()
-                    cell_text.setText(str(xtal))
-                    cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
-                    self.datasets_summary_table.setItem(current_row, column, cell_text)
-                elif header[0] == 'DataCollection\nOutcome':
-                    if new_xtal:
-                        dataset_outcome_combobox = QtGui.QComboBox()
-                        for outcomeItem in self.dataset_outcome:
-                            dataset_outcome_combobox.addItem(outcomeItem)
-                        self.datasets_summary_table.setCellWidget(current_row, column, dataset_outcome_combobox)
-                        dataset_outcome_combobox.activated[str].connect(self.dataset_outcome_combobox_change_outcome)
-                        self.dataset_outcome_combobox_dict[xtal] = dataset_outcome_combobox
-                    index = self.dataset_outcome_combobox_dict[xtal].findText(str(outcome), QtCore.Qt.MatchFixedString)
-                    self.dataset_outcome_combobox_dict[xtal].setCurrentIndex(index)
-                    continue
-
-                elif header[0].startswith('img'):
-                    if new_run_for_exisiting_crystal_or_new_sample:
-                        img = latest_run[4]
-                        pixmap = QtGui.QPixmap()
-                        # can do this (img[image_number][1]) because made sure in the threading module
-                        # that there are always exactly 5 images in there
-                        pixmap.loadFromData(base64.b64decode(img[image_number][1]))
-                        image = QtGui.QLabel()
-                        image.resize(128, 80)
-                        image.setPixmap(pixmap.scaled(image.size(), QtCore.Qt.KeepAspectRatio))
-                        self.datasets_summary_table.setCellWidget(current_row, column, image)
-                        image_number += 1
-
-                elif header[0].startswith('Show Diffraction\nImage'):
-                    if new_run_for_exisiting_crystal_or_new_sample:
-                        diffraction_image = latest_run[5]
-                        diffraction_image_name = diffraction_image[diffraction_image.rfind('/') + 1:]
-                        try:  # need to try because older pkl file may not have this item in list
-                            html_summary = latest_run[7]
-                        except IndexError:
-                            html_summary = ''
-                        if new_xtal:
-                            start_albula_button = QtGui.QPushButton('Show: \n' + diffraction_image_name)
-                            start_albula_button.clicked.connect(self.show_html_summary_and_diffraction_image)
-                            self.albula_button_dict[xtal] = [start_albula_button, diffraction_image, html_summary]
-                            self.datasets_summary_table.setCellWidget(current_row, column, start_albula_button)
-                        else:
-                            self.albula_button_dict[xtal][1] = diffraction_image
-                elif header[0].startswith('Show\nDetails'):
-                    if new_xtal:
-                        show_data_collection_details_checkbox = QtGui.QCheckBox()
-                        show_data_collection_details_checkbox.toggle()
-                        show_data_collection_details_checkbox.setChecked(False)
-                        show_data_collection_details_checkbox.stateChanged.connect(self.show_data_collection_details)
-                        self.datasets_summary_table.setCellWidget(current_row, column,
-                                                                  show_data_collection_details_checkbox)
-                        self.datasets_summary_dict[xtal].append(show_data_collection_details_checkbox)
-                elif header[0].startswith('SoakDB\nBarcode') or header[0].startswith('GDA\nBarcode'):
-                    if new_xtal:
-                        cell_text = QtGui.QTableWidgetItem()
-                        if xtal in pinDict:
-                            if header[0].startswith('SoakDB\nBarcode'):
-                                cell_text.setText(str(pinDict[xtal][0]))
-                            elif header[0].startswith('GDA\nBarcode'):
-                                cell_text.setText(str(pinDict[xtal][1]))
-                            if pinDict[xtal][0] == 'NULL' or pinDict[xtal][1] == 'NULL':
-                                cell_text.setBackground(QtGui.QColor(255, 215, 0))
-                            elif pinDict[xtal][0] != pinDict[xtal][1]:
-                                cell_text.setBackground(QtGui.QColor(255, 0, 0))
-                        else:
-                            cell_text.setText('')
-                        cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
-                        self.datasets_summary_table.setItem(current_row, column, cell_text)
-                else:
-                    cell_text = QtGui.QTableWidgetItem()
-                    # in case data collection failed for whatever reason
-                    if logfile_found:
-                        try:
-                            cell_text.setText(str(db_dict[header[1]]))
-                        except KeyError:  # older pkl files may not have all the columns
-                            cell_text.setText('n/a')
-                    else:
-                        if header[0].startswith('Resolution\n[Mn<I/sig(I)> = 1.5]'):
-                            cell_text.setText('999')
-                        elif header[0].startswith('DataProcessing\nRfree'):
-                            cell_text.setText('999')
-                        elif header[0].startswith('Rmerge\nLow'):
-                            cell_text.setText('999')
-                        else:
-                            cell_text.setText('')
-                    cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
-                    self.datasets_summary_table.setItem(current_row, column, cell_text)
-
-            row += 1
-
-        self.datasets_summary_table.resizeRowsToContents()
-        self.datasets_summary_table.resizeColumnsToContents()
-
-        self.status_bar.showMessage('updating Overview table')
-
-        self.status_bar.showMessage('idle')
-
-        self.save_files_to_initial_model_folder()
-
+#    def populate_datasets_summary_table(self):
+#        self.status_bar.showMessage(
+#            'Building summary table for data processing results; be patient this may take a while')
+#        row = self.datasets_summary_table.rowCount()
+#        column_name = self.db.translate_xce_column_list_to_sqlite(self.datasets_summary_table_columns)
+#
+#        pinList = self.db.execute_statement(
+#            "Select CrystalName,PinBarcode,DataCollectionPinBarcode from mainTable where CrystalName is not ''")
+#        pinDict = {}
+#        for item in pinList:
+#            pinDict[str(item[0])] = [str(item[1]), str(item[2])]
+#
+#        for xtal in sorted(self.data_collection_dict):
+#            new_xtal = False
+#            if xtal not in self.datasets_summary_dict:
+#                row = self.datasets_summary_table.rowCount()
+#                self.datasets_summary_table.insertRow(row)
+#                self.datasets_summary_dict[xtal] = []
+#                new_xtal = True
+#
+#            # check for dataset outcome
+#            outcome = ''
+#            logfile_found = False
+#            too_low_resolution = True
+#            db_dict = {}
+#            for entry in self.data_collection_dict[xtal]:
+#                if entry[0] == 'logfile':
+#                    logfile_found = True
+#                    if entry[8]:  # if this was auto-selected best resolution file
+#                        db_dict = entry[6]
+#                        try:
+#                            if float(db_dict['DataProcessingResolutionHigh']) <= float(
+#                                    self.acceptable_low_resolution_limit_for_data):
+#                                too_low_resolution = False
+#                        except ValueError:
+#                            pass
+#
+#            try:
+#                outcome = str(self.db.get_value_from_field(xtal, 'DataCollectionOutcome')[0])
+#            except TypeError:
+#                outcome = 'Failed - unknown'
+#                self.update_log.insert('cannot find DataCollectionOutcome for {0!s}'.format(xtal))
+#            self.dataset_outcome_dict[xtal] = outcome
+#
+#            # find latest run for crystal and diffraction images
+#            tmp = []
+#            for entry in self.data_collection_dict[xtal]:
+#                if entry[0] == 'image':
+#                    tmp.append([entry, datetime.strptime(entry[3], '%Y-%m-%d %H:%M:%S')])
+#            latest_run = max(tmp, key=lambda x: x[1])[0]
+#
+#            new_run_for_exisiting_crystal_or_new_sample = True
+#            if new_xtal:
+#                self.datasets_summary_dict[xtal] = [outcome, db_dict, latest_run]
+#            else:
+#                # check if newer run appeared
+#                old_run_timestamp = self.datasets_summary_dict[xtal][2][3]
+#                new_run_timestamp = latest_run[3]
+#                if old_run_timestamp == new_run_timestamp:
+#                    new_run_for_exisiting_crystal_or_new_sample = False
+#                else:
+#                    checkbox_for_details = self.datasets_summary_dict[xtal][3]
+#                    self.datasets_summary_dict[xtal] = [outcome, db_dict, latest_run, checkbox_for_details]
+#
+#            if new_xtal:
+#                current_row = row
+#            else:
+#                allRows = self.datasets_summary_table.rowCount()
+#                for table_row in range(allRows):
+#                    if self.datasets_summary_table.item(table_row, 0).text() == xtal:
+#                        current_row = table_row
+#                        break
+#
+#            image_number = 0
+#            for column, header in enumerate(column_name):
+#                if header[0] == 'Sample ID':
+#                    cell_text = QtGui.QTableWidgetItem()
+#                    cell_text.setText(str(xtal))
+#                    cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
+#                    self.datasets_summary_table.setItem(current_row, column, cell_text)
+#                elif header[0] == 'DataCollection\nOutcome':
+#                    if new_xtal:
+#                        dataset_outcome_combobox = QtGui.QComboBox()
+#                        for outcomeItem in self.dataset_outcome:
+#                            dataset_outcome_combobox.addItem(outcomeItem)
+#                        self.datasets_summary_table.setCellWidget(current_row, column, dataset_outcome_combobox)
+#                        dataset_outcome_combobox.activated[str].connect(self.dataset_outcome_combobox_change_outcome)
+#                        self.dataset_outcome_combobox_dict[xtal] = dataset_outcome_combobox
+#                    index = self.dataset_outcome_combobox_dict[xtal].findText(str(outcome), QtCore.Qt.MatchFixedString)
+#                    self.dataset_outcome_combobox_dict[xtal].setCurrentIndex(index)
+#                    continue
+#
+#                elif header[0].startswith('img'):
+#                    if new_run_for_exisiting_crystal_or_new_sample:
+#                        img = latest_run[4]
+#                        pixmap = QtGui.QPixmap()
+#                        # can do this (img[image_number][1]) because made sure in the threading module
+#                        # that there are always exactly 5 images in there
+#                        pixmap.loadFromData(base64.b64decode(img[image_number][1]))
+#                        image = QtGui.QLabel()
+#                        image.resize(128, 80)
+#                        image.setPixmap(pixmap.scaled(image.size(), QtCore.Qt.KeepAspectRatio))
+#                        self.datasets_summary_table.setCellWidget(current_row, column, image)
+#                        image_number += 1
+#
+#                elif header[0].startswith('Show Diffraction\nImage'):
+#                    if new_run_for_exisiting_crystal_or_new_sample:
+#                        diffraction_image = latest_run[5]
+#                        diffraction_image_name = diffraction_image[diffraction_image.rfind('/') + 1:]
+#                        try:  # need to try because older pkl file may not have this item in list
+#                            html_summary = latest_run[7]
+#                        except IndexError:
+#                            html_summary = ''
+#                        if new_xtal:
+#                            start_albula_button = QtGui.QPushButton('Show: \n' + diffraction_image_name)
+#                            start_albula_button.clicked.connect(self.show_html_summary_and_diffraction_image)
+#                            self.albula_button_dict[xtal] = [start_albula_button, diffraction_image, html_summary]
+#                            self.datasets_summary_table.setCellWidget(current_row, column, start_albula_button)
+#                        else:
+#                            self.albula_button_dict[xtal][1] = diffraction_image
+#                elif header[0].startswith('Show\nDetails'):
+#                    if new_xtal:
+#                        show_data_collection_details_checkbox = QtGui.QCheckBox()
+#                        show_data_collection_details_checkbox.toggle()
+#                        show_data_collection_details_checkbox.setChecked(False)
+#                        show_data_collection_details_checkbox.stateChanged.connect(self.show_data_collection_details)
+#                        self.datasets_summary_table.setCellWidget(current_row, column,
+#                                                                  show_data_collection_details_checkbox)
+#                        self.datasets_summary_dict[xtal].append(show_data_collection_details_checkbox)
+#                elif header[0].startswith('SoakDB\nBarcode') or header[0].startswith('GDA\nBarcode'):
+#                    if new_xtal:
+#                        cell_text = QtGui.QTableWidgetItem()
+#                        if xtal in pinDict:
+#                            if header[0].startswith('SoakDB\nBarcode'):
+#                                cell_text.setText(str(pinDict[xtal][0]))
+#                            elif header[0].startswith('GDA\nBarcode'):
+#                                cell_text.setText(str(pinDict[xtal][1]))
+#                            if pinDict[xtal][0] == 'NULL' or pinDict[xtal][1] == 'NULL':
+#                                cell_text.setBackground(QtGui.QColor(255, 215, 0))
+#                            elif pinDict[xtal][0] != pinDict[xtal][1]:
+#                                cell_text.setBackground(QtGui.QColor(255, 0, 0))
+#                        else:
+#                            cell_text.setText('')
+#                        cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
+#                        self.datasets_summary_table.setItem(current_row, column, cell_text)
+#                else:
+#                    cell_text = QtGui.QTableWidgetItem()
+#                    # in case data collection failed for whatever reason
+#                    if logfile_found:
+#                        try:
+#                            cell_text.setText(str(db_dict[header[1]]))
+#                        except KeyError:  # older pkl files may not have all the columns
+#                            cell_text.setText('n/a')
+#                    else:
+#                        if header[0].startswith('Resolution\n[Mn<I/sig(I)> = 1.5]'):
+#                            cell_text.setText('999')
+#                        elif header[0].startswith('DataProcessing\nRfree'):
+#                            cell_text.setText('999')
+#                        elif header[0].startswith('Rmerge\nLow'):
+#                            cell_text.setText('999')
+#                        else:
+#                            cell_text.setText('')
+#                    cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
+#                    self.datasets_summary_table.setItem(current_row, column, cell_text)
+#
+#            row += 1
+#
+#        self.datasets_summary_table.resizeRowsToContents()
+#        self.datasets_summary_table.resizeColumnsToContents()
+#
+#        self.status_bar.showMessage('updating Overview table')
+#
+#        self.status_bar.showMessage('idle')
+#
+#        self.save_files_to_initial_model_folder()
+#
 
     ################################################################################################################
     #
