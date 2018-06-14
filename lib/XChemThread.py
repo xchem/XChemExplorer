@@ -930,7 +930,9 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         for item in self.compound_list:
             sampleID=item[0]
             compoundID=item[1]
-            smiles=item[2]
+            sm=item[2]
+            # if counterions are present, split and take the longest string in list
+            smiles = max(sm.split('.'), key=len)
             self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'creating ACEDRG shell script for '+sampleID)
             if compoundID=='' or compoundID is None:
                 compoundID='compound'
