@@ -69,8 +69,8 @@ class SettingsTab():
         xce_object.data_collection_vbox_for_settings.addWidget(
             QtGui.QLabel('\n\n<b>Data Collection Directory: (e.g. /dls/i04-1/data/2017/lb18145-70) -</b>'))
 
-#        settings_beamline_frame = QtGui.QFrame()
-#        settings_beamline_frame.setFrameShape(QtGui.QFrame.StyledPanel)
+        settings_beamline_frame = QtGui.QFrame()
+        settings_beamline_frame.setFrameShape(QtGui.QFrame.StyledPanel)
         settings_beamline_vbox = QtGui.QVBoxLayout()
 
         settings_hbox_beamline_directory = QtGui.QHBoxLayout()
