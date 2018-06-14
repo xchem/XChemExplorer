@@ -71,7 +71,7 @@ class SettingsTab():
 
 #        settings_beamline_frame = QtGui.QFrame()
 #        settings_beamline_frame.setFrameShape(QtGui.QFrame.StyledPanel)
-#        settings_beamline_vbox = QtGui.QVBoxLayout()
+        settings_beamline_vbox = QtGui.QVBoxLayout()
 
         settings_hbox_beamline_directory = QtGui.QHBoxLayout()
         xce_object.beamline_directory_label = QtGui.QLabel(xce_object.beamline_directory)
