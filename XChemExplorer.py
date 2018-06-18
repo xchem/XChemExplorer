@@ -312,18 +312,15 @@ class XChemExplorer(QtGui.QApplication):
 
     def check_for_new_autoprocessing_results(self):
         self.update_log.insert('checking for new data collection')
-        start_thread = True
-        if start_thread:
-            if self.target == '=== SELECT TARGET ===':
-                try:
-                    start_thread = CheckAutoProcessing().query(self)
-                except:
-                    print("==> XCE: ERROR: NO TARGET SELECTED, PLEASE SELECT A TARGET AND TRY AGAIN!")
-                    start_thread = False
-            elif self.target == '=== project directory ===':
-                processedDir = self.initial_model_directory
-            else:
-                processedDir = os.path.join(self.beamline_directory, 'processed', self.target)
+        if self.target == '=== SELECT TARGET ===':
+            self.update_log.error('NO TARGET SELECTED, PLEASE SELECT A TARGET AND TRY AGAIN!')
+            start_thread = False
+        elif self.target == '=== project directory ===':
+            processedDir = self.initial_model_directory
+            start_thread = True
+        else:
+            processedDir = os.path.join(self.beamline_directory, 'processed', self.target)
+            start_thread = True
 
         if start_thread:
 #            processedDir=os.path.join(self.beamline_directory,'processed',self.target)
@@ -344,7 +341,6 @@ class XChemExplorer(QtGui.QApplication):
             self.work_thread.start()
 
     def select_best_autoprocessing_result(self):
-        start_thread = True
         if self.rescore:
             # first pop up a warning message as this will overwrite all user selections
             msgBox = QtGui.QMessageBox()
@@ -354,11 +350,12 @@ class XChemExplorer(QtGui.QApplication):
             reply = msgBox.exec_();
             if reply != 0:
                 start_thread = False
+        else:
+            start_thread = True
 
         if start_thread:
             self.update_log.insert('selecting best autoprocessing result')
             self.update_log.insert('samples where user made manual changes will be ignored!')
-            rescore = False
 
             if self.target == '=== project directory ===':
                 processedDir = self.initial_model_directory
