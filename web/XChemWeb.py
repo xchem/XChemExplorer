@@ -169,6 +169,7 @@ class export_to_html:
                 self.make_thumbnail(xtal,x,y,z,ligand,eventMap)
                 self.prepare_for_download(xtal, pdb, event, compoundCIF, ligand)
         self.write_html_file(html)
+        self.Logfile.insert('======== finished preparing HTML summary ========')
 
     def prepare_for_download(self,xtal,pdb,event,compoundCIF,ligID):
         os.chdir(os.path.join(self.htmlDir,'tmp'))
