@@ -35,7 +35,7 @@ def space_group_list():
 
 def get_target_and_visit_list(beamline_directory):
 #    target_list=['*']      # always give the option to read in all targets
-    target_list=['=== SELECT TARGET ===']      # always give the option to read in all targets
+    target_list=['=== SELECT TARGET ===','=== project directory ===']
     visit_list=[]
     # the beamline directory could be a the real directory or
     # a directory where the visits are linked into
@@ -56,21 +56,21 @@ def get_target_and_visit_list(beamline_directory):
                     target_list.append(target[target.rfind('/')+1:])
     return target_list,visit_list
 
-def get_target_and_visit_list_for_Pietro(beamline_directory):
-#    target_list=['*']      # always give the option to read in all targets
-    target_list=['=== SELECT TARGET ===']      # always give the option to read in all targets
-    visit_list=[]
-    # the beamline directory could be a the real directory or
-    # a directory where the visits are linked into
-    for stuff in glob.glob(os.path.join(beamline_directory,'*')):
-        visit_list.append(stuff)
-
-    for visit in visit_list:
-        for target in glob.glob(os.path.join(visit,'processed','*')):
-            if target[target.rfind('/')+1:] not in ['results','README-log','edna-latest.html']:
-                if target[target.rfind('/')+1:] not in target_list:
-                    target_list.append(target[target.rfind('/')+1:])
-    return target_list,visit_list
+#def get_target_and_visit_list_for_Pietro(beamline_directory):
+##    target_list=['*']      # always give the option to read in all targets
+#    target_list=['=== SELECT TARGET ===']      # always give the option to read in all targets
+#    visit_list=[]
+#    # the beamline directory could be a the real directory or
+#    # a directory where the visits are linked into
+#    for stuff in glob.glob(os.path.join(beamline_directory,'*')):
+#        visit_list.append(stuff)
+#
+#    for visit in visit_list:
+#        for target in glob.glob(os.path.join(visit,'processed','*')):
+#            if target[target.rfind('/')+1:] not in ['results','README-log','edna-latest.html']:
+#                if target[target.rfind('/')+1:] not in target_list:
+#                    target_list.append(target[target.rfind('/')+1:])
+#    return target_list,visit_list
 
 
 def get_dewar_configuration(beamline_directory):
