@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.1'
+        xce_object.xce_version = 'v1.2'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -546,7 +546,6 @@ class setup():
         xce_object.dataset_tasks = ['Get New Results from Autoprocessing',
                                     'Run DIMPLE on All Autoprocessing MTZ files',
                                     'Rescore Datasets',
-                                    'Read PKL file',
                                     'Run xia2 on selected datasets',
                                     'Run xia2 on selected datasets - overwrite']
 

@@ -118,7 +118,7 @@ class run_xia2(QtCore.QThread):
                         os.mkdir(os.path.join(self.initial_model_directory,xtal,'processed','run_'+str(newRun),pipeline))
 
                     script+='$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_status_flag.py')+' {0!s} {1!s} {2!s} {3!s}\n'.format(self.database, xtal, 'DataProcessingStatus', 'running')
-                    script+='xia2 pipeline='+pipeline+' '+ref_option+' '+spg_option+' '+reso_limit_option+' '+cc_half_option+' '+image_dir+'\n'
+                    script+='$CCP4/bin/xia2 pipeline='+pipeline+' '+ref_option+' '+spg_option+' '+reso_limit_option+' '+cc_half_option+' '+image_dir+'\n'
 
             script+='$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_status_flag.py')+' {0!s} {1!s} {2!s} {3!s}\n'.format(self.database, xtal, 'DataProcessingStatus', 'finished')
             script+='cd '+os.path.join(self.initial_model_directory,xtal,'processed')+'\n'

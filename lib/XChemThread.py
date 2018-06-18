@@ -2101,7 +2101,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     os.path.join('DataFiles', '*free.mtz')],
                 [   os.path.join('autoPROC', '*'),
                     '*aimless.log',
-                    '*truncate-unique.mtz']
+                    '*truncate-unique.mtz'],
+                [   os.path.join('*'),
+                    os.path.join('LogFiles', '*aimless.log'),
+                    os.path.join('DataFiles', '*free.mtz')]
                         ]
 
     def run(self):
@@ -2178,12 +2181,16 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             for logfile in glob.glob(os.path.join(folder, log)):
                 self.createAutoprocessingDir(xtal, current_run, autoproc)
                 mtzNew,logNew = self.copyMTZandLOGfiles(xtal,current_run,autoproc,mtzfile,logfile)
+                if self.target == '=== project directory ===':
+                    target = 'unknown'
+                else:
+                    target = self.target
                 db_dict = { 'DataCollectionDate':               timestamp,
                             'DataProcessingPathToLogfile':      logNew,
                             'DataProcessingPathToMTZfile':      mtzNew,
                             'DataProcessingDirectoryOriginal':  folder,
                             'DataCollectionOutcome':            'success',  # success in collection Table only means that a logfile was found
-                            'ProteinName':                      self.target     }
+                            'ProteinName':                      target     }
                 db_dict.update(parse().read_aimless_logfile(logNew))
         db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
         db_dict['DataCollectionBeamline'] = self.beamline
@@ -2242,11 +2249,19 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
             if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
                 continue
+            if not os.path.isdir(collected_xtals):
+                self.Logfile.warning(collected_xtals + ' is not a directory')
+                continue
 
             xtal = collected_xtals[collected_xtals.rfind('/')+1:]
             self.createSampleDir(xtal)
 
-            for run in sorted(glob.glob(os.path.join(collected_xtals,'*'))):
+            if self.target == '=== project directory ===':
+                runDir = os.path.join(collected_xtals,'processed','*')
+            else:
+                runDir = os.path.join(collected_xtals,'*')
+
+            for run in sorted(glob.glob(runDir)):
                 current_run=run[run.rfind('/')+1:]
                 timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
 
