@@ -418,13 +418,15 @@ class run_pandda_analyse(QtCore.QThread):
             self.Logfile.insert(msg)
             return None
         else:
-            if os.getenv('SHELL') == '/bin/tcsh' or os.getenv('SHELL') == '/bin/csh':
-                source_file=os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-csh\n')
-            elif os.getenv('SHELL') == '/bin/bash' or self.use_remote:
-                source_file='export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
-                source_file+='source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n')
-            else:
-                source_file=''
+#            if os.getenv('SHELL') == '/bin/tcsh' or os.getenv('SHELL') == '/bin/csh':
+#                source_file=os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-csh\n')
+#            elif os.getenv('SHELL') == '/bin/bash' or self.use_remote:
+#                source_file='export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
+#                source_file+='source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n')
+#            else:
+#                source_file=''
+            # v1.2.1 - pandda.setup files should be obsolete now that pandda is part of ccp4
+            source_file=''
 
             if os.path.isfile(self.filter_pdb + '.pdb'):
                 print('filter pdb located')
@@ -548,6 +550,10 @@ class run_pandda_analyse(QtCore.QThread):
             f = open('pandda.sh','w')
             f.write(Cmds)
             f.close()
+
+#            #>>> for testing
+#            self.submit_mode='local machine'
+
             if self.submit_mode=='local machine':
                 self.Logfile.insert('running PANDDA on local machine')
                 os.system('chmod +x pandda.sh')
