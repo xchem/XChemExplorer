@@ -26,7 +26,7 @@ class startLog:
             '     #                                                                     #\n'
             '     # Version: %s                                       #\n' %pasteVersion+
             '     #                                                                     #\n'
-            '     # Date: 18/06/2018                                                    #\n'
+            '     # Date: 20/06/2018                                                    #\n'
             '     #                                                                     #\n'
             '     # Authors: Tobias Krojer, Structural Genomics Consortium, Oxford, UK  #\n'
             '     #          tobias.krojer@sgc.ox.ac.uk                                 #\n'
