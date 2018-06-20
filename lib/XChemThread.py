@@ -1159,6 +1159,14 @@ class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
             else:
                 symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
 
+            dls_stuff = ''
+            if os.path.isdir('/dls'):
+                dls_stuff = (
+                    'module unload ccp4\n'
+                    'source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
+                )
+
+
             Cmds = (
                     '{0!s}\n'.format(top_line)+
                     '\n'
@@ -1168,9 +1176,9 @@ class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
                     '\n'
                     'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
                     '\n'
-                    'module unload ccp4\n'
-                    'source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
-                    +ccp4_scratch+
+                    + dls_stuff +
+                    '\n'
+                    + ccp4_scratch +
                     '\n'
                     '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(database,xtal,'DimpleStatus','running') +
                     '\n'
