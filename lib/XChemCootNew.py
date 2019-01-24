@@ -209,7 +209,7 @@ class GUI(object):
         #################################################################################
         # --- refinement protocol ---
         frame = gtk.Frame()
-        self.refinementProtocolcheckbox = gtk.CheckButton('giant.quick_refine (REFMAC - default for PanDDA refinement)')
+        self.refinementProtocolcheckbox = gtk.CheckButton('PanDDA model refinement)')
         # callback is defined later
 #        self.refinementProtocolcheckbox.connect("toggled", self.refinementProtocolCallback)
         self.refinementProtocolcheckbox.set_active(True)
@@ -218,15 +218,15 @@ class GUI(object):
 
         #################################################################################
         # --- refinement program ---
-        frame = gtk.Frame()
-        self.refinementProgramcheckbox = gtk.CheckButton('use PHENIX for giant.quick_refine')
-        self.refinementProgramcheckbox.connect("toggled", self.refinementProgramCallback)
-        self.refinementProgramcheckbox.set_active(False)
-        frame.add(self.refinementProgramcheckbox)
-        self.vbox.pack_start(frame)
+#        frame = gtk.Frame()
+#        self.refinementProgramcheckbox = gtk.CheckButton('use PHENIX for giant.quick_refine')
+#        self.refinementProgramcheckbox.connect("toggled", self.refinementProgramCallback)
+#        self.refinementProgramcheckbox.set_active(False)
+#        frame.add(self.refinementProgramcheckbox)
+#        self.vbox.pack_start(frame)
 
         # SPACER
-        self.vbox.add(gtk.Label(' '))
+#        self.vbox.add(gtk.Label(' '))
 
         #################################################################################
         # --- Refinement Statistics ---
@@ -427,13 +427,21 @@ class GUI(object):
         outer_frame.add(hbox)
         self.vbox.add(outer_frame)
 
+        hbox = gtk.HBox()
         button = gtk.Button(label="Show MolProbity to-do list")
         button.connect("clicked", self.show_molprobity_to_do)
-        self.vbox.add(button)
+        hbox.add(button)
+        # --- ground state mean map ---
+        self.ground_state_mean_map_button = gtk.Button(label="Show ground state mean map")
+        self.ground_state_mean_map_button.connect("clicked", self.show_ground_state_mean_map)
+        hbox.add(self.ground_state_mean_map_button)
+#        self.vbox.add(self.ground_state_mean_map_button)
+        self.vbox.add(hbox)
+
         self.vbox.pack_start(frame)
 
         # SPACER
-        self.vbox.add(gtk.Label(' '))
+#        self.vbox.add(gtk.Label(' '))
 
         #################################################################################
         # --- hbox for compound picture & spider_plot (formerly: refinement history) ---
@@ -470,56 +478,51 @@ class GUI(object):
 
         #################################################################################
         # --- pandda.inspect user comments ---
-        outer_frame = gtk.Frame(label='pandda.inspect comments')
-        vbox = gtk.VBox()
-        ligand_site_name_label_frame = gtk.Frame()
-        ligand_site_name_label = gtk.Label('Site Name')
-        ligand_site_name_label_frame.add(ligand_site_name_label)
-        ligand_inspect_confidence_label_frame = gtk.Frame()
-        ligand_inspect_confidence_label = gtk.Label('Confidence')
-        ligand_inspect_confidence_label_frame.add(ligand_inspect_confidence_label)
-        ligand_inspect_interesting_label_frame = gtk.Frame()
-        ligand_inspect_interesting_label = gtk.Label('Interesting')
-        ligand_inspect_interesting_label_frame.add(ligand_inspect_interesting_label)
-        ligand_inspect_comment_label_frame = gtk.Frame()
-        ligand_inspect_comment_label = gtk.Label('Comment')
-        ligand_inspect_comment_label_frame.add(ligand_inspect_comment_label)
-        ligand_site_name_value_frame = gtk.Frame()
-        self.ligand_site_name_value = gtk.Label('-')
-        ligand_site_name_value_frame.add(self.ligand_site_name_value)
-        ligand_inspect_confidence_value_frame = gtk.Frame()
-        self.ligand_inspect_confidence_value = gtk.Label('-')
-        ligand_inspect_confidence_value_frame.add(self.ligand_inspect_confidence_value)
-        ligand_inspect_interesting_value_frame = gtk.Frame()
-        self.ligand_inspect_interesting_value = gtk.Label('-')
-        ligand_inspect_interesting_value_frame.add(self.ligand_inspect_interesting_value)
-        ligand_inspect_comment_value_frame = gtk.Frame()
-        self.ligand_inspect_comment_value = gtk.Label('-')
-        ligand_inspect_comment_value_frame.add(self.ligand_inspect_comment_value)
-
-        frame_pandda_inspect_comments_table = gtk.Frame()
-        pandda_inspect_comments_table = gtk.Table(2, 6, False)
-        pandda_inspect_comments_table.attach(ligand_site_name_label_frame, 0, 1, 0, 1)
-        pandda_inspect_comments_table.attach(ligand_site_name_value_frame, 1, 2, 0, 1)
-        pandda_inspect_comments_table.attach(ligand_inspect_confidence_label_frame, 2, 3, 0, 1)
-        pandda_inspect_comments_table.attach(ligand_inspect_confidence_value_frame, 3, 4, 0, 1)
-        pandda_inspect_comments_table.attach(ligand_inspect_interesting_label_frame, 4, 5, 0, 1)
-        pandda_inspect_comments_table.attach(ligand_inspect_interesting_value_frame, 5, 6, 0, 1)
-        pandda_inspect_comments_table.attach(ligand_inspect_comment_label_frame, 0, 1, 1, 2)
-        pandda_inspect_comments_table.attach(ligand_inspect_comment_value_frame, 1, 6, 1, 2)
-
-        frame_pandda_inspect_comments_table.add(pandda_inspect_comments_table)
-        vbox.add(frame_pandda_inspect_comments_table)
-        outer_frame.add(vbox)
-        self.vbox.pack_start(outer_frame)
-
-        # --- ground state mean map ---
-        self.ground_state_mean_map_button = gtk.Button(label="Show ground state mean map")
-        self.ground_state_mean_map_button.connect("clicked", self.show_ground_state_mean_map)
-        self.vbox.add(self.ground_state_mean_map_button)
+#        outer_frame = gtk.Frame(label='pandda.inspect comments')
+#        vbox = gtk.VBox()
+#        ligand_site_name_label_frame = gtk.Frame()
+#        ligand_site_name_label = gtk.Label('Site Name')
+#        ligand_site_name_label_frame.add(ligand_site_name_label)
+#        ligand_inspect_confidence_label_frame = gtk.Frame()
+#        ligand_inspect_confidence_label = gtk.Label('Confidence')
+#        ligand_inspect_confidence_label_frame.add(ligand_inspect_confidence_label)
+#        ligand_inspect_interesting_label_frame = gtk.Frame()
+#        ligand_inspect_interesting_label = gtk.Label('Interesting')
+#        ligand_inspect_interesting_label_frame.add(ligand_inspect_interesting_label)
+#        ligand_inspect_comment_label_frame = gtk.Frame()
+#        ligand_inspect_comment_label = gtk.Label('Comment')
+#        ligand_inspect_comment_label_frame.add(ligand_inspect_comment_label)
+#        ligand_site_name_value_frame = gtk.Frame()
+#        self.ligand_site_name_value = gtk.Label('-')
+#        ligand_site_name_value_frame.add(self.ligand_site_name_value)
+#        ligand_inspect_confidence_value_frame = gtk.Frame()
+#        self.ligand_inspect_confidence_value = gtk.Label('-')
+#        ligand_inspect_confidence_value_frame.add(self.ligand_inspect_confidence_value)
+#        ligand_inspect_interesting_value_frame = gtk.Frame()
+#        self.ligand_inspect_interesting_value = gtk.Label('-')
+#        ligand_inspect_interesting_value_frame.add(self.ligand_inspect_interesting_value)
+#        ligand_inspect_comment_value_frame = gtk.Frame()
+#        self.ligand_inspect_comment_value = gtk.Label('-')
+#        ligand_inspect_comment_value_frame.add(self.ligand_inspect_comment_value)
+#
+#        frame_pandda_inspect_comments_table = gtk.Frame()
+#        pandda_inspect_comments_table = gtk.Table(2, 6, False)
+#        pandda_inspect_comments_table.attach(ligand_site_name_label_frame, 0, 1, 0, 1)
+#        pandda_inspect_comments_table.attach(ligand_site_name_value_frame, 1, 2, 0, 1)
+#        pandda_inspect_comments_table.attach(ligand_inspect_confidence_label_frame, 2, 3, 0, 1)
+#        pandda_inspect_comments_table.attach(ligand_inspect_confidence_value_frame, 3, 4, 0, 1)
+#        pandda_inspect_comments_table.attach(ligand_inspect_interesting_label_frame, 4, 5, 0, 1)
+#        pandda_inspect_comments_table.attach(ligand_inspect_interesting_value_frame, 5, 6, 0, 1)
+#        pandda_inspect_comments_table.attach(ligand_inspect_comment_label_frame, 0, 1, 1, 2)
+#        pandda_inspect_comments_table.attach(ligand_inspect_comment_value_frame, 1, 6, 1, 2)
+#
+#        frame_pandda_inspect_comments_table.add(pandda_inspect_comments_table)
+#        vbox.add(frame_pandda_inspect_comments_table)
+#        outer_frame.add(vbox)
+#        self.vbox.pack_start(outer_frame)
 
         #        # SPACER
-        self.vbox.add(gtk.Label(' '))
+#        self.vbox.add(gtk.Label(' '))
 
         #################################################################################
         outer_frame = gtk.Frame(label='Sample Navigator')
@@ -565,47 +568,47 @@ class GUI(object):
         self.vbox.add(outer_frame)
 
         #        # SPACER
-        self.vbox.add(gtk.Label(' '))
+#        self.vbox.add(gtk.Label(' '))
 
         #################################################################################
-        outer_frame = gtk.Frame(label='Label')
-        hboxlabel = gtk.HBox()
-
-        # --- crystal navigator combobox ---
-        frame = gtk.Frame()
-        self.vbox_label = gtk.VBox()
-
-        hbox = gtk.HBox()
-        labels = self.db.get_labels_from_db()
-        if len(labels) > 5:
-            print '==> sorry, too many labels; cannot display them in panel'
-        labels = labels[:5]
-        # with radiobuttons, one of them needs to be always on
-        # but there will be cases when the user has not assigned a label yet
-        # hence, the not_shown button is not shown but gets active
-        # if the label has not been set yet
-        labels.append('not_shown')
-        for n, l in enumerate(labels):
-            print n,l
-            if n == 0:
-                new_button = gtk.RadioButton(None, l)
-            else:
-                new_button = gtk.RadioButton(new_button, l)
-            new_button.connect("toggled", self.label_button_clicked, l)
-            if not l == 'not_shown':
-                hbox.add(new_button)
-            self.label_button_list.append(new_button)
-
-        self.vbox_label.add(hbox)
-        frame.add(self.vbox_label)
-
-        hboxlabel.add(frame)
-
-        outer_frame.add(hboxlabel)
-        self.vbox.add(outer_frame)
+#        outer_frame = gtk.Frame(label='Label')
+#        hboxlabel = gtk.HBox()
+#
+#        # --- crystal navigator combobox ---
+#        frame = gtk.Frame()
+#        self.vbox_label = gtk.VBox()
+#
+#        hbox = gtk.HBox()
+#        labels = self.db.get_labels_from_db()
+#        if len(labels) > 5:
+#            print '==> sorry, too many labels; cannot display them in panel'
+#        labels = labels[:5]
+#        # with radiobuttons, one of them needs to be always on
+#        # but there will be cases when the user has not assigned a label yet
+#        # hence, the not_shown button is not shown but gets active
+#        # if the label has not been set yet
+#        labels.append('not_shown')
+#        for n, l in enumerate(labels):
+#            print n,l
+#            if n == 0:
+#                new_button = gtk.RadioButton(None, l)
+#            else:
+#                new_button = gtk.RadioButton(new_button, l)
+#            new_button.connect("toggled", self.label_button_clicked, l)
+#            if not l == 'not_shown':
+#                hbox.add(new_button)
+#            self.label_button_list.append(new_button)
+#
+#        self.vbox_label.add(hbox)
+#        frame.add(self.vbox_label)
+#
+#        hboxlabel.add(frame)
+#
+#        outer_frame.add(hboxlabel)
+#        self.vbox.add(outer_frame)
 
         # SPACER
-        self.vbox.add(gtk.Label(' '))
+#        self.vbox.add(gtk.Label(' '))
 
         #################################################################################
         # --- current refinement stage ---
@@ -621,7 +624,8 @@ class GUI(object):
             else:
                 new_button = gtk.RadioButton(new_button, button[0])
             new_button.connect("toggled", self.experiment_stage_button_clicked, button[1])
-            vbox.add(new_button)
+            vbox.pack_start(new_button,False,False,0)
+#            vbox.add(new_button)
             self.experiment_stage_button_list.append(new_button)
         frame.add(vbox)
         hbox.pack_start(frame)
@@ -636,7 +640,8 @@ class GUI(object):
             else:
                 new_button = gtk.RadioButton(new_button, criteria)
             new_button.connect("toggled", self.ligand_confidence_button_clicked, criteria)
-            vbox.add(new_button)
+            vbox.pack_start(new_button,False,False,0)
+#            vbox.add(new_button)
             self.ligand_confidence_button_list.append(new_button)
         frame.add(vbox)
         hbox.pack_start(frame)
@@ -645,7 +650,7 @@ class GUI(object):
         self.vbox.pack_start(outer_frame)
 
         # SPACER
-        self.vbox.add(gtk.Label(' '))
+#        self.vbox.add(gtk.Label(' '))
 
         # --- ligand modeling ---
         frame = gtk.Frame(label='Ligand Modeling')
