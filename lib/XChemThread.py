@@ -2134,6 +2134,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 [   os.path.join('autoPROC', '*'),
                     '*staraniso_alldata-unique.table1',
                     '*staraniso_alldata-unique.mtz'],
+                [   os.path.join('autoPROC'),
+                    '*aimless.log',
+                    '*truncate-unique.mtz'],
+                [   os.path.join('autoPROC'),
+                    '*staraniso_alldata-unique.table1',
+                    '*staraniso_alldata-unique.mtz'],
                 [   os.path.join('*'),
                     os.path.join('LogFiles', '*aimless.log'),
                     os.path.join('DataFiles', '*free.mtz')]
