@@ -574,11 +574,9 @@ class GUI(object):
 #        outer_frame = gtk.Frame(label='Label')
 #        hboxlabel = gtk.HBox()
 #
-#        # --- crystal navigator combobox ---
 #        frame = gtk.Frame()
-#        self.vbox_label = gtk.VBox()
-#
 #        hbox = gtk.HBox()
+#        self.vbox_label = gtk.VBox()
 #        labels = self.db.get_labels_from_db()
 #        if len(labels) > 5:
 #            print '==> sorry, too many labels; cannot display them in panel'
@@ -598,7 +596,6 @@ class GUI(object):
 #            if not l == 'not_shown':
 #                hbox.add(new_button)
 #            self.label_button_list.append(new_button)
-#
 #        self.vbox_label.add(hbox)
 #        frame.add(self.vbox_label)
 #
@@ -645,6 +642,32 @@ class GUI(object):
             self.ligand_confidence_button_list.append(new_button)
         frame.add(vbox)
         hbox.pack_start(frame)
+
+        # label section --> start
+        frame = gtk.Frame(label='Label')
+        vbox = gtk.VBox()
+        labels = self.db.get_labels_from_db()
+        if len(labels) > 5:
+            print '==> sorry, too many labels; cannot display them in panel'
+        labels = labels[:5]
+        # with radiobuttons, one of them needs to be always on
+        # but there will be cases when the user has not assigned a label yet
+        # hence, the not_shown button is not shown but gets active
+        # if the label has not been set yet
+        labels.append('not_shown')
+        for n, l in enumerate(labels):
+            print n,l
+            if n == 0:
+                new_button = gtk.RadioButton(None, l)
+            else:
+                new_button = gtk.RadioButton(new_button, l)
+            new_button.connect("toggled", self.label_button_clicked, l)
+            if not l == 'not_shown':
+                vbox.add(new_button)
+            self.label_button_list.append(new_button)
+        frame.add(vbox)
+        hbox.pack_start(frame)
+        # label section <-- end
 
         outer_frame.add(hbox)
         self.vbox.pack_start(outer_frame)
