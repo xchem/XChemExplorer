@@ -557,14 +557,14 @@ class parse:
             self.aimless['DataProcessingProgram']='aP_staraniso'
 
         # get run number from logfile
-        # Note: only works if file is in original directory, but not once it moved to 'inital_model' folder
-#        print self.Logfile.split('/')[9].split('_')[1]
-#        if len(self.Logfile.split('/'))>8 and len(self.Logfile.split('/')[9].split('_'))==1:
-        try:
-            self.aimless['DataCollectionRun']=logfile.split('/')[9].split('_')[1]
-        except IndexError:
-            pass
-
+        # Note: only works if file is in original directory, but not once it moved to 'inital_model' folder#
+##        print self.Logfile.split('/')[9].split('_')[1]
+##        if len(self.Logfile.split('/'))>8 and len(self.Logfile.split('/')[9].split('_'))==1:
+#        try:
+#            self.aimless['DataCollectionRun']=logfile.split('/')[9].split('_')[1]
+#        except IndexError:
+#            pass
+#
         resolution_at_sigma_line_overall_found=False
         for line_number,line in enumerate(open(logfile)):
 #            if 'Wavelength' in line:
