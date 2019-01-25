@@ -2173,7 +2173,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             os.mkdir(os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc))
 
     def cleanUpDir(self,xtal,run,autoproc,mtzfile,logfile):
-        toKeep = ['staraniso_alldata-unique.mtz','staraniso_alldata-unique.table1','staraniso_alldata.log']
+        toKeep = ['staraniso_alldata-unique.mtz','staraniso_alldata-unique.table1',
+                  'staraniso_alldata.log',xtal+'.mtz',xtal+'.log']
         os.chdir(os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc))
         for files in glob.glob('*'):
             if files not in toKeep:
@@ -2246,7 +2247,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 db_dict.update(parse().read_aimless_logfile(logNew))
                 db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
                 db_dict['DataCollectionBeamline'] = self.beamline
-                print '====>',db_dict['DataProcessingProgram'],db_dict['DataCollectionRun']
                 self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 #        return db_dict
 
