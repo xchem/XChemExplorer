@@ -2320,7 +2320,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             continue
                         if self.empty_folder(xtal,folder):
                             continue
-                        if 'staraniso' in logfile:
+                        if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
                             autoproc = 'aP_staraniso'
                         else:
                             autoproc = self.getAutoProc(folder)
