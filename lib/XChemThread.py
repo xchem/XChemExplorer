@@ -2230,8 +2230,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             'DataCollectionOutcome':            'success',  # success in collection Table only means that a logfile was found
                             'ProteinName':                      target     }
                 db_dict.update(parse().read_aimless_logfile(logNew))
-        db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
-        db_dict['DataCollectionBeamline'] = self.beamline
+                db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
+                db_dict['DataCollectionBeamline'] = self.beamline
         self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 #        return db_dict
 
