@@ -2213,7 +2213,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         return jpgDict
 
 
-    def readProcessingResults(self,xtal,folder,log,mtz,timestamp,current_run,autoproc):
+    def readProcessingUpdateResults(self,xtal,folder,log,mtz,timestamp,current_run,autoproc):
         db_dict = {}
         for mtzfile in glob.glob(os.path.join(folder,mtz)):
             for logfile in glob.glob(os.path.join(folder, log)):
@@ -2232,7 +2232,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 db_dict.update(parse().read_aimless_logfile(logNew))
         db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
         db_dict['DataCollectionBeamline'] = self.beamline
-        return db_dict
+        self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
+#        return db_dict
 
     def getAutoProc(self,folder):
         autoproc='unkown'
@@ -2324,8 +2325,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             autoproc = self.getAutoProc(folder)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
-                        db_dict = self.readProcessingResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
-                        self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
+                        self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
+#                        db_dict = self.readProcessingResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
+#                        self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
