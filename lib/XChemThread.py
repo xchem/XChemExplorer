@@ -14,6 +14,7 @@ from datetime import datetime
 import time
 import getpass
 import csv
+import tarfile
 
 from iotbx import mtz
 from iotbx.reflection_file_reader import any_reflection_file
@@ -2187,6 +2188,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         if not os.path.isfile(logfile[logfile.rfind('/')+1:]):
             self.Logfile.insert('%s: copying %s' % (xtal, logfile))
             os.system('/bin/cp ' + logfile + ' .')
+            if logfile.endswith('summary.tar.gz'):
+                self.Logfile.insert('unpacking summary.tar.gz')
+                os.system('tar -xzvf summary.tar.gz')
+                logfile = logfile.replace('summary.tar.gz','staraniso_alldata-unique.table1')
         if os.path.isfile(logfile[logfile.rfind('/')+1:]) and not os.path.isfile(xtal+'.log'):
             os.symlink(logfile[logfile.rfind('/')+1:], xtal + '.log')
         if os.path.isfile(logfile[logfile.rfind('/') + 1:]):
