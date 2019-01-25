@@ -2172,6 +2172,14 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc)):
             os.mkdir(os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc))
 
+    def cleanUpDir(self,xtal,run,autoproc,mtzfile,logfile):
+        toKeep = ['staraniso_alldata-unique.mtz','staraniso_alldata-unique.table1','staraniso_alldata.log']
+        os.chdir(os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc))
+        for files in glob.glob('*'):
+            if files not in toKeep:
+                os.system('/bin/rm -f ' + files)
+
+
     def copyMTZandLOGfiles(self,xtal,run,autoproc,mtzfile,logfile):
         mtzNew = ''
         logNew = ''
@@ -2192,6 +2200,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 self.Logfile.insert('unpacking summary.tar.gz')
                 os.system('tar -xzvf summary.tar.gz')
                 logfile = logfile.replace('summary.tar.gz','staraniso_alldata-unique.table1')
+                self.cleanUpDir(xtal,run,autoproc,mtzfile,logfile)
         if os.path.isfile(logfile[logfile.rfind('/')+1:]) and not os.path.isfile(xtal+'.log'):
             os.symlink(logfile[logfile.rfind('/')+1:], xtal + '.log')
         if os.path.isfile(logfile[logfile.rfind('/') + 1:]):
