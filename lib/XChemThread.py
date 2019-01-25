@@ -2138,7 +2138,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     '*aimless.log',
                     '*truncate-unique.mtz'],
                 [   os.path.join('autoPROC'),
-                    '*staraniso_alldata-unique.table1',
+                    '*summary.tar.gz',                  # staraniso_alldata-unique.table1 only available in tar archive
                     '*staraniso_alldata-unique.mtz'],
                 [   os.path.join('*'),
                     os.path.join('LogFiles', '*aimless.log'),

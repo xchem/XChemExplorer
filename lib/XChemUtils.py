@@ -9,6 +9,7 @@ import getpass
 import shutil
 import math
 import platform
+import tarfile
 
 
 from rdkit import Chem
@@ -410,7 +411,24 @@ class parse:
 
 
     def GetAimlessLog(self,Logfile):
-        self.Logfile=Logfile
+        if Logfile.endswith('summary.tar.gz'):
+            if os.path.isfile('staraniso_alldata-unique.table1'):
+                os.system('/bin/rm staraniso_alldata-unique.table1')
+            tar = tarfile.open(Logfile, "r:gz")
+            foundTable = False
+            for tarinfo in tar:
+                if 'staraniso_alldata-unique.table1' in tarinfo.name:
+                    f = tar.extractfile(tarinfo)
+                    content = f.read()
+                    tmpTxt = open('staraniso_alldata-unique.table1','w')
+                    tmpTxt.write(content)
+                    tmpTxt.close()
+                    self.Logfile = 'staraniso_alldata-unique.table1'
+                    foundTable = True
+            if not foundTable:
+                return self.aimless
+        else:
+            self.Logfile=Logfile
         Aimless = { 'AutoProc': 'n/a',
                     'Run': 'n/a',
                     'SpaceGroup': 'n/a',
