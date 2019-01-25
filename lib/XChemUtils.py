@@ -566,8 +566,7 @@ class parse:
             pass
 
 #
-        print '=====>',self.aimless['DataCollectionRun'],logfile
-
+#        print '=====>',self.aimless['DataCollectionRun'],logfile
 #
         resolution_at_sigma_line_overall_found=False
         for line_number,line in enumerate(open(logfile)):

@@ -2232,7 +2232,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 db_dict.update(parse().read_aimless_logfile(logNew))
                 db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
                 db_dict['DataCollectionBeamline'] = self.beamline
-        self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
+                print '====>',db_dict['DataProcessingProgram'],db_dict['DataCollectionRun']
+                self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 #        return db_dict
 
     def getAutoProc(self,folder):
