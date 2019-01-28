@@ -742,10 +742,10 @@ class GUI(object):
         self.merge_ligand_button.set_sensitive(True)
         self.place_ligand_here_button.set_sensitive(True)
 
-        self.ligand_site_name_value.set_label('-')
-        self.ligand_inspect_confidence_value.set_label('-')
-        self.ligand_inspect_interesting_value.set_label('-')
-        self.ligand_inspect_comment_value.set_label('-')
+#        self.ligand_site_name_value.set_label('-')
+#        self.ligand_inspect_confidence_value.set_label('-')
+#        self.ligand_inspect_interesting_value.set_label('-')
+#        self.ligand_inspect_comment_value.set_label('-')
 
         self.refresh_site_combobox()
         self.db_dict_mainTable = {}
@@ -869,10 +869,10 @@ class GUI(object):
         print 'new site coordinates:', site_x, site_y, site_z
         coot.set_rotation_centre(site_x, site_y, site_z)
 
-        self.ligand_site_name_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][8]))
-        self.ligand_inspect_confidence_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][9]))
-        self.ligand_inspect_interesting_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][10]))
-        self.ligand_inspect_comment_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][11]))
+#        self.ligand_site_name_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][8]))
+#        self.ligand_inspect_confidence_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][9]))
+#        self.ligand_inspect_interesting_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][10]))
+#        self.ligand_inspect_comment_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][11]))
 
         self.spider_plot_data = self.db.get_db_pandda_dict_for_sample_and_site_and_event(self.xtalID, self.site_index,
                                                                                          self.event_index)
