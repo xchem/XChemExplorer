@@ -1161,8 +1161,8 @@ class convert_apo_structures_to_mmcif(QtCore.QThread):
                        ' -o mmcif'
                        ' -sf %s' % xtal+'-pandda-input.mtz' +
                        ' -out {0!s}_sf.mmcif  > {1!s}.sf_mmcif.log'.format(xtal, xtal))
-                self.Logfile.insert('running command: '+Cmd)
-                os.system(Cmd)
+                    self.Logfile.insert('running command: '+Cmd)
+                    os.system(Cmd)
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
