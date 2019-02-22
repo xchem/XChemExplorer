@@ -73,6 +73,13 @@ class DepositionTab():
         ground_state_pdb_button.setMaximumWidth(400)
         xce_object.ground_state_pdb_button_label = QtGui.QLabel('')
 
+        ground_state_log_info = (
+            'IMPORTANT:\n'
+            'Make sure that a file or symlink to an AIMLESS logile with the same name root as your ground-state PDB file\n'
+            'is present in the same folder. This is currently not generated automatically! '
+        )
+        ground_state_log_info_label = QtGui.QLabel(ground_state_log_info)
+
         ground_state_mtz_button_label_help = QtGui.QLabel('2. Select ground-state MTZ file')
         ground_state_mtz_button = QtGui.QPushButton('Select ground-state MTZ file')
         ground_state_mtz_button.clicked.connect(xce_object.select_ground_state_mtz)
@@ -190,6 +197,7 @@ class DepositionTab():
                                   deposition_ground_state_heading, QtGui.QLabel(' \n '),
                                   ground_state_pdb_button_label_help,
                                   ground_state_pdb_button,xce_object.ground_state_pdb_button_label,QtGui.QLabel(' '),
+                                  ground_state_log_info_label, QtGui.QLabel(' \n '),
                                   ground_state_mtz_button_label_help,
                                   ground_state_mtz_button,xce_object.ground_state_mtz_button_label,QtGui.QLabel(' '),
                                   warning_label,QtGui.QLabel(' '),
