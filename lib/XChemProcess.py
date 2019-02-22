@@ -50,6 +50,7 @@ class run_xia2(QtCore.QThread):
 
             if os.getcwd().startswith('/dls'):
                 script += 'module load ccp4\n'
+                script += 'module load XDS\n'
 #                script += 'module load phenix\n'
 
 # 2018-09-19 - removed this for Joe's test
@@ -91,7 +92,7 @@ class run_xia2(QtCore.QThread):
 #            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,'processed','run_in_progress')):
 #                self.Logfile.insert('data processing is in progress; skipping...')
 #                continue
-            f = False
+            f = True
             if f:
                 print 'hallo'
             else:
