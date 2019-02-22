@@ -649,10 +649,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         noError = True
         self.Logfile.insert('%s: preparing data_template.cif file' %xtal)
         if self.overwrite_existing_mmcif:
-
+            self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
             if self.ground_state:
                 os.chdir(self.projectDir)
-                self.data_template_dict['radiation_wavelengths'] = '1.000'
+#                self.data_template_dict['radiation_wavelengths'] = '1.000'
                 self.data_template_dict['group_type'] = 'ground state'
                 self.data_template_dict['group_title'] = 'PanDDA analysis group deposition of ground-state model'
                 self.data_template_dict['group_description'] = self.data_template_dict['group_description'].replace('$ProteinName',
@@ -664,7 +664,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             else:
                 os.chdir(os.path.join(self.projectDir, xtal))
                 # edit wavelength
-                self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
+#                self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
 
                 title = self.data_template_dict['structure_title'].replace('$ProteinName', self.data_template_dict[
                     'Source_organism_gene']).replace('$CompoundName', self.db_dict['CompoundCode'])
