@@ -1259,7 +1259,10 @@ class GUI(object):
             if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
                 os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
             # create folder for new refinement cycle
-            os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+            try:
+                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+            except OSError:
+                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
 
             #######################################################
             # write PDB file

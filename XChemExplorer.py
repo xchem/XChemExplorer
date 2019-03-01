@@ -1053,7 +1053,7 @@ class XChemExplorer(QtGui.QApplication):
         grid.addWidget(QtGui.QLabel('PI role'), 5, 0)
         self.contact_author_PI_role = QtGui.QComboBox()
 #        PIroles = ['group leader', 'principal investigator/group leader', 'investigator']
-        PIroles = ['principal investigator/group leader', 'investigator']
+        PIroles = ['principal investigator/group leader']
         for item in PIroles: self.contact_author_PI_role.addItem(item)
         grid.addWidget(self.contact_author_PI_role, 5, 1)
 

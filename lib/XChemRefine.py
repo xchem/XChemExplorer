@@ -803,12 +803,16 @@ class panddaRefine(object):
                 ground_state=os.path.join(self.ProjectPath,self.xtalID,'refine.split.ground-state.pdb')
                 bound_state='refine.modified.pdb'
                 Logfile.insert('running giant.merge_conformations major=%s minor=%s' %(ground_state,bound_state))
-
-                cmd = (
-                'export XChemExplorer_DIR="%s"\n' %os.getenv('XChemExplorer_DIR')+
-                'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n') +
-                'giant.merge_conformations major=%s minor=%s reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0' %(ground_state,bound_state)
-                )
+                if os.getcwd().startswith('/dls'):
+                    cmd = (
+                    'export XChemExplorer_DIR="%s"\n' %os.getenv('XChemExplorer_DIR')+
+                    'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n') +
+                    'giant.merge_conformations major=%s minor=%s reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0' %(ground_state,bound_state)
+                    )
+                else:
+                    cmd = (
+                    'giant.merge_conformations major=%s minor=%s reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0' %(ground_state,bound_state)
+                    )
                 Logfile.insert(cmd+'\n')
                 os.system(cmd)
             else:
@@ -1060,7 +1064,7 @@ class panddaRefine(object):
             os.system('%s -P labxchem refmac.csh' %remote_command)
             print '%s -P labxchem refmac.csh' %remote_command
         else:
-            print 'oh not here'
+            Logfile.insert('changing permission of refmac.csh: chmod +x refmac.csh')
             os.system('chmod +x refmac.csh')
             Logfile.insert('starting refinement on local machine')
             os.system('./refmac.csh &')
@@ -1608,7 +1612,7 @@ class RefineOld(object):
             os.system('%s -P labxchem refmac.csh' %remote_command)
             print '%s -P labxchem refmac.csh' %remote_command
         else:
-            print 'oh not here'
+            Logfile.insert('changing permission of refmac.csh: chmod +x refmac.csh')
             os.system('chmod +x refmac.csh')
             Logfile.insert('starting refinement on local machine')
             os.system('./refmac.csh &')
