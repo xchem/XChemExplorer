@@ -1387,8 +1387,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
             os.mkdir(os.path.join(self.initial_model_directory,xtal))
-        if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline')):
-            os.mkdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
+        if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline')):
+            os.system('/bin/rm -fr phenix.ligand_pipeline')
+        os.mkdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
         os.chdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
         os.system('touch dimple_run_in_progress')
         os.system('/bin/rm final.mtz 2> /dev/null')
@@ -1450,7 +1451,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '/bin/rm fofc.map\n'
                 '\n'
                 'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
-                ' labin F1=2FOFCWT PHI=PH2FOFCWT\n'
+                ' labin F1=2FOFCWT_filled PHI=PH2FOFCWT\n'
                 'EOF\n'
                 '\n'
                 'fft hklin dimple.mtz mapout fofc.map << EOF\n'
@@ -1476,29 +1477,12 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
     def prepare_pipedream_shell_script(self,xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif):
 
-        # check if reference mtzfile has an Rfree column; if not, then ignore
-        # DIMPLE assumes an Rfree column and barfs if it is not present
-        # note: ref_mtz looks like this: ref mtz  -R reference.mtz
-#        if os.path.isfile(ref_mtz):
-#            mtz_column_dict=mtztools(ref_mtz).get_all_columns_as_dict()
-#            if 'FreeR_flag' not in mtz_column_dict['RFREE']:
-#                self.Logfile.insert('cannot find FreeR_flag in reference mtz file: %s -> ignoring reference mtzfile!!!' %ref_mtz)
-#                ref_mtz = ''
-#                if mtz_column_dict['RFREE'] != []:
-#                    self.Logfile.insert('found Rfree set with other column name though: %s' %str(mtz_column_dict['RFREE']))
-#                    self.Logfile.insert('try renaming Rfree column to FreeR_flag with CAD!')
-#
-#        db_dict={}
-#        db_dict['DimpleReferencePDB']=ref_pdb
-#        self.db.update_data_source(xtal,db_dict)
-#
-#        self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'creating input script for '+xtal+' in '+visit_run_autoproc)
-#
-
         if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
             os.mkdir(os.path.join(self.initial_model_directory,xtal))
-        if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'pipedream')):
-            os.mkdir(os.path.join(self.initial_model_directory,xtal,'pipedream'))
+        if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'pipedream')):
+            os.chdir(os.path.join(self.initial_model_directory,xtal))
+            os.system('/bin/rm -fr pipedream')
+        os.mkdir(os.path.join(self.initial_model_directory,xtal,'pipedream'))
         os.chdir(os.path.join(self.initial_model_directory,xtal,'pipedream'))
         os.system('touch dimple_run_in_progress')
         os.system('/bin/rm final.mtz 2> /dev/null')
@@ -1549,8 +1533,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '/bin/rm pipedream.pdb\n'
                 '/bin/rm pipedream.mtz\n'
                 '\n'
-                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb pipedream.pdb\n'
-                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz pipedream.mtz\n'
+                'ln -s pipedream/pipedreamDir/refine/refine.pdb pipedream.pdb\n'
+                'ln -s pipedream/pipedreamDir/refine/refine.mtz pipedream.mtz\n'
                 '\n'
                 '/bin/rm dimple.pdb\n'
                 '/bin/rm dimple.mtz\n'
@@ -1558,12 +1542,15 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 'ln -s pipedream.pdb dimple.pdb\n'
                 'ln -s pipedream.mtz dimple.mtz\n'
                 '\n'
+                '/bin/rm 2fofc.map\n'
+                '/bin/rm fofc.map\n'
+                '\n'
                 'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
-                ' labin F1=FWT PHI=PHWT\n'
+                ' labin F1=2FOFCWT PHI=PH2FOFCWT\n'
                 'EOF\n'
                 '\n'
                 'fft hklin dimple.mtz mapout fofc.map << EOF\n'
-                ' labin F1=DELFWT PHI=PHDELWT\n'
+                ' labin F1=FOFCWT PHI=PHFOFCWT\n'
                 'EOF\n'
                 '\n'
                 '$CCP4/libexec/python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
