@@ -1410,6 +1410,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if os.path.isdir('/dls'):
             ccp4_scratch+='module load phenix\n'
+            ccp4_scratch+='module load ccp4\n'
 
         Cmds = (
                 '{0!s}\n'.format(top_line)+
@@ -1503,6 +1504,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if os.path.isdir('/dls'):
             ccp4_scratch+='module load buster\n'
+            ccp4_scratch+='module load ccp4\n'
 
         if os.path.isfile(ref_mtz):
             hklref_line=' -hklref {0!s}'.format(ref_mtz)
@@ -1617,6 +1619,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch='export CCP4_SCR='+self.ccp4_scratch_directory+'\n'
         else:
             ccp4_scratch=''
+
+        if os.path.isdir('/dls'):
+            ccp4_scratch+='module load ccp4\n'
 
         if 'dimple_rerun_on_selected_file' in visit_run_autoproc:
             additional_cmds = (
