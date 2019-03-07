@@ -2456,7 +2456,8 @@ class XChemExplorer(QtGui.QApplication):
                                                                             self.initial_model_directory,
                                                                             self.xce_logfile,
                                                                             self.database_directory,
-                                                                            self.data_source_file)
+                                                                            self.data_source_file,
+                                                                            self.preferences['initial_refinement_pipeline'])
                 self.explorer_active = 1
                 self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
                 self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
@@ -2883,20 +2884,20 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'Run xia2 on selected datasets - overwrite':
             self.run_xia2_on_selected_datasets(True)
 
-        elif instruction == 'Run DIMPLE on All Autoprocessing MTZ files':
-            self.rerun_dimple_on_all_autoprocessing_files()
+#        elif instruction == 'Run DIMPLE on All Autoprocessing MTZ files':
+#            self.rerun_dimple_on_all_autoprocessing_files()
 
-        elif instruction == 'Run DIMPLE on selected MTZ files':
+        elif instruction == 'Run initial refinement on selected MTZ files':
             self.run_dimple_on_selected_autoprocessing_file()
 
-        elif instruction == 'Remove selected DIMPLE PDB/MTZ files':
+        elif instruction == 'Remove selected initial refinement files':
             self.remove_selected_dimple_files()
 
-        elif instruction == 'Create CIF/PDB/PNG file of ALL compounds':
-            self.create_cif_pdb_png_files('ALL')
+#        elif instruction == 'Create CIF/PDB/PNG file of ALL compounds':
+#            self.create_cif_pdb_png_files('ALL')
 
-        elif instruction == 'Create CIF/PDB/PNG file of NEW compounds':
-            self.create_cif_pdb_png_files('NEW')
+#        elif instruction == 'Create CIF/PDB/PNG file of NEW compounds':
+#            self.create_cif_pdb_png_files('NEW')
 
         elif instruction == 'Create CIF/PDB/PNG file of SELECTED compounds':
             self.create_cif_pdb_png_files('SELECTED')

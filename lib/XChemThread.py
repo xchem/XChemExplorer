@@ -1758,13 +1758,14 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
 
 class remove_selected_dimple_files(QtCore.QThread):
-    def __init__(self,sample_list,initial_model_directory,xce_logfile,database_directory,data_source_file,):
+    def __init__(self,sample_list,initial_model_directory,xce_logfile,database_directory,data_source_file,pipeline):
         QtCore.QThread.__init__(self)
         self.sample_list=sample_list
         self.initial_model_directory=initial_model_directory
         self.xce_logfile=xce_logfile
         self.Logfile=XChemLog.updateLog(xce_logfile)
         self.db=XChemDB.data_source(os.path.join(database_directory,data_source_file))
+        self.pipeline = pipeline
 
     def run(self):
         progress_step=1
@@ -1779,13 +1780,49 @@ class remove_selected_dimple_files(QtCore.QThread):
                 self.Logfile.insert('{0!s}: directory does not exist'.format(xtal))
                 continue
             os.chdir(os.path.join(self.initial_model_directory,xtal))
-            self.Logfile.insert('{0!s}: removing dimple.pdb/dimple.mtz'.format(xtal))
-            os.system('/bin/rm dimple.pdb 2> /dev/null')
-            os.system('/bin/rm dimple.mtz 2> /dev/null')
-            if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple','dimple_rerun_on_selected_file')):
-                os.chdir('dimple')
-                self.Logfile.insert('{0!s} removing directory dimple/dimple_rerun_on_selected_file'.format(xtal))
-                os.system('/bin/rm -fr dimple_rerun_on_selected_file')
+
+            if self.pipeline=='dimple':
+                if os.path.isfile('init.pdb'):
+                    if 'dimple' in os.path.realpath('init.pdb'):
+                        self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to dimple outcome'.format(xtal))
+                        self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
+                        os.system('/bin/rm init.pdb')
+                        os.system('/bin/rm init.mtz')
+                        os.system('/bin/rm 2fofc.map')
+                        os.system('/bin/rm fofc.map')
+                self.Logfile.warning('{0!s}: removing dimple folder & dimple.pdb/dimple.mtz'.format(xtal))
+                os.system('/bin/rm dimple.pdb 2> /dev/null')
+                os.system('/bin/rm dimple.mtz 2> /dev/null')
+                os.system('/bin/rm -fr dimple')
+            elif self.pipeline=='pipedream':
+                if os.path.isfile('init.pdb'):
+                    if 'dimple' in os.path.realpath('init.pdb'):
+                        self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to pipedream outcome'.format(xtal))
+                        self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
+                        os.system('/bin/rm init.pdb')
+                        os.system('/bin/rm init.mtz')
+                        os.system('/bin/rm 2fofc.map')
+                        os.system('/bin/rm fofc.map')
+                self.Logfile.warning('{0!s}: removing pipedream folder & pipedream.pdb/pipedream.mtz'.format(xtal))
+                os.system('/bin/rm pipedream.pdb 2> /dev/null')
+                os.system('/bin/rm pipedream.mtz 2> /dev/null')
+                os.system('/bin/rm -fr pipedream')
+            elif self.pipeline=='phenix.ligand_pipeline':
+                if os.path.isfile('init.pdb'):
+                    if 'dimple' in os.path.realpath('init.pdb'):
+                        self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to phenix.ligand_pipeline outcome'.format(xtal))
+                        self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
+                        os.system('/bin/rm init.pdb')
+                        os.system('/bin/rm init.mtz')
+                        os.system('/bin/rm 2fofc.map')
+                        os.system('/bin/rm fofc.map')
+                self.Logfile.warning('{0!s}: removing phenix.ligand_pipeline folder & phenix.ligand_pipeline.pdb/phenix.ligand_pipeline.mtz'.format(xtal))
+                os.system('/bin/rm phenix.ligand_pipeline.pdb 2> /dev/null')
+                os.system('/bin/rm phenix.ligand_pipeline.mtz 2> /dev/null')
+                os.system('/bin/rm -fr phenix.ligand_pipeline')
+
+
+
 
             db_dict['DimpleResolutionHigh']=''
             db_dict['DimpleRcryst']=''

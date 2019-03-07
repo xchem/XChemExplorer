@@ -574,11 +574,12 @@ class setup():
                                     'Run xia2 on selected datasets',
                                     'Run xia2 on selected datasets - overwrite']
 
-        xce_object.map_cif_file_tasks = ['Run DIMPLE on selected MTZ files',
-                                         'Remove selected DIMPLE PDB/MTZ files',
-                                         'Create CIF/PDB/PNG file of ALL compounds',
-                                         'Create CIF/PDB/PNG file of NEW compounds',
-                                         'Create CIF/PDB/PNG file of SELECTED compounds']
+        xce_object.map_cif_file_tasks = ['Run initial refinement on selected MTZ files',
+                                         'Remove selected initial refinement files',
+#                                         'Create CIF/PDB/PNG file of ALL compounds',
+#                                         'Create CIF/PDB/PNG file of NEW compounds',
+                                         'Create CIF/PDB/PNG file of SELECTED compounds'
+                                         ]
 
         xce_object.panddas_file_tasks = ['pandda.analyse',
                                          'pandda.inspect',
