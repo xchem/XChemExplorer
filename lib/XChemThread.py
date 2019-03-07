@@ -1387,6 +1387,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
             os.mkdir(os.path.join(self.initial_model_directory,xtal))
+        os.chdir(os.path.join(self.initial_model_directory,xtal))
         if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline')):
             os.system('/bin/rm -fr phenix.ligand_pipeline')
         os.mkdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
