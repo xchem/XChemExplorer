@@ -1434,6 +1434,14 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 ' update_waters=False'
                 ' build_hydrogens=False\n'
                 '\n'
+                'fft hklin pipeline_1/refine_final.mtz mapout 2fofc.map << EOF\n'
+                ' labin F1=2FOFCWT_filled PHI=PH2FOFCWT\n'
+                'EOF\n'
+                '\n'
+                'fft hklin pipeline_1/refine_final.mtz mapout fofc.map << EOF\n'
+                ' labin F1=FOFCWT PHI=PHFOFCWT\n'
+                'EOF\n'
+                '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
                 '/bin/rm phenix.ligand_pipeline.pdb\n'
@@ -1451,13 +1459,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '/bin/rm 2fofc.map\n'
                 '/bin/rm fofc.map\n'
                 '\n'
-                'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
-                ' labin F1=2FOFCWT_filled PHI=PH2FOFCWT\n'
-                'EOF\n'
-                '\n'
-                'fft hklin dimple.mtz mapout fofc.map << EOF\n'
-                ' labin F1=FOFCWT PHI=PHFOFCWT\n'
-                'EOF\n'
+                'ln -s phenix.ligand_pipeline/2fofc.map .\n'
+                'ln -s phenix.ligand_pipeline/fofc.map .\n'
                 '\n'
                 '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)+
@@ -1527,6 +1530,14 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 ' -hklin {0!s}'.format(mtzin)+
                 ' -keepwater\n'
                 '\n'
+                'fft hklin pipedreamDir/refine/refine.mtz mapout 2fofc.map << EOF\n'
+                ' labin F1=2FOFCWT PHI=PH2FOFCWT\n'
+                'EOF\n'
+                '\n'
+                'fft hklin pipedreamDir/refine/refine.mtz mapout fofc.map << EOF\n'
+                ' labin F1=FOFCWT PHI=PHFOFCWT\n'
+                'EOF\n'
+                '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
                 '/bin/rm pipedream.pdb\n'
@@ -1544,13 +1555,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '/bin/rm 2fofc.map\n'
                 '/bin/rm fofc.map\n'
                 '\n'
-                'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
-                ' labin F1=2FOFCWT PHI=PH2FOFCWT\n'
-                'EOF\n'
-                '\n'
-                'fft hklin dimple.mtz mapout fofc.map << EOF\n'
-                ' labin F1=FOFCWT PHI=PHFOFCWT\n'
-                'EOF\n'
+                'ln -s pipedream/2fofc.map .\n'
+                'ln -s pipedream/fofc.map .\n'
                 '\n'
                 '$CCP4/libexec/python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)+
@@ -1673,6 +1679,14 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
 #                'dimple --no-cleanup %s %s %s %s dimple\n' %(mtzin,ref_pdb,ref_mtz,ref_cif) +
 #                '\n'
+                'fft hklin dimple/final.mtz mapout 2fofc.map << EOF\n'
+                ' labin F1=FWT PHI=PHWT\n'
+                'EOF\n'
+                '\n'
+                'fft hklin dimple/final.mtz mapout fofc.map << EOF\n'
+                ' labin F1=DELFWT PHI=PHDELWT\n'
+                'EOF\n'
+                '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
                 '/bin/rm dimple.pdb\n'
@@ -1690,18 +1704,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '/bin/rm 2fofc.map\n'
                 '/bin/rm fofc.map\n'
                 '\n'
-                'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
-                ' labin F1=FWT PHI=PHWT\n'
-                'EOF\n'
-                '\n'
-                'fft hklin dimple.mtz mapout fofc.map << EOF\n'
-                ' labin F1=DELFWT PHI=PHDELWT\n'
-                'EOF\n'
+                'ln -s dimple/2fofc.map .\n'
+                'ln -s dimple/fofc.map .\n'
                 '\n'
                 '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory) +
-                '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
                 '/bin/rm dimple_run_in_progress\n'
                 '\n'
@@ -1785,6 +1792,7 @@ class remove_selected_dimple_files(QtCore.QThread):
                         os.system('/bin/rm 2fofc.map')
                         os.system('/bin/rm fofc.map')
                 self.Logfile.warning('{0!s}: removing dimple folder & dimple.pdb/dimple.mtz'.format(xtal))
+                os.system('/bin/rm dimple_run_in_progress 2> /dev/null')
                 os.system('/bin/rm dimple.pdb 2> /dev/null')
                 os.system('/bin/rm dimple.mtz 2> /dev/null')
                 os.system('/bin/rm -fr dimple')
@@ -1798,6 +1806,7 @@ class remove_selected_dimple_files(QtCore.QThread):
                         os.system('/bin/rm 2fofc.map')
                         os.system('/bin/rm fofc.map')
                 self.Logfile.warning('{0!s}: removing pipedream folder & pipedream.pdb/pipedream.mtz'.format(xtal))
+                os.system('/bin/rm pipedream_run_in_progress 2> /dev/null')
                 os.system('/bin/rm pipedream.pdb 2> /dev/null')
                 os.system('/bin/rm pipedream.mtz 2> /dev/null')
                 os.system('/bin/rm -fr pipedream')
@@ -1811,6 +1820,7 @@ class remove_selected_dimple_files(QtCore.QThread):
                         os.system('/bin/rm 2fofc.map')
                         os.system('/bin/rm fofc.map')
                 self.Logfile.warning('{0!s}: removing phenix.ligand_pipeline folder & phenix.ligand_pipeline.pdb/phenix.ligand_pipeline.mtz'.format(xtal))
+                os.system('/bin/rm phenix.ligand_pipeline_run_in_progress 2> /dev/null')
                 os.system('/bin/rm phenix.ligand_pipeline.pdb 2> /dev/null')
                 os.system('/bin/rm phenix.ligand_pipeline.mtz 2> /dev/null')
                 os.system('/bin/rm -fr phenix.ligand_pipeline')
