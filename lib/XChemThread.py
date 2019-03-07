@@ -1411,6 +1411,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch+='module load phenix\n'
             ccp4_scratch+='module load ccp4\n'
 
+        mtz_column_dict=mtztools(mtzin).get_all_columns_as_dict()
+        rfree = ''
+        if 'FreeR_flag' in mtz_column_dict['RFREE']:
+            rfree = ' xray_data.r_free_flags.label="FreeR_flag"'
+
         Cmds = (
                 '{0!s}\n'.format(top_line)+
                 '\n'
@@ -1432,6 +1437,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 ' remove_waters=False'
                 ' stop_if_r_free_greater_than=0.4'
                 ' update_waters=False'
+                + rfree +
                 ' build_hydrogens=False\n'
                 '\n'
                 'fft hklin pipeline_1/refine_final.mtz mapout 2fofc.map << EOF\n'
@@ -1787,24 +1793,19 @@ class remove_selected_dimple_files(QtCore.QThread):
                     if 'dimple' in os.path.realpath('init.pdb'):
                         self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to dimple outcome'.format(xtal))
                         self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
-                        os.system('/bin/rm init.pdb')
-                        os.system('/bin/rm init.mtz')
-                        os.system('/bin/rm 2fofc.map')
-                        os.system('/bin/rm fofc.map')
+                        db_dict = self.remove_init(db_dict)
                 self.Logfile.warning('{0!s}: removing dimple folder & dimple.pdb/dimple.mtz'.format(xtal))
                 os.system('/bin/rm dimple_run_in_progress 2> /dev/null')
                 os.system('/bin/rm dimple.pdb 2> /dev/null')
                 os.system('/bin/rm dimple.mtz 2> /dev/null')
                 os.system('/bin/rm -fr dimple')
+
             elif self.pipeline=='pipedream':
                 if os.path.isfile('init.pdb'):
                     if 'dimple' in os.path.realpath('init.pdb'):
                         self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to pipedream outcome'.format(xtal))
                         self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
-                        os.system('/bin/rm init.pdb')
-                        os.system('/bin/rm init.mtz')
-                        os.system('/bin/rm 2fofc.map')
-                        os.system('/bin/rm fofc.map')
+                        db_dict = self.remove_init(db_dict)
                 self.Logfile.warning('{0!s}: removing pipedream folder & pipedream.pdb/pipedream.mtz'.format(xtal))
                 os.system('/bin/rm pipedream_run_in_progress 2> /dev/null')
                 os.system('/bin/rm pipedream.pdb 2> /dev/null')
@@ -1815,40 +1816,140 @@ class remove_selected_dimple_files(QtCore.QThread):
                     if 'dimple' in os.path.realpath('init.pdb'):
                         self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to phenix.ligand_pipeline outcome'.format(xtal))
                         self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
-                        os.system('/bin/rm init.pdb')
-                        os.system('/bin/rm init.mtz')
-                        os.system('/bin/rm 2fofc.map')
-                        os.system('/bin/rm fofc.map')
+                        db_dict = self.remove_init(db_dict)
                 self.Logfile.warning('{0!s}: removing phenix.ligand_pipeline folder & phenix.ligand_pipeline.pdb/phenix.ligand_pipeline.mtz'.format(xtal))
                 os.system('/bin/rm phenix.ligand_pipeline_run_in_progress 2> /dev/null')
                 os.system('/bin/rm phenix.ligand_pipeline.pdb 2> /dev/null')
                 os.system('/bin/rm phenix.ligand_pipeline.mtz 2> /dev/null')
                 os.system('/bin/rm -fr phenix.ligand_pipeline')
 
-
-
-
-            db_dict['DimpleResolutionHigh']=''
-            db_dict['DimpleRcryst']=''
-            db_dict['DimpleRfree']=''
-            db_dict['DimplePathToPDB']=''
-            db_dict['DimplePathToMTZ']=''
-            db_dict['DimpleReferencePDB']=''
-            db_dict['DimplePANDDAwasRun']='False'
-            db_dict['DimplePANDDAhit']='False'
-            db_dict['DimplePANDDAreject']='False'
-            db_dict['DimplePANDDApath']=''
-            db_dict['DimpleStatus']='pending'
-
-            self.Logfile.insert('{0!s}: updating database'.format(xtal))
-            self.db.update_data_source(xtal,db_dict)
-
+            if db_dict != {}:
+                self.Logfile.insert('{0!s}: updating database'.format(xtal))
+                self.db.update_data_source(xtal,db_dict)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
+    def remove_init(self,db_dict):
+        os.system('/bin/rm init.pdb')
+        os.system('/bin/rm init.mtz')
+        os.system('/bin/rm 2fofc.map')
+        os.system('/bin/rm fofc.map')
+        db_dict['DimpleResolutionHigh']=''
+        db_dict['DimpleRcryst']=''
+        db_dict['DimpleRfree']=''
+        db_dict['DimplePathToPDB']=''
+        db_dict['DimplePathToMTZ']=''
+        db_dict['DimpleReferencePDB']=''
+        db_dict['DimplePANDDAwasRun']='False'
+        db_dict['DimplePANDDAhit']='False'
+        db_dict['DimplePANDDAreject']='False'
+        db_dict['DimplePANDDApath']=''
+        db_dict['DimpleStatus']='pending'
+        return db_dict
+
+
+class set_results_from_selected_pipeline(QtCore.QThread):
+    def __init__(self,sample_list,initial_model_directory,xce_logfile,database_directory,data_source_file,pipeline):
+        QtCore.QThread.__init__(self)
+        self.sample_list=sample_list
+        self.initial_model_directory=initial_model_directory
+        self.xce_logfile=xce_logfile
+        self.Logfile=XChemLog.updateLog(xce_logfile)
+        self.db=XChemDB.data_source(os.path.join(database_directory,data_source_file))
+        self.pipeline = pipeline
+
+    def run(self):
+        progress_step=1
+        if len(self.sample_list) != 0:
+            progress_step=100/float(len(self.sample_list))
+        progress=0
+        self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+        for n,xtal in enumerate(self.sample_list):
+            db_dict={}
+            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
+                self.Logfile.insert('{0!s}: directory does not exist'.format(xtal))
+                continue
+            os.chdir(os.path.join(self.initial_model_directory,xtal))
+
+            if os.path.isfile('init.pdb'):
+                self.Logfile.warning('{0!s}: init.pdb & init.mtz exist'.format(xtal))
+                self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
+                os.system('/bin/rm init.pdb')
+                os.system('/bin/rm init.mtz')
+                os.system('/bin/rm 2fofc.map')
+                os.system('/bin/rm fofc.map')
+                db_dict['DimpleResolutionHigh']=''
+                db_dict['DimpleRcryst']=''
+                db_dict['DimpleRfree']=''
+                db_dict['DimplePathToPDB']=''
+                db_dict['DimplePathToMTZ']=''
+                db_dict['DimpleReferencePDB']=''
+                db_dict['DimplePANDDAwasRun']='False'
+                db_dict['DimplePANDDAhit']='False'
+                db_dict['DimplePANDDAreject']='False'
+                db_dict['DimplePANDDApath']=''
+                db_dict['DimpleStatus']='pending'
+
+            if self.pipeline=='dimple':
+                if os.path.isfile('dimple.pdb'):
+                    os.system('ln -s dimple.pdb init.pdb')
+                    pdb_info=parse().PDBheader('dimple.pdb')
+                    db_dict['DimpleRcryst']=pdb_info['Rcryst']
+                    db_dict['DimpleRfree']=pdb_info['Rfree']
+                    db_dict['DimpleResolutionHigh']=pdb_info['ResolutionHigh']
+                    db_dict['DimpleStatus']='finished'
+                    db_dict['DimplePathToPDB']=os.path.realpath('dimple.pdb')
+                if os.path.isfile('dimple.mtz'):
+                    os.system('ln -s dimple.mtz init.mtz')
+                    db_dict['DimplePathToMTZ']=os.path.realpath('dimple.mtz')
+                if os.path.isfile('dimple/2fofc.map'):
+                    os.system('ln -s dimple/2fofc.map .')
+                if os.path.isfile('dimple/fofc.map'):
+                    os.system('ln -s dimple/fofc.map .')
+            elif self.pipeline=='pipedream':
+                if os.path.isfile('pipedream.pdb'):
+                    os.system('ln -s pipedream.pdb init.pdb')
+                    pdb_info=parse().PDBheader('pipedream.pdb')
+                    db_dict['DimpleRcryst']=pdb_info['Rcryst']
+                    db_dict['DimpleRfree']=pdb_info['Rfree']
+                    db_dict['DimpleResolutionHigh']=pdb_info['ResolutionHigh']
+                    db_dict['DimpleStatus']='finished'
+                    db_dict['DimplePathToPDB']=os.path.realpath('pipedream.pdb')
+                if os.path.isfile('pipedream.mtz'):
+                    os.system('ln -s pipedream.mtz init.mtz')
+                    db_dict['DimplePathToMTZ']=os.path.realpath('pipedream.mtz')
+                if os.path.isfile('pipedream/2fofc.map'):
+                    os.system('ln -s pipedream/2fofc.map .')
+                if os.path.isfile('pipedream/fofc.map'):
+                    os.system('ln -s pipedream/fofc.map .')
+            elif self.pipeline=='phenix.ligand_pipeline':
+                if os.path.isfile('phenix.ligand_pipeline.pdb'):
+                    os.system('ln -s phenix.ligand_pipeline.pdb init.pdb')
+                    pdb_info=parse().PDBheader('phenix.ligand_pipeline.pdb')
+                    db_dict['DimpleRcryst']=pdb_info['Rcryst']
+                    db_dict['DimpleRfree']=pdb_info['Rfree']
+                    db_dict['DimpleResolutionHigh']=pdb_info['ResolutionHigh']
+                    db_dict['DimpleStatus']='finished'
+                    db_dict['DimplePathToPDB']=os.path.realpath('phenix.ligand_pipeline.pdb')
+                if os.path.isfile('phenix.ligand_pipeline.mtz'):
+                    os.system('ln -s phenix.ligand_pipeline.mtz init.mtz')
+                    db_dict['DimplePathToMTZ']=os.path.realpath('phenix.ligand_pipeline.mtz')
+                if os.path.isfile('phenix.ligand_pipeline/2fofc.map'):
+                    os.system('ln -s phenix.ligand_pipeline/2fofc.map .')
+                if os.path.isfile('phenix.ligand_pipeline/fofc.map'):
+                    os.system('ln -s phenix.ligand_pipeline/fofc.map .')
+
+            self.Logfile.insert('{0!s}: updating database'.format(xtal))
+            self.db.update_data_source(xtal,db_dict)
+
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+        self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
 
 

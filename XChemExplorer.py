@@ -2467,6 +2467,25 @@ class XChemExplorer(QtGui.QApplication):
                              self.datasource_menu_reload_samples)
                 self.work_thread.start()
 
+    def set_results_from_selected_pipeline(self):
+        self.update_log.warning('selecting initial refinement results from '+self.preferences['initial_refinement_pipeline'])
+        self.work_thread = XChemThread.set_results_from_selected_pipeline(job_list,
+                                                                    self.initial_model_directory,
+                                                                    self.xce_logfile,
+                                                                    self.database_directory,
+                                                                    self.data_source_file,
+                                                                    self.preferences['initial_refinement_pipeline'])
+        self.explorer_active = 1
+        self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
+        self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
+        self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
+        self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
+        self.connect(self.work_thread, QtCore.SIGNAL("datasource_menu_reload_samples"),
+                             self.datasource_menu_reload_samples)
+        self.work_thread.start()
+
+
+
     def run_xia2_on_selected_datasets(self, overwrite):
 
         # check which programs should be run
@@ -2892,6 +2911,9 @@ class XChemExplorer(QtGui.QApplication):
 
         elif instruction == 'Remove selected initial refinement files':
             self.remove_selected_dimple_files()
+
+        elif instruction == 'Set only results from selected pipeline':
+            self.set_results_from_selected_pipeline()
 
 #        elif instruction == 'Create CIF/PDB/PNG file of ALL compounds':
 #            self.create_cif_pdb_png_files('ALL')
