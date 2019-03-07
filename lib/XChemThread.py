@@ -1322,6 +1322,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         self.n=1
 
+        self.Logfile.insert('running initial refinement with the following pipeline: '+self.pipeline)
+
     def run(self):
         progress_step=1
         if len(self.sample_list) != 0:

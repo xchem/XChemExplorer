@@ -725,6 +725,8 @@ class XChemExplorer(QtGui.QApplication):
             self.preferences_selection_mechanism_combobox.addItem(item)
         self.preferences_selection_mechanism_combobox.currentIndexChanged.connect(
             self.preferences_selection_mechanism_combobox_changed)
+        index = self.preferences_selection_mechanism_combobox.findText(self.preferences['dataset_selection_mechanism'], QtCore.Qt.MatchFixedString)
+        self.preferences_selection_mechanism_combobox.setCurrentIndex(index)
         vbox_select.addWidget(self.preferences_selection_mechanism_combobox)
         vbox.addLayout(vbox_select)
 
@@ -735,6 +737,8 @@ class XChemExplorer(QtGui.QApplication):
             self.preferences_initial_refinement_combobox.addItem(item)
         self.preferences_initial_refinement_combobox.currentIndexChanged.connect(
             self.preferences_initial_refinement_combobox_changed)
+        index = self.preferences_initial_refinement_combobox.findText(self.preferences['initial_refinement_pipeline'], QtCore.Qt.MatchFixedString)
+        self.preferences_initial_refinement_combobox.setCurrentIndex(index)
         vbox_inital_refinement.addWidget(self.preferences_initial_refinement_combobox)
         vbox.addLayout(vbox_inital_refinement)
 
@@ -3622,10 +3626,12 @@ class XChemExplorer(QtGui.QApplication):
     def preferences_selection_mechanism_combobox_changed(self, i):
         text = str(self.preferences_selection_mechanism_combobox.currentText())
         self.preferences['dataset_selection_mechanism'] = text
+        self.update_log.insert('setting datasets selection mechanism to ' + text)
 
     def preferences_initial_refinement_combobox_changed(self, i):
         text = str(self.preferences_initial_refinement_combobox.currentText())
         self.preferences['initial_refinement_pipeline'] = text
+        self.update_log.insert('setting initial refinement pipeline to ' + text)
 
     def preferences_restraints_generation_combobox_changed(self):
         text = str(self.preferences_restraints_generation_combobox.currentText())
