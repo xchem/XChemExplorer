@@ -1513,7 +1513,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         if os.path.isfile(ref_mtz):
             hklref_line=' -hklref {0!s}'.format(ref_mtz)
         else:
-            hklref_line=''
+            hklref_line=' -nofreeref'
 
         Cmds = (
                 '{0!s}\n'.format(top_line)+
@@ -1695,7 +1695,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
                 self.Logfile.insert('using the following command:')
                 self.Logfile.insert('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(self.n), self.max_queue_jobs, self.pipeline))
-                os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(self.n), self.max_queue_jobs, self.pipeline))
+                os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(self.n-1), self.max_queue_jobs, self.pipeline))
             else:
                 self.Logfile.insert("cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
         elif self.external_software['qsub']:
