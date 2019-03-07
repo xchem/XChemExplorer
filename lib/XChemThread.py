@@ -1042,7 +1042,8 @@ class create_png_and_cif_of_compound(QtCore.QThread):
 
 class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
     def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,
-                 data_source_file,max_queue_jobs,xce_logfile, remote_submission, remote_submission_string, dimple_twin_mode):
+                 data_source_file,max_queue_jobs,xce_logfile, remote_submission, remote_submission_string,
+                 dimple_twin_mode,pipeline):
         QtCore.QThread.__init__(self)
         self.sample_list=sample_list
         self.initial_model_directory=initial_model_directory
@@ -1054,7 +1055,7 @@ class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
         self.max_queue_jobs=max_queue_jobs
         self.xce_logfile=xce_logfile
         self.Logfile=XChemLog.updateLog(xce_logfile)
-        self.pipeline='dimple'
+        self.pipeline=pipeline
         self.using_remote_qsub_submission = remote_submission
         self.remote_qsub_submission = remote_submission_string
         self.dimple_twin_mode = dimple_twin_mode
@@ -1299,7 +1300,9 @@ class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
 class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
-    def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,data_source_file,max_queue_jobs,xce_logfile):
+    def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,
+                 data_source_file,max_queue_jobs,xce_logfile, remote_submission, remote_submission_string,
+                 dimple_twin_mode,pipeline):
         QtCore.QThread.__init__(self)
         self.sample_list=sample_list
         self.initial_model_directory=initial_model_directory
@@ -1308,18 +1311,16 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         self.ccp4_scratch_directory=ccp4_scratch_directory
         self.database_directory=database_directory
         self.data_source_file=data_source_file
-
         self.db=XChemDB.data_source(os.path.join(self.database_directory,self.data_source_file))
-        self.database=os.path.join(self.database_directory,self.data_source_file)
-
         self.max_queue_jobs=max_queue_jobs
         self.xce_logfile=xce_logfile
         self.Logfile=XChemLog.updateLog(xce_logfile)
+        self.pipeline=pipeline
+        self.using_remote_qsub_submission = remote_submission
+        self.remote_qsub_submission = remote_submission_string
+        self.dimple_twin_mode = dimple_twin_mode
 
-        self.n=0
-
-        self.pipeline='dimple'
-
+        self.n=1
 
     def run(self):
         progress_step=1
@@ -1345,9 +1346,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 if self.pipeline=='dimple':
                     self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
                 elif self.pipeline=='pipedream':
-                    self.prepare_pipedream_shell_script()
+                    self.prepare_pipedream_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
                 elif self.pipeline=='phenix.ligand_pipeline':
-                    self.prepare_phenix_ligand_pipeline_shell_script()
+                    self.prepare_phenix_ligand_pipeline_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
             else:
                 self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
 
@@ -1417,11 +1418,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
                 '\n'
-                'module unload ccp4\n'
-                'source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
                 +ccp4_scratch+
                 '\n'
-                '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(database,xtal,'DimpleStatus','running') +
+                '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(os.path.join(self.database_directory,self.data_source_file),xtal,'DimpleStatus','running') +
                 '\n'
                 'phenix.ligand_pipeline %s %s' %(ref_pdb,mtzin)+
                 ' mr=False'
@@ -1435,8 +1434,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
-                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb dimple.pdb'
-                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz dimple.mtz'
+                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb phenix.ligand_pipeline.pdb'
+                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz phenix.ligand_pipeline.mtz'
+                '\n'
+                'ln -s phenix.ligand_pipeline.pdb dimple.pdb\n'
+                'ln -s phenix.ligand_pipeline.mtz dimple.mtz\n'
                 '\n'
                 'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
                 ' labin F1=2FOFCWT PHI=PH2FOFCWT\n'
@@ -1453,11 +1455,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 )
 
         os.chdir(self.ccp4_scratch_directory)
-        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(n+1)),'w')
+        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)),'w')
         f.write(Cmds)
         f.close()
+        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)))
         self.n+=1
-        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(n+1)))
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
@@ -1524,7 +1526,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 +ccp4_scratch+
                 '\n'
-                '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(database,xtal,'DimpleStatus','running') +
+                '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(os.path.join(self.database_directory,self.data_source_file),xtal,'DimpleStatus','running') +
                 '\n'
                 'pipedream '
                 ' -d pipedreamDir'
@@ -1535,8 +1537,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
-                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb dimple.pdb'
-                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz dimple.mtz'
+                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb pipedream.pdb'
+                'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz pipedream.mtz'
+                '\n'
+                'ln -s pipedream.pdb dimple.pdb\n'
+                'ln -s pipedream.mtz dimple.mtz\n'
                 '\n'
                 'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
                 ' labin F1=FWT PHI=PHWT\n'
@@ -1553,11 +1558,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 )
 
         os.chdir(self.ccp4_scratch_directory)
-        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(n+1)),'w')
+        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)),'w')
         f.write(Cmds)
         f.close()
+        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)))
         self.n+=1
-        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(n+1)))
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
@@ -1639,7 +1644,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 +ccp4_scratch+
                 '\n'
-                '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(database,xtal,'DimpleStatus','running') +
+                '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(os.path.join(self.database_directory,self.data_source_file),xtal,'DimpleStatus','running') +
                 '\n'
                 'dimple --no-cleanup %s %s %s %s dimple\n' %(mtzin,ref_pdb,ref_mtz,ref_cif) +
                 '\n'
@@ -1664,11 +1669,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 )
 
         os.chdir(self.ccp4_scratch_directory)
-        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(n+1)),'w')
+        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)),'w')
         f.write(Cmds)
         f.close()
+        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)))
         self.n+=1
-        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(n+1)))
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
@@ -1696,14 +1701,14 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         elif self.external_software['qsub']:
             self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(self.n))))
             self.Logfile.insert('WARNING: this could potentially lead to a crash...')
-            for i in range(self.n):
-                self.Logfile.insert('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(str(i+1), self.pipeline))
-                os.system('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(str(i+1), self.pipeline))
+            for i in range(1,self.n):
+                self.Logfile.insert('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
+                os.system('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
         else:
-            self.Logfile.insert('running {0!s} consecutive {1!s} jobs on your local machine'.format(*(self.pipeline)))
-            for i in range(self.n):
-                self.Logfile.insert('starting xce_{0!s}_{1!s}.sh'.format(str(i+1), self.pipeline))
-                os.system('./xce_{0!s}_{1!s}.sh'.format(str(i+1), self.pipeline))
+            self.Logfile.insert('running {0!s} consecutive {1!s} jobs on your local machine'.format(str(self.n-1),self.pipeline))
+            for i in range(1,self.n):
+                self.Logfile.insert('starting xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
+                os.system('./xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
 
 
 

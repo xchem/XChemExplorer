@@ -728,6 +728,16 @@ class XChemExplorer(QtGui.QApplication):
         vbox_select.addWidget(self.preferences_selection_mechanism_combobox)
         vbox.addLayout(vbox_select)
 
+        vbox_inital_refinement = QtGui.QVBoxLayout()
+        vbox_inital_refinement.addWidget(QtGui.QLabel('Initial Refinement Pipeline:'))
+        self.preferences_initial_refinement_combobox = QtGui.QComboBox()
+        for item in self.preferences_initial_refinement_pipeline:
+            self.preferences_initial_refinement_combobox.addItem(item)
+        self.preferences_initial_refinement_combobox.currentIndexChanged.connect(
+            self.preferences_initial_refinement_combobox_changed)
+        vbox_inital_refinement.addWidget(self.preferences_initial_refinement_combobox)
+        vbox.addLayout(vbox_inital_refinement)
+
         vbox_restraints = QtGui.QVBoxLayout()
         vbox_restraints.addWidget(QtGui.QLabel('Restraints generation program:'))
         self.preferences_restraints_generation_combobox = QtGui.QComboBox()
@@ -2598,7 +2608,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.update_log.insert(
                     'you can change this in the PREFERENCES menu, but be warned that to high a number might break the cluster!')
             self.update_log.insert('preparing input files for DIMPLE...')
-            self.work_thread = XChemThread.run_dimple_on_all_autoprocessing_files(job_list,
+            self.work_thread = XChemThread.run_dimple_on_all_autoprocessing_files_new(job_list,
                                                                                   self.initial_model_directory,
                                                                                   self.external_software,
                                                                                   self.ccp4_scratch_directory,
@@ -2608,7 +2618,8 @@ class XChemExplorer(QtGui.QApplication):
                                                                                   self.xce_logfile,
                                                                                   self.using_remote_qsub_submission,
                                                                                   self.remote_qsub_submission,
-                                                                                  self.preferences['dimple_twin_mode']  )
+                                                                                  self.preferences['dimple_twin_mode'],
+                                                                                  self.preferences['initial_refinement_pipeline'])
             self.explorer_active = 1
             self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
             self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
@@ -3611,6 +3622,10 @@ class XChemExplorer(QtGui.QApplication):
     def preferences_selection_mechanism_combobox_changed(self, i):
         text = str(self.preferences_selection_mechanism_combobox.currentText())
         self.preferences['dataset_selection_mechanism'] = text
+
+    def preferences_initial_refinement_combobox_changed(self, i):
+        text = str(self.preferences_initial_refinement_combobox.currentText())
+        self.preferences['initial_refinement_pipeline'] = text
 
     def preferences_restraints_generation_combobox_changed(self):
         text = str(self.preferences_restraints_generation_combobox.currentText())

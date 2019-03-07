@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.4'
+        xce_object.xce_version = 'v1.3.5'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -214,6 +214,10 @@ class setup():
         xce_object.max_queue_jobs = 100
         xce_object.dimple_twin_mode = False
 
+        xce_object.preferences_initial_refinement_pipeline = [  'dimple',
+                                                                'pipedream',
+                                                                'phenix.ligand_pipeline'    ]
+
         xce_object.preferences = {'processed_data_to_copy':                     'mtz_log_only',
                                   'dataset_selection_mechanism':                'IsigI*Comp*UniqueRefl',
                                   'allowed_unitcell_difference_percent':        12,
@@ -221,7 +225,9 @@ class setup():
                                   'acceptable_low_resolution_Rmerge':           0.1,
                                   'filename_root':                              '${samplename}',
                                   'max_queue_jobs':                             100,
-                                  'dimple_twin_mode':                           False   }
+                                  'dimple_twin_mode':                           False,
+                                  'initial_refinement_pipeline':                'dimple'    }
+
 
         ## settings
 
