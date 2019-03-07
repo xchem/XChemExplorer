@@ -1394,7 +1394,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             os.system('/bin/rm -fr phenix.ligand_pipeline')
         os.mkdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
         os.chdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
-        os.system('touch dimple_run_in_progress')
+        os.system('touch phenix.ligand_pipeline_run_in_progress')
         os.system('/bin/rm final.mtz 2> /dev/null')
         os.system('/bin/rm final.pdb 2> /dev/null')
 
@@ -1445,11 +1445,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb phenix.ligand_pipeline.pdb\n'
                 'ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz phenix.ligand_pipeline.mtz\n'
                 '\n'
-                '/bin/rm dimple.pdb\n'
-                '/bin/rm dimple.mtz\n'
+                '/bin/rm init.pdb\n'
+                '/bin/rm init.mtz\n'
                 '\n'
-                'ln -s phenix.ligand_pipeline.pdb dimple.pdb\n'
-                'ln -s phenix.ligand_pipeline.mtz dimple.mtz\n'
+                'ln -s phenix.ligand_pipeline.pdb init.pdb\n'
+                'ln -s phenix.ligand_pipeline.mtz init.mtz\n'
                 '\n'
                 '/bin/rm 2fofc.map\n'
                 '/bin/rm fofc.map\n'
@@ -1465,7 +1465,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)+
                 '\n'
-                '/bin/rm dimple_run_in_progress\n'
+                '/bin/rm phenix.ligand_pipeline_run_in_progress\n'
                 )
 
         os.chdir(self.ccp4_scratch_directory)
@@ -1488,7 +1488,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             os.system('/bin/rm -fr pipedream')
         os.mkdir(os.path.join(self.initial_model_directory,xtal,'pipedream'))
         os.chdir(os.path.join(self.initial_model_directory,xtal,'pipedream'))
-        os.system('touch dimple_run_in_progress')
+        os.system('touch pipedream_run_in_progress')
         os.system('/bin/rm final.mtz 2> /dev/null')
         os.system('/bin/rm final.pdb 2> /dev/null')
 
@@ -1541,11 +1541,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 'ln -s pipedream/pipedreamDir/refine/refine.pdb pipedream.pdb\n'
                 'ln -s pipedream/pipedreamDir/refine/refine.mtz pipedream.mtz\n'
                 '\n'
-                '/bin/rm dimple.pdb\n'
-                '/bin/rm dimple.mtz\n'
+                '/bin/rm init.pdb\n'
+                '/bin/rm init.mtz\n'
                 '\n'
-                'ln -s pipedream.pdb dimple.pdb\n'
-                'ln -s pipedream.mtz dimple.mtz\n'
+                'ln -s pipedream.pdb init.pdb\n'
+                'ln -s pipedream.mtz init.mtz\n'
                 '\n'
                 '/bin/rm 2fofc.map\n'
                 '/bin/rm fofc.map\n'
@@ -1561,7 +1561,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '$CCP4/libexec/python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)+
                 '\n'
-                '/bin/rm dimple_run_in_progress\n'
+                '/bin/rm pipedream_run_in_progress\n'
                 )
 
         os.chdir(self.ccp4_scratch_directory)
@@ -1601,11 +1601,10 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
             os.mkdir(os.path.join(self.initial_model_directory,xtal))
-        if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
-            os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
-        if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc)):
-            os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
-        os.chdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
+        os.chdir(os.path.join(self.initial_model_directory,xtal))
+        if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
+            os.system('/bin/rm -fr dimple')
+        os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
         os.system('touch dimple_run_in_progress')
         os.system('/bin/rm final.mtz 2> /dev/null')
         os.system('/bin/rm final.pdb 2> /dev/null')
@@ -1625,30 +1624,25 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         if os.path.isdir('/dls'):
             ccp4_scratch+='module load ccp4\n'
 
-        if 'dimple_rerun_on_selected_file' in visit_run_autoproc:
-            additional_cmds = (
-                            'cd {0!s}\n'.format(os.path.join(self.initial_model_directory,xtal)) +
-                            '/bin/rm dimple.pdb\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.pdb dimple.pdb\n'
-                            '/bin/rm dimple.mtz\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.mtz dimple.mtz\n'
-                            '/bin/rm 2fofc.map\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/2fofc.map .\n'
-                            '/bin/rm fofc.map\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/fofc.map .\n'
-                            '\n'
-                            '$CCP4/libexec/python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
-                            ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)  )
+        hkl = any_reflection_file(file_name=mtzin)
+        miller_arrays = hkl.as_miller_arrays()
+        mtzFile = miller_arrays[0]
 
+        if mtzFile.space_group_info().symbol_and_number() ==  'R 3 :H (No. 146)':
+            symNoAbsence = 'H3'
         else:
-            additional_cmds=''
+            symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
+
+        twin = ''
+        if self.dimple_twin_mode:
+            twin = "--refmac-key 'TWIN'"
 
         Cmds = (
                 '{0!s}\n'.format(top_line)+
                 '\n'
                 'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
                 '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple') +
                 '\n'
                 'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
                 '\n'
@@ -1656,26 +1650,67 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(os.path.join(self.database_directory,self.data_source_file),xtal,'DimpleStatus','running') +
                 '\n'
-                'dimple --no-cleanup %s %s %s %s dimple\n' %(mtzin,ref_pdb,ref_mtz,ref_cif) +
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple') +
                 '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc,'dimple') +
+                'unique hklout unique.mtz << eof\n'
+                ' cell %s\n' %str([round(float(i),2) for i in mtzFile.unit_cell().parameters()]).replace('[','').replace(']','')+
+                ' symmetry %s\n' %symNoAbsence+
+                ' resolution %s\n' %str(round(float(mtzFile.d_min()),3))+
+                'eof\n'
                 '\n'
-                'fft hklin final.mtz mapout 2fofc.map << EOF\n'
+#                    'freerflag hklin unique.mtz hklout free.mtz > freerflag.log\n'
+                '\n'
+                'sftools << eof > sftools.log\n'
+                ' read unique.mtz\n'
+                ' calc col F = 10.0\n'
+                ' calc col SIGF = 1.0\n'
+                ' write sftools.mtz\n'
+                'eof\n'
+                '\n'
+                'cad hklin1 sftools.mtz hklin2 %s hklout %s.999A.mtz << eof\n' %(mtzin,xtal) +
+                ' monitor BRIEF\n'
+                ' labin file 1 E1=F E2=SIGF\n'
+                ' labout file 1 E1=F_unique E2=SIGF_unique\n'
+                ' labin file 2 ALL\n'
+                ' resolution file 1 999.0 %s\n' %str(round(float(mtzFile.d_min()),2))+
+                'eof\n'
+                '\n'
+                "dimple --no-cleanup %s.999A.mtz %s %s %s %s dimple\n" %(xtal,ref_pdb,ref_mtz,ref_cif,twin) +
+                '\n'
+#                'dimple --no-cleanup %s %s %s %s dimple\n' %(mtzin,ref_pdb,ref_mtz,ref_cif) +
+#                '\n'
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
+                '\n'
+                '/bin/rm dimple.pdb\n'
+                '/bin/rm dimple.mtz\n'
+                '\n'
+                'ln -s dimple/dimple/final.pdb dimple.pdb\n'
+                'ln -s dimple/dimple/final.mtz dimple.mtz\n'
+                '\n'
+                '/bin/rm init.pdb\n'
+                '/bin/rm init.mtz\n'
+                '\n'
+                'ln -s dimple.pdb init.pdb\n'
+                'ln -s dimple.mtz init.mtz\n'
+                '\n'
+                '/bin/rm 2fofc.map\n'
+                '/bin/rm fofc.map\n'
+                '\n'
+                'fft hklin dimple.mtz mapout 2fofc.map << EOF\n'
                 ' labin F1=FWT PHI=PHWT\n'
                 'EOF\n'
                 '\n'
-                'fft hklin final.mtz mapout fofc.map << EOF\n'
+                'fft hklin dimple.mtz mapout fofc.map << EOF\n'
                 ' labin F1=DELFWT PHI=PHDELWT\n'
                 'EOF\n'
                 '\n'
-                +additional_cmds+
+                '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
+                ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory) +
                 '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
                 '\n'
                 '/bin/rm dimple_run_in_progress\n'
                 '\n'
-                'ln -s dimple/final.pdb .\n'
-                'ln -s dimple/final.mtz .\n'
                 )
 
         os.chdir(self.ccp4_scratch_directory)
