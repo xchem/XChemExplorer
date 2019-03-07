@@ -1393,10 +1393,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline')):
             os.system('/bin/rm -fr phenix.ligand_pipeline')
         os.mkdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
-        os.chdir(os.path.join(self.initial_model_directory,xtal,'phenix.ligand_pipeline'))
         os.system('touch phenix.ligand_pipeline_run_in_progress')
-        os.system('/bin/rm final.mtz 2> /dev/null')
-        os.system('/bin/rm final.pdb 2> /dev/null')
 
         if self.queueing_system_available:
             top_line='#PBS -joe -N XCE_{0!s}\n'.format(self.pipeline)
@@ -1487,10 +1484,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             os.chdir(os.path.join(self.initial_model_directory,xtal))
             os.system('/bin/rm -fr pipedream')
         os.mkdir(os.path.join(self.initial_model_directory,xtal,'pipedream'))
-        os.chdir(os.path.join(self.initial_model_directory,xtal,'pipedream'))
         os.system('touch pipedream_run_in_progress')
-        os.system('/bin/rm final.mtz 2> /dev/null')
-        os.system('/bin/rm final.pdb 2> /dev/null')
 
         if self.queueing_system_available:
             top_line='#PBS -joe -N XCE_{0!s}\n'.format(self.pipeline)
@@ -1707,7 +1701,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory) +
                 '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
                 '/bin/rm dimple_run_in_progress\n'
                 '\n'
