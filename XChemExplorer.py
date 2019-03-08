@@ -2444,7 +2444,7 @@ class XChemExplorer(QtGui.QApplication):
 
         if job_list:
             msgBox = QtGui.QMessageBox()
-            msgBox.setText("Do you really want to delete {0!s} Dimple files?".format(len(job_list)))
+            msgBox.setText("Do you really want to delete {0!s} {1!s} files?".format(len(job_list),self.preferences['initial_refinement_pipeline']))
             msgBox.addButton(QtGui.QPushButton('Go'), QtGui.QMessageBox.YesRole)
             msgBox.addButton(QtGui.QPushButton('Cancel'), QtGui.QMessageBox.RejectRole)
             reply = msgBox.exec_();
@@ -2621,8 +2621,8 @@ class XChemExplorer(QtGui.QApplication):
 
         msgBox = QtGui.QMessageBox()
         msgBox.setText(
-            "Do you really want to run {0!s} Dimple jobs?\nNote: we will not run more than 100 at once on the cluster!".format(
-                len(job_list)))
+            "Do you really want to run {0!s} {1!s} jobs?\nNote: we will not run more than 100 at once on the cluster!".format(
+                len(job_list),self.preferences['initial_refinement_pipeline']))
         msgBox.addButton(QtGui.QPushButton('Go'), QtGui.QMessageBox.YesRole)
         msgBox.addButton(QtGui.QPushButton('Cancel'), QtGui.QMessageBox.RejectRole)
         reply = msgBox.exec_();

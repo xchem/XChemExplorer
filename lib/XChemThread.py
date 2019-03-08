@@ -1529,11 +1529,13 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(os.path.join(self.database_directory,self.data_source_file),xtal,'DimpleStatus','running') +
                 '\n'
+                'pointless hklin {0!s} xyzin {1!s} hklout pointless.mtz > pointless.log\n'.format(mtzin,ref_pdb)+
+                '\n'
                 'pipedream '
                 ' -d pipedreamDir'
                 ' -xyzin %s' %ref_pdb+
                 hklref_line+
-                ' -hklin {0!s}'.format(mtzin)+
+                ' -hklin pointless.mtz'
                 ' -keepwater\n'
                 '\n'
                 'fft hklin pipedreamDir/refine/refine.mtz mapout 2fofc.map << EOF\n'
