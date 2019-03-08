@@ -1411,9 +1411,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch+='module load phenix\n'
             ccp4_scratch+='module load ccp4\n'
 
-        mtz_column_dict=mtztools(mtzin).get_all_columns_as_dict()
+        mtz_column_list=mtztools(mtzin).get_all_columns_as_list()
         rfree = ''
-        if 'FreeR_flag' in mtz_column_dict['RFREE']:
+        if 'FreeR_flag' in mtz_column_list:
             rfree = ' xray_data.r_free_flags.label="FreeR_flag"'
 
         Cmds = (

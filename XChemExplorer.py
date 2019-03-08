@@ -2621,8 +2621,8 @@ class XChemExplorer(QtGui.QApplication):
 
         msgBox = QtGui.QMessageBox()
         msgBox.setText(
-            "Do you really want to run {0!s} {1!s} jobs?\nNote: we will not run more than 100 at once on the cluster!".format(
-                len(job_list),self.preferences['initial_refinement_pipeline']))
+            "Do you really want to run {0!s} {1!s} jobs?\nNote: we will not run more than {2!s} at once on the cluster!".format(
+                len(job_list),self.preferences['initial_refinement_pipeline'],self.preferences['max_queue_jobs']))
         msgBox.addButton(QtGui.QPushButton('Go'), QtGui.QMessageBox.YesRole)
         msgBox.addButton(QtGui.QPushButton('Cancel'), QtGui.QMessageBox.RejectRole)
         reply = msgBox.exec_();

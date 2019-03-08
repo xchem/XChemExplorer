@@ -1283,6 +1283,9 @@ class mtztools:
 
         return column_dict
 
+    def get_all_columns_as_list(self):
+        column_list = self.iotbxMTZ.column_labels()
+        return column_list
 
 class queue:
 
