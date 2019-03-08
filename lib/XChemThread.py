@@ -1896,6 +1896,7 @@ class set_results_from_selected_pipeline(QtCore.QThread):
 
             if self.pipeline=='dimple':
                 if os.path.isfile('dimple.pdb'):
+                    self.Logfile.insert('%s: selecting output from dimple' %xtal)
                     os.system('ln -s dimple.pdb init.pdb')
                     pdb_info=parse().PDBheader('dimple.pdb')
                     db_dict['DimpleRcryst']=pdb_info['Rcryst']
@@ -1912,6 +1913,7 @@ class set_results_from_selected_pipeline(QtCore.QThread):
                     os.system('ln -s dimple/fofc.map .')
             elif self.pipeline=='pipedream':
                 if os.path.isfile('pipedream.pdb'):
+                    self.Logfile.insert('%s: selecting output from pipedream' %xtal)
                     os.system('ln -s pipedream.pdb init.pdb')
                     pdb_info=parse().PDBheader('pipedream.pdb')
                     db_dict['DimpleRcryst']=pdb_info['Rcryst']
@@ -1928,6 +1930,7 @@ class set_results_from_selected_pipeline(QtCore.QThread):
                     os.system('ln -s pipedream/fofc.map .')
             elif self.pipeline=='phenix.ligand_pipeline':
                 if os.path.isfile('phenix.ligand_pipeline.pdb'):
+                    self.Logfile.insert('%s: selecting output from phenix.ligand_pipeline' %xtal)
                     os.system('ln -s phenix.ligand_pipeline.pdb init.pdb')
                     pdb_info=parse().PDBheader('phenix.ligand_pipeline.pdb')
                     db_dict['DimpleRcryst']=pdb_info['Rcryst']

@@ -2469,6 +2469,12 @@ class XChemExplorer(QtGui.QApplication):
 
     def set_results_from_selected_pipeline(self):
         self.update_log.warning('selecting initial refinement results from '+self.preferences['initial_refinement_pipeline'])
+
+        job_list = []
+        for xtal in sorted(self.initial_model_dimple_dict):
+            if self.initial_model_dimple_dict[xtal][0].isChecked():
+                job_list.append(xtal)
+
         self.work_thread = XChemThread.set_results_from_selected_pipeline(job_list,
                                                                     self.initial_model_directory,
                                                                     self.xce_logfile,
