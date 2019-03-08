@@ -1796,18 +1796,21 @@ class remove_selected_dimple_files(QtCore.QThread):
                         self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to dimple outcome'.format(xtal))
                         self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
                         db_dict = self.remove_init(db_dict)
+                else:
+                    db_dict = self.remove_init(db_dict)
                 self.Logfile.warning('{0!s}: removing dimple folder & dimple.pdb/dimple.mtz'.format(xtal))
                 os.system('/bin/rm dimple_run_in_progress 2> /dev/null')
                 os.system('/bin/rm dimple.pdb 2> /dev/null')
                 os.system('/bin/rm dimple.mtz 2> /dev/null')
                 os.system('/bin/rm -fr dimple')
-
             elif self.pipeline=='pipedream':
                 if os.path.isfile('init.pdb'):
                     if 'dimple' in os.path.realpath('init.pdb'):
                         self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to pipedream outcome'.format(xtal))
                         self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
                         db_dict = self.remove_init(db_dict)
+                else:
+                    db_dict = self.remove_init(db_dict)
                 self.Logfile.warning('{0!s}: removing pipedream folder & pipedream.pdb/pipedream.mtz'.format(xtal))
                 os.system('/bin/rm pipedream_run_in_progress 2> /dev/null')
                 os.system('/bin/rm pipedream.pdb 2> /dev/null')
@@ -1819,6 +1822,8 @@ class remove_selected_dimple_files(QtCore.QThread):
                         self.Logfile.warning('{0!s}: init.pdb & init.mtz is linked to phenix.ligand_pipeline outcome'.format(xtal))
                         self.Logfile.warning('{0!s}: removing init.pdb & init.mtz & (2)fofc maps'.format(xtal))
                         db_dict = self.remove_init(db_dict)
+                else:
+                    db_dict = self.remove_init(db_dict)
                 self.Logfile.warning('{0!s}: removing phenix.ligand_pipeline folder & phenix.ligand_pipeline.pdb/phenix.ligand_pipeline.mtz'.format(xtal))
                 os.system('/bin/rm phenix.ligand_pipeline_run_in_progress 2> /dev/null')
                 os.system('/bin/rm phenix.ligand_pipeline.pdb 2> /dev/null')
