@@ -1020,6 +1020,13 @@ class GUI(object):
                                                                                  self.pdb_style))
                 XChemUtils.parse().update_datasource_with_phenix_validation_summary(self.xtalID, self.data_source,
                                                                                     '')  # '' because file does not exist
+            elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.pdb')):
+                print '==> XCE: updating quality indicators in data source for ' + self.xtalID
+                XChemUtils.parse().update_datasource_with_PDBheader(self.xtalID, self.data_source,
+                                                                    os.path.join(self.project_directory, self.xtalID,
+                                                                                 'init.pdb'))
+                XChemUtils.parse().update_datasource_with_phenix_validation_summary(self.xtalID, self.data_source,
+                                                                                    '')  # '' because file does not exist
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.pdb')):
                 print '==> XCE: updating quality indicators in data source for ' + self.xtalID
                 XChemUtils.parse().update_datasource_with_PDBheader(self.xtalID, self.data_source,
@@ -1116,6 +1123,10 @@ class GUI(object):
                 os.chdir(os.path.join(self.project_directory, self.xtalID))
                 imol = coot.handle_read_draw_molecule_with_recentre(
                     os.path.join(self.project_directory, self.xtalID, self.pdb_style), 0)
+            elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.pdb')):
+                os.chdir(os.path.join(self.project_directory, self.xtalID))
+                imol = coot.handle_read_draw_molecule_with_recentre(
+                    os.path.join(self.project_directory, self.xtalID, 'init.pdb'), 0)
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.pdb')):
                 os.chdir(os.path.join(self.project_directory, self.xtalID))
                 imol = coot.handle_read_draw_molecule_with_recentre(
@@ -1162,6 +1173,8 @@ class GUI(object):
             #                        os.symlink('dimple.mtz',self.mtz_style)
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.mtz_style)):
                 coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, self.mtz_style))
+            elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.mtz')):
+                coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, 'init.mtz'))
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.mtz')):
                 coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, 'dimple.mtz'))
 
@@ -1297,6 +1310,11 @@ class GUI(object):
             # note: the user has to make sure that the ligand file was merged into main file
             for item in coot_utils_XChem.molecule_number_list():
                 if coot.molecule_name(item).endswith(self.pdb_style):
+                    coot.write_pdb_file(item,
+                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
+                                                     'in.pdb'))
+                    break
+                elif coot.molecule_name(item).endswith('init.pdb'):
                     coot.write_pdb_file(item,
                                         os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
                                                      'in.pdb'))
