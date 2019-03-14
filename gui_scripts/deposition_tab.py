@@ -27,195 +27,173 @@ class DepositionTab():
         scrollContent.setLayout(scrollLayout)
 
         # deposition page heading
-        deposition_page_heading = self.layout_funcs.add_depo_heading('HTML export, GROUND-STATE deposition & ZENODO upload')
-        deposition_page_heading.setStyleSheet("font: 40pt Arial Bold")
+        deposition_page_heading = self.layout_funcs.add_depo_heading('Group deposition of bound-state structures & ground-state model')
+        deposition_page_heading.setStyleSheet("font: bold 40pt Arial")
 
-#        # introduction text
-#        introduction_text = self.layout_funcs.add_depo_text(XChemToolTips.html_summary_introduction())
-#
-#        # zenodo example image
-#        zenodo_image = QtGui.QLabel()
-#        zenodo_pixmap = QtGui.QPixmap(os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'html_summary_page.png'))
-#        zenodo_image.setPixmap(zenodo_pixmap)
-#
-#        # export html directory heading
-#        export_html_heading = self.layout_funcs.add_depo_heading('1. Specify HTML export directory in the settings tab')
-#
-#        # export html directory text
-#        export_html_text = self.layout_funcs.add_depo_text(XChemToolTips.html_export_directory_background())
-#
-#        # default for dls
-#        dls_dir_text = self.layout_funcs.add_depo_text(
-#            'Note: default for labxchem project at DLS is <labxchem_directory>/processing/html.')
-#
-#        # user specific directory
-#        usr_dir_text = self.layout_funcs.add_depo_text('In your case: ' + xce_object.html_export_directory)
-#
-#        # html prep heading
-#        html_prep_heading = self.layout_funcs.add_depo_heading("2. Prepare files for HTML export")
-#
-#        # html prep test
-#        html_prep_text = self.layout_funcs.add_depo_text(XChemToolTips.html_export_step())
+        deposition_page_introduction = QtGui.QLabel(XChemToolTips.deposition_introduction())
+        deposition_page_introduction_link = QtGui.QLabel(XChemToolTips.deposition_introduction_link())
+        deposition_page_introduction_link.setOpenExternalLinks(True)
 
-        deposition_html_heading = self.layout_funcs.add_depo_heading('HTML export')
-        deposition_html_heading.setStyleSheet("font: 20pt Arial Bold")
+        #
+        # bound-state depostion
+        #
 
-        html_export_button = QtGui.QPushButton('Export to HTML')
-        html_export_button.clicked.connect(xce_object.export_to_html)
-        html_export_button.setMaximumWidth(200)
+        deposition_bound_state_heading = self.layout_funcs.add_depo_heading('Group deposition of bound-state structures')
+        deposition_bound_state_heading.setStyleSheet("font: bold 20pt Arial")
 
-        deposition_ground_state_heading = self.layout_funcs.add_depo_heading('ground-state deposition')
-        deposition_ground_state_heading.setStyleSheet("font: 20pt Arial Bold")
+        deposition_bound_state_prerequisites = self.layout_funcs.add_depo_heading('Prerequisites')
+        deposition_bound_state_prerequisites.setStyleSheet("font: italic bold 17pt Arial")
 
-        ground_state_pdb_button_label_help = QtGui.QLabel('1. Select ground-state PDB file')
-        ground_state_pdb_button = QtGui.QPushButton('Select ground-state PDB file')
+        deposition_bound_state_prerequisites_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_bound_state_prerequisites())
+
+        deposition_bound_state_preparation = self.layout_funcs.add_depo_heading('Procedure')
+        deposition_bound_state_preparation.setStyleSheet("font: italic bold 17pt Arial ")
+
+        deposition_bound_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_bound_state_preparation_step_one_text())
+
+        prepare_mmcif_button = QtGui.QPushButton('prepare mmcif')
+        prepare_mmcif_button.clicked.connect(xce_object.prepare_models_for_deposition_ligand_bound)
+        prepare_mmcif_button.setMaximumWidth(200)
+
+        deposition_bound_state_preparation_step_two_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_bound_state_preparation_step_two_text())
+
+        copy_mmcif_button = QtGui.QPushButton('copy mmcif')
+        copy_mmcif_button.clicked.connect(xce_object.prepare_for_group_deposition_upload_ligand_bound)
+        copy_mmcif_button.setMaximumWidth(200)
+
+        pdb_group_deposition_instruction_one = self.layout_funcs.add_depo_text(XChemToolTips.pdb_group_deposition_instruction_one())
+
+        pdb_group_deposition_link = QtGui.QLabel(XChemToolTips.pdb_group_deposition_link())
+        pdb_group_deposition_link.setOpenExternalLinks(True)
+
+        pdb_group_deposition_instruction_two = self.layout_funcs.add_depo_text(XChemToolTips.pdb_group_deposition_instruction_two())
+
+
+        #
+        # ground-state depostion
+        #
+
+        deposition_ground_state_heading = self.layout_funcs.add_depo_heading('Group deposition of ground-state model')
+        deposition_ground_state_heading.setStyleSheet("font: bold 20pt Arial")
+
+
+
+        deposition_ground_state_prerequisites = self.layout_funcs.add_depo_heading('Prerequisites')
+        deposition_ground_state_prerequisites.setStyleSheet("font: italic bold 17pt Arial")
+
+        deposition_ground_state_prerequisites_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_prerequisites())
+
+        deposition_ground_state_preparation = self.layout_funcs.add_depo_heading('Procedure')
+        deposition_ground_state_preparation.setStyleSheet("font: italic bold 17pt Arial ")
+
+        deposition_ground_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_one_text())
+
+        ground_state_pdb_button = QtGui.QPushButton('Select PDB file')
         ground_state_pdb_button.clicked.connect(xce_object.select_ground_state_pdb)
-        ground_state_pdb_button.setMaximumWidth(400)
+        ground_state_pdb_button.setMaximumWidth(200)
         xce_object.ground_state_pdb_button_label = QtGui.QLabel('')
 
-        ground_state_log_info = (
-            'IMPORTANT:\n'
-            'Make sure that a file or symlink to an AIMLESS logile with the same name root as your ground-state PDB file\n'
-            'is present in the same folder. This is currently not generated automatically! '
-        )
-        ground_state_log_info_label = QtGui.QLabel(ground_state_log_info)
+        deposition_ground_state_log_info = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_log_info())
 
-        ground_state_mtz_button_label_help = QtGui.QLabel('2. Select ground-state MTZ file')
-        ground_state_mtz_button = QtGui.QPushButton('Select ground-state MTZ file')
+        deposition_ground_state_preparation_step_two_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_two_text())
+
+        ground_state_mtz_button = QtGui.QPushButton('Select MTZ file')
         ground_state_mtz_button.clicked.connect(xce_object.select_ground_state_mtz)
-        ground_state_mtz_button.setMaximumWidth(400)
+        ground_state_mtz_button.setMaximumWidth(200)
         xce_object.ground_state_mtz_button_label = QtGui.QLabel('')
 
-        warning_label = QtGui.QLabel('3. Please check the settings tab that you have selected the correct pandda directory')
+        deposition_ground_state_preparation_step_three_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_three_text())
 
-        add_ground_state_db_button_help = QtGui.QLabel('4. Add the ground-state entry to the database')
-        add_ground_state_db_button = QtGui.QPushButton('Add ground-state to database')
+        deposition_ground_state_preparation_step_four_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_four_text())
+
+        add_ground_state_db_button = QtGui.QPushButton('Add to database')
         add_ground_state_db_button.clicked.connect(xce_object.add_ground_state_db)
-        add_ground_state_db_button.setMaximumWidth(400)
+        add_ground_state_db_button.setMaximumWidth(200)
 
-        further_instructions = (
-            '5. Enter meta-data for ground-state model:\n'
-            '   - Open "Deposition -> Edit information"\n'
-            '   - Fill out form or load .deposit file\n'
-            '   - Press "Save to Database"\n'
-            '   - Press "OK"\n'        )
-        further_instructions_label = QtGui.QLabel(further_instructions)
+        deposition_ground_state_preparation_step_five_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_five_text())
 
-        prepare_ground_state_mmcif_button_help = QtGui.QLabel('6. Prepare the ground-state mmcif file\n    (is saved to pandda directory')
-        prepare_ground_state_mmcif_button = QtGui.QPushButton('Prepare ground-state mmcif file')
+        deposition_ground_state_preparation_step_six_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_six_text())
+
+        prepare_ground_state_mmcif_button = QtGui.QPushButton('Prepare mmcif')
         prepare_ground_state_mmcif_button.clicked.connect(xce_object.prepare_ground_state_mmcif)
-        prepare_ground_state_mmcif_button.setMaximumWidth(400)
+        prepare_ground_state_mmcif_button.setMaximumWidth(200)
+
+        deposition_ground_state_preparation_step_seven_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_seven_text())
+
+        copy_apo_mmcif_button = QtGui.QPushButton('copy mmcif')
+        copy_apo_mmcif_button.clicked.connect(xce_object.prepare_for_group_deposition_upload_ground_state)
+        copy_apo_mmcif_button.setMaximumWidth(200)
+
+        deposition_ground_state_preparation_step_eight_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_eight_text())
 
 
-#        # prepare ICM heading
-#        ICM_heading = self.layout_funcs.add_depo_heading("3. Prepare ICM files")
+###############################################
+
+#        deposition_html_heading = self.layout_funcs.add_depo_heading('HTML export')
+#        deposition_html_heading.setStyleSheet("font: 20pt Arial Bold")
 #
-#        # ICM background text
-#        ICM_bgr_text = self.layout_funcs.add_depo_text(XChemToolTips.icb_file_background())
+#        introduction_text = self.layout_funcs.add_depo_text(XChemToolTips.html_summary_introduction())
 #
-#        # ICM prep text
-#        ICM_prep_text = self.layout_funcs.add_depo_text(XChemToolTips.prepare_ICB_files())
-#
-#        # Open ICM button
-#        ICM_button = QtGui.QPushButton('Open ICM-pro')
-#        ICM_button.clicked.connect(xce_object.open_icm)
-#        ICM_button.setMaximumWidth(200)
-#
-#        # ICM loading image
-#        ICM_image = QtGui.QLabel()
-#        ICM_pixmap = QtGui.QPixmap(os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'drag_and_drop_icb_file.png'))
-#        ICM_image.setPixmap(ICM_pixmap)
-#
-#        # ICM run image
-#        ICM_run_image = QtGui.QLabel()
-#        ICM_run_pixmap = QtGui.QPixmap(os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'run_icm_script.png'))
-#        ICM_run_image.setPixmap(ICM_run_pixmap)
-#
-        # zenodo upload heading 1
-        zenodo_upload_heading = self.layout_funcs.add_depo_heading("4. Prepare files for ZENODO upload")
+#        html_export_button = QtGui.QPushButton('Export to HTML')
+#        html_export_button.clicked.connect(xce_object.export_to_html)
+#        html_export_button.setMaximumWidth(200)
 
-        # zenodo upload text 1
-        zenodo_upload_text = self.layout_funcs.add_depo_text(
-            XChemToolTips.zenodo_upload_start(xce_object.html_export_directory))
 
-        # prepare files button
-        prep_files_button = QtGui.QPushButton('prepare files')
-        prep_files_button.clicked.connect(xce_object.prepare_files_for_zenodo_upload)
-        prep_files_button.setMaximumWidth(200)
 
-        # zenodo upload heading 2
-        zenodo_upload_heading2 = self.layout_funcs.add_depo_heading("5. ZENODO")
+        deposition_widget_list = [deposition_page_heading,
+                                  QtGui.QLabel(' \n '),
+                                  deposition_page_introduction,deposition_page_introduction_link,
+                                  QtGui.QLabel(' \n '),
 
-        # zenodo upload text 2
-        zenodo_upload_text2 = self.layout_funcs.add_depo_text(
-            XChemToolTips.zenodo_upload_part_one(xce_object.html_export_directory))
+                                  deposition_bound_state_heading, QtGui.QLabel(' \n '),
+                                  deposition_bound_state_prerequisites,
+                                  deposition_bound_state_prerequisites_text, QtGui.QLabel(' \n '),
+                                  deposition_bound_state_preparation,
+                                  deposition_bound_state_preparation_step_one_text,
+                                  prepare_mmcif_button,
+                                  deposition_bound_state_preparation_step_two_text,
+                                  copy_mmcif_button,
+                                  pdb_group_deposition_instruction_one,
+                                  pdb_group_deposition_link,
+                                  pdb_group_deposition_instruction_two,
 
-        # zenodo upload image
-        zenodo_upload_image = QtGui.QLabel()
-        zenodo_upload_pixmap = QtGui.QPixmap(os.path.join(os.getenv('XChemExplorer_DIR'), 'image',
-                                                          'new_zenodo_upload.png'))
-        zenodo_upload_image.setPixmap(zenodo_upload_pixmap)
+                                  QtGui.QLabel(' \n\n\n '),
 
-        # zenodo upload ID heading
-        zenodo_upload_ID_heading = self.layout_funcs.add_depo_heading("6. ZENODO upload ID")
-
-        # zenodo upload ID text
-        zenodo_upload_ID_text = self.layout_funcs.add_depo_text(XChemToolTips.zenodo_upload_part_two())
-
-        # zenodo upload ID image
-        zenodo_upload_image2 = QtGui.QLabel()
-        zenodo_upload_pixmap2 = QtGui.QPixmap(os.path.join(os.getenv('XChemExplorer_DIR'), 'image',
-                                                           'zenodo_upload_id.png'))
-        zenodo_upload_image2.setPixmap(zenodo_upload_pixmap2)
-
-        # zenodo upload ID text 2
-        zenodo_upload_ID_text2 = self.layout_funcs.add_depo_text(XChemToolTips.zenodo_upload_part_three())
-
-        # zenodo upload ID entry box
-        hbox_zenodo_upload_id = QtGui.QHBoxLayout()
-        hbox_zenodo_upload_id.addWidget(QtGui.QLabel('upload ID:'))
-        xce_object.zenodo_upload_id_entry = QtGui.QLineEdit()
-        xce_object.zenodo_upload_id_entry.setFixedWidth(200)
-        hbox_zenodo_upload_id.addWidget(xce_object.zenodo_upload_id_entry)
-        hbox_zenodo_upload_id.addStretch(1)
-
-        # update html button
-        update_html_button = QtGui.QPushButton('update html files with upload ID')
-        update_html_button.clicked.connect(xce_object.update_html_for_zenodo_upload)
-        update_html_button.setMaximumWidth(300)
-
-        # zenodo upload html files heading
-        upload_html_heading = self.layout_funcs.add_depo_heading("7. ZENODO upload HTML files")
-
-        # zenodo upload html text
-        upload_html_text = self.layout_funcs.add_depo_text(XChemToolTips.zenodo_upload_part_four(xce_object.
-                                                                                                 html_export_directory))
-
-        deposition_widget_list = [deposition_page_heading, QtGui.QLabel(' \n\n\n '),
-                                  deposition_html_heading, QtGui.QLabel(' \n '),
-                                  html_export_button, QtGui.QLabel('  \n\n '),
                                   deposition_ground_state_heading, QtGui.QLabel(' \n '),
-                                  ground_state_pdb_button_label_help,
-                                  ground_state_pdb_button,xce_object.ground_state_pdb_button_label,QtGui.QLabel(' '),
-                                  ground_state_log_info_label, QtGui.QLabel(' \n '),
-                                  ground_state_mtz_button_label_help,
-                                  ground_state_mtz_button,xce_object.ground_state_mtz_button_label,QtGui.QLabel(' '),
-                                  warning_label,QtGui.QLabel(' '),
-                                  add_ground_state_db_button_help,add_ground_state_db_button,QtGui.QLabel(' '),
-                                  further_instructions_label,QtGui.QLabel(' '),
-                                  prepare_ground_state_mmcif_button_help,prepare_ground_state_mmcif_button,QtGui.QLabel('  \n\n '),
-                                  QtGui.QLabel('  \n  '),
-                                  zenodo_upload_heading, zenodo_upload_text, prep_files_button,
-                                  QtGui.QLabel('  '), zenodo_upload_heading2, zenodo_upload_text2, zenodo_upload_image,
-                                  QtGui.QLabel('  '), zenodo_upload_ID_heading, zenodo_upload_ID_text,
-                                  zenodo_upload_image2, zenodo_upload_ID_text2]
+                                  deposition_ground_state_prerequisites,
+                                  deposition_ground_state_prerequisites_text, QtGui.QLabel(' \n '),
+                                  deposition_ground_state_preparation,
+                                  deposition_ground_state_preparation_step_one_text,
+                                  ground_state_pdb_button,
+                                  deposition_ground_state_log_info,
+                                  deposition_ground_state_preparation_step_two_text,
+                                  ground_state_mtz_button,
+                                  deposition_ground_state_preparation_step_three_text,
+                                  deposition_ground_state_preparation_step_four_text,
+                                  add_ground_state_db_button,
+                                  deposition_ground_state_preparation_step_five_text,
+                                  deposition_ground_state_preparation_step_six_text,
+                                  prepare_ground_state_mmcif_button,
+                                  deposition_ground_state_preparation_step_seven_text,
+                                  copy_apo_mmcif_button,
+                                  deposition_ground_state_preparation_step_eight_text,
+                                  pdb_group_deposition_link,
+                                  pdb_group_deposition_instruction_two
+                                  ]
 
-        deposition_widget_list2 = [update_html_button, QtGui.QLabel('  '),
-                                   upload_html_heading, upload_html_text, QtGui.QLabel('  ')]
+#                                  QtGui.QLabel(' \n\n\n '),
+#
+#                                  deposition_html_heading, QtGui.QLabel(' \n '),
+#                                  introduction_text,
+#                                  html_export_button, QtGui.QLabel('  \n\n '),
+#s                                  QtGui.QLabel('  \n  ')]
+#
+#        deposition_widget_list2 = [update_html_button, QtGui.QLabel('  '),
+#                                   upload_html_heading, upload_html_text, QtGui.QLabel('  ')]
 
         self.layout_funcs.add_to_box(scrollLayout, deposition_widget_list)
-        scrollLayout.addLayout(hbox_zenodo_upload_id)
-        self.layout_funcs.add_to_box(scrollLayout, deposition_widget_list2)
+#        scrollLayout.addLayout(hbox_zenodo_upload_id)
+#        self.layout_funcs.add_to_box(scrollLayout, deposition_widget_list2)
 
         # container settings
         scrollLayout.addStretch(1)

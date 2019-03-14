@@ -145,9 +145,12 @@ def deposition_interface_note():
 
 def html_summary_introduction():
 
-    text = (    'This section describes how to generate an HTML summary page of the current experiment and \n'
-                'how to share it with the scientific community via the ZENODO data repository.\n'
-                'For example:')
+    text = (    'This section describes how to generate an HTML summary page of the current project. \n'
+                'All you need to do is select the HTML output directory where the html and additional auxiliary files \n'
+                'and will be written to. '
+                'Then press the "Export to HTML" button and \nall bound structures that are labeled as "4 - compchem ready"'
+                'or higher will be included in the final document. \n'
+                'Please checkout https://www.thesgc.org/fragment-screening to see what the final pages look like. ')
 
     return text
 
@@ -239,4 +242,134 @@ def pandda_pre_run(reference_directory):
                         '- PanDDA tab: run "pandda.analyse\n'
                         '- run "pandda.analyse\n'    )
 
+    return msg
+
+def deposition_introduction():
+    msg = ( 'Some background about batch deposition of PanDDA models can be found here: '
+    )
+    return msg
+
+def deposition_introduction_link():
+    lnk = (
+        "<a href=\"https://openlabnotebooks.org/update-on-batch-deposition-of-xchem-structures\">'https://openlabnotebooks.org/update-on-batch-deposition-of-xchem-structures'</a>"
+    )
+    return lnk
+
+def deposition_bound_state_prerequisites():
+    msg = (
+        '1. Event map to MTZ conversion.\n'
+        '     All pandda event maps need to be converted to MTZ format. This is currently not done automatically.\n'
+        '     If you have not done so, select and run "Event Map -> SF" from the Hit Identification action box.\n'
+        '     This may take a while, but you only need to run this once.\n'
+        '2. Select datasets to be deposited.\n'
+        '     Set crystals to "5-ready for deposition" in XCE refinement tab\n'
+        '3. Enter additional data required for PDB deposition.\n'
+        '     In the Deposition menu, select "Edit information". Fill out all the required items and press "Save to Database".\n'
+        '     Note: this needs to be done after the datasets have been selected for deposition.'
+    )
+    return msg
+
+def deposition_bound_state_preparation_step_one_text():
+    msg = (
+        '1. Press the button below to generate structure and structure factor mmcif files of all selected datasets.\n'
+        '     Note: all previously generated mmcif files will be overwritten.'
+    )
+    return msg
+
+def deposition_bound_state_preparation_step_two_text():
+    msg = (
+        '2. Press the button below to copy all the mmcif files into the "group deposition directory" (see settings tab).\n'
+        'All mmcif files will be bundled into a single, bzipped tar archive which can be uploaded into via the PDB group deposition website.'
+    )
+    return msg
+
+def pdb_group_deposition_instruction_one():
+    msg = (
+        '3. Go to the group deposition website, create a session and upload the ligand-bound.tar.bz2 file from the group deposition directory.'
+    )
+    return msg
+
+def pdb_group_deposition_link():
+    lnk = (
+        "<a href=\"https://deposit-group-1.rcsb.rutgers.edu/groupdeposit\">'https://deposit-group-1.rcsb.rutgers.edu/groupdeposit'</a>"
+    )
+    return lnk
+
+def pdb_group_deposition_instruction_two():
+    msg = (
+        '     user: grouptester\n'
+        '     password: !2016rcsbpdb '
+    )
+    return msg
+
+def deposition_ground_state_prerequisites():
+    msg = (
+        '1. Convert all apo MTZ files to mmcif format.\n'
+        '     Swtich to the pandda tab, select the PanDDA directory which contains the analysis you want to deposit.\n'
+        '     Then select and run "apo -> mmcif" from the Hit Identification action box.\n'
+        '     Note: you only need to do this once.'
+    )
+    return msg
+
+
+def deposition_ground_state_preparation_step_one_text():
+    msg = (
+        '1. Select ground-state PDB file.'
+    )
+    return msg
+
+def deposition_ground_state_log_info():
+    msg = (
+            '     IMPORTANT:\n'
+            '     Make sure that a file or symlink to an AIMLESS logile with the same name root as your ground-state PDB file\n'
+            '     is present in the same folder. This is currently not generated automatically! '
+    )
+    return msg
+
+def deposition_ground_state_preparation_step_two_text():
+    msg = (
+        '2. Select ground-state MTZ file.'
+    )
+    return msg
+
+def deposition_ground_state_preparation_step_three_text():
+    msg = (
+        '3. Please check the settings tab that you have selected the correct pandda directory.'
+    )
+    return msg
+
+def deposition_ground_state_preparation_step_four_text():
+    msg = (
+        '4. Add the ground-state entry to the database.'
+    )
+    return msg
+
+def deposition_ground_state_preparation_step_five_text():
+    msg = (
+            '5. Enter meta-data for ground-state model:\n'
+            '     - Open "Deposition -> Edit information"\n'
+            '     - Fill out form or load .deposit file\n'
+            '     - Press "Save to Database"\n'
+            '     - Press "OK"\n'
+    )
+    return msg
+
+def deposition_ground_state_preparation_step_six_text():
+    msg = (
+            '6. Prepare the ground-state mmcif file.'
+            '     Note: the mmcif files are saved into the selected pandda directory'
+    )
+    return msg
+
+def deposition_ground_state_preparation_step_seven_text():
+    msg = (
+        '7. Press the button below to copy the structire and structure factor mmcif files into the "group deposition directory" (see settings tab).\n'
+        'Both mmcif files will be bundled into a single, bzipped tar archive which can be uploaded into via the PDB group deposition website.'
+    )
+    return msg
+
+def deposition_ground_state_preparation_step_eight_text():
+    msg = (
+        '8. Go to the group deposition website, create a session and upload the ligand-bound.tar.bz2 file from the group deposition directory.'
+    )
     return msg

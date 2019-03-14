@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.5'
+        xce_object.xce_version = 'v1.3.6'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -421,18 +421,18 @@ class setup():
                                                   [
                                                       ['Edit information', '', xce_object.deposition_data],
                                                       ['Export to HTML', '', xce_object.export_to_html],
-                                                      ['Find PanDDA apo structures', '',
-                                                       xce_object.create_missing_apo_records_in_depositTable],
+#                                                      ['Find PanDDA apo structures', '',
+#                                                       xce_object.create_missing_apo_records_in_depositTable],
 #                                                      ['Update file info of apo structures', '',
 #                                                       xce_object.update_file_information_of_apo_records],
-                                                      ['Prepare mmcif for apo structures', '',
-                                                       xce_object.prepare_models_for_deposition_apo],
-                                                      ['Prepare mmcif for ligand bound structures', '',
-                                                       xce_object.prepare_models_for_deposition_ligand_bound],
-                                                      ['Copy files to group deposition directory (ligand bound)', '',
-                                                       xce_object.prepare_for_group_deposition_upload_ligand_bound],
-                                                      ['Copy files to group deposition directory (ground state)', '',
-                                                       xce_object.prepare_for_group_deposition_upload_ground_state],
+#                                                      ['Prepare mmcif for apo structures', '',
+#                                                       xce_object.prepare_models_for_deposition_apo],
+#                                                      ['Prepare mmcif for ligand bound structures', '',
+#                                                       xce_object.prepare_models_for_deposition_ligand_bound],
+#                                                      ['Copy files to group deposition directory (ligand bound)', '',
+#                                                       xce_object.prepare_for_group_deposition_upload_ligand_bound],
+#                                                      ['Copy files to group deposition directory (ground state)', '',
+#                                                       xce_object.prepare_for_group_deposition_upload_ground_state],
                                                       ['Update DB with PDB codes', '', xce_object.enter_pdb_codes],
                                                       ['Check SMILES', '', xce_object.check_smiles_in_db_and_pdb]
                                                   ]],
@@ -596,7 +596,10 @@ class setup():
                                          'pre-run for ground state model',
                                          'Build ground state model']
 
-        xce_object.refine_file_tasks = ['Open COOT',
-                                        'Open COOT for old PanDDA',
-                                        'Update Deposition Table',
-                                        'Prepare Group Deposition']
+        xce_object.refine_file_tasks = ['Open COOT']
+
+#        xce_object.refine_file_tasks = ['Open COOT',
+#                                        'Open COOT for old PanDDA',
+#                                        'Update Deposition Table',
+#                                        'Prepare Group Deposition']
+
