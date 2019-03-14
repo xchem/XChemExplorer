@@ -314,7 +314,8 @@ def deposition_ground_state_prerequisites():
 
 def deposition_ground_state_preparation_step_one_text():
     msg = (
-        '1. Select ground-state PDB file.'
+        '1. Select ground-state PDB file.\n'
+        '     Note: the file is usually in the reference directory.'
     )
     return msg
 
@@ -328,7 +329,8 @@ def deposition_ground_state_log_info():
 
 def deposition_ground_state_preparation_step_two_text():
     msg = (
-        '2. Select ground-state MTZ file.'
+        '2. Select ground-state MTZ file.\n'
+        '     Note: the file is usually in the reference directory.'
     )
     return msg
 
@@ -350,13 +352,13 @@ def deposition_ground_state_preparation_step_five_text():
             '     - Open "Deposition -> Edit information"\n'
             '     - Fill out form or load .deposit file\n'
             '     - Press "Save to Database"\n'
-            '     - Press "OK"\n'
+            '     - Press "OK"'
     )
     return msg
 
 def deposition_ground_state_preparation_step_six_text():
     msg = (
-            '6. Prepare the ground-state mmcif file.'
+            '6. Prepare the ground-state mmcif file.\n'
             '     Note: the mmcif files are saved into the selected pandda directory'
     )
     return msg
