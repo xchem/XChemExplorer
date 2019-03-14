@@ -43,14 +43,13 @@ def get_target_and_visit_list(beamline_directory):
         beamline_directory.split('/')[1]=='dls' and beamline_directory.split('/')[3]=='data' \
         and not 'labxchem' in beamline_directory:
         visit_list.append(beamline_directory)
-    elif os.path.islink(beamline_directory):
-        visit_list.append(os.path.realpath(beamline_directory))
     else:
-        for dir in glob.glob(beamline_directory+'/*'):
-            visit_list.append(os.path.realpath(dir))
+        visit_list.append(os.path.realpath(beamline_directory))
 
     for visit in visit_list:
+        print '-->',os.path.join(visit,'processed','*')
         for target in glob.glob(os.path.join(visit,'processed','*')):
+            print target
             if target[target.rfind('/')+1:] not in ['results','README-log','edna-latest.html']:
                 if target[target.rfind('/')+1:] not in target_list:
                     target_list.append(target[target.rfind('/')+1:])
@@ -528,6 +527,9 @@ def getVisitAndBeamline(visitDirectory):
             beamline=visitDirectory.split('/')[2]
         except IndexError:
             pass
+    if not visitDirectory.startswith('/dls'):
+        visit = 'unknown'
+        beamline = 'unknown'
     return visit,beamline
 
 
