@@ -375,3 +375,11 @@ def deposition_ground_state_preparation_step_eight_text():
         '8. Go to the group deposition website, create a session and upload the ligand-bound.tar.bz2 file from the group deposition directory.'
     )
     return msg
+
+def after_deposition_step_one_text():
+    msg = (
+        'After you have successfully submitted the ligand-bound structures via the PDB group deposition interface, you will immediately get\n'
+        'an email with the PDB codes. There will be a single line for each PDB submission. Highlight and copy the text! Then go to the "Deposition" menu\n'
+        'and select "Update DB with PDB codes". A pop-up window will appear, paste the text into the window and press "Update Database".'
+    )
+    return msg

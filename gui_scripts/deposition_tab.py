@@ -127,6 +127,21 @@ class DepositionTab():
         deposition_ground_state_preparation_step_eight_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_eight_text())
 
 
+        #
+        # after ligand_bound depostion
+        #
+
+        after_deposition_heading = self.layout_funcs.add_depo_heading('After deposition of ligand-bound structures')
+        after_deposition_heading.setStyleSheet("font: bold 20pt Arial")
+
+
+
+        after_deposition_preparation = self.layout_funcs.add_depo_heading('Procedure')
+        after_deposition_preparation.setStyleSheet("font: italic bold 17pt Arial ")
+        after_deposition_preparation_text = self.layout_funcs.add_depo_text(XChemToolTips.after_deposition_step_one_text())
+
+
+
 ###############################################
 
 #        deposition_html_heading = self.layout_funcs.add_depo_heading('HTML export')
@@ -178,7 +193,14 @@ class DepositionTab():
                                   copy_apo_mmcif_button,
                                   deposition_ground_state_preparation_step_eight_text,
                                   pdb_group_deposition_link,
-                                  pdb_group_deposition_instruction_two
+                                  pdb_group_deposition_instruction_two,
+
+                                  QtGui.QLabel(' \n\n\n '),
+
+                                  after_deposition_heading, QtGui.QLabel(' \n '),
+                                  after_deposition_preparation,
+                                  after_deposition_preparation_text
+
                                   ]
 
 #                                  QtGui.QLabel(' \n\n\n '),
