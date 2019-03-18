@@ -1064,7 +1064,14 @@ class prepare_for_group_deposition_upload(QtCore.QThread):
         # ligand bound structures
         if self.type == 'ligand_bound':
             self.Logfile.insert('checking depositionTable for mmcif files of ligand-bound structures')
-            toDeposit=self.db.execute_statement("select CrystalName,mmCIF_model_file,mmCIF_SF_file,DimplePANDDApath from depositTable where StructureType is 'ligand_bound';")
+            depositList = self.db.execute_statement("select CrystalName from mainTable where RefinementOutcome like '5%';")
+            xtalString = '('
+            for item in depositList:
+                xtal=str(item[0])
+                self.Logfile.insert('%s: adding mmcif files to final tar.bz2 file' %xtal)
+                xtalString += "CrystalName = '"+xtal+"' or "
+            xtalString = xtalString[:-4] + ')'
+            toDeposit=self.db.execute_statement("select CrystalName,mmCIF_model_file,mmCIF_SF_file,DimplePANDDApath from depositTable where StructureType is 'ligand_bound' and %s;" %xtalString)
         elif self.type == 'ground_state':
             self.Logfile.insert('checking depositionTable for mmcif files of ground-state structures')
             toDeposit = self.db.execute_statement("select CrystalName,mmCIF_model_file,mmCIF_SF_file,DimplePANDDApath from depositTable where StructureType is 'ground_state';")
@@ -1105,6 +1112,19 @@ class prepare_for_group_deposition_upload(QtCore.QThread):
         f = open('index.txt','w')
         f.write(TextIndex)
         f.close()
+
+        # checking of tar.bz2 files exisit
+        fileList = []
+        for i in sorted(glob.glob('%s_structures.tar.bz2.*' %self.type)):
+            fileList.append(int(i[i.rfind('.')+1:]))
+
+        if os.path.isfile('%s_structures.tar.bz2' %self.type):
+            if fileList == []:
+                self.Logfile.warning('moving existing %s_structures.tar.bz2 to %s_structures.tar.bz2.1' %(self.type,self.type))
+                os.system('/bin/mv %s_structures.tar.bz2 %s_structures.tar.bz2.1' %(self.type,self.type))
+            else:
+                self.Logfile.warning('moving existing %s_structures.tar.bz2 %s_structures.tar.bz2.%s' %(self.type,self.type,str(max(fileList)+1)))
+                os.system('/bin/mv %s_structures.tar.bz2 %s_structures.tar.bz2.%s' %(self.type,self.type,str(max(fileList)+1)))
 
         self.Logfile.insert('preparing tar archive...')
         os.system('tar -cvf {0!s}_structures.tar *mmcif index.txt'.format(self.type))
