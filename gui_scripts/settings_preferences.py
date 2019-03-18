@@ -49,7 +49,7 @@ class setup():
         if 'labxchem' in xce_object.current_directory:
             if len(xce_object.current_directory.split('/')) >= 9 and xce_object.current_directory.split('/')[6] == 'processing' and xce_object.current_directory.split('/')[8] == 'processing':
                 xce_object.labxchem_directory = '/' + os.path.join(
-                        *xce_object.current_directory.split('/')[1:9])  # need splat operator: *
+                        *xce_object.current_directory.split('/')[1:8])  # need splat operator: *
             else:
                 xce_object.labxchem_directory = '/' + os.path.join(
                         *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
