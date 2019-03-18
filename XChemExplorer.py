@@ -90,6 +90,25 @@ class XChemExplorer(QtGui.QApplication):
         LayoutObjects(self).main_layout(self)
         LayoutFuncs().add_widgets_layouts(self)
 
+        self.checkLabXChemDir()
+
+    def checkLabXChemDir(self):
+        dirCheck = QtGui.QMessageBox()
+        dirCheckLayout = dirCheck.layout()
+        vbox = QtGui.QVBoxLayout()
+        try:
+            warning = (
+                    'You have opened XCE in the following directory:\n\n'
+                    +self.labxchem_directory+'\n\n'
+                    'Are you sure this is what you want to do?'
+                    )
+        except AttributeError:
+            return
+        vbox.addWidget(QtGui.QLabel(warning))
+        dirCheckLayout.addLayout(vbox, 0, 0)
+        dirCheck.exec_();
+
+
     # function to update datasource
     def datasource_menu_reload_samples(self):
         self.update_log.insert(
@@ -2977,6 +2996,8 @@ class XChemExplorer(QtGui.QApplication):
                 self.update_log.insert('starting coot...')
                 if instruction == "Open COOT":
                     interface = 'new'
+                elif instruction == "Open COOT - test -":
+                    interface = 'test'
                 elif instruction == "Open COOT for old PanDDA":
                     interface = 'panddaV1'
                 elif instruction == 'Build ground state model':

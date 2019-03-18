@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.6'
+        xce_object.xce_version = 'v1.3.7'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -47,8 +47,14 @@ class setup():
 
         # if in the correct place, set the various directories
         if 'labxchem' in xce_object.current_directory:
-            xce_object.labxchem_directory = '/' + os.path.join(
-                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
+            if len(xce_object.current_directory.split('/')) >= 9 and xce_object.current_directory.split('/')[6] == 'processing' and xce_object.current_directory.split('/')[8] == 'processing':
+                xce_object.labxchem_directory = '/' + os.path.join(
+                        *xce_object.current_directory.split('/')[1:9])  # need splat operator: *
+            else:
+                xce_object.labxchem_directory = '/' + os.path.join(
+                        *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
+#            xce_object.labxchem_directory = '/' + os.path.join(
+#                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
             xce_object.beamline_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'beamline')
             xce_object.initial_model_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
                                                               'initial_model')
@@ -596,7 +602,8 @@ class setup():
                                          'pre-run for ground state model',
                                          'Build ground state model']
 
-        xce_object.refine_file_tasks = ['Open COOT']
+        xce_object.refine_file_tasks = ['Open COOT',
+                                        'Open COOT - test -']
 
 #        xce_object.refine_file_tasks = ['Open COOT',
 #                                        'Open COOT for old PanDDA',
