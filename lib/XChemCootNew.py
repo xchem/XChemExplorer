@@ -948,7 +948,8 @@ class GUI(object):
         self.db_dict_mainTable['RefinementOutcome'] = data
         print '==> XCE: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
             data) + ' in mainTable of datasource'
-        self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
+#        self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
+        self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile,self.xtalID,'ligand_bound',self.db_dict_mainTable)
 
     def ligand_confidence_button_clicked(self, widget, data=None):
         print 'PANDDA_index', self.pandda_index
