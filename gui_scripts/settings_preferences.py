@@ -97,7 +97,7 @@ class setup():
 
         # otherwise, use the current working directory
         else:
-            xce_object.xce_object.labxchem_directory_current = xce_object.current_directory
+            #            xce_object.xce_object.labxchem_directory_current = xce_object.current_directory
             xce_object.beamline_directory = xce_object.current_directory
             xce_object.initial_model_directory = xce_object.current_directory
             xce_object.reference_directory = xce_object.current_directory
