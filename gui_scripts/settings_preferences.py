@@ -56,7 +56,7 @@ class setup():
                 xce_object.labxchem_directory = '/' + os.path.join(
                         *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
                 xce_object.labxchem_directory_current = '/' + os.path.join(
-                        *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
+                        *xce_object.current_directory.split('/')[1:7])  # need splat operator: *
 #            xce_object.labxchem_directory = '/' + os.path.join(
 #                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
             xce_object.beamline_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'beamline')
