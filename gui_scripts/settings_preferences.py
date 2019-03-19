@@ -50,8 +50,12 @@ class setup():
             if len(xce_object.current_directory.split('/')) >= 9 and xce_object.current_directory.split('/')[6] == 'processing' and xce_object.current_directory.split('/')[8] == 'processing':
                 xce_object.labxchem_directory = '/' + os.path.join(
                         *xce_object.current_directory.split('/')[1:8])  # need splat operator: *
+                xce_object.labxchem_directory_current = '/' + os.path.join(
+                    *xce_object.current_directory.split('/')[1:9])  # labxchem_directory_current is where they actually have write permission
             else:
                 xce_object.labxchem_directory = '/' + os.path.join(
+                        *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
+                xce_object.labxchem_directory_current = '/' + os.path.join(
                         *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
 #            xce_object.labxchem_directory = '/' + os.path.join(
 #                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *

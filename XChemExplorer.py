@@ -98,9 +98,9 @@ class XChemExplorer(QtGui.QApplication):
         vbox = QtGui.QVBoxLayout()
         try:
             warning = (
-                    'You have opened XCE in the following directory:\n\n'
-                    +self.labxchem_directory+'\n\n'
-                    'Are you sure this is what you want to do?'
+                    'Are you sure you want to launch XCE here:\n\n'
+                    +self.labxchem_directory_current+'\n\n'
+                    'If this is not where you should be running XCE, please close!'
                     )
         except AttributeError:
             return
