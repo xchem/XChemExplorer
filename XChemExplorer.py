@@ -100,7 +100,7 @@ class XChemExplorer(QtGui.QApplication):
             warning = (
                     'Are you sure you want to launch XCE here:\n\n'
                     +self.labxchem_directory_current+'\n\n'
-                    'If this is not where you should be running XCE, please close!'
+                    'If this is not where you should be running XCE, please close!\n'
                     )
         except AttributeError:
             return
