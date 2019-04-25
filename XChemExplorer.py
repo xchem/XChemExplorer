@@ -2050,7 +2050,7 @@ class XChemExplorer(QtGui.QApplication):
             self.molecule_chain_one.setText(self.deposit_dict['molecule_chain_one'])
             ### entity 2
             self.molecule_name_two.setText(self.deposit_dict['molecule_name_two'])
-            self.fragment_name_two_specific_mutation.setText(self.deposit_dict['fragment_name_one_specific_mutation_two'])
+            self.fragment_name_two_specific_mutation.setText(self.deposit_dict['fragment_name_two_specific_mutation'])
             index = self.Source_organism_scientific_name_two.findText(self.deposit_dict['Source_organism_scientific_name_two'],
                                                                       QtCore.Qt.MatchFixedString)
             self.Source_organism_scientific_name_two.setCurrentIndex(index)
