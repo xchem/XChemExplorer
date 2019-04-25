@@ -2046,28 +2046,28 @@ class XChemExplorer(QtGui.QApplication):
             self.Expression_system_plasmid_name.setText(self.deposit_dict['Expression_system_plasmid_name'])
             self.Manipulated_source_details.setText(self.deposit_dict['Manipulated_source_details'])
 
-            try:
-                self.molecule_chain_one.setText(self.deposit_dict['molecule_chain_one'])
-                ### entity 2
-                self.molecule_name_two.setText(self.deposit_dict['molecule_name_two'])
-                self.fragment_name_two_specific_mutation.setText(self.deposit_dict['fragment_name_one_specific_mutation_two'])
+#            try:
+            self.molecule_chain_one.setText(self.deposit_dict['molecule_chain_one'])
+            ### entity 2
+            self.molecule_name_two.setText(self.deposit_dict['molecule_name_two'])
+            self.fragment_name_two_specific_mutation.setText(self.deposit_dict['fragment_name_one_specific_mutation_two'])
                 index = self.Source_organism_scientific_name_two.findText(self.deposit_dict['Source_organism_scientific_name_two'],
                                                                       QtCore.Qt.MatchFixedString)
-                self.Source_organism_scientific_name_two.setCurrentIndex(index)
-                self.Source_organism_gene_two.setText(self.deposit_dict['Source_organism_gene_two'])
-                self.Source_organism_strain_two.setText(self.deposit_dict['Source_organism_strain_two'])
-                index = self.Expression_system_scientific_name_two.findText(
+            self.Source_organism_scientific_name_two.setCurrentIndex(index)
+            self.Source_organism_gene_two.setText(self.deposit_dict['Source_organism_gene_two'])
+            self.Source_organism_strain_two.setText(self.deposit_dict['Source_organism_strain_two'])
+            index = self.Expression_system_scientific_name_two.findText(
                     self.deposit_dict['Expression_system_scientific_name_two'], QtCore.Qt.MatchFixedString)
-                self.Expression_system_scientific_name_two.setCurrentIndex(index)
+            self.Expression_system_scientific_name_two.setCurrentIndex(index)
 
-                self.Expression_system_strain_two.setText(self.deposit_dict['Expression_system_strain_two'])
-                self.Expression_system_vector_type_two.setText(self.deposit_dict['Expression_system_vector_type_two'])
-                self.Expression_system_plasmid_name_two.setText(self.deposit_dict['Expression_system_plasmid_name_two'])
-                self.Manipulated_source_details_two.setText(self.deposit_dict['Manipulated_source_details_two'])
-                self.molecule_chain_two.setText(self.deposit_dict['molecule_chain_two'])
-                self.molecule_one_letter_sequence_uniprot_id_two.setText(
+            self.Expression_system_strain_two.setText(self.deposit_dict['Expression_system_strain_two'])
+            self.Expression_system_vector_type_two.setText(self.deposit_dict['Expression_system_vector_type_two'])
+            self.Expression_system_plasmid_name_two.setText(self.deposit_dict['Expression_system_plasmid_name_two'])
+            self.Manipulated_source_details_two.setText(self.deposit_dict['Manipulated_source_details_two'])
+            self.molecule_chain_two.setText(self.deposit_dict['molecule_chain_two'])
+            self.molecule_one_letter_sequence_uniprot_id_two.setText(
                     self.deposit_dict['molecule_two_letter_sequence_uniprot_id'])
-                self.molecule_one_letter_sequence_two.setText(self.deposit_dict['molecule_two_letter_sequence'])
+            self.molecule_one_letter_sequence_two.setText(self.deposit_dict['molecule_two_letter_sequence'])
 #            except KeyError:
 #                self.molecule_chain_one.setText('')
 #                ### entity 2
