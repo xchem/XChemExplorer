@@ -163,7 +163,7 @@ class templates:
                     + molecule_one_letter_sequence + '\n'
                     ';\n'
                     '%s %s UNP\n'                                        %(depositDict['molecule_chain_one'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
-                    ';\n'
+#                    ';\n'
                     '2 "polypeptide(L)"\n'
                     + molecule_two_letter_sequence + '\n'
                     ';\n'
