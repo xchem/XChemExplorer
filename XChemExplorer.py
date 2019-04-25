@@ -1936,6 +1936,7 @@ class XChemExplorer(QtGui.QApplication):
                                                                     '*.deposit')
         file_name = tuple(file_name_temp)[0]
         self.deposit_dict = pickle.load(open(file_name, "rb"))
+        print self.deposit_dict
         self.update_deposit_input()
 
     def load_deposit_from_database(self):
