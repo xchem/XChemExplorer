@@ -2068,6 +2068,7 @@ class XChemExplorer(QtGui.QApplication):
                     self.deposit_dict['molecule_two_letter_sequence_uniprot_id'])
                 self.molecule_one_letter_sequence_two.setText(self.deposit_dict['molecule_two_letter_sequence'])
             except KeyError:
+                print 'rgyryfgygywrgyry'
                 self.molecule_chain_one.setText('')
                 ### entity 2
                 self.molecule_name_two.setText('')
