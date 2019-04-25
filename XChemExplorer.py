@@ -2068,23 +2068,22 @@ class XChemExplorer(QtGui.QApplication):
                 self.molecule_one_letter_sequence_uniprot_id_two.setText(
                     self.deposit_dict['molecule_two_letter_sequence_uniprot_id'])
                 self.molecule_one_letter_sequence_two.setText(self.deposit_dict['molecule_two_letter_sequence'])
-            except KeyError:
-                print 'rgyryfgygywrgyry'
-                self.molecule_chain_one.setText('')
-                ### entity 2
-                self.molecule_name_two.setText('')
-                self.fragment_name_two_specific_mutation.setText('')
-                self.Source_organism_scientific_name_two.setCurrentIndex(0)
-                self.Source_organism_gene_two.setText('')
-                self.Source_organism_strain_two.setText('')
-                self.Expression_system_scientific_name_two.setCurrentIndex(0)
-                self.Expression_system_strain_two.setText('')
-                self.Expression_system_vector_type_two.setText('')
-                self.Expression_system_plasmid_name_two.setText('')
-                self.Manipulated_source_details_two.setText('')
-                self.molecule_chain_two.setText('')
-                self.molecule_one_letter_sequence_uniprot_id_two.setText('')
-                self.molecule_one_letter_sequence_two.setText('')
+#            except KeyError:
+#                self.molecule_chain_one.setText('')
+#                ### entity 2
+#                self.molecule_name_two.setText('')
+#                self.fragment_name_two_specific_mutation.setText('')
+#                self.Source_organism_scientific_name_two.setCurrentIndex(0)
+#                self.Source_organism_gene_two.setText('')
+#                self.Source_organism_strain_two.setText('')
+#                self.Expression_system_scientific_name_two.setCurrentIndex(0)
+#                self.Expression_system_strain_two.setText('')
+#                self.Expression_system_vector_type_two.setText('')
+#                self.Expression_system_plasmid_name_two.setText('')
+#                self.Manipulated_source_details_two.setText('')
+#                self.molecule_chain_two.setText('')
+#                self.molecule_one_letter_sequence_uniprot_id_two.setText('')
+#                self.molecule_one_letter_sequence_two.setText('')
 
             ###
 
