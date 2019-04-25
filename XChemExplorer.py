@@ -2051,7 +2051,7 @@ class XChemExplorer(QtGui.QApplication):
             ### entity 2
             self.molecule_name_two.setText(self.deposit_dict['molecule_name_two'])
             self.fragment_name_two_specific_mutation.setText(self.deposit_dict['fragment_name_one_specific_mutation_two'])
-                index = self.Source_organism_scientific_name_two.findText(self.deposit_dict['Source_organism_scientific_name_two'],
+            index = self.Source_organism_scientific_name_two.findText(self.deposit_dict['Source_organism_scientific_name_two'],
                                                                       QtCore.Qt.MatchFixedString)
             self.Source_organism_scientific_name_two.setCurrentIndex(index)
             self.Source_organism_gene_two.setText(self.deposit_dict['Source_organism_gene_two'])
