@@ -132,6 +132,16 @@ class templates:
                     '#\n'
                     )
         else:
+            molecule_two_letter_sequence=';'
+            counter=1
+            for aa in depositDict['molecule_two_letter_sequence']:
+                if counter < 70:
+                    molecule_two_letter_sequence+=aa
+                if counter == 70:
+                    molecule_two_letter_sequence+='\n'+aa
+                    counter = 0
+                counter+=1
+
             entity = (
                     'loop_\n'
                     '_entity.id\n'
@@ -140,7 +150,7 @@ class templates:
                     '_entity.pdbx_description\n'
                     '_entity.pdbx_mutation\n'
                     '1 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene'], depositDict['fragment_name_one_specific_mutation']) +
-                    '2 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene_two'], depositDict['fragment_name_one_specific_mutation_two']) +
+                    '2 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene_two'], depositDict['fragment_name_two_specific_mutation']) +
                     '#\n'
                     'loop_\n'
                     '_entity_poly.entity_id\n'
@@ -151,10 +161,16 @@ class templates:
                     '_entity_poly.pdbx_seq_db_name\n'
                     '1 "polypeptide(L)"\n'
                     + molecule_one_letter_sequence + '\n'
-                                                     ';\n'
-                    '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
+                    ';\n'
+                    '%s %s UNP\n'                                        %(depositDict['molecule_chain_one'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
+                    ';\n'
+                    '2 "polypeptide(L)"\n'
+                    + molecule_two_letter_sequence + '\n'
+                    ';\n'
+                    '%s %s UNP\n'                                        %(depositDict['molecule_chain_two'],depositDict['molecule_two_letter_sequence_uniprot_id'])+
                     '#\n'
                     )
+
 
         data_template_cif = (
             'data_UNNAMED\n'
