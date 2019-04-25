@@ -108,6 +108,54 @@ class templates:
                 counter = 0
             counter+=1
 
+        if depositDict['molecule_name_two'].replace(' ','') == '':
+            entity = (
+                    'loop_\n'
+                    '_entity.id\n'
+                    '_entity.type\n'
+                    '_entity.src_method\n'
+                    '_entity.pdbx_description\n'
+                    '_entity.pdbx_mutation\n'
+                    '1 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene'], depositDict['fragment_name_one_specific_mutation']) +
+                    '#\n'
+                    'loop_\n'
+                    '_entity_poly.entity_id\n'
+                    '_entity_poly.type\n'
+                    '_entity_poly.pdbx_seq_one_letter_code\n'
+                    '_entity_poly.pdbx_strand_id\n'
+                    '_entity_poly.pdbx_seq_db_id\n'
+                    '_entity_poly.pdbx_seq_db_name\n'
+                    '1 "polypeptide(L)"\n'
+                    + molecule_one_letter_sequence + '\n'
+                                                     ';\n'
+                    '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
+                    '#\n'
+                    )
+        else:
+            entity = (
+                    'loop_\n'
+                    '_entity.id\n'
+                    '_entity.type\n'
+                    '_entity.src_method\n'
+                    '_entity.pdbx_description\n'
+                    '_entity.pdbx_mutation\n'
+                    '1 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene'], depositDict['fragment_name_one_specific_mutation']) +
+                    '2 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene_two'], depositDict['fragment_name_one_specific_mutation_two']) +
+                    '#\n'
+                    'loop_\n'
+                    '_entity_poly.entity_id\n'
+                    '_entity_poly.type\n'
+                    '_entity_poly.pdbx_seq_one_letter_code\n'
+                    '_entity_poly.pdbx_strand_id\n'
+                    '_entity_poly.pdbx_seq_db_id\n'
+                    '_entity_poly.pdbx_seq_db_name\n'
+                    '1 "polypeptide(L)"\n'
+                    + molecule_one_letter_sequence + '\n'
+                                                     ';\n'
+                    '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
+                    '#\n'
+                    )
+
         data_template_cif = (
             'data_UNNAMED\n'
             '#\n'
@@ -148,26 +196,27 @@ class templates:
             '_diffrn_radiation_wavelength.wavelength   %s\n'                                    %depositDict['radiation_wavelengths']+
             '#\n'
             '#\n'
-            'loop_\n'
-            '_entity.id\n'
-            '_entity.type\n'
-            '_entity.src_method\n'
-            '_entity.pdbx_description\n'
-            '_entity.pdbx_mutation\n'
-            '1 polymer     man "%s" %s\n'                                                          %(depositDict['Source_organism_gene'],depositDict['fragment_name_one_specific_mutation'])+
-            '#\n'
-            'loop_\n'
-            '_entity_poly.entity_id\n'
-            '_entity_poly.type\n'
-            '_entity_poly.pdbx_seq_one_letter_code\n'
-            '_entity_poly.pdbx_strand_id\n'
-            '_entity_poly.pdbx_seq_db_id\n'
-            '_entity_poly.pdbx_seq_db_name\n'
-            '1 "polypeptide(L)"\n'
-            +molecule_one_letter_sequence+'\n'
-            ';\n'
-            '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
-            '#\n'
+            + entity +
+#            'loop_\n'
+#            '_entity.id\n'
+#            '_entity.type\n'
+#            '_entity.src_method\n'
+#            '_entity.pdbx_description\n'
+#            '_entity.pdbx_mutation\n'
+#            '1 polymer     man "%s" %s\n'                                                          %(depositDict['Source_organism_gene'],depositDict['fragment_name_one_specific_mutation'])+
+#            '#\n'
+#            'loop_\n'
+#            '_entity_poly.entity_id\n'
+#            '_entity_poly.type\n'
+#            '_entity_poly.pdbx_seq_one_letter_code\n'
+#            '_entity_poly.pdbx_strand_id\n'
+#            '_entity_poly.pdbx_seq_db_id\n'
+#            '_entity_poly.pdbx_seq_db_name\n'
+#            '1 "polypeptide(L)"\n'
+#            +molecule_one_letter_sequence+'\n'
+#            ';\n'
+#            '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
+#            '#\n'
             'loop_\n'
             '_entity_src_gen.entity_id\n'
             '_entity_src_gen.gene_src_strain\n'

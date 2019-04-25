@@ -331,7 +331,6 @@ class data_source:
             ['Fragment_name',                               'Fragment_name',                            'TEXT'],
             ['Specific_mutation',                           'Specific_mutation',                        'TEXT'],
             ['Enzyme_Comission_number',                     'Enzyme_Comission_number',                  'TEXT'],
-
             ['Source_organism_scientific_name',             'Source_organism_scientific_name',          'TEXT'],
             ['Source_organism_gene',                        'Source_organism_gene',                     'TEXT'],
             ['Source_organism_strain',                      'Source_organism_strain',                   'TEXT'],
@@ -340,9 +339,23 @@ class data_source:
             ['Expression_system_vector_type',               'Expression_system_vector_type',            'TEXT'],
             ['Expression_system_plasmid_name',              'Expression_system_plasmid_name',           'TEXT'],
             ['Manipulated_source_details',                  'Manipulated_source_details',               'TEXT'],
-
-
             ['fragment_name_one_specific_mutation',         'fragment_name_one_specific_mutation',      'TEXT'],
+            ['molecule_chain_one',                          'molecule_chain_one',                       'TEXT'],
+
+            ['molecule_name_two',                           'molecule_name_two',                        'TEXT'],
+            ['Fragment_name_two',                           'Fragment_name_two',                        'TEXT'],
+            ['Specific_mutation_two',                       'Specific_mutation_two',                    'TEXT'],
+            ['Enzyme_Comission_number_two',                 'Enzyme_Comission_number_two',              'TEXT'],
+            ['Source_organism_scientific_name_two',         'Source_organism_scientific_name_two',      'TEXT'],
+            ['Source_organism_gene_two',                    'Source_organism_gene_two',                 'TEXT'],
+            ['Source_organism_strain_two',                  'Source_organism_strain_two',               'TEXT'],
+            ['Expression_system_scientific_name_two',       'Expression_system_scientific_name_two',    'TEXT'],
+            ['Expression_system_strain_two',                'Expression_system_strain_two',             'TEXT'],
+            ['Expression_system_vector_type_two',           'Expression_system_vector_type_two',        'TEXT'],
+            ['Expression_system_plasmid_name_two',          'Expression_system_plasmid_name_two',       'TEXT'],
+            ['Manipulated_source_details_two',              'Manipulated_source_details_two',           'TEXT'],
+            ['fragment_name_two_specific_mutation',         'fragment_name_one_specific_mutation_two',  'TEXT'],
+            ['molecule_chain_two',                          'molecule_chain_two',                       'TEXT'],
 
             ['structure_keywords',                          'structure_keywords',                       'TEXT'],
             ['biological_assembly_chain_number',            'biological_assembly_chain_number',         'TEXT'],
@@ -368,6 +381,8 @@ class data_source:
 
             ['molecule_one_letter_sequence',                'molecule_one_letter_sequence',             'TEXT'],
             ['molecule_one_letter_sequence_uniprot_id',     'molecule_one_letter_sequence_uniprot_id',  'TEXT'],
+            ['molecule_two_letter_sequence',                'molecule_two_letter_sequence',             'TEXT'],
+            ['molecule_two_letter_sequence_uniprot_id',     'molecule_two_letter_sequence_uniprot_id',  'TEXT'],
 
             ['CrystalName_of_pandda_input',                 'CrystalName_of_pandda_input',              'TEXT'],
 

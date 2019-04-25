@@ -1539,8 +1539,136 @@ class XChemExplorer(QtGui.QApplication):
         grid.addWidget(self.Manipulated_source_details, 14, 1)
         grid.addWidget(QtGui.QLabel('(any other relevant information)'), 14, 2)
 
+        grid.addWidget(QtGui.QLabel('Chains'), 15, 0)
+        self.molecule_chain_one = QtGui.QLineEdit()
+        self.molecule_chain_one.setText('')
+        self.molecule_chain_one.setFixedWidth(300)
+        grid.addWidget(self.molecule_chain_one, 15, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. A or A,B)'), 15, 2)
+
         frame.setLayout(grid)
         vb.addWidget(frame)
+
+        ### entity 2
+
+        frame = QtGui.QFrame()
+        frame.setFrameShape(QtGui.QFrame.StyledPanel)
+
+        grid = QtGui.QGridLayout()
+
+        grid.addWidget(QtGui.QLabel('Entity 2 (IMPORTANT: only fill in if you are working with a protein-protein complex!)'), 1, 0)
+
+        grid.addWidget(QtGui.QLabel('Molecule Name'), 2, 0)
+        self.molecule_name_two = QtGui.QLineEdit()
+        self.molecule_name_two.setText('')
+        self.molecule_name_two.setFixedWidth(300)
+        self.molecule_name_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.molecule_name_two, 2, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. RNA Hammerhead Ribozyme)'), 2, 2)
+
+        grid.addWidget(QtGui.QLabel('Fragment Name'), 3, 0)
+        self.fragment_name_two = QtGui.QLineEdit()
+        self.fragment_name_two.setText('')
+        self.fragment_name_two.setFixedWidth(300)
+        self.fragment_name_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.fragment_name_two, 3, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. ligand binding domain, hairpin)'), 3, 2)
+
+        grid.addWidget(QtGui.QLabel('Specific Mutation'), 4, 0)
+        self.fragment_name_two_specific_mutation = QtGui.QLineEdit()
+        self.fragment_name_two_specific_mutation.setText('')
+        self.fragment_name_two_specific_mutation.setFixedWidth(300)
+        self.fragment_name_two_specific_mutation.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.fragment_name_two_specific_mutation, 4, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. C280S)'), 4, 2)
+
+        grid.addWidget(QtGui.QLabel('Enzyme Comission Number'), 5, 0)
+        self.fragment_name_two_enzyme_comission_number = QtGui.QLineEdit()
+        self.fragment_name_two_enzyme_comission_number.setText('')
+        self.fragment_name_two_enzyme_comission_number.setFixedWidth(300)
+        self.fragment_name_two_enzyme_comission_number.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.fragment_name_two_enzyme_comission_number, 5, 1)
+        grid.addWidget(QtGui.QLabel('(if known: e.g. 2.7.7.7)'), 5, 2)
+
+        grid.addWidget(QtGui.QLabel('Genetically Manipulated Source'), 6, 0)
+
+        grid.addWidget(QtGui.QLabel('Source organism scientific name'), 7, 0)
+
+        self.Source_organism_scientific_name_two = QtGui.QComboBox()
+        taxonomy_dict = XChemMain.NCBI_taxonomy_ID()
+        for item in taxonomy_dict:
+            self.Source_organism_scientific_name_two.addItem(taxonomy_dict[item])
+        grid.addWidget(self.Source_organism_scientific_name_two, 7, 1)
+
+        grid.addWidget(QtGui.QLabel('Source organism gene'), 8, 0)
+        self.Source_organism_gene_two = QtGui.QLineEdit()
+        self.Source_organism_gene_two.setText('')
+        self.Source_organism_gene_two.setFixedWidth(300)
+        grid.addWidget(self.Source_organism_gene_two, 8, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. RPOD, ALKA...)'), 8, 2)
+
+        grid.addWidget(QtGui.QLabel('Source organism strain'), 9, 0)
+        self.Source_organism_strain_two = QtGui.QLineEdit()
+        self.Source_organism_strain_two.setText('')
+        self.Source_organism_strain_two.setFixedWidth(300)
+        self.Source_organism_strain_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.Source_organism_strain_two, 9, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. BH10 ISOLATE, K-12...)'), 9, 2)
+
+        grid.addWidget(QtGui.QLabel('Expression system scientific name'), 10, 0)
+
+        self.Expression_system_scientific_name_two = QtGui.QComboBox()
+        for item in taxonomy_dict:
+            self.Expression_system_scientific_name_two.addItem(taxonomy_dict[item])
+        grid.addWidget(self.Expression_system_scientific_name_two, 10, 1)
+
+        grid.addWidget(QtGui.QLabel('Expression system strain'), 11, 0)
+        self.Expression_system_strain_two = QtGui.QLineEdit()
+        self.Expression_system_strain_two.setText('')
+        self.Expression_system_strain_two.setFixedWidth(300)
+        self.Expression_system_strain_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.Expression_system_strain_two, 11, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. BL21(DE3))'), 11, 2)
+
+        grid.addWidget(QtGui.QLabel('Expression system vector type'), 12, 0)
+        self.Expression_system_vector_type_two = QtGui.QLineEdit()
+        self.Expression_system_vector_type_two.setText('')
+        self.Expression_system_vector_type_two.setFixedWidth(300)
+        self.Expression_system_vector_type_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.Expression_system_vector_type_two, 12, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. plasmid)'), 12, 2)
+
+        grid.addWidget(QtGui.QLabel('Expression_system_plasmid_name'), 13, 0)
+        self.Expression_system_plasmid_name_two = QtGui.QLineEdit()
+        self.Expression_system_plasmid_name_two.setText('')
+        self.Expression_system_plasmid_name_two.setFixedWidth(300)
+        self.Expression_system_plasmid_name_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.Expression_system_plasmid_name_two, 13, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. pET26)'), 13, 2)
+
+        grid.addWidget(QtGui.QLabel('Manipulated_source_details'), 14, 0)
+        self.Manipulated_source_details_two = QtGui.QLineEdit()
+        self.Manipulated_source_details_two.setText('')
+        self.Manipulated_source_details_two.setFixedWidth(300)
+        self.Manipulated_source_details_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+        grid.addWidget(self.Manipulated_source_details_two, 14, 1)
+        grid.addWidget(QtGui.QLabel('(any other relevant information)'), 14, 2)
+
+        grid.addWidget(QtGui.QLabel('Chains'), 15, 0)
+        self.molecule_chain_two = QtGui.QLineEdit()
+        self.molecule_chain_two.setText('')
+        self.molecule_chain_two.setFixedWidth(300)
+        grid.addWidget(self.molecule_chain_two, 15, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. A or A,B)'), 15, 2)
+
+        frame.setLayout(grid)
+
+        vb.addWidget(frame)
+
+        ### entity 2 --- END
+
+
+
 
         vb.addStretch(1)
 
@@ -1581,21 +1709,37 @@ class XChemExplorer(QtGui.QApplication):
         self.molecule_one_letter_sequence.setFixedWidth(300)
         grid.addWidget(self.molecule_one_letter_sequence, 4, 1, 7, 2)
 
-        grid.addWidget(QtGui.QLabel('Structural Genomic (optional)'), 8, 0)
+        grid.addWidget(QtGui.QLabel('Sequence information for entity 2 (Important: only fill in if you have a protein-protein complex'), 8, 0)
 
-        grid.addWidget(QtGui.QLabel('Project Name'), 9, 0)
+        grid.addWidget(QtGui.QLabel('Sequence UNIPROT ID (Entity 2)'), 9, 0)
+        self.molecule_one_letter_sequence_uniprot_id_two = QtGui.QLineEdit()
+        self.molecule_one_letter_sequence_uniprot_id_two.setText('')
+        self.molecule_one_letter_sequence_uniprot_id_two.setFixedWidth(300)
+        grid.addWidget(self.molecule_one_letter_sequence_uniprot_id_two, 9, 1)
+        grid.addWidget(QtGui.QLabel('(e.g.  Q6B0I6)'), 9, 2)
+
+        grid.addWidget(QtGui.QLabel('Sequence (Entity 2)'), 10, 0)
+        self.molecule_one_letter_sequence_two = QtGui.QTextEdit()
+        self.molecule_one_letter_sequence_two.setText('')
+        self.molecule_one_letter_sequence_two.setFixedWidth(300)
+        grid.addWidget(self.molecule_one_letter_sequence_two, 10, 1, 13, 2)
+
+
+        grid.addWidget(QtGui.QLabel('Structural Genomic (optional)'), 14, 0)
+
+        grid.addWidget(QtGui.QLabel('Project Name'), 15, 0)
         self.SG_project_name = QtGui.QLineEdit()
         self.SG_project_name.setText('')
         self.SG_project_name.setFixedWidth(300)
-        grid.addWidget(self.SG_project_name, 9, 1)
-        grid.addWidget(QtGui.QLabel('(e.g. PSI, Protein Structure Initiative)'), 9, 2)
+        grid.addWidget(self.SG_project_name, 15, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. SGC, Structural Genomics Consortium)'), 15, 2)
 
-        grid.addWidget(QtGui.QLabel('Full Name'), 10, 0)
+        grid.addWidget(QtGui.QLabel('Full Name'), 16, 0)
         self.full_name_of_SG_center = QtGui.QLineEdit()
         self.full_name_of_SG_center.setText('')
         self.full_name_of_SG_center.setFixedWidth(300)
-        grid.addWidget(self.full_name_of_SG_center, 10, 1)
-        grid.addWidget(QtGui.QLabel('(e.g. Berkeley Structural Genomic Center)'), 10, 2)
+        grid.addWidget(self.full_name_of_SG_center, 16, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. Structural Genomics Consortium)'), 16, 2)
 
         frame.setLayout(grid)
         vb.addWidget(frame)
@@ -1882,6 +2026,8 @@ class XChemExplorer(QtGui.QApplication):
             for n, name in enumerate(self.deposit_dict['primary_citation_author_name'].split(';')):
                 self.primary_citation_author_name_List[n].setText(name)
 
+            ### entity 1
+
             self.molecule_name.setText(self.deposit_dict['molecule_name'])
             self.fragment_name_one_specific_mutation.setText(self.deposit_dict['fragment_name_one_specific_mutation'])
             index = self.Source_organism_scientific_name.findText(self.deposit_dict['Source_organism_scientific_name'],
@@ -1898,12 +2044,38 @@ class XChemExplorer(QtGui.QApplication):
             self.Expression_system_vector_type.setText(self.deposit_dict['Expression_system_vector_type'])
             self.Expression_system_plasmid_name.setText(self.deposit_dict['Expression_system_plasmid_name'])
             self.Manipulated_source_details.setText(self.deposit_dict['Manipulated_source_details'])
+            self.molecule_chain_one.setText(self.deposit_dict['molecule_chain_one'])
+
+            ### entity 2
+
+            self.molecule_name_two.setText(self.deposit_dict['molecule_name_two'])
+            self.fragment_name_two_specific_mutation.setText(self.deposit_dict['fragment_name_one_specific_mutation_two'])
+            index = self.Source_organism_scientific_name_two.findText(self.deposit_dict['Source_organism_scientific_name_two'],
+                                                                  QtCore.Qt.MatchFixedString)
+            self.Source_organism_scientific_name_two.setCurrentIndex(index)
+
+            self.Source_organism_gene_two.setText(self.deposit_dict['Source_organism_gene_two'])
+            self.Source_organism_strain_two.setText(self.deposit_dict['Source_organism_strain_two'])
+            index = self.Expression_system_scientific_name_two.findText(
+                self.deposit_dict['Expression_system_scientific_name_two'], QtCore.Qt.MatchFixedString)
+            self.Expression_system_scientific_name_two.setCurrentIndex(index)
+
+            self.Expression_system_strain_two.setText(self.deposit_dict['Expression_system_strain_two'])
+            self.Expression_system_vector_type_two.setText(self.deposit_dict['Expression_system_vector_type_two'])
+            self.Expression_system_plasmid_name_two.setText(self.deposit_dict['Expression_system_plasmid_name_two'])
+            self.Manipulated_source_details_two.setText(self.deposit_dict['Manipulated_source_details_two'])
+            self.molecule_chain_two.setText(self.deposit_dict['molecule_chain_two'])
+
+            ###
 
             self.structure_keywords.setText(self.deposit_dict['structure_keywords'])
             self.biological_assembly_chain_number.setText(self.deposit_dict['biological_assembly_chain_number'])
             self.molecule_one_letter_sequence_uniprot_id.setText(
                 self.deposit_dict['molecule_one_letter_sequence_uniprot_id'])
             self.molecule_one_letter_sequence.setText(self.deposit_dict['molecule_one_letter_sequence'])
+            self.molecule_one_letter_sequence_uniprot_id_two.setText(
+                self.deposit_dict['molecule_two_letter_sequence_uniprot_id'])
+            self.molecule_one_letter_sequence_two.setText(self.deposit_dict['molecule_two_letter_sequence'])
             self.SG_project_name.setText(self.deposit_dict['SG_project_name'])
             self.full_name_of_SG_center.setText(self.deposit_dict['full_name_of_SG_center'])
 
@@ -1993,7 +2165,7 @@ class XChemExplorer(QtGui.QApplication):
             'primary_citation_journal_volume': str(self.primary_citation_journal_volume.text()),
             'primary_citation_page_first': str(self.primary_citation_page_first.text()),
             'primary_citation_page_last': str(self.primary_citation_page_last.text()),
-
+            ### entity 1
             'molecule_name': str(self.molecule_name.text()),
             'Source_organism_scientific_name': str(self.Source_organism_scientific_name.currentText()),
             'Source_organism_gene': str(self.Source_organism_gene.text()),
@@ -2004,13 +2176,31 @@ class XChemExplorer(QtGui.QApplication):
             'Expression_system_vector_type': str(self.Expression_system_vector_type.text()),
             'Manipulated_source_details': str(self.Manipulated_source_details.text()),
             'fragment_name_one_specific_mutation': str(self.fragment_name_one_specific_mutation.text()),
+            'molecule_chain_one': str(self.molecule_chain_one.text()),
+
+            ### entity 2
+            'molecule_name_two': str(self.molecule_name_two.text()),
+            'Source_organism_scientific_name_two': str(self.Source_organism_scientific_name_two.currentText()),
+            'Source_organism_gene_two': str(self.Source_organism_gene_two.text()),
+            'Source_organism_strain_two': str(self.Source_organism_strain_two.text()),
+            'Expression_system_scientific_name_two': str(self.Expression_system_scientific_name_two.currentText()),
+            'Expression_system_strain_two': str(self.Expression_system_strain_two.text()),
+            'Expression_system_plasmid_name_two': str(self.Expression_system_plasmid_name_two.text()),
+            'Expression_system_vector_type_two': str(self.Expression_system_vector_type_two.text()),
+            'Manipulated_source_details_two': str(self.Manipulated_source_details_two.text()),
+            'fragment_name_two_specific_mutation': str(self.fragment_name_two_specific_mutation.text()),
+            'molecule_chain_two': str(self.molecule_chain_two.text()),
 
             'structure_keywords': str(self.structure_keywords.text()),
             'biological_assembly_chain_number': str(self.biological_assembly_chain_number.text()),
             'molecule_one_letter_sequence_uniprot_id': str(self.molecule_one_letter_sequence_uniprot_id.text()),
+            'molecule_two_letter_sequence_uniprot_id': str(self.molecule_one_letter_sequence_uniprot_id_two.text()),
             'SG_project_name': str(self.SG_project_name.text()),
             'full_name_of_SG_center': str(self.full_name_of_SG_center.text()),
             'molecule_one_letter_sequence': str(self.molecule_one_letter_sequence.toPlainText()).replace(' ',
+                                                                                                         '').replace(
+                '\n', '').replace('\r', ''),
+            'molecule_two_letter_sequence': str(self.molecule_one_letter_sequence_two.toPlainText()).replace(' ',
                                                                                                          '').replace(
                 '\n', '').replace('\r', ''),
 
