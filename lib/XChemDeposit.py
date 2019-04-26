@@ -353,7 +353,7 @@ class update_depositTable(QtCore.QThread):
 
 class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
-    def __init__(self,database,xce_logfile,overwrite_existing_mmcif,projectDir,ground_state):
+    def __init__(self,database,xce_logfile,overwrite_existing_mmcif,projectDir,ground_state,ignore_event_map):
         QtCore.QThread.__init__(self)
         self.database=database
         self.xce_logfile=xce_logfile
@@ -375,6 +375,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.ground_state_pdb = ''
         self.ground_state_mean_mtz = ''
         self.panddaDir = ''
+        self.ignore_event_map = ignore_event_map
         if ground_state:
             self.ground_state = True
             self.ground_state_pdb = ground_state[0]

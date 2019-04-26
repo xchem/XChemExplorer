@@ -51,6 +51,8 @@ class DepositionTab():
 
         deposition_bound_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_bound_state_preparation_step_one_text())
 
+        deposition_bounnd_state_preparation_ignore_event_map = QtGui.QCheckBox(XChemToolTips.deposition_bounnd_state_preparation_ignore_event_map())
+
         prepare_mmcif_button = QtGui.QPushButton('prepare mmcif')
         prepare_mmcif_button.clicked.connect(xce_object.prepare_models_for_deposition_ligand_bound)
         prepare_mmcif_button.setMaximumWidth(200)
@@ -165,6 +167,7 @@ class DepositionTab():
                                   deposition_bound_state_prerequisites_text, QtGui.QLabel(' \n '),
                                   deposition_bound_state_preparation,
                                   deposition_bound_state_preparation_step_one_text,
+                                  deposition_bounnd_state_preparation_ignore_event_map,
                                   prepare_mmcif_button,
                                   deposition_bound_state_preparation_step_two_text,
                                   copy_mmcif_button,

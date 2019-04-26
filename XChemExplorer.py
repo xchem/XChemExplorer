@@ -948,12 +948,15 @@ class XChemExplorer(QtGui.QApplication):
 
     def prepare_models_for_deposition_ligand_bound(self,structureType):
 
+        ignore_event_map = False
         if structureType == 'ground-state':
             ground_state = [ str(self.ground_state_pdb_button_label.text()),
                              str(self.ground_state_mtz_button_label.text()),
                              self.panddas_directory ]
         else:
             ground_state = []
+            if self.deposition_bounnd_state_preparation_ignore_event_map.isChecked():
+                ignore_event_map = True
 
 #        structureType = "ligand_bound"
 
@@ -963,7 +966,8 @@ class XChemExplorer(QtGui.QApplication):
             self.xce_logfile,
             overwrite_existing_mmcif,
             self.initial_model_directory,
-            ground_state)
+            ground_state,
+            ignore_event_map)
         self.explorer_active = 1
         self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
         self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)

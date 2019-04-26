@@ -383,3 +383,9 @@ def after_deposition_step_one_text():
         'and select "Update DB with PDB codes". A pop-up window will appear, paste the text into the window and press "Update Database".'
     )
     return msg
+
+def deposition_bounnd_state_preparation_ignore_event_map():
+    msg = (
+        'do NOT include PanDDA event maps (ONLY USE IN CASE IF DATA WERE NOT ANALYSED WITH PANDDA!)'
+    )
+    return msg
