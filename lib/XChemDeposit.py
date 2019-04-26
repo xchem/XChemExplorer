@@ -642,6 +642,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         if os.path.isfile('no_pandda_analysis_performed'):
             self.Logfile.warning('%s: found empty file named "no_pandda_analysis_performed" which suggests we will ignore event maps for this sample' %xtal)
             eventMTZexists = True
+        elif self.ignore_event_map:
+            self.Logfile.warning('%s: user selected to not include event map in SF mmcif file' %xtal)
+            eventMTZexists = True
         else:
             for mtz in glob.glob('*event*.native*P1.mtz'):
                 eventMTZlist.append(mtz[mtz.rfind('/')+1:])
@@ -659,7 +662,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
         ligList = self.pdb.save_residues_with_resname(os.path.join(self.projectDir,xtal), 'LIG')
         foundMatchingMap = None
-        if os.path.isfile('no_pandda_analysis_performed'):
+        if os.path.isfile('no_pandda_analysis_performed') or self.ignore_event_map:
             self.Logfile.warning('%s: found empty file named "no_pandda_analysis_performed" which suggests we will ignore event maps for this sample' %xtal)
             foundMatchingMap = True
             ligList = []
