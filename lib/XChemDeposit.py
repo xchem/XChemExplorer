@@ -515,8 +515,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                                 'i24':      ['DIAMOND BEAMLINE I24',    'DECTRIS PILATUS 6M'] ,     }
 
         if self.db_dict['DataCollectionBeamline'] in dls_beamlines:
-            self.data_template_dict['radiation_source_type']=    dls_beamline_dict[db_dict['radiation_source_type']][0]
-            self.data_template_dict['radiation_detector_type']=  dls_beamline_dict[db_dict['radiation_source_type']][1]
+            self.data_template_dict['radiation_source_type']=    dls_beamline_dict[self.db_dict['radiation_source_type']][0]
+            self.data_template_dict['radiation_detector_type']=  dls_beamline_dict[self.db_dict['radiation_source_type']][1]
             self.data_template_dict['radiation_detector']=       'PIXEL'
             self.data_template_dict['radiation_source']=         'SYNCHROTRON'
             self.Logfile.insert(('%s: setting data collection beamline to %s' %(xtal,self.data_template_dict['radiation_source_type'])))
