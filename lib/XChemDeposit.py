@@ -734,6 +734,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
             self.Logfile.insert('%s: experimental wavelength according to %s is %s' %(xtal,self.mtz,self.data_template_dict['radiation_wavelengths']))
             self.data_template_dict['radiation_source_type'] = self.db_dict['radiation_source_type']
+            self.Logfile.insert(('%s: setting data collection beamline to %s' %(xtal,self.data_template_dict['radiation_source_type'])))
             if self.ground_state:
                 os.chdir(self.projectDir)
 #                self.data_template_dict['radiation_wavelengths'] = '1.000'
