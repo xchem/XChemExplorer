@@ -505,7 +505,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             dictStatus = True
         return  dictStatus
 
-    def update_beamline_info_data_template_dict(self):
+    def update_beamline_info_data_template_dict(self,xtal):
         dls_beamlines=['i02','i03','i04','i04-1','i23','i24']
         dls_beamline_dict = {   'i02':      ['DIAMOND BEAMLINE I02',    'DECTRIS PILATUS 6M'],
                                 'i03':      ['DIAMOND BEAMLINE I03',    'DECTRIS PILATUS 6M'],
@@ -532,7 +532,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.add_to_errorList(xtal)
         else:
             self.Logfile.insert('%s: found db_dict dictionary in mainTable' % xtal)
-            self.update_beamline_info_data_template_dict()
+            self.update_beamline_info_data_template_dict(xtal)
             dictStatus = True
         return  dictStatus
 
