@@ -49,9 +49,9 @@ class DepositionTab():
         deposition_bound_state_preparation = self.layout_funcs.add_depo_heading('Procedure')
         deposition_bound_state_preparation.setStyleSheet("font: italic bold 17pt Arial ")
 
-        xce_object.deposition_bound_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_bound_state_preparation_step_one_text())
+        deposition_bound_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_bound_state_preparation_step_one_text())
 
-        deposition_bounnd_state_preparation_ignore_event_map = QtGui.QCheckBox(XChemToolTips.deposition_bounnd_state_preparation_ignore_event_map())
+        xce_object.deposition_bounnd_state_preparation_ignore_event_map = QtGui.QCheckBox(XChemToolTips.deposition_bounnd_state_preparation_ignore_event_map())
 
         prepare_mmcif_button = QtGui.QPushButton('prepare mmcif')
         prepare_mmcif_button.clicked.connect(xce_object.prepare_models_for_deposition_ligand_bound)
@@ -166,8 +166,8 @@ class DepositionTab():
                                   deposition_bound_state_prerequisites,
                                   deposition_bound_state_prerequisites_text, QtGui.QLabel(' \n '),
                                   deposition_bound_state_preparation,
-                                  xce_object.deposition_bound_state_preparation_step_one_text,
-                                  deposition_bounnd_state_preparation_ignore_event_map,
+                                  deposition_bound_state_preparation_step_one_text,
+                                  xce_object.deposition_bounnd_state_preparation_ignore_event_map,
                                   prepare_mmcif_button,
                                   deposition_bound_state_preparation_step_two_text,
                                   copy_mmcif_button,
