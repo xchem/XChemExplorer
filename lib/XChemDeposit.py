@@ -505,6 +505,22 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             dictStatus = True
         return  dictStatus
 
+    def update_beamline_info(self):
+        dls_beamlines=['i02','i03','i04','i04-1','i23','i24']
+        dls_beamline_dict = {   'i02':      ['DIAMOND BEAMLINE I02',    'DECTRIS PILATUS 6M'],
+                                'i03':      ['DIAMOND BEAMLINE I03',    'DECTRIS PILATUS 6M'],
+                                'i04':      ['DIAMOND BEAMLINE I04',    'DECTRIS PILATUS 6M'],
+                                'i04-1':    ['DIAMOND BEAMLINE I04-1',  'DECTRIS PILATUS 6M'],
+                                'i23':      ['DIAMOND BEAMLINE I23',    'DECTRIS PILATUS 12M'],
+                                'i24':      ['DIAMOND BEAMLINE I24',    'DECTRIS PILATUS 6M'] ,     }
+
+        if self.db_dict['radiation_source_type'] in dls_beamlines:
+            self.db_dict['radiation_source_type']=    dls_beamline_dict[db_dict['radiation_source_type']][0]
+            self.db_dict['radiation_detector_type']=  dls_beamline_dict[db_dict['radiation_source_type']][1]
+            self.db_dict['radiation_detector']=       'PIXEL'
+            self.db_dict['radiation_source']=         'SYNCHROTRON'
+
+
     def db_dict_exists(self,xtal):
         dictStatus = False
         self.db_dict = None
@@ -515,6 +531,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.add_to_errorList(xtal)
         else:
             self.Logfile.insert('%s: found db_dict dictionary in mainTable' % xtal)
+            self.update_beamline_info()
             dictStatus = True
         return  dictStatus
 
@@ -716,6 +733,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         if self.overwrite_existing_mmcif:
             self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
             self.Logfile.insert('%s: experimental wavelength according to %s is %s' %(xtal,self.mtz,self.data_template_dict['radiation_wavelengths']))
+            self.data_template_dict['radiation_source_type'] = self.db_dict['radiation_source_type']
             if self.ground_state:
                 os.chdir(self.projectDir)
 #                self.data_template_dict['radiation_wavelengths'] = '1.000'
