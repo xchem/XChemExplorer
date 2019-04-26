@@ -71,12 +71,9 @@ class templates:
 
         taxonomy_dict=XChemMain.NCBI_taxonomy_ID()
         for key in taxonomy_dict:
-            print key
             if taxonomy_dict[key]==depositDict['Source_organism_scientific_name']:
-                print 'found A'
                 pdbx_gene_src_ncbi_taxonomy_id=key
             if taxonomy_dict[key]==depositDict['Expression_system_scientific_name']:
-                print 'found B'
                 pdbx_host_org_ncbi_taxonomy_id=key
 
 #        structure_author_name=''
