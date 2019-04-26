@@ -166,7 +166,7 @@ class DepositionTab():
                                   deposition_bound_state_prerequisites,
                                   deposition_bound_state_prerequisites_text, QtGui.QLabel(' \n '),
                                   deposition_bound_state_preparation,
-                                  deposition_bound_state_preparation_step_one_text,
+                                  xce_object.deposition_bound_state_preparation_step_one_text,
                                   deposition_bounnd_state_preparation_ignore_event_map,
                                   prepare_mmcif_button,
                                   deposition_bound_state_preparation_step_two_text,
