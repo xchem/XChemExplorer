@@ -479,6 +479,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.event_maps_exist_in_sf_mmcif(xtal):
                     continue
 
+                self.make_table_one(xtal)
+
 
         self.print_errorlist()
         self.Logfile.insert('======= finished preparing mmcif files for wwPDB deposition =======')
@@ -925,6 +927,31 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #
 #            elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
 #                sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
+
+
+    def make_table_one(self,xtal):
+        os.chdir(os.path.join(self.projectDir, xtal))
+        if os.path.isfile(xtal + '.mmcif') and os.path.getsize(xtal + '.mmcif') > 20000:
+            self.Logfile.insert('making table_1 for %s.mmcif' %xtal)
+            if os.path.isdir('/dls'):
+                extract_table_init = 'source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n'
+                extract_table_init += '/dls/science/groups/i04-1/software/pdb-extract-prod/bin/extract_table'
+            else:
+                extract_table_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
+                                                                'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
+                extract_table_init += +os.path.join(os.getenv('XChemExplorer_DIR'),
+                                                      'pdb_extract/pdb-extract-prod/bin/extract_table')
+
+            Cmd = extract_table_init + ' ' + xtal.mmcif
+
+            self.Logfile.insert(xtal + ': running sf_convert: ' + Cmd)
+            os.system(Cmd)
+
+            if os.path.isfile('cryst-table-1.out'):
+                self.Logfile.insert('%s: table_1 successfully created; updating database' %xtal)
+                self.db.execute_statement("update mainTable set table_one='cryst-table-1.out' where CrystalName is '{0!s}'".format(xtal))
+            else:
+                self.Logfile.warning('%s: could not create table_1' %xtal)
 
 
     def create_sf_mmcif(self,xtal):

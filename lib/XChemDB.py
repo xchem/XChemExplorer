@@ -208,6 +208,7 @@ class data_source:
             ['Deposition_mmCIF_SF_file',                    'Deposition_mmCIF_SF_file',                     'TEXT',                 0],
 
             ['Label',                                       'Label',                                        'TEXT',                 0],
+            ['table_one',                                   'table_one',                                    'TEXT',                 0],
 
             ['AssayIC50',                                   'AssayIC50',                                    'TEXT',                 0],
             ['LastUpdated',                                 'LastUpdated',                                  'TEXT',                 0],
