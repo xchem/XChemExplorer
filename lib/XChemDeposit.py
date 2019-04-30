@@ -130,7 +130,16 @@ class templates:
                                                      ';\n'
                     '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
                     '#\n'
-                    )
+                    'loop_\n'
+                    '_entity_src_gen.entity_id\n'
+                    '_entity_src_gen.gene_src_strain\n'
+                    '_entity_src_gen.pdbx_gene_src_scientific_name\n'
+                    '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
+                    '_entity_src_gen.pdbx_host_org_scientific_name\n'
+                    '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
+                    '1 ? "%s" %s  "%s" %s\n' % (depositDict['Source_organism_scientific_name'], pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'], pdbx_host_org_ncbi_taxonomy_id) +
+                    '#\n'
+            )
         else:
             molecule_two_letter_sequence=';'
             counter=1
@@ -169,7 +178,17 @@ class templates:
                     ';\n'
                     '%s %s UNP\n'                                        %(depositDict['molecule_chain_two'],depositDict['molecule_two_letter_sequence_uniprot_id'])+
                     '#\n'
-                    )
+                    'loop_\n'
+                    '_entity_src_gen.entity_id\n'
+                    '_entity_src_gen.gene_src_strain\n'
+                    '_entity_src_gen.pdbx_gene_src_scientific_name\n'
+                    '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
+                    '_entity_src_gen.pdbx_host_org_scientific_name\n'
+                    '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
+                    '1 ? "%s" %s  "%s" %s\n' % (depositDict['Source_organism_scientific_name'], pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'], pdbx_host_org_ncbi_taxonomy_id) +
+                    '2 ? "%s" %s  "%s" %s\n' % (depositDict['Source_organism_scientific_name'], pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'], pdbx_host_org_ncbi_taxonomy_id) +
+                    '#\n'
+            )
 
 
         data_template_cif = (
@@ -233,15 +252,15 @@ class templates:
 #            ';\n'
 #            '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
 #            '#\n'
-            'loop_\n'
-            '_entity_src_gen.entity_id\n'
-            '_entity_src_gen.gene_src_strain\n'
-            '_entity_src_gen.pdbx_gene_src_scientific_name\n'
-            '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
-            '_entity_src_gen.pdbx_host_org_scientific_name\n'
-            '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
-            '1 ? "%s" %s  "%s" %s\n'                %(depositDict['Source_organism_scientific_name'],pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'],pdbx_host_org_ncbi_taxonomy_id)+
-            '#\n'
+#            'loop_\n'
+#            '_entity_src_gen.entity_id\n'
+#            '_entity_src_gen.gene_src_strain\n'
+#            '_entity_src_gen.pdbx_gene_src_scientific_name\n'
+#            '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
+#            '_entity_src_gen.pdbx_host_org_scientific_name\n'
+#            '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
+#            '1 ? "%s" %s  "%s" %s\n'                %(depositDict['Source_organism_scientific_name'],pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'],pdbx_host_org_ncbi_taxonomy_id)+
+#            '#\n'
             'loop_\n'
             '_pdbx_contact_author.id                  \n'
             "_pdbx_contact_author.address_1           \n"
