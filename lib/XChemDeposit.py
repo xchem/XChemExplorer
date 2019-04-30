@@ -942,7 +942,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 extract_table_init += +os.path.join(os.getenv('XChemExplorer_DIR'),
                                                       'pdb_extract/pdb-extract-prod/bin/extract_table')
 
-            Cmd = extract_table_init + ' ' + xtal.mmcif
+            Cmd = extract_table_init + ' ' + xtal + '.mmcif'
 
             self.Logfile.insert(xtal + ': running sf_convert: ' + Cmd)
             os.system(Cmd)
