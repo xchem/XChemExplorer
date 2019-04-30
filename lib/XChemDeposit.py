@@ -948,8 +948,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             os.system(Cmd)
 
             if os.path.isfile('cryst-table-1.out'):
-                self.Logfile.insert('%s: table_1 successfully created; updating database' %xtal)
-                self.db.execute_statement("update mainTable set table_one='cryst-table-1.out' where CrystalName is '{0!s}'".format(xtal))
+                os.system('/bin/mv cryst-table-1.out %s-table-1.txt' %xtal)
+                self.Logfile.insert('%s: table_1 successfully created; updating database...' %xtal)
+                self.db.execute_statement("update mainTable set table_one='{0!s}-table-1.txt' where CrystalName is '{1!s}'".format(xtal,xtal))
             else:
                 self.Logfile.warning('%s: could not create table_1' %xtal)
 
