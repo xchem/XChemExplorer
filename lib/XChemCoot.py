@@ -1372,6 +1372,11 @@ class GUI(object):
             self.cb_site.set_sensitive(True)
             self.PREVbuttonSite.set_sensitive(True)
             self.NEXTbuttonSite.set_sensitive(True)
+        if int(self.refinement_outcome.split()[0]) > 3:
+            print '==> XCE: sorry cannot change refinement protocol since you are at a stage when we refine the ligand bound state only'
+            self.refinementProtocol = 'refmac'
+            self.refinementProtocolcheckbox.set_active(False)
+
 
     def update_plot(self, refinement_cycle, Rfree, Rcryst):
         fig = Figure(figsize=(2, 2), dpi=50)
