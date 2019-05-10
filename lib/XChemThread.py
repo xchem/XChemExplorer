@@ -1966,7 +1966,7 @@ class start_COOT(QtCore.QThread):
     def __init__(self,settings,interface):
         QtCore.QThread.__init__(self)
         self.settings=settings
-        if interface=='old':
+        if interface=='test':
             self.pylib='XChemCoot.py'
         elif interface=='new':
             self.pylib='XChemCootNew.py'
