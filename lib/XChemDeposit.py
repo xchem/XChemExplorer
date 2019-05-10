@@ -916,7 +916,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 Title = ''
                 foundTitle = False
                 for li in open('data_template.cif'):
-                    if li.startwith('_struct.title'):
+                    if li.startswith('_struct.title'):
                         foundTitle = True
                     if foundTitle:
                         if li.replace(' ','').replace('\n','').replace('\r','') == ';':
