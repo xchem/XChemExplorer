@@ -911,8 +911,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             elif '_refine.pdbx_method_to_determine_struct' in line:
                 sys.stdout.write("_refine.pdbx_method_to_determine_struct          'FOURIER SYNTHESIS'\n")
             elif '_struct.title      ---' in line:
-                self.Logfile.warning('structure title was not created by pdb_extract; there might be an issue with REFMAC 5.8.0238')
-                self.Logfile.insert('trying to get title from data_template.cif file')
+#                self.Logfile.warning('structure title was not created by pdb_extract; there might be an issue with REFMAC 5.8.0238')
+#                self.Logfile.insert('trying to get title from data_template.cif file')
                 Title = ''
                 foundTitle = False
                 for li in open('data_template.cif'):
@@ -923,7 +923,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                             Title += li
                             break
                         Title += li
-
+                sys.stdout.write(Title)
             elif amendSoftwareBlock:
                 cifItem = (
                     "{0!s} {1!s} ? ? program ? ? 'data reduction' ? ?\n".format(str(max(softwareEntry) + 1),
