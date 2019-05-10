@@ -1373,7 +1373,7 @@ class GUI(object):
             self.cb_site.set_sensitive(True)
             self.PREVbuttonSite.set_sensitive(True)
             self.NEXTbuttonSite.set_sensitive(True)
-        print '===========>',self.refinement_outcome
+        print '===========>',self.cb_select_samples.get_active_text()
         if int(self.refinement_outcome.split()[0]) > 3:
             print '==> XCE: sorry cannot change refinement protocol since you are at a stage when we refine the ligand bound state only'
             self.refinementProtocol = 'refmac'
