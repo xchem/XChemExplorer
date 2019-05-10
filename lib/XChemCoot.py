@@ -1349,6 +1349,7 @@ class GUI(object):
         self.selection_mode = widget.get_active_text()
 
     def get_samples_to_look_at(self, widget):
+        print 'KKKKKKKKKKKKKKKKKKKKKKKKK HERERE'
         if self.selection_mode == '':
             self.status_label.set_text('select model stage')
             return
@@ -1360,7 +1361,7 @@ class GUI(object):
         self.Todo = []
         self.siteDict = {}
         self.Todo, self.siteDict = self.db.get_todoList_for_coot(self.selection_mode)
-        self.status_label.set_text('found {0!s} samples'.format(len(self.Todo)))
+#        self.status_label.set_text('found {0!s} samples'.format(len(self.Todo)))
         # refresh sample CB
         for item in sorted(self.Todo):
             self.cb.append_text('{0!s}'.format(item[0]))
