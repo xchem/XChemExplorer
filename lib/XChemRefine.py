@@ -401,6 +401,24 @@ class Refine(object):
                 'source '+os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-csh')+'\n'   )
 
 
+        spider_plot=''
+        if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-ensemble-model.pdb')):
+            if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')):
+                pdb_two=os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-ensemble-model.pdb')
+                mtz_two=os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')
+                pdb_one=os.path.join(self.ProjectPath,self.xtalID,'Refine_'+str(Serial),'multi-state-model.pdb')
+                mtz_one=os.path.join(self.ProjectPath,self.xtalID,'Refine_'+str(Serial),'refine_'+str(Serial)+'.mtz')
+                spider_plot = (
+                'cd ' + self.ProjectPath + '/' + self.xtalID + '/Refine_' + Serial + '\n'
+                '\n'
+                'giant.merge_conformations '
+                ' major=../refine.split.ground-state.pdb'
+                ' minor=../refine.split.bound-state.pdb'
+                ' reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0\n'
+                'giant.score_model pdb1=%s mtz1=%s pdb2=%s mtz2=%s res_names=LIG,UNL,DRG,FRG\n' % (pdb_one, mtz_one, pdb_two, mtz_two)
+                )
+
+
         refmacCmds = (
             '#!'+os.getenv('SHELL')+'\n'
             +pbs_line+
@@ -474,7 +492,7 @@ class Refine(object):
             '#ln -s %s/%s/Refine_%s/refine_%s.mtz refine.mtz\n' %(self.ProjectPath,self.xtalID,Serial,Serial)+
             'ln -s ./Refine_%s/refine_%s.pdb refine.pdb\n' %(Serial,Serial)+
             'ln -s ./Refine_%s/refine_%s.mtz refine.mtz\n' %(Serial,Serial)+
-            'ln -s refine.split.bound-state.pdb refine.pdb'
+            'ln -s refine.pdb refine.split.bound-state.pdb\n'
             '\n'
             'ln -s Refine_%s/validate_ligands.txt .\n' %Serial+
             'ln -s Refine_%s/refine_molprobity.log .\n' %Serial+
@@ -494,10 +512,7 @@ class Refine(object):
             '\n'
             'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+Serial+'\n'
             '\n'
-            'giant.merge_conformations '
-            ' major=../refine.split.ground-state.pdb'
-            ' minor=../refine.split.bound-state.pdb'
-            ' reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0\n'
+            +spider_plot+
             '\n'
            )
 
