@@ -366,7 +366,7 @@ class Refine(object):
         #######################################################
         # clean up!
         # and remove all files which will be re-created by current refinement cycle
-        os.system('/bin/rm refine.pdb refine.mtz validation_summary.txt validate_ligands.txt 2fofc.map fofc.map refine_molprobity.log')
+        os.system('/bin/rm refine.pdb refine.mtz refine.split.bound-state.pdb validation_summary.txt validate_ligands.txt 2fofc.map fofc.map refine_molprobity.log')
 
         if external_software['qsub']:
             pbs_line='#PBS -joe -N XCE_refmac\n'
@@ -474,6 +474,7 @@ class Refine(object):
             '#ln -s %s/%s/Refine_%s/refine_%s.mtz refine.mtz\n' %(self.ProjectPath,self.xtalID,Serial,Serial)+
             'ln -s ./Refine_%s/refine_%s.pdb refine.pdb\n' %(Serial,Serial)+
             'ln -s ./Refine_%s/refine_%s.mtz refine.mtz\n' %(Serial,Serial)+
+            'ln -s refine.split.bound-state.pdb refine.pdb'
             '\n'
             'ln -s Refine_%s/validate_ligands.txt .\n' %Serial+
             'ln -s Refine_%s/refine_molprobity.log .\n' %Serial+
@@ -490,6 +491,13 @@ class Refine(object):
             +updateDB+
             '\n'
             '/bin/rm %s/%s/REFINEMENT_IN_PROGRESS\n' %(self.ProjectPath,self.xtalID)+
+            '\n'
+            'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+Serial+'\n'
+            '\n'
+            'giant.merge_conformations '
+            ' major=../refine.split.ground-state.pdb'
+            ' minor=../refine.split.bound-state.pdb'
+            ' reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0\n'
             '\n'
            )
 

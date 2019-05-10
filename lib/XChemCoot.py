@@ -950,8 +950,6 @@ class GUI(object):
             data) + ' in mainTable of datasource'
 #        self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
         self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile,self.xtalID,'ligand_bound',self.db_dict_mainTable)
-        print 'fughuiruirgur',data
-        print 'dehfuehuief',self.refinementProtocol
         if data == '4 - CompChem ready' and self.refinementProtocol.startswith('pandda'):
             print "==> XCE: removing refine.pdb and setting linking refine.split.bound-state.pdb to refine.pdb"
             os.chdir(os.path.join(self.project_directory,self.xtalID))
