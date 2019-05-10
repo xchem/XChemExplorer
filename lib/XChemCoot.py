@@ -954,7 +954,7 @@ class GUI(object):
         print 'dehfuehuief',self.refinementProtocol
         if data == '4 - CompChem ready' and self.refinementProtocol.startswith('pandda'):
             print "==> XCE: removing refine.pdb and setting linking refine.split.bound.pdb to refine.pdb"
-            os.system('/bin/rm refine.split.bound-state.pdb')
+            os.system('/bin/rm refine.pdb')
             os.system('ln -s refine.split.bound-state.pdb refine.pdb')
             self.refinementProtocolcheckbox.set_active(False)
             self.refinementProtocol = 'refmac'
