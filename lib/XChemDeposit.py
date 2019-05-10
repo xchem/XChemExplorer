@@ -108,9 +108,7 @@ class templates:
                 counter = 0
             counter+=1
 
-        print "depositDict['molecule_name_two']",depositDict['molecule_name_two']
-
-        if depositDict['molecule_name_two'].replace(' ','') == '':
+        if depositDict['molecule_name_two'].replace(' ','') == '' or depositDict['molecule_name_two'].replace(' ','').lower() == 'none':
             entity = (
                     'loop_\n'
                     '_entity.id\n'
