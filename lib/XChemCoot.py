@@ -1349,7 +1349,6 @@ class GUI(object):
         self.selection_mode = widget.get_active_text()
 
     def get_samples_to_look_at(self, widget):
-        print 'KKKKKKKKKKKKKKKKKKKKKKKKK HERERE'
         if self.selection_mode == '':
             self.status_label.set_text('select model stage')
             return
@@ -1374,7 +1373,7 @@ class GUI(object):
             self.PREVbuttonSite.set_sensitive(True)
             self.NEXTbuttonSite.set_sensitive(True)
         print '===========>',self.cb_select_samples.get_active_text()
-        if int(self.refinement_outcome.split()[0]) > 3:
+        if int(self.cb_select_samples.get_active_text().split()[0]) > 3:
             print '==> XCE: sorry cannot change refinement protocol since you are at a stage when we refine the ligand bound state only'
             self.refinementProtocol = 'refmac'
             self.refinementProtocolcheckbox.set_active(False)
