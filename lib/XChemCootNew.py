@@ -643,31 +643,31 @@ class GUI(object):
         frame.add(vbox)
         hbox.pack_start(frame)
 
-        # label section --> start
-        frame = gtk.Frame(label='Label')
-        vbox = gtk.VBox()
-        labels = self.db.get_labels_from_db()
-        if len(labels) > 5:
-            print '==> sorry, too many labels; cannot display them in panel'
-        labels = labels[:5]
-        # with radiobuttons, one of them needs to be always on
-        # but there will be cases when the user has not assigned a label yet
-        # hence, the not_shown button is not shown but gets active
-        # if the label has not been set yet
-        labels.append('not_shown')
-        for n, l in enumerate(labels):
-            print n,l
-            if n == 0:
-                new_button = gtk.RadioButton(None, l)
-            else:
-                new_button = gtk.RadioButton(new_button, l)
-            new_button.connect("toggled", self.label_button_clicked, l)
-            if not l == 'not_shown':
-                vbox.add(new_button)
-            self.label_button_list.append(new_button)
-        frame.add(vbox)
-        hbox.pack_start(frame)
-        # label section <-- end
+#        # label section --> start
+#        frame = gtk.Frame(label='Label')
+#        vbox = gtk.VBox()
+#        labels = self.db.get_labels_from_db()
+#        if len(labels) > 5:
+#            print '==> sorry, too many labels; cannot display them in panel'
+#        labels = labels[:5]
+#        # with radiobuttons, one of them needs to be always on
+#        # but there will be cases when the user has not assigned a label yet
+#        # hence, the not_shown button is not shown but gets active
+#        # if the label has not been set yet
+#        labels.append('not_shown')
+#        for n, l in enumerate(labels):
+#            print n,l
+#            if n == 0:
+#                new_button = gtk.RadioButton(None, l)
+#            else:
+#                new_button = gtk.RadioButton(new_button, l)
+#            new_button.connect("toggled", self.label_button_clicked, l)
+#            if not l == 'not_shown':
+#                vbox.add(new_button)
+#            self.label_button_list.append(new_button)
+#        frame.add(vbox)
+#        hbox.pack_start(frame)
+#        # label section <-- end
 
         outer_frame.add(hbox)
         self.vbox.pack_start(outer_frame)
@@ -754,13 +754,13 @@ class GUI(object):
             self.compoundID = str(self.Todo[self.index][1])
             self.refinement_folder = str(self.Todo[self.index][4])
             self.refinement_outcome = str(self.Todo[self.index][5])
-            self.label = self.db.get_label_of_sample(self.xtalID)
-            self.update_label_radiobutton()
+#            self.label = self.db.get_label_of_sample(self.xtalID)
+#            self.update_label_radiobutton()
             self.update_RefinementOutcome_radiobutton()
         if self.xtalID not in self.siteDict:  # i.e. we are not working with a PanDDA model
             self.ligand_confidence = str(self.Todo[self.index][6])
-            self.update_LigandConfidence_radiobutton()
-            self.label = self.db.get_label_of_sample(self.xtalID)
+#            self.update_LigandConfidence_radiobutton()
+#            self.label = self.db.get_label_of_sample(self.xtalID)
             self.update_label_radiobutton()
 
         self.RefreshData()
@@ -777,17 +777,17 @@ class GUI(object):
                 button.set_active(True)
                 break
 
-    def update_label_radiobutton(self):
-        found = False
-        for button in self.label_button_list:
-            if button.get_label() == self.label:
-                button.set_active(True)
-                found = True
-        if not found:
-            for button in self.label_button_list:
-                if button.get_label() == 'not_shown':
-                    button.set_active(True)
-                    break
+#    def update_label_radiobutton(self):
+#        found = False
+#        for button in self.label_button_list:
+#            if button.get_label() == self.label:
+#                button.set_active(True)
+#                found = True
+#        if not found:
+#            for button in self.label_button_list:
+#                if button.get_label() == 'not_shown':
+#                    button.set_active(True)
+#                    break
 
     def update_LigandConfidence_radiobutton(self):
         # updating ligand confidence radiobuttons
@@ -852,8 +852,8 @@ class GUI(object):
                     if self.compoundID + '.pdb' in coot.molecule_name(imol):
                         coot.close_molecule(imol)
 
-        for w in self.label_button_list:
-            w.set_active(False)
+#        for w in self.label_button_list:
+#            w.set_active(False)
 
 
         print 'pandda index', self.pandda_index
@@ -981,14 +981,14 @@ class GUI(object):
 #                widget.get_label()) + ' in mainTable of datasource'
 #            self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
 
-    def label_button_clicked(self, widget, data=None):
-        print '............',data
-        if data == 'not_shown':
-            self.db.execute_statement("update mainTable set label=Null where CrystalName = '%s'" %self.xtalID)
-        else:
-            self.db_dict_mainTable['label'] = data
-            print '==> XCE: setting label for ' + self.xtalID + ' to ' + str(data) + ' in mainTable of datasource'
-            self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
+#    def label_button_clicked(self, widget, data=None):
+#        print '............',data
+#        if data == 'not_shown':
+#            self.db.execute_statement("update mainTable set label=Null where CrystalName = '%s'" %self.xtalID)
+#        else:
+#            self.db_dict_mainTable['label'] = data
+#            print '==> XCE: setting label for ' + self.xtalID + ' to ' + str(data) + ' in mainTable of datasource'
+#            self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
 
     def RefreshData(self):
         # reset spider plot image
