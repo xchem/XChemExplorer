@@ -35,159 +35,6 @@ import XChemMain
 import iotbx.mtz
 
 
-#class update_datasource_from_file_system(QtCore.QThread):
-#    def __init__(self,initial_model_directory,datasource,panddas_directory,xce_logfile):
-#        QtCore.QThread.__init__(self)
-#        self.initial_model_directory=initial_model_directory
-#        self.datasource=datasource
-#        self.db=XChemDB.data_source(self.datasource)
-#        self.panddas_directory=panddas_directory
-#        self.Logfile=XChemLog.updateLog(xce_logfile)
-#
-#    def run(self):
-#        self.Logfile.insert('new project directory: '+self.initial_model_directory)
-#        self.Logfile.insert('updating data source from file system')
-#        progress_step=1
-#        if len(glob.glob(os.path.join(self.initial_model_directory,'*'))) != 0:
-#            progress_step=100/float(len(glob.glob(os.path.join(self.initial_model_directory,'*'))))
-#        else:
-#            progress_step=1
-#        progress=0
-#        self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-#
-#        all_samples_in_datasource=self.db.get_all_samples_in_data_source_as_list()
-#
-#        for directory in sorted(glob.glob(os.path.join(self.initial_model_directory,'*'))):
-#            try:
-#                os.chdir(directory)
-#            except OSError:
-#                # this could happen if the user accidentaly left a file in the project directory
-#                continue
-#            xtal=directory[directory.rfind('/')+1:]
-#            if xtal not in all_samples_in_datasource:
-#                self.Logfile.insert('inserting '+xtal+' into data source')
-#                self.db.execute_statement("insert into mainTable (CrystalName) values ('{0!s}');".format(xtal))
-#                all_samples_in_datasource.append(xtal)
-#            compoundID=str(self.db.get_value_from_field(xtal,'CompoundCode')[0])
-#            db_dict={}
-#            sample_dict=self.db.get_db_dict_for_sample(xtal)
-#
-#            dimple_path=''  # will be set to correct path if dimple.pdb is present;
-#            if os.path.isfile('dimple.pdb'):
-#                print ''
-##                if not os.path.isfile('refine.pdb'):
-##                    os.system('/bin/rm refine.pdb')         # this removes broken links that could trip the symlink
-##                    os.symlink('dimple.pdb', 'refine.pdb')
-#            else:
-#                os.system('/bin/rm dimple.pdb 2> /dev/null')    # this makes sure that any broken link which could rerail PANDDA gets removed
-#            if os.path.isfile('dimple.mtz'):
-#                db_dict['DimplePathToMTZ']=os.path.realpath(os.path.join(directory,'dimple.mtz'))
-#                dimple_mtz=db_dict['DimplePathToMTZ']
-#                dimple_path=dimple_mtz[:dimple_mtz.rfind('/')]
-#                if not os.path.isfile('refine.mtz'):
-#                    os.system('/bin/rm refine.mtz')
-#                    os.symlink('dimple.mtz', 'refine.mtz')
-#            else:
-#                os.system('/bin/rm dimple.mtz 2> /dev/null')    # this makes sure that any broken link which could rerail PANDDA gets removed
-#            # this should not really be the case, but if a user does not provide an aimless logfile then that's all we can do
-#            if not os.path.isfile(xtal+'.log'):
-#                if os.path.isfile(xtal+'.mtz'):
-#                    mtz_info=mtztools(xtal+'.mtz').get_information_for_datasource()
-#                    db_dict.update(mtz_info)
-#                    db_dict['DataCollectionOutcome']='success'
-#            if not os.path.isfile(xtal+'.free.mtz'):
-#                os.system('/bin/rm '+xtal+'.free.mtz 2> /dev/null')      # remove possible broken link
-#                if os.path.isfile(os.path.join(dimple_path,'prepared2.mtz')):
-#                    os.symlink(os.path.join(dimple_path,'prepared2.mtz'),xtal+'.free.mtz')
-#                    db_dict['RefinementMTZfree']=xtal+'.free.mtz'
-#                elif os.path.isfile(os.path.join(dimple_path,'prepared.mtz')):
-#                    os.symlink(os.path.join(dimple_path,'prepared.mtz'),xtal+'.free.mtz')
-#                    db_dict['RefinementMTZfree']=xtal+'.free.mtz'
-#            if os.path.isfile('refine.mtz'):
-#                if sample_dict['RefinementOutcome']=='None' or sample_dict['RefinementOutcome']=='':
-#                    refinement_in_progress=False
-#                    for dirs in glob.glob('*'):
-#                        if dirs.startswith('Refine_') and os.path.isdir(dirs):
-#                            db_dict['RefinementOutcome']='3 - In Refinement'
-#                            refinement_in_progress=True
-#                            break
-#                    if not refinement_in_progress:
-#                        db_dict['RefinementOutcome']='1 - Analysis Pending'
-#            if os.path.isdir('compound'):
-#                if sample_dict['CompoundCode']=='None' or sample_dict['CompoundCode']=='':
-#                    for smiles in glob.glob('compound/*'):
-#                        if smiles.endswith('smiles'):
-#                            for line in open(smiles):
-#                                if len(line.split()) >= 1:
-#                                    db_dict['CompoundSMILES']=line.split()[0]
-#                                    db_dict['CompoundCode']=smiles[smiles.rfind('/')+1:smiles.rfind('.')]
-#                                    compoundID=db_dict['CompoundCode']
-#                                    break
-#
-#            for file in glob.glob('*'):
-#                if file==xtal+'.log' and os.path.isfile(file):
-#                    db_dict['DataProcessingPathToLogfile']=os.path.join(directory,xtal+'.log')
-#                    db_dict['DataProcessingLOGfileName']=xtal+'.log'
-#                    if sample_dict['DataCollectionOutcome']=='None' or sample_dict['DataCollectionOutcome']=='':
-#                        db_dict['DataCollectionOutcome']='success'
-#                    aimless_results=parse().read_aimless_logfile(file)
-#                    db_dict.update(aimless_results)
-#                if file==xtal+'.mtz' and os.path.isfile(file):
-#                    db_dict['DataProcessingPathToMTZfile']=os.path.join(directory,xtal+'.mtz')
-#                    db_dict['DataProcessingMTZfileName']=xtal+'.mtz'
-#                if file==xtal+'.free.mtz' and os.path.isfile(file):
-#                    db_dict['RefinementMTZfree']=os.path.join(directory,xtal+'.free.mtz')
-#                if file==compoundID+'.cif' and os.path.isfile(file):
-#                    db_dict['RefinementCIF']=os.path.join(directory,compoundID+'.cif')
-#                if file=='dimple.pdb' and os.path.isfile(file):
-#                    db_dict['DimplePathToPDB']=os.path.realpath(os.path.join(directory,'dimple.pdb'))
-#                    pdb_info=parse().PDBheader(file)
-#                    db_dict['DimpleRcryst']=pdb_info['Rcryst']
-#                    db_dict['DimpleRfree']=pdb_info['Rfree']
-#                    db_dict['DimpleResolutionHigh']=pdb_info['ResolutionHigh']
-#                if file=='refine.pdb' and os.path.isfile(file):
-##                    if sample_dict['RefinementOutcome']=='None' or sample_dict['RefinementOutcome']=='':
-##                        db_dict['RefinementOutcome']='3 - In Refinement'
-#                    db_dict['RefinementPDB_latest']=os.path.realpath(os.path.join(directory,'refine.pdb'))
-#                    pdb_info=parse().PDBheader(file)
-#                    db_dict['RefinementRcryst']=pdb_info['Rcryst']
-#                    db_dict['RefinementRfree']=pdb_info['Rfree']
-#                    db_dict['RefinementSpaceGroup']=pdb_info['SpaceGroup']
-#                    db_dict['RefinementRmsdBonds']=pdb_info['rmsdBonds']
-#                    db_dict['RefinementRmsdAngles']=pdb_info['rmsdAngles']
-#                if file=='refine.mtz' and os.path.isfile(file):
-#                    db_dict['RefinementMTZ_latest']=os.path.realpath(os.path.join(directory,'refine.mtz'))
-#
-#            if db_dict != {}:
-#                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'updating datasource for '+xtal)
-#                self.db.update_data_source(xtal,db_dict)
-#
-#            # also need to update PANDDA table...
-#            pandda_models=self.db.execute_statement("select CrystalName,PANDDA_site_index,PANDDA_site_spider_plot,PANDDA_site_event_map from panddaTable where CrystalName='{0!s}'".format(xtal))
-#            if not pandda_models == []:
-#                for entry in pandda_models:
-#                    db_pandda_dict={}
-#                    db_pandda_dict['PANDDA_site_index']=entry[1]
-#                    db_pandda_dict['PANDDApath']=self.panddas_directory
-#                    if entry[3] is not None:
-#                        event_map=os.path.join(self.initial_model_directory,xtal,entry[3].split('/')[len(entry[3].split('/'))-1])
-#                        if os.path.isfile(event_map):
-#                            db_pandda_dict['PANDDA_site_event_map']=event_map
-#                    if entry[2] is not None:
-#                        spider_plot=os.path.join(self.initial_model_directory,xtal,entry[2].split('/')[len(entry[2].split('/'))-3],entry[2].split('/')[len(entry[2].split('/'))-2],entry[2].split('/')[len(entry[2].split('/'))-1])
-#                        if os.path.isfile(spider_plot):
-#                            db_pandda_dict['PANDDA_site_spider_plot']=spider_plot
-##                            db_pandda_dict['RefinementOutcome']='3 - In Refinement'    # just in case; presence of a spider plot definitely signals that refinement happened
-#                                                                                        # should probably be not updated! Will overwrite CompChem ready
-#                    self.Logfile.insert('updating panddaTable for xtal: {0!s}, site: {1!s}'.format(entry[0], entry[1]))
-#                    self.db.update_insert_panddaTable(xtal,db_pandda_dict)
-#
-#            progress += progress_step
-#            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-#
-#        self.Logfile.insert('datasource update finished')
-#
-
 class synchronise_db_and_filesystem(QtCore.QThread):
 
     '''
@@ -227,6 +74,9 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 progress_step=100/float(len(glob.glob(os.path.join(self.initial_model_directory,'*'))))
             self.Logfile.insert('found '+str(len(glob.glob(os.path.join(self.initial_model_directory,'*'))))+' samples in project directory')
             for directory in sorted(glob.glob(os.path.join(self.initial_model_directory,'*'))):
+                if os.listdir(directory) == []:
+                    self.Logfile.warning(directory + ' is empty; skipping...')
+                    continue
                 try:
                     os.chdir(directory)
                 except OSError:
