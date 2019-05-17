@@ -62,13 +62,14 @@ class run_pandda_export(QtCore.QThread):
 
     def run(self):
 
-        self.import_samples_into_datasouce()
+        # v1.3.8.2 - removed option to update database only
+#        if not self.update_datasource_only:
+        samples_to_export=self.export_models()
 
-        if not self.update_datasource_only:
-            samples_to_export=self.export_models()
+        self.import_samples_into_datasouce(samples_to_export)
 
-        if not self.update_datasource_only:
-            self.refine_exported_models(samples_to_export)
+#        if not self.update_datasource_only:
+        self.refine_exported_models(samples_to_export)
 
 
     def refine_exported_models(self,samples_to_export):
@@ -111,7 +112,7 @@ class run_pandda_export(QtCore.QThread):
             else:
                 self.Logfile.insert('%s: nothing to refine' % (xtal))
 
-    def import_samples_into_datasouce(self):
+    def import_samples_into_datasouce(self,samples_to_export):
 
         # first make a note of all the datasets which were used in pandda directory
         os.chdir(os.path.join(self.panddas_directory,'processed_datasets'))
@@ -155,6 +156,9 @@ class run_pandda_export(QtCore.QThread):
             for i,line in enumerate(csv_dict):
                 db_dict={}
                 sampleID=line['dtag']
+                if sampleID not in samples_to_export:
+                    self.Logfile.warning('%s: not to be exported; will not add to panddaTable...')
+                    continue
                 if sampleID not in pandda_hit_list:
                     pandda_hit_list.append(sampleID)
                 site_index=line['site_idx']
