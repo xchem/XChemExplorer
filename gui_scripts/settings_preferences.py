@@ -600,7 +600,7 @@ class setup():
                                          'Export NEW PANDDA models',
                                          'Export ALL PANDDA models',
                                          'Show HTML summary',
-                                         'Update datasource with results from pandda.inspect',
+#                                         'Update datasource with results from pandda.inspect',
                                          'cluster datasets',
                                          'Event Map -> SF',
                                          'apo -> mmcif',
