@@ -74,13 +74,13 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 progress_step=100/float(len(glob.glob(os.path.join(self.initial_model_directory,'*'))))
             self.Logfile.insert('found '+str(len(glob.glob(os.path.join(self.initial_model_directory,'*'))))+' samples in project directory')
             for directory in sorted(glob.glob(os.path.join(self.initial_model_directory,'*'))):
-                if os.listdir(directory) == []:
-                    self.Logfile.warning(directory + ' is empty; skipping...')
-                    continue
                 try:
                     os.chdir(directory)
                 except OSError:
                     # this could happen if the user accidentaly left a file in the project directory
+                    continue
+                if os.listdir(directory) == []:
+                    self.Logfile.warning(directory + ' is empty; skipping...')
                     continue
                 xtal=directory[directory.rfind('/')+1:]
                 self.xtal_list.append(xtal)
