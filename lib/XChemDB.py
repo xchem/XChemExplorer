@@ -1394,7 +1394,7 @@ class data_source:
                             " PANDDA_site_event_comment "
                             "from panddaTable  "
                             "where "
-                            " CrystalName is '%s' and PANDDA_site_ligand_placed is 'True';" %entry[0]     )
+                            " CrystalName is '%s';" %entry[0]     )
                 cursor.execute(sqlite)
                 tmp = cursor.fetchall()
                 if tmp:
