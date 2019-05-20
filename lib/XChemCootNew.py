@@ -761,7 +761,7 @@ class GUI(object):
             self.ligand_confidence = str(self.Todo[self.index][6])
 #            self.update_LigandConfidence_radiobutton()
 #            self.label = self.db.get_label_of_sample(self.xtalID)
-            self.update_label_radiobutton()
+#            self.update_label_radiobutton()
 
         self.RefreshData()
 
