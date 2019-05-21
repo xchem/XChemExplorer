@@ -946,14 +946,12 @@ class GUI(object):
 
     def experiment_stage_button_clicked(self, widget, data=None):
         if data == '4 - CompChem ready' and self.refinementProtocol.startswith('pandda'):
-            print "==> XCE: removing refine.pdb and linking refine_<n>.output.bound-state.pdb to refine.pdb"
+            print "==> XCE: removing refine.pdb and linking refine_<n>.split.bound-state.pdb to refine.pdb"
             os.chdir(os.path.join(self.project_directory,self.xtalID))
-            if os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb'):
-                print '-->',os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb')
-                newPDB = os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb')
+            if os.path.realpath('refine.pdb').replace('.pdb', '.split.bound-state.pdb'):
+                newPDB = os.path.realpath('refine.pdb').replace('.pdb', '.split.bound-state.pdb')
                 os.system('/bin/rm refine.pdb')
                 os.system('ln -s .%s refine.pdb' %newPDB.replace(os.getcwd(),''))
-                print 'ln -s .%s refine.pdb' %newPDB.replace(os.getcwd(),'')
                 self.refinementProtocolcheckbox.set_active(False)
                 self.refinementProtocol = 'refmac'
             else:
