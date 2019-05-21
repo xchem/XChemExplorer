@@ -1331,6 +1331,12 @@ class GUI(object):
                                         os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
                                                      'in.pdb'))
                     break
+                elif coot.molecule_name(item).endswith('refine.split.bound-state.pdb'):
+                    coot.write_pdb_file(item,
+                                        os.path.join(self.project_directory, self.xtalID,
+                                                        'Refine_' + str(self.Serial),
+                                                        'in.pdb'))
+                    break
                 elif coot.molecule_name(item).endswith('init.pdb'):
                     coot.write_pdb_file(item,
                                         os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
