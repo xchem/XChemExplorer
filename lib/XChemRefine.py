@@ -406,15 +406,15 @@ class Refine(object):
             if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')):
                 pdb_two=os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-ensemble-model.pdb')
                 mtz_two=os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')
-                pdb_one=os.path.join(self.ProjectPath,self.xtalID,'Refine_'+str(Serial),'multi-state-model.pdb')
+                pdb_one=os.path.join(self.ProjectPath,self.xtalID,'Refine_'+str(Serial),'refine_'+str(Serial)+'.pdb')
                 mtz_one=os.path.join(self.ProjectPath,self.xtalID,'Refine_'+str(Serial),'refine_'+str(Serial)+'.mtz')
                 spider_plot = (
                 'cd ' + self.ProjectPath + '/' + self.xtalID + '/Refine_' + Serial + '\n'
                 '\n'
-                'giant.merge_conformations '
-                ' major=../refine.split.ground-state.pdb'
-                ' minor=../refine.split.bound-state.pdb'
-                ' reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0\n'
+#                'giant.merge_conformations '
+#                ' major=../refine.split.ground-state.pdb'
+#                ' minor=../refine.split.bound-state.pdb'
+#                ' reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0\n'
                 'giant.score_model pdb1=%s mtz1=%s pdb2=%s mtz2=%s res_names=LIG,UNL,DRG,FRG\n' % (pdb_one, mtz_one, pdb_two, mtz_two)
                 )
 
