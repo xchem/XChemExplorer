@@ -821,7 +821,7 @@ class data_source:
             if not str(value).replace(' ','')=='':  # ignore empty fields
 #                update_string+=str(key)+'='+"'"+str(value)+"'"+','
 #                update_string+=str(key)+'='+'"'+str(value)+'"'+','
-                update_string+=str(key)+'='+'"'+str(value).replace('\r','').replace('\n')+'"'+','
+                update_string+=str(key)+'='+'"'+str(value).replace('\r','').replace('\n','')+'"'+','
             else:
                 update_string+=str(key)+' = null,'
         if update_string != '':
