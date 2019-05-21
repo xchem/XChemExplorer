@@ -819,12 +819,14 @@ class data_source:
             if key=='ID' or key=='CrystalName' or key=='StructureType':
                 continue
             if not str(value).replace(' ','')=='':  # ignore empty fields
-                update_string+=str(key)+'='+"'"+str(value)+"'"+','
+#                update_string+=str(key)+'='+"'"+str(value)+"'"+','
+                update_string+=str(key)+'='+'"'+str(value)+'"'+','
             else:
                 update_string+=str(key)+' = null,'
         if update_string != '':
-            print '-->',"UPDATE depositTable SET "+update_string[:-1]+" WHERE CrystalName='{0!s}' and StructureType='{1!s}'".format(sampleID, structure_type)
-            cursor.execute("UPDATE depositTable SET "+update_string[:-1]+" WHERE CrystalName='{0!s}' and StructureType='{1!s}'".format(sampleID, structure_type))
+#            print '-->',"UPDATE depositTable SET "+update_string[:-1]+" WHERE CrystalName='{0!s}' and StructureType='{1!s}'".format(sampleID, structure_type)
+#            cursor.execute("UPDATE depositTable SET "+update_string[:-1]+" WHERE CrystalName='{0!s}' and StructureType='{1!s}'".format(sampleID, structure_type))
+            cursor.execute('UPDATE depositTable SET '+update_string[:-1]+' WHERE CrystalName="{0!s}" and StructureType="{1!s}"'.format(sampleID, structure_type))
             connect.commit()
 
 
