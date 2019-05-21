@@ -950,9 +950,10 @@ class GUI(object):
             os.chdir(os.path.join(self.project_directory,self.xtalID))
             if os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb'):
                 print '-->',os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb')
+                newPDB = os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb')
                 os.system('/bin/rm refine.pdb')
-                os.system('ln -s .%s refine.pdb' %os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb').replace(os.getcwd(),''))
-                print 'ln -s .%s refine.pdb' %os.path.realpath('refine.pdb').replace('.pdb', '.output.bound-state.pdb').replace(os.getcwd(),'')
+                os.system('ln -s .%s refine.pdb' %newPDB.replace(os.getcwd(),''))
+                print 'ln -s .%s refine.pdb' %newPDB.replace(os.getcwd(),'')
                 self.refinementProtocolcheckbox.set_active(False)
                 self.refinementProtocol = 'refmac'
             else:
