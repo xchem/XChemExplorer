@@ -42,6 +42,7 @@ class GUI(object):
         self.database_directory = self.settings['database_directory']
         self.xce_logfile = self.settings['xce_logfile']
         self.Logfile = XChemLog.updateLog(self.xce_logfile)
+        self.Logfile.insert('==> COOT: starting coot plugin...')
         self.data_source = self.settings['data_source']
         self.db = XChemDB.data_source(self.data_source)
 
