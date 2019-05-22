@@ -15,6 +15,7 @@ sys.path.append(os.getenv('XChemExplorer_DIR') + '/lib')
 import XChemDB
 import XChemRefine
 import XChemUtils
+import XChemLog
 
 # libraries from COOT
 import pygtk, gtk, pango
@@ -40,6 +41,8 @@ class GUI(object):
         remote_qsub_submission = self.settings['remote_qsub']
         self.database_directory = self.settings['database_directory']
         self.xce_logfile = self.settings['xce_logfile']
+        self.Logfile = XChemLog.updateLog(self.xce_logfile)
+        self.Logfile.insert('==> COOT: starting coot plugin...')
         self.data_source = self.settings['data_source']
         self.db = XChemDB.data_source(self.data_source)
 
@@ -165,7 +168,7 @@ class GUI(object):
                              'TWIN': ''}
 
         # XCE menu
-        menu = coot_menubar_menu("SParkle")
+        menu = coot_menubar_menu("XCE")
 
         add_simple_coot_menu_menuitem(
             menu, "set all occupanicies to 1",
@@ -1499,6 +1502,41 @@ class GUI(object):
             widget.set_label('Show ground state mean map')
 
     def reset_occupancy(self):
+        self.Logfile.warning('==> COOT: trying to set occupancies of all residues to 1.0')
+        if self.refinementProtocol.startswith('pandda'):
+            self.Logfile.warning('==> COOT: you cannot reset occupancies while working in PanDDA refine mode')
+        else:
+            for imol in coot_utils_XChem.molecule_number_list():
+                print '==>',imol
+
+#                if self.compoundID + '.pdb' in coot.molecule_name(imol):
+#                    coot.close_molecule(imol)
+
+#            for item in coot_utils_XChem.molecule_number_list():
+#                if coot.molecule_name(item).endswith(self.pdb_style):
+#                    coot.write_pdb_file(item,
+#                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
+#                                                     'in.pdb'))
+#                    break
+#                elif coot.molecule_name(item).endswith('refine.split.bound-state.pdb'):
+#                    coot.write_pdb_file(item,
+#                                        os.path.join(self.project_directory, self.xtalID,
+#                                                        'Refine_' + str(self.Serial),
+#                                                        'in.pdb'))
+#                    break
+#                elif coot.molecule_name(item).endswith('init.pdb'):
+#                    coot.write_pdb_file(item,
+#                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
+#                                                     'in.pdb'))
+#                    break
+#                elif coot.molecule_name(item).endswith('dimple.pdb'):
+#                    coot.write_pdb_file(item,
+#                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
+#                                                     'in.pdb'))
+#                    break
+
+
+
         print 'uhuuhhuuh'
 
 if __name__ == '__main__':
