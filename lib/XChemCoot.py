@@ -164,6 +164,14 @@ class GUI(object):
                              'NCS': '',
                              'TWIN': ''}
 
+        # XCE menu
+        menu = coot_menubar_menu("SParkle")
+
+        add_simple_coot_menu_menuitem(
+            menu, "set all occupanicies to 1",
+            lambda func: self.reset_occupancy())
+
+
     def StartGUI(self):
 
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -1490,6 +1498,8 @@ class GUI(object):
                     coot.set_map_displayed(imol, 0)
             widget.set_label('Show ground state mean map')
 
+    def reset_occupancy(self):
+        print 'uhuuhhuuh'
 
 if __name__ == '__main__':
     GUI().StartGUI()
