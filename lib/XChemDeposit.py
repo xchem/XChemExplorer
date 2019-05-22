@@ -474,7 +474,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.refine_mtz_exists(xtal):
                     continue
 
-                if not self.mtzFree_exists(xtal)
+                if not self.mtzFree_exists(xtal):
                     continue
 
                 if not self.aimless_logfile_exists(xtal):
