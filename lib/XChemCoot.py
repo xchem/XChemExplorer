@@ -1511,7 +1511,8 @@ class GUI(object):
                    coot.molecule_name(imol).endswith('refine.split.bound-state.pdb') or \
                    coot.molecule_name(imol).endswith('ini.pdb') or \
                    coot.molecule_name(imol).endswith('dimple.pdb'):
-                    print '==>',imol
+                    self.Logfile.warning('==> COOT: setting occupancies of all protein residues in %s to 1.0' %coot.molecule_name(imol))
+                    coot.fill_occupancy_residue_range(imol,"A",1,10000)
 
 
 
