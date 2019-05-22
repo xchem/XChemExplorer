@@ -41,7 +41,7 @@ class GUI(object):
         remote_qsub_submission = self.settings['remote_qsub']
         self.database_directory = self.settings['database_directory']
         self.xce_logfile = self.settings['xce_logfile']
-        self.Logfile = XChemLog.updateLog(xce_logfile)
+        self.Logfile = XChemLog.updateLog(self.xce_logfile)
         self.data_source = self.settings['data_source']
         self.db = XChemDB.data_source(self.data_source)
 
