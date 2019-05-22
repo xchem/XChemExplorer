@@ -1515,8 +1515,9 @@ class GUI(object):
                     coot.fill_occupancy_residue_range(imol,"A",1,10000)
                     chains = chain_ids(imol)
                     for chain in chains:
-                        for residue in residues_in_chain(imol, chain):
-                            print residue
+                        print residues_in_chain(imol, chain)
+#                        for residue in residues_in_chain(imol, chain):
+#                            print residue
 
 
 if __name__ == '__main__':
