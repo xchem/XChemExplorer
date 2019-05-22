@@ -474,6 +474,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.refine_mtz_exists(xtal):
                     continue
 
+                if not self.mtzFree_exists(xtal)
+                    continue
+
                 if not self.aimless_logfile_exists(xtal):
                     continue
 
@@ -632,7 +635,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         return  fileStatus
 
 
-    def mtzFree_exisits(self,xtal):
+    def mtzFree_exists(self,xtal):
         self.Logfile.insert('%s: checking if %s.free.mtz exists' %(xtal,xtal))
         fileStatus = False
         if os.path.isfile('%s.free.mtz' %xtal):
