@@ -1513,7 +1513,10 @@ class GUI(object):
                    coot.molecule_name(imol).endswith('dimple.pdb'):
                     self.Logfile.warning('==> COOT: setting occupancies of all protein residues in %s to 1.0' %coot.molecule_name(imol))
                     coot.fill_occupancy_residue_range(imol,"A",1,10000)
-
+                    chains = coot.chain_ids(imol)
+                    for chain in chains:
+                        for residue in coot.residues_in_chain(imol, chain):
+                            print residue
 
 
 if __name__ == '__main__':
