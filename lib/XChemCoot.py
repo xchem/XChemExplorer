@@ -1507,37 +1507,13 @@ class GUI(object):
             self.Logfile.warning('==> COOT: you cannot reset occupancies while working in PanDDA refine mode')
         else:
             for imol in coot_utils_XChem.molecule_number_list():
-                print '==>',imol
-
-#                if self.compoundID + '.pdb' in coot.molecule_name(imol):
-#                    coot.close_molecule(imol)
-
-#            for item in coot_utils_XChem.molecule_number_list():
-#                if coot.molecule_name(item).endswith(self.pdb_style):
-#                    coot.write_pdb_file(item,
-#                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
-#                                                     'in.pdb'))
-#                    break
-#                elif coot.molecule_name(item).endswith('refine.split.bound-state.pdb'):
-#                    coot.write_pdb_file(item,
-#                                        os.path.join(self.project_directory, self.xtalID,
-#                                                        'Refine_' + str(self.Serial),
-#                                                        'in.pdb'))
-#                    break
-#                elif coot.molecule_name(item).endswith('init.pdb'):
-#                    coot.write_pdb_file(item,
-#                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
-#                                                     'in.pdb'))
-#                    break
-#                elif coot.molecule_name(item).endswith('dimple.pdb'):
-#                    coot.write_pdb_file(item,
-#                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
-#                                                     'in.pdb'))
-#                    break
+                if coot.molecule_name(imol).endswith(self.pdb_style) or \
+                   coot.molecule_name(imol).endswith('refine.split.bound-state.pdb') or \
+                   coot.molecule_name(imol).endswith('ini.pdb') or \
+                   coot.molecule_name(imol).endswith('dimple.pdb'):
+                    print '==>',imol
 
 
-
-        print 'uhuuhhuuh'
 
 if __name__ == '__main__':
     GUI().StartGUI()
