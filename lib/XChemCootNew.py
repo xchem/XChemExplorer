@@ -15,6 +15,7 @@ sys.path.append(os.getenv('XChemExplorer_DIR') + '/lib')
 import XChemDB
 import XChemRefine
 import XChemUtils
+import XChemLog
 
 # libraries from COOT
 import pygtk, gtk, pango
@@ -40,6 +41,7 @@ class GUI(object):
         remote_qsub_submission = self.settings['remote_qsub']
         self.database_directory = self.settings['database_directory']
         self.xce_logfile = self.settings['xce_logfile']
+        self.Logfile = XChemLog.updateLog(xce_logfile)
         self.data_source = self.settings['data_source']
         self.db = XChemDB.data_source(self.data_source)
 
@@ -946,8 +948,10 @@ class GUI(object):
 
     def experiment_stage_button_clicked(self, widget, data=None):
         self.db_dict_mainTable['RefinementOutcome'] = data
-        print '==> XCE: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
-            data) + ' in mainTable of datasource'
+        self.Logfile.insert('==> COOT: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
+            data) + ' in mainTable of datasource')
+#        print '==> XCE: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
+#            data) + ' in mainTable of datasource'
 #        self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
         self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile,self.xtalID,'ligand_bound',self.db_dict_mainTable)
 
@@ -955,15 +959,20 @@ class GUI(object):
         print 'PANDDA_index', self.pandda_index
         if self.pandda_index == -1:
             self.db_dict_mainTable['RefinementLigandConfidence'] = data
-            print '==> XCE: setting Ligand Confidence for ' + self.xtalID + ' to ' + str(
-                data) + ' in mainTable of datasource'
+            self.Logfile.insert('==> COOT: setting Ligand Confidence for ' + self.xtalID + ' to ' + str(
+                data) + ' in mainTable of datasource')
+#            print '==> XCE: setting Ligand Confidence for ' + self.xtalID + ' to ' + str(
+#                data) + ' in mainTable of datasource'
             self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
             self.Todo[self.index][6] = data
         else:
             self.db_dict_panddaTable['PANDDA_site_confidence'] = data
-            print '==> XCE: setting Ligand Confidence for ' + self.xtalID + ' (site=' + str(
+            self.Logfile.insert('==> COOT: setting Ligand Confidence for ' + self.xtalID + ' (site=' + str(
                 self.site_index) + ', event=' + str(self.event_index) + ') to ' + str(
-                data) + ' in panddaTable of datasource'
+                data) + ' in panddaTable of datasource')
+#            print '==> XCE: setting Ligand Confidence for ' + self.xtalID + ' (site=' + str(
+#                self.site_index) + ', event=' + str(self.event_index) + ') to ' + str(
+#                data) + ' in panddaTable of datasource'
             self.db.update_site_event_panddaTable(self.xtalID, self.site_index, self.event_index,
                                                   self.db_dict_panddaTable)
             self.siteDict[self.xtalID][self.pandda_index][7] = data
@@ -1079,12 +1088,16 @@ class GUI(object):
             os.chdir(os.path.join(self.project_directory, self.xtalID))
 
         if self.refinementProtocol.startswith('pandda'):
-            print '=> XCE: looking for ground-state model', os.path.join(self.project_directory, self.xtalID,
+            self.Logfile.insert('==> COOT: looking for ground-state model ' + os.path.join(self.project_directory, self.xtalID,
                                                                          self.pdb_style.replace('.pdb',
-                                                                                                '') + '.split.ground-state.pdb')
+                                                                                                '') + '.split.ground-state.pdb'))
+#            print '=> XCE: looking for ground-state model', os.path.join(self.project_directory, self.xtalID,
+#                                                                         self.pdb_style.replace('.pdb',
+#                                                                                                '') + '.split.ground-state.pdb')
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
                                            self.pdb_style.replace('.pdb', '') + '.split.ground-state.pdb')):
-                print '=> XCE: found ground-state model'
+                self.Logfile.insert('==> COOT: found ground-state model')
+#                print '=> XCE: found ground-state model'
                 os.chdir(os.path.join(self.project_directory, self.xtalID))
                 coot.set_colour_map_rotation_on_read_pdb(0)
                 try:
@@ -1099,13 +1112,18 @@ class GUI(object):
                 coot.set_colour_by_molecule(imol)
                 coot.set_mol_active(imol, 0)
             else:
-                print '=> XCE - ERROR: cannot find ground-state model'
-            print '=> XCE: looking for bound-state model', os.path.join(self.project_directory, self.xtalID,
+                self.Logfile.error('==> COOT - cannot find ground-state model')
+#                print '=> XCE - ERROR: cannot find ground-state model'
+            self.Logfile.insert('==> COOT: looking for bound-state model '+ os.path.join(self.project_directory, self.xtalID,
                                                                         self.pdb_style.replace('.pdb',
-                                                                                               '') + '.split.bound-state.pdb')
+                                                                                               '') + '.split.bound-state.pdb'))
+#            print '=> XCE: looking for bound-state model', os.path.join(self.project_directory, self.xtalID,
+#                                                                        self.pdb_style.replace('.pdb',
+#                                                                                               '') + '.split.bound-state.pdb')
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
                                            self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb')):
-                print '=> XCE: found bound-state model'
+                self.Logfile.insert('==> COOT: found bound-state model')
+#                print '=> XCE: found bound-state model'
                 os.chdir(os.path.join(self.project_directory, self.xtalID))
                 coot.set_colour_map_rotation_on_read_pdb(0)
                 color_wheel_rotation = 21 / float(imol + 2)
@@ -1116,8 +1134,10 @@ class GUI(object):
                                                                     0)
                 self.mol_dict['protein'] = imol
             else:
-                print '=> XCE - ERROR: cannot find bound-state model'
-                print '=> XCE: moving to next crystal...'
+                self.Logfile.error('==> COOT: cannot find bound-state model')
+#                print '=> XCE - ERROR: cannot find bound-state model'
+                self.Logfile.warning('==> COOT: moving to next crystal...')
+#                print '=> XCE: moving to next crystal...'
                 self.go_to_next_xtal()
         else:
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
@@ -1274,9 +1294,12 @@ class GUI(object):
                 os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
             # create folder for new refinement cycle
             try:
+                self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
                 os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
             except OSError:
-                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
+                self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
+#                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
+                self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
 
             #######################################################
             # write PDB file
