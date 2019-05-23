@@ -73,11 +73,18 @@ class run_pandda_export(QtCore.QThread):
 
 
     def refine_exported_models(self,samples_to_export):
-        sample_list=self.db.execute_statement("select CrystalName,CompoundCode from mainTable where RefinementOutcome='2 - PANDDA model';")
-        for item in sample_list:
-            xtal=str(item[0])
-            compoundID=str(item[1])
-            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'.free.mtz')) and xtal in samples_to_export:
+        self.Logfile.insert('will try to refine the following crystals:')
+        for xtal in samples_to_export: self.Logfile.insert(xtal)
+#        sample_list=self.db.execute_statement("select CrystalName,CompoundCode from mainTable where RefinementOutcome='2 - PANDDA model';")
+#        for item in sample_list:
+#            xtal=str(item[0])
+        for xtal in sorted(samples_to_export):
+            self.Logfile.insert('%s: getting compound code from database' %xtal)
+            query=self.db.execute_statement("select CrystalName,CompoundCode from mainTable where CrystalName='%s';" %xtal)
+            compoundID=str(query[1])
+            self.Logfile.insert('%s: compounds code = %s' %(xtal,compoundID))
+#            compoundID=str(item[1])
+            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'.free.mtz')):
                 if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'-ensemble-model.pdb')):
                     self.Logfile.insert('running inital refinement on PANDDA model of '+xtal)
                     Serial=XChemRefine.GetSerial(self.initial_model_directory,xtal)
