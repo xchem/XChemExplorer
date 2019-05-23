@@ -51,6 +51,10 @@ if __name__=='__main__':
             mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared2.mtz')
         elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz')):
             mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared.mtz')):
+            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared2.mtz')):
+            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared2.mtz')
         elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','free.mtz')):
             mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','free.mtz')
         elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple','free.mtz')):
