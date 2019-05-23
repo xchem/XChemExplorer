@@ -80,9 +80,8 @@ class run_pandda_export(QtCore.QThread):
 #            xtal=str(item[0])
         for xtal in sorted(samples_to_export):
             self.Logfile.insert('%s: getting compound code from database' %xtal)
-            query=self.db.execute_statement("select CrystalName,CompoundCode from mainTable where CrystalName='%s';" %xtal)
-            print '-->',query
-            compoundID=str(query[1])
+            query=self.db.execute_statement("select CompoundCode from mainTable where CrystalName='%s';" %xtal)
+            compoundID=str(query[0][0])
             self.Logfile.insert('%s: compounds code = %s' %(xtal,compoundID))
 #            compoundID=str(item[1])
             if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'.free.mtz')):
