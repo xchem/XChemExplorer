@@ -98,12 +98,12 @@ class run_pandda_export(QtCore.QThread):
                     os.symlink(os.path.join(self.initial_model_directory,xtal,xtal+'-ensemble-model.pdb'),xtal+'-ensemble-model.pdb')
                     Refine.RunQuickRefine(Serial,self.RefmacParams,self.external_software,self.xce_logfile,'pandda_refmac')
 
-            elif xtal in os.path.join(self.panddas_directory,'processed_datasets',xtal,'modelled_structures',
-                                      '{}-pandda-model.pdb'.format(xtal)):
-                self.Logfile.insert('{}: cannot start refinement because {}'.format(xtal,xtal) +
-                                   ' does not have a modelled structure. Check whether you expect this dataset to ' +
-                                   ' have a modelled structure, compare pandda.inspect and datasource,'
-                                   ' then tell XCHEMBB ')
+#            elif xtal in os.path.join(self.panddas_directory,'processed_datasets',xtal,'modelled_structures',
+#                                      '{}-pandda-model.pdb'.format(xtal)):
+#                self.Logfile.insert('{}: cannot start refinement because {}'.format(xtal,xtal) +
+#                                   ' does not have a modelled structure. Check whether you expect this dataset to ' +
+#                                   ' have a modelled structure, compare pandda.inspect and datasource,'
+#                                   ' then tell XCHEMBB ')
 
             elif xtal in samples_to_export and not os.path.isfile(
                     os.path.join(self.initial_model_directory, xtal, xtal + '.free.mtz')):
