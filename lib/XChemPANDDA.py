@@ -242,10 +242,11 @@ class run_pandda_export(QtCore.QThread):
         # finally find all samples which do not have a pandda hit
         os.chdir(os.path.join(self.panddas_directory,'processed_datasets'))
         self.Logfile.insert('check which datasets are not interesting')
-        for xtal in glob.glob('*'):
-            if xtal not in pandda_hit_list:
-                self.Logfile.insert(xtal+': not in interesting_datasets; updating database...')
-                self.db.execute_statement("update mainTable set DimplePANDDAhit = 'False' where CrystalName is '{0!s}'".format(xtal))
+        # DimplePANDDAhit
+#        for xtal in glob.glob('*'):
+#            if xtal not in pandda_hit_list:
+#                self.Logfile.insert(xtal+': not in interesting_datasets; updating database...')
+#                self.db.execute_statement("update mainTable set DimplePANDDAhit = 'False' where CrystalName is '{0!s}'".format(xtal))
 
 
     def export_models(self):
