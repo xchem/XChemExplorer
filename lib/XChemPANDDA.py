@@ -81,6 +81,7 @@ class run_pandda_export(QtCore.QThread):
         for xtal in sorted(samples_to_export):
             self.Logfile.insert('%s: getting compound code from database' %xtal)
             query=self.db.execute_statement("select CrystalName,CompoundCode from mainTable where CrystalName='%s';" %xtal)
+            print '-->',query
             compoundID=str(query[1])
             self.Logfile.insert('%s: compounds code = %s' %(xtal,compoundID))
 #            compoundID=str(item[1])
