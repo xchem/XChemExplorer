@@ -164,7 +164,7 @@ class run_pandda_export(QtCore.QThread):
                 db_dict={}
                 sampleID=line['dtag']
                 if sampleID not in samples_to_export:
-                    self.Logfile.warning('%s: not to be exported; will not add to panddaTable...')
+                    self.Logfile.warning('%s: not to be exported; will not add to panddaTable...' %sampleID)
                     continue
                 if sampleID not in pandda_hit_list:
                     pandda_hit_list.append(sampleID)

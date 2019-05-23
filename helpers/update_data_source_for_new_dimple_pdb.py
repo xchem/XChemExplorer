@@ -51,7 +51,11 @@ if __name__=='__main__':
             mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared2.mtz')
         elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz')):
             mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz')
-        
+        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','free.mtz')):
+            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','free.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple','free.mtz')):
+            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple','free.mtz')
+
         if mtzFree is not None:
             if 'F_unique' in mtz.object(mtzFree).column_labels():
                 cmd = ( 'cad hklin1 %s hklout %s.free.mtz << eof\n' %(mtzFree,xtal) +

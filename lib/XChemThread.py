@@ -302,6 +302,9 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 db_dict['RefinementMTZfree']=os.path.realpath(xtal+'.free.mtz')
 #                db_dict['RefinementMTZfree']=os.path.realpath(xtal+'.free.mtz').replace(os.getcwd()+'/','')
 #               db_dict['RefinementMTZfree']=xtal+'.free.mtz'
+            elif os.path.isfile(os.path.join(dimple_path,'free.mtz')):
+                os.symlink(os.path.relpath(os.path.join(dimple_path,'free.mtz')),xtal+'.free.mtz')
+                db_dict['RefinementMTZfree']=os.path.realpath(xtal+'.free.mtz')
 
         return db_dict
 
