@@ -74,9 +74,14 @@ def link_pdb_mtz_files(panddaDir,lowestRfree):
     if os.path.isfile(os.path.join(panddaDir,'processed_datasets',lowestRfree,lowestRfree+'-pandda-input.mtz')):
         os.system('/bin/rm %s-ground-state.free.mtz 2> /dev/null' %lowestRfree)
         os.symlink(os.path.join(panddaFolder,'processed_datasets',lowestRfree,lowestRfree+'-pandda-input.mtz'),lowestRfree+'-ground-state.free.mtz')
+
     if os.path.isfile(os.path.join(panddaDir,'processed_datasets',lowestRfree,lowestRfree+'-ground-state-mean-map.native.ccp4')):
         os.system('/bin/rm %s-ground-state-mean-map.native.ccp4 2> /dev/null' %lowestRfree)
         os.symlink(os.path.join(panddaFolder,'processed_datasets',lowestRfree,lowestRfree+'-ground-state-mean-map.native.ccp4'),lowestRfree+'-ground-state-mean-map.native.ccp4')
+    elif os.path.isfile(os.path.join(panddaDir,'processed_datasets',lowestRfree,lowestRfree+'-ground-state-average-map.native.ccp4')):
+        os.system('/bin/rm %s-ground-state-mean-map.native.ccp4 2> /dev/null' %lowestRfree)
+        os.symlink(os.path.join(panddaFolder,'processed_datasets',lowestRfree,lowestRfree+'-ground-state-average-map.native.ccp4'),lowestRfree+'-ground-state-mean-map.native.ccp4')
+
     convert_mean_map_to_mtz(lowestRfree+'-ground-state-mean-map.native.ccp4',lowestRfree+'-ground-state.free.mtz')
 
 
