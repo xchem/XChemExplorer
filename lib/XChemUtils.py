@@ -1577,7 +1577,7 @@ class pdbtools(object):
 
 
         self.AminoAcids = ['ALA','ARG','ASN','ASP','CYS','GLU','GLN','GLY','HIS',
-                           'ILE','LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL']
+                           'ILE','LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL','CSO','HYP']
         self.Solvents = ['DMS','EDO','GOL','HOH']
         self.Ions = ['NA','MG','CL','K','SO4','PO4','CA']
         self.AAdict = {'ALA':'A','ARG':'R','ASN':'N','ASP':'D','CYS':'C','GLU':'E','GLN':'Q',
@@ -1637,6 +1637,9 @@ class pdbtools(object):
                                                         '622':          12,
                                                         '23':           12,
                                                         '432':          24  }
+
+    def amino_acids(self):
+        return self.AminoAcids
 
     def get_refinement_program(self):
         program = 'unknown'

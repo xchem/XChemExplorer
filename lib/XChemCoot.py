@@ -1512,10 +1512,46 @@ class GUI(object):
                    coot.molecule_name(imol).endswith('ini.pdb') or \
                    coot.molecule_name(imol).endswith('dimple.pdb'):
                     self.Logfile.warning('==> COOT: setting occupancies of all protein residues in %s to 1.0' %coot.molecule_name(imol))
-                    coot.fill_occupancy_residue_range(imol,"A",1,10000)
+#                    coot.fill_occupancy_residue_range(imol,"A",1,10000)
                     chains = chain_ids(imol)
+                    resiDict = {}
                     for chain in chains:
-                        print residues_in_chain(imol, chain)
+                        resiDict[chain] = residues_in_chain(imol, chain)
+                    amino_acids = XChemUtils.pdbtools(coot.molecule_name(imol)).amino_acids()
+
+                    resetDict = {}
+                    for chain in resiDict:
+                        residRange = []
+                        resid_prev = -1000
+                        n_res = 0
+                        for resid in resiDict[chain]:
+                            if residue_name(imol,chain,resid[1],'') in amino_acids:
+                                n_res += 1
+                        counter = 0
+                        for n,resid in enumerate(resiDict[chain]):
+                            if residue_name(imol,chain,resid[1],'') in amino_acids:
+                                counter += 1
+                                if chain not in resetDict:
+                                    resetDict[chain] = None
+                                if resid[1] != resid_prev + 1:
+                                    if resid_prev != -1000:
+                                        residRange.append([start,resid_prev])
+                                    start = resid[1]
+                                resid_prev = resid[1]
+                                if counter == n_res:
+                                    residRange.append([start,resid[1]])
+                        if chain in resetDict:
+                            resetDict[chain] = residRange
+                    for chain in resetDict:
+                        for resid_range in resetDict[chain]:
+                            print 'setting occupancy to 1: ->',chain,resid_range[0],resid_range[1]
+                            coot.fill_occupancy_residue_range(imol,chain,resid_range[0],resid_range[1])
+
+
+
+#
+#
+#                        print residues_in_chain(imol, chain)
 #                        for residue in residues_in_chain(imol, chain):
 #                            print residue
 
