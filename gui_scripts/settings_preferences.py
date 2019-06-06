@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.8.6'
+        xce_object.xce_version = 'v1.3.8.7'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -60,7 +60,11 @@ class setup():
 #            xce_object.labxchem_directory = '/' + os.path.join(
 #                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
             xce_object.beamline_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'beamline')
-            xce_object.initial_model_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
+            if os.path.isdir(os.path.join(xce_object.labxchem_directory, 'processing', 'analysis','model_building'))
+                xce_object.initial_model_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
+                                                              'model_building')
+            else:
+                xce_object.initial_model_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
                                                               'initial_model')
             xce_object.reference_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'reference')
             xce_object.database_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'database')
