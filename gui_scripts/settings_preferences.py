@@ -60,7 +60,7 @@ class setup():
 #            xce_object.labxchem_directory = '/' + os.path.join(
 #                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
             xce_object.beamline_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'beamline')
-            if os.path.isdir(os.path.join(xce_object.labxchem_directory, 'processing', 'analysis','model_building'))
+            if os.path.isdir(os.path.join(xce_object.labxchem_directory, 'processing', 'analysis','model_building')):
                 xce_object.initial_model_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
                                                               'model_building')
             else:
