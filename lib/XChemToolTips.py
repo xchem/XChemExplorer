@@ -330,13 +330,17 @@ def deposition_ground_state_log_info():
 def deposition_ground_state_preparation_step_two_text():
     msg = (
         '2. Select ground-state MTZ file.\n'
-        '     Note: the file is usually in the reference directory.'
+        '     Notes: - this is the MTZ file of the ground-state mean map\n'
+        '            - the file should have been created after the pandda pre-run\n'
+        '            - hence, you will usually find it in the reference directory'
     )
     return msg
 
 def deposition_ground_state_preparation_step_three_text():
     msg = (
-        '3. Please check the settings tab that you have selected the correct pandda directory.'
+        '3. Please check the settings tab that you have selected the correct pandda directory.\n'
+        '   (Note: we will take all the apo mmcif files from this directory)\n'
+        '   Current PanDDA directory:'
     )
     return msg
 

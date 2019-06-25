@@ -656,6 +656,7 @@ class XChemExplorer(QtGui.QApplication):
             self.panddas_directory = str(QtGui.QFileDialog.getExistingDirectory(self.window, "Select Directory"))
             self.panddas_directory_label.setText(self.panddas_directory)
             self.pandda_output_data_dir_entry.setText(self.panddas_directory)
+            self.ground_state_pandda_directory_label.setText(self.panddas_directory)
             print('PANDDA', self.panddas_directory)
             self.settings['panddas_directory'] = self.panddas_directory
 

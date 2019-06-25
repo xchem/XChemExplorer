@@ -68,7 +68,11 @@ class DepositionTab():
         pdb_group_deposition_link = QtGui.QLabel(XChemToolTips.pdb_group_deposition_link())
         pdb_group_deposition_link.setOpenExternalLinks(True)
 
+        pdb_group_deposition_link_two = QtGui.QLabel(XChemToolTips.pdb_group_deposition_link())
+        pdb_group_deposition_link_two.setOpenExternalLinks(True)
+
         pdb_group_deposition_instruction_two = self.layout_funcs.add_depo_text(XChemToolTips.pdb_group_deposition_instruction_two())
+        pdb_group_deposition_instruction_two_two = self.layout_funcs.add_depo_text(XChemToolTips.pdb_group_deposition_instruction_two())
 
 
         #
@@ -94,6 +98,7 @@ class DepositionTab():
         ground_state_pdb_button.clicked.connect(xce_object.select_ground_state_pdb)
         ground_state_pdb_button.setMaximumWidth(200)
         xce_object.ground_state_pdb_button_label = QtGui.QLabel('')
+        xce_object.ground_state_pdb_button_label.setStyleSheet('color: blue')
 
         deposition_ground_state_log_info = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_log_info())
 
@@ -103,8 +108,11 @@ class DepositionTab():
         ground_state_mtz_button.clicked.connect(xce_object.select_ground_state_mtz)
         ground_state_mtz_button.setMaximumWidth(200)
         xce_object.ground_state_mtz_button_label = QtGui.QLabel('')
+        xce_object.ground_state_mtz_button_label.setStyleSheet('color: blue')
 
         deposition_ground_state_preparation_step_three_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_three_text())
+        xce_object.ground_state_pandda_directory_label = QtGui.QLabel(xce_object.panddas_directory)
+        xce_object.ground_state_pandda_directory_label.setStyleSheet('color: blue')
 
         deposition_ground_state_preparation_step_four_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_four_text())
 
@@ -173,7 +181,13 @@ class DepositionTab():
                                   copy_mmcif_button,
                                   pdb_group_deposition_instruction_one,
                                   pdb_group_deposition_link,
-                                  pdb_group_deposition_instruction_two,
+                                  pdb_group_deposition_instruction_two_two,
+
+                                  QtGui.QLabel(' \n\n\n '),
+
+                                  after_deposition_heading, QtGui.QLabel(' \n '),
+                                  after_deposition_preparation,
+                                  after_deposition_preparation_text,
 
                                   QtGui.QLabel(' \n\n\n '),
 
@@ -182,11 +196,12 @@ class DepositionTab():
                                   deposition_ground_state_prerequisites_text, QtGui.QLabel(' \n '),
                                   deposition_ground_state_preparation,
                                   deposition_ground_state_preparation_step_one_text,
-                                  ground_state_pdb_button,
+                                  ground_state_pdb_button, xce_object.ground_state_pdb_button_label,
                                   deposition_ground_state_log_info,
                                   deposition_ground_state_preparation_step_two_text,
-                                  ground_state_mtz_button,
+                                  ground_state_mtz_button,xce_object.ground_state_mtz_button_label,
                                   deposition_ground_state_preparation_step_three_text,
+                                  xce_object.ground_state_pandda_directory_label,
                                   deposition_ground_state_preparation_step_four_text,
                                   add_ground_state_db_button,
                                   deposition_ground_state_preparation_step_five_text,
@@ -195,14 +210,14 @@ class DepositionTab():
                                   deposition_ground_state_preparation_step_seven_text,
                                   copy_apo_mmcif_button,
                                   deposition_ground_state_preparation_step_eight_text,
-                                  pdb_group_deposition_link,
+                                  pdb_group_deposition_link_two,
                                   pdb_group_deposition_instruction_two,
 
-                                  QtGui.QLabel(' \n\n\n '),
+                                  QtGui.QLabel(' \n\n\n ')
 
-                                  after_deposition_heading, QtGui.QLabel(' \n '),
-                                  after_deposition_preparation,
-                                  after_deposition_preparation_text
+#                                  after_deposition_heading, QtGui.QLabel(' \n '),
+#                                  after_deposition_preparation,
+#                                  after_deposition_preparation_text
 
                                   ]
 
