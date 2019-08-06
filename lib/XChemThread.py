@@ -2305,9 +2305,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 db_dict.update(parse().read_aimless_logfile(logNew))
                 db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
                 db_dict['DataCollectionBeamline'] = self.beamline
-                if xtal == 'PHIPA-x20961':
+                if xtal == 'PHIPA-x20963':
                     print '>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-                    print db_dict
                     quit()
                 self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 #        return db_dict
