@@ -2288,10 +2288,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def readProcessingUpdateResults(self,xtal,folder,log,mtz,timestamp,current_run,autoproc):
         db_dict = {}
-        self.Logfile.insert('B: %s -> current run: %s' % (xtal, current_run))
         for mtzfile in glob.glob(os.path.join(folder,mtz)):
             for logfile in glob.glob(os.path.join(folder, log)):
-                self.Logfile.insert('C: %s -> current run: %s' % (xtal, current_run))
                 self.createAutoprocessingDir(xtal, current_run, autoproc)
                 mtzNew,logNew = self.copyMTZandLOGfiles(xtal,current_run,autoproc,mtzfile,logfile)
                 if self.target == '=== project directory ===':
@@ -2305,14 +2303,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             'DataCollectionOutcome':            'success',  # success in collection Table only means that a logfile was found
                             'ProteinName':                      target     }
                 db_dict.update(parse().read_aimless_logfile(logNew))
-                self.Logfile.insert('X: %s -> %s' %(xtal,logNew.split('/')[9].split('_')[1]))
-                self.Logfile.insert('D: %s -> current run: %s' % (xtal, current_run))
                 db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
-                self.Logfile.insert('E: %s -> current run: %s' % (xtal, current_run))
                 db_dict['DataCollectionBeamline'] = self.beamline
-                if xtal == 'PHIPA-x20963':
-                    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-                    quit()
                 self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 #        return db_dict
 
@@ -2325,13 +2317,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         return autoproc
 
     def update_data_collection_table(self,xtal,current_run,autoproc,db_dict):
-        self.Logfile.insert('F: %s -> current run: %s' % (xtal, current_run))
         condition_dict = {  'CrystalName':              xtal,
                             'DataCollectionVisit':      self.visit,
                             'DataCollectionRun':        current_run,
                             'DataProcessingProgram':    autoproc    }
-        self.Logfile.insert('G: %s -> current run: %s -> condition_dict: %s' %(xtal,current_run,str(condition_dict)))
-        self.Logfile.insert('H: %s -> current run: %s -> db_dict: %s' % (xtal, current_run, str(db_dict)))
         self.db.update_insert_any_table('collectionTable', db_dict, condition_dict)
 
     def alreadyParsed(self,xtal,current_run,autoproc):
@@ -2369,57 +2358,67 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         progress = 0
         progress_step = XChemMain.getProgressSteps(len(glob.glob(os.path.join(self.processedDir,'*'))))
 
-        for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
-            self.visit = collected_xtals.split('/')[5]
-            if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
-                continue
-            if not os.path.isdir(collected_xtals):
-                self.Logfile.warning(collected_xtals + ' is not a directory')
-                continue
-
-            xtal = collected_xtals[collected_xtals.rfind('/')+1:]
-            if self.agamemnon:
+        if self.agamemnon:
+            allCrystals = []
+            allVisits = []
+            for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir, '*'))):
+                visit = collected_xtals.split('/')[5]
+                if visit not in allVisits:
+                    allVisits.append(visit)
+                xtal = collected_xtals[collected_xtals.rfind('/')+1:]
                 tmp = xtal[:xtal.rfind('_')]
                 xtal = tmp[:tmp.rfind('_')]
+                if xtal not in allCrystals:
+                    allCrystals.append(xtal)
 
-            self.Logfile.insert('%s: checking auto-processing results' %xtal)
-            self.createSampleDir(xtal)
+            print allCrystals
+            print allVisits
+            quit()
 
-            if self.target == '=== project directory ===':
-                runDir = os.path.join(collected_xtals,'processed','*')
-            elif self.agamemnon:
-                tmpDir = collected_xtals[:collected_xtals.rfind('/')]
-                runDir = os.path.join(tmpDir,xtal+'_*_')
-            else:
-                runDir = os.path.join(collected_xtals,'*')
+        else:
+            for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
+                if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
+                    continue
+                if not os.path.isdir(collected_xtals):
+                    self.Logfile.warning(collected_xtals + ' is not a directory')
+                    continue
 
-            for run in sorted(glob.glob(runDir)):
-                current_run=run[run.rfind('/')+1:]
-                self.Logfile.insert('%s -> run: %s -> current run: %s' %(xtal,run,current_run))
-                timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
+                xtal = collected_xtals[collected_xtals.rfind('/')+1:]
 
-                # create directory for crystal aligment images in projectDir
-                self.makeJPGdir(xtal,current_run)
-                self.copyJPGs(xtal, current_run)
+                self.Logfile.insert('%s: checking auto-processing results' %xtal)
+                self.createSampleDir(xtal)
 
-                for item in self.toParse:
-                    procDir = os.path.join(run,item[0])
-                    logfile = item[1]
-                    mtzfile = item[2]
+                if self.target == '=== project directory ===':
+                    runDir = os.path.join(collected_xtals,'processed','*')
+                else:
+                    runDir = os.path.join(collected_xtals,'*')
 
-                    for folder in glob.glob(procDir):
-                        if self.junk(folder):
-                            continue
-                        if self.empty_folder(xtal,folder):
-                            continue
-                        if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-                            autoproc = 'aP_staraniso'
-                        else:
-                            autoproc = self.getAutoProc(folder)
-                        if self.alreadyParsed(xtal,current_run,autoproc):
-                            continue
-                        self.Logfile.insert('A: %s -> current run: %s' %(xtal,current_run))
-                        self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
+                for run in sorted(glob.glob(runDir)):
+                    current_run=run[run.rfind('/')+1:]
+                    self.Logfile.insert('%s -> run: %s -> current run: %s' %(xtal,run,current_run))
+                    timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
+
+                    # create directory for crystal aligment images in projectDir
+                    self.makeJPGdir(xtal,current_run)
+                    self.copyJPGs(xtal, current_run)
+
+                    for item in self.toParse:
+                        procDir = os.path.join(run,item[0])
+                        logfile = item[1]
+                        mtzfile = item[2]
+
+                        for folder in glob.glob(procDir):
+                            if self.junk(folder):
+                                continue
+                            if self.empty_folder(xtal,folder):
+                                continue
+                            if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
+                                autoproc = 'aP_staraniso'
+                            else:
+                                autoproc = self.getAutoProc(folder)
+                            if self.alreadyParsed(xtal,current_run,autoproc):
+                                continue
+                            self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
 #                        db_dict = self.readProcessingResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
 #                        self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 

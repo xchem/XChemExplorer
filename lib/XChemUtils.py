@@ -562,8 +562,7 @@ class parse:
 ##        print self.Logfile.split('/')[9].split('_')[1]
 ##        if len(self.Logfile.split('/'))>8 and len(self.Logfile.split('/')[9].split('_'))==1:
         try:
-#            self.aimless['DataCollectionRun']=logfile.split('/')[9].split('_')[1]
-            self.aimless['DataCollectionRun'] = logfile.split('/')[9]
+            self.aimless['DataCollectionRun']=logfile.split('/')[9].split('_')[1]
         except IndexError:
             pass
 
