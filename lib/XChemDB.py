@@ -970,7 +970,6 @@ class data_source:
                 "UPDATE " + table +
                 " SET " + update_string[:-1] +
                 " WHERE " + condition_string[:-5] + ";")
-            quit()
         connect.commit()
 
 
