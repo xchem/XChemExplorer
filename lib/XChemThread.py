@@ -2388,6 +2388,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
             for run in sorted(glob.glob(runDir)):
                 current_run=run[run.rfind('/')+1:]
+                self.Logfile.insert('%s -> run: %s -> current run: %s' %(xtal,run,current_run))
                 timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
 
                 # create directory for crystal aligment images in projectDir
