@@ -588,7 +588,7 @@ class setup():
 
     def dropdown_items(self, xce_object):
         xce_object.dataset_tasks = ['Get New Results from Autoprocessing',
-                                    'Run DIMPLE on All Autoprocessing MTZ files',
+#                                    'Run DIMPLE on All Autoprocessing MTZ files',
                                     'Rescore Datasets',
                                     'Run xia2 on selected datasets',
                                     'Run xia2 on selected datasets - overwrite']
