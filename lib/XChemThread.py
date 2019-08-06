@@ -2288,8 +2288,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def readProcessingUpdateResults(self,xtal,folder,log,mtz,timestamp,current_run,autoproc):
         db_dict = {}
+        self.Logfile.insert('B: %s -> current run: %s' % (xtal, current_run))
         for mtzfile in glob.glob(os.path.join(folder,mtz)):
             for logfile in glob.glob(os.path.join(folder, log)):
+                self.Logfile.insert('C: %s -> current run: %s' % (xtal, current_run))
                 self.createAutoprocessingDir(xtal, current_run, autoproc)
                 mtzNew,logNew = self.copyMTZandLOGfiles(xtal,current_run,autoproc,mtzfile,logfile)
                 if self.target == '=== project directory ===':
@@ -2303,7 +2305,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             'DataCollectionOutcome':            'success',  # success in collection Table only means that a logfile was found
                             'ProteinName':                      target     }
                 db_dict.update(parse().read_aimless_logfile(logNew))
+                self.Logfile.insert('D: %s -> current run: %s' % (xtal, current_run))
                 db_dict.update(self.findJPGs(xtal,current_run))     # image exist even if data processing failed
+                self.Logfile.insert('E: %s -> current run: %s' % (xtal, current_run))
                 db_dict['DataCollectionBeamline'] = self.beamline
                 if xtal == 'PHIPA-x20963':
                     print '>>>>>>>>>>>>>>>>>>>>>>>>>>>'
@@ -2410,6 +2414,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             autoproc = self.getAutoProc(folder)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
+                        self.Logfile.insert('A: %s -> current run: %s' %(xtal,current_run))
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
 #                        db_dict = self.readProcessingResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
 #                        self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
