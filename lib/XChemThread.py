@@ -2174,6 +2174,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.target = target
         self.agamemnon = agamemnon
+        if self.agamemnon:
+            self.visit = 'agamemnon'        # this is for trouble-shooting only
 
         self.db = XChemDB.data_source(os.path.join(database))
         self.exisitingSamples = self.getExistingSamples()
@@ -2357,6 +2359,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         progress_step = XChemMain.getProgressSteps(len(glob.glob(os.path.join(self.processedDir,'*'))))
 
         for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
+            self.visit = collected_xtals.split('/')[5]
             if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
                 continue
             if not os.path.isdir(collected_xtals):
@@ -2364,11 +2367,18 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 continue
 
             xtal = collected_xtals[collected_xtals.rfind('/')+1:]
+            if self.agamemnon:
+                tmp = xtal[:xtal.rfind('_')]
+                xtal = tmp[:tmp.rfind('_')]
+
             self.Logfile.insert('%s: checking auto-processing results' %xtal)
             self.createSampleDir(xtal)
 
             if self.target == '=== project directory ===':
                 runDir = os.path.join(collected_xtals,'processed','*')
+            elif self.agamemnon:
+                tmpDir = collected_xtals[:collected_xtals.rfind('/')]
+                runDir = os.path.join(tmpDir,xtal+'_*_')
             else:
                 runDir = os.path.join(collected_xtals,'*')
 
