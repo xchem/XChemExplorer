@@ -2329,7 +2329,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             'DataCollectionVisit':      self.visit,
                             'DataCollectionRun':        current_run,
                             'DataProcessingProgram':    autoproc    }
-        self.Logfile.insert('G: xtal -> condition_dict: ' %(xtal,str(condition_dict)))
+        self.Logfile.insert('G: %s -> current run: %s -> condition_dict: %s' %(xtal,current_run,str(condition_dict)))
         self.db.update_insert_any_table('collectionTable', db_dict, condition_dict)
 
     def alreadyParsed(self,xtal,current_run,autoproc):
