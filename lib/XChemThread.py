@@ -2371,8 +2371,11 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 if xtal not in allCrystals:
                     allCrystals.append(xtal)
 
+            beamlineDir = "/"+"/".join(self.processedDir.split('/')[1:5])
+
             print allCrystals
             print allVisits
+            print beamlineDir
             quit()
 
         else:
