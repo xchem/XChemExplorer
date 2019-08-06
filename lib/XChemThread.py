@@ -2164,7 +2164,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                  database,
                  projectDir,
                  xce_logfile,
-                 target):
+                 target,
+                 agamemnon):
         QtCore.QThread.__init__(self)
 #        self.target = target
         self.processedDir =  processedDir
@@ -2172,6 +2173,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.projectDir = projectDir
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.target = target
+        self.agamemnon = agamemnon
 
         self.db = XChemDB.data_source(os.path.join(database))
         self.exisitingSamples = self.getExistingSamples()

@@ -33,26 +33,34 @@ def space_group_list():
     return space_group_list
 
 
-def get_target_and_visit_list(beamline_directory):
+def get_target_and_visit_list(beamline_directory,agamemnon):
 #    target_list=['*']      # always give the option to read in all targets
     target_list=['=== SELECT TARGET ===','=== project directory ===']
     visit_list=[]
     # the beamline directory could be a the real directory or
     # a directory where the visits are linked into
-    if len(beamline_directory.split('/')) and \
-        beamline_directory.split('/')[1]=='dls' and beamline_directory.split('/')[3]=='data' \
-        and not 'labxchem' in beamline_directory:
-        visit_list.append(beamline_directory)
+    if agamemnon:
+        # /dls/i03/data/2019/lb18145-136
+        for target in glob.glob(beamline_directory[:beamline_directory.rfind('-') + 1] + '*/agamemnon/*'):
+            visit_list.append(beamline_directory[:beamline_directory.rfind('/')].replace('/agamemnon',''))
+            if target[target.rfind('/') + 1:] not in ['results', 'README-log', 'edna-latest.html']:
+                if target[target.rfind('/') + 1:] not in target_list:
+                    target_list.append(target[target.rfind('/') + 1:])
     else:
-        visit_list.append(os.path.realpath(beamline_directory))
+        if len(beamline_directory.split('/')) and \
+            beamline_directory.split('/')[1]=='dls' and beamline_directory.split('/')[3]=='data' \
+            and not 'labxchem' in beamline_directory:
+            visit_list.append(beamline_directory)
+        else:
+            visit_list.append(os.path.realpath(beamline_directory))
 
-    for visit in visit_list:
-        print '-->',os.path.join(visit,'processed','*')
-        for target in glob.glob(os.path.join(visit,'processed','*')):
-            print target
-            if target[target.rfind('/')+1:] not in ['results','README-log','edna-latest.html']:
-                if target[target.rfind('/')+1:] not in target_list:
-                    target_list.append(target[target.rfind('/')+1:])
+        for visit in visit_list:
+            print '-->',os.path.join(visit,'processed','*')
+            for target in glob.glob(os.path.join(visit,'processed','*')):
+                print target
+                if target[target.rfind('/')+1:] not in ['results','README-log','edna-latest.html']:
+                    if target[target.rfind('/')+1:] not in target_list:
+                        target_list.append(target[target.rfind('/')+1:])
     return target_list,visit_list
 
 #def get_target_and_visit_list_for_Pietro(beamline_directory):

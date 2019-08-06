@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.8.8'
+        xce_object.xce_version = 'v1.3.8.9'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -147,8 +147,9 @@ class setup():
         xce_object.main_data_collection_table_exists = False
         xce_object.timer_to_check_for_new_data_collection = QtCore.QTimer()
 
+        xce_object.agamemnon = False
         xce_object.target_list, xce_object.visit_list = XChemMain.get_target_and_visit_list(
-            xce_object.beamline_directory)
+            xce_object.beamline_directory,False)
 
         xce_object.diffraction_data_dict = {}
 
@@ -230,6 +231,7 @@ class setup():
         xce_object.max_queue_jobs = 100
         xce_object.dimple_twin_mode = False
 
+
         xce_object.preferences_initial_refinement_pipeline = [  'dimple',
                                                                 'pipedream',
                                                                 'phenix.ligand_pipeline'    ]
@@ -266,7 +268,8 @@ class setup():
                                'html_export_directory': xce_object.html_export_directory,
                                'group_deposit_directory': xce_object.group_deposit_directory,
                                'remote_qsub': '',
-                               'dimple_twin_mode': False    }
+                               'dimple_twin_mode': False,
+                               'agamemnon': False           }
 
     def tables(self, xce_object):
         # Table column settings

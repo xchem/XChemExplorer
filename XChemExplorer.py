@@ -337,6 +337,8 @@ class XChemExplorer(QtGui.QApplication):
         elif self.target == '=== project directory ===':
             processedDir = self.initial_model_directory
             start_thread = True
+        elif self.read_agamemnon.isChecked():
+            processedDir = os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*/processed/agamemnon/'+self.target)
         else:
             processedDir = os.path.join(self.beamline_directory, 'processed', self.target)
             start_thread = True
@@ -349,7 +351,8 @@ class XChemExplorer(QtGui.QApplication):
                                                                                               self.data_source_file),
                                                                                           self.initial_model_directory,
                                                                                           self.xce_logfile,
-                                                                                          self.target   )
+                                                                                          self.target,
+                                                                                          self.read_agamemnon.isChecked())
 
             self.explorer_active = 1
             self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
@@ -613,7 +616,7 @@ class XChemExplorer(QtGui.QApplication):
             dir_name = str(QtGui.QFileDialog.getExistingDirectory(self.window, "Select Directory"))
             if dir_name != self.beamline_directory:
                 self.beamline_directory = dir_name
-                self.target_list, self.visit_list = XChemMain.get_target_and_visit_list(self.beamline_directory)
+                self.target_list, self.visit_list = XChemMain.get_target_and_visit_list(self.beamline_directory,read_agamemnon.isChecked())
                 self.populate_target_selection_combobox(self.target_selection_combobox)
             self.beamline_directory_label.setText(self.beamline_directory)
             self.settings['beamline_directory'] = self.beamline_directory
@@ -2493,7 +2496,7 @@ class XChemExplorer(QtGui.QApplication):
             pickled_settings = pickle.load(open(file_name, "rb"))
             if pickled_settings['beamline_directory'] != self.beamline_directory:
                 self.beamline_directory = pickled_settings['beamline_directory']
-                self.target_list, self.visit_list = XChemMain.get_target_and_visit_list(self.beamline_directory)
+                self.target_list, self.visit_list = XChemMain.get_target_and_visit_list(self.beamline_directory,read_agamemnon.isChecked())
                 self.settings['beamline_directory'] = self.beamline_directory
                 self.populate_target_selection_combobox(self.target_selection_combobox)
 

@@ -80,8 +80,13 @@ class SettingsTab():
         settings_button_beamline_directory.setMaximumWidth(500)
 
         settings_button_beamline_directory.clicked.connect(xce_object.settings_button_clicked)
+
         settings_hbox_beamline_directory.addWidget(settings_button_beamline_directory)
         settings_beamline_vbox.addLayout(settings_hbox_beamline_directory)
+        xce_object.read_agamemnon = QtGui.QCheckBox('Read Agamemnon data structure')
+        settings_beamline_vbox.addWidget(xce_object.read_agamemnon)
+
+
 
 #        settings_hbox_datasets_summary_file = QtGui.QHBoxLayout()
 #        xce_object.datasets_summary_file_label = QtGui.QLabel(xce_object.datasets_summary_file)
