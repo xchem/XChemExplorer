@@ -339,6 +339,7 @@ class XChemExplorer(QtGui.QApplication):
             start_thread = True
         elif self.read_agamemnon.isChecked():
             processedDir = os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*/processed/agamemnon/'+self.target)
+            start_thread = True
         else:
             processedDir = os.path.join(self.beamline_directory, 'processed', self.target)
             start_thread = True
