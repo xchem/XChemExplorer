@@ -948,6 +948,7 @@ class data_source:
         cursor.execute('Select %s FROM %s where %s' %(columns[:-1],table,condition_string[:-5]))
 
         tmp = cursor.fetchall()
+        print 'UUUUUU>>>>',data_dict
         if not tmp:
             data_dict.update(condition_dict)
             value_string=''
