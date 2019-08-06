@@ -2376,7 +2376,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             print allCrystals
             print allVisits
             print beamlineDir
-            quit()
             for xtal in allCrystals:
                 for visit in allVisits:
                     for run in sorted(glob.glob(os.path.join(beamlineDir,visit,'processed','agamemnon',self.target,xtal+'_*_'))):
