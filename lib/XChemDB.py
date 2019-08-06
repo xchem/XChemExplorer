@@ -959,7 +959,9 @@ class data_source:
             cursor.execute("INSERT INTO "+table+" (" + column_string[:-1] + ") VALUES (" + value_string[:-1] + ");")
         else:
             update_string=''
+            print '________________',data_dict
             for key in data_dict:
+                print '-->',key,data_dict[key]
                 value = data_dict[key]
                 update_string += str(key) + '=' + "'" + str(value) + "',"
             print ">>> UPDATE " + table + " SET " + update_string[:-1] + " WHERE " + condition_string[:-5] + ";"
@@ -967,6 +969,7 @@ class data_source:
                 "UPDATE " + table +
                 " SET " + update_string[:-1] +
                 " WHERE " + condition_string[:-5] + ";")
+            quit()
         connect.commit()
 
 
