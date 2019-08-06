@@ -956,13 +956,13 @@ class data_source:
                 value = data_dict[key]
                 value_string += "'" + str(value) + "'" + ','
                 column_string += key + ','
-            print ">>>> INSERT INTO "+table+" (" + column_string[:-1] + ") VALUES (" + value_string[:-1] + ");"
             cursor.execute("INSERT INTO "+table+" (" + column_string[:-1] + ") VALUES (" + value_string[:-1] + ");")
         else:
             update_string=''
             for key in data_dict:
                 value = data_dict[key]
                 update_string += str(key) + '=' + "'" + str(value) + "',"
+            print ">>> UPDATE " + table + " SET " + update_string[:-1] + " WHERE " + condition_string[:-5] + ";"
             cursor.execute(
                 "UPDATE " + table +
                 " SET " + update_string[:-1] +
