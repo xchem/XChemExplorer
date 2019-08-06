@@ -956,6 +956,7 @@ class data_source:
                 value = data_dict[key]
                 value_string += "'" + str(value) + "'" + ','
                 column_string += key + ','
+            print ">>>> INSERT INTO "+table+" (" + column_string[:-1] + ") VALUES (" + value_string[:-1] + ");"
             cursor.execute("INSERT INTO "+table+" (" + column_string[:-1] + ") VALUES (" + value_string[:-1] + ");")
         else:
             update_string=''
