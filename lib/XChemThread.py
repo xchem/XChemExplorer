@@ -1986,7 +1986,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
         if self.agamemnon:
             self.allSamples = []
             for v in self.visit:
-                x = self.collected_xtals_during_visit_for_scoring(v)
+                x = self.db.collected_xtals_during_visit_for_scoring(v)
                 for e in x:
                     self.allSamples.append(e)
         else:
