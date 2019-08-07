@@ -1832,7 +1832,9 @@ class data_source:
         if isinstance(visitID,list):    # for Agamemnon data structure
             collectedXtals = []
             for visit in visitID:
-                collectedXtals.append(self.collected_xtals_during_visit(visit))
+                x = self.collected_xtals_during_visit(visit)
+                for e in x:
+                    collectedXtals.append(e)
         else:
             collectedXtals = self.collected_xtals_during_visit(visitID)
         print '---------------->',collectedXtals
