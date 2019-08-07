@@ -2283,7 +2283,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             os.mkdir(os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run))
 
     def copyJPGs(self,xtal,run):
-        for img in glob.glob(os.path.join(self.processedDir.replace('processed','jpegs'),xtal,run+'*t.png')):
+#        for img in glob.glob(os.path.join(self.processedDir.replace('processed','jpegs'),xtal,run+'*t.png')):
+        for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*t.png')):
             if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
                 os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
 
