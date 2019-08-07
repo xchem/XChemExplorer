@@ -1842,6 +1842,7 @@ class data_source:
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
         for xtal in sorted(collectedXtals):
+            print xtal
             db_dict = self.get_db_dict_for_sample(xtal)
             xtalDict[xtal] = db_dict
         return xtalDict
