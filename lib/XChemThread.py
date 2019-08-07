@@ -1967,7 +1967,8 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                 preferences,
                 projectDir,
                 rescore,
-                xce_logfile):
+                xce_logfile,
+                agamemnon):
         QtCore.QThread.__init__(self)
         self.visit = visit
         self.projectDir = projectDir
@@ -1977,12 +1978,19 @@ class choose_autoprocessing_outcome(QtCore.QThread):
         self.acceptable_unitcell_volume_difference = preferences['allowed_unitcell_difference_percent']
         self.acceptable_low_resolution_limit_for_data = preferences['acceptable_low_resolution_limit_for_data']
         self.acceptable_low_resolution_Rmerge = preferences['acceptable_low_resolution_Rmerge']
-
+        self.agamemnon = agamemnon
         self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
 
         self.db = XChemDB.data_source(os.path.join(database))
-        self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit)
+        if self.agamemnon:
+            self.allSamples = []
+            for v in self.visit:
+                x = self.collected_xtals_during_visit_for_scoring(v)
+                for e in x:
+                    self.allSamples.append(e)
+        else:
+            self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit)
 #        self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit,rescore)
 
 

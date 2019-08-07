@@ -388,6 +388,13 @@ class XChemExplorer(QtGui.QApplication):
                 processedDir = os.path.join(self.beamline_directory, 'processed', self.target)
 
             visit,beamline = XChemMain.getVisitAndBeamline(processedDir)
+
+            if self.read_agamemnon.isChecked():
+                visit = []
+                for v in glob.glob(
+                        os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*')):
+                    visit.append(v[v.rfind('/') + 1:])
+
             self.work_thread = XChemThread.choose_autoprocessing_outcome(os.path.join(self.database_directory,
                                                                                       self.data_source_file),
                                                                                       visit,
@@ -395,7 +402,8 @@ class XChemExplorer(QtGui.QApplication):
                                                                                       self.preferences,
                                                                                       self.initial_model_directory,
                                                                                       self.rescore,
-                                                                                      self.xce_logfile)
+                                                                                      self.xce_logfile,
+                                                                                      self.read_agamemnon.isChecked())
 
             self.explorer_active = 1
             self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
