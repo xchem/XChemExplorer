@@ -4303,6 +4303,11 @@ class XChemExplorer(QtGui.QApplication):
 
         # get information about all samples collected during the current visit
         visit, beamline = XChemMain.getVisitAndBeamline(self.beamline_directory)
+        if self.read_agamemnon.isChecked():
+            visit = []
+            for v in glob.glob(os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*')):
+                visit.append(v[v.rfind('/')+1:])
+
         self.update_log.insert('reading information about collected crystals from database...')
         collectedXtalsDict = self.db.xtals_collected_during_visit_as_dict(visit)
 
