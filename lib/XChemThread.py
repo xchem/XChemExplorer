@@ -2291,7 +2291,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def findJPGs(self,xtal,run):
         jpgDict={}
-        for n,img in enumerate(glob.glob(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,'*t.png'))):
+#        for n,img in enumerate(glob.glob(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,'*t.png'))):
+        for n,img in enumerate(glob.glob(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,'*.0.png'))):
             if n <= 3: jpgDict['DataCollectionCrystalImage'+str(n+1)]=img
         return jpgDict
 
@@ -2425,7 +2426,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 runList.append(current_run)
 
             progress += progress_step
-            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), xtal)
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         self.Logfile.insert('====== finished parsing beamline directory ======')
