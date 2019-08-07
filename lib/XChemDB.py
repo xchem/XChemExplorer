@@ -680,7 +680,6 @@ class data_source:
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
-        print 'data',data
         for n,item in enumerate(data[0]):
             db_dict[header[n]]=str(item)
         return db_dict
@@ -960,7 +959,6 @@ class data_source:
         else:
             update_string=''
             for key in data_dict:
-                print '-->',key,data_dict[key]
                 value = data_dict[key]
                 update_string += str(key) + '=' + "'" + str(value) + "',"
             cursor.execute(
@@ -1312,23 +1310,6 @@ class data_source:
                 "from mainTable "
                 "where RefinementOutcome is %s and DimpleRfree is not Null;" %outcome
                 )
-#            sqlite = (
-#                "select"
-#                " CrystalName,"
-#                " CompoundCode,"
-#                " RefinementCIF,"
-#                " RefinementMTZfree,"
-#                " RefinementPathToRefinementFolder,"
-#                " RefinementOutcome,"
-#                " RefinementLigandConfidence "
-#                "from mainTable "
-#                "where RefinementOutcome like "+outcome.split()[0]+"%';"
-#                )
-
-
-        print sqlite
-
-#        print sqlite
         cursor.execute(sqlite)
 
         tmp = cursor.fetchall()
@@ -1828,7 +1809,6 @@ class data_source:
 
     def xtals_collected_during_visit_as_dict(self,visitID):
         # first get all collected xtals as list
-        print '>>>>>>>>>>>>>>>>>>>>>>',visitID
         if isinstance(visitID,list):    # for Agamemnon data structure
             collectedXtals = []
             for visit in visitID:
@@ -1837,12 +1817,10 @@ class data_source:
                     collectedXtals.append(e)
         else:
             collectedXtals = self.collected_xtals_during_visit(visitID)
-        print '---------------->',collectedXtals
         xtalDict = {}
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
         for xtal in sorted(collectedXtals):
-            print xtal
             db_dict = self.get_db_dict_for_sample(xtal)
             xtalDict[xtal] = db_dict
         return xtalDict

@@ -2421,7 +2421,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             autoproc = self.getAutoProc(folder)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
-                        self.Logfile.insert('A: %s -> current run: %s' %(xtal,current_run))
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
                 runList.append(current_run)
 
