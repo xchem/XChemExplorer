@@ -1828,12 +1828,14 @@ class data_source:
 
     def xtals_collected_during_visit_as_dict(self,visitID):
         # first get all collected xtals as list
+        print '>>>>>>>>>>>>>>>>>>>>>>',visitID
         if isinstance(visitID,list):    # for Agamemnon data structure
             collectedXtals = []
             for visit in visitID:
                 collectedXtals.append(self.collected_xtals_during_visit(visit))
         else:
             collectedXtals = self.collected_xtals_during_visit(visitID)
+        print '---------------->',collectedXtals
         xtalDict = {}
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
