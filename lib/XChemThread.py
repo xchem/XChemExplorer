@@ -395,8 +395,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         # REFINE bound pdb
         #
 
-        if os.path.isfile('refine.bound.pdb'):
-            db_dict['RefinementBoundConformation']=os.path.realpath('refine.bound.pdb')
+        if os.path.isfile('refine.split.bound-state.pdb'):
+            db_dict['RefinementBoundConformation']=os.path.realpath('refine.split.bound-state.pdb')
 #            db_dict['RefinementBoundConformation']='refine.bound.pdb'
         else:
 #            if os.path.isfile('refine.pdb'):

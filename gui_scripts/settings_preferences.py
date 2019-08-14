@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.8.9'
+        xce_object.xce_version = 'v1.3.8.10'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
