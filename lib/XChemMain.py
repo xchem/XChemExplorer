@@ -536,7 +536,12 @@ def getVisitAndBeamline(visitDirectory):
         except IndexError:
             pass
     if not visitDirectory.startswith('/dls'):
-        visit = 'unknown'
+        # this is all a bit of a fudge in case someone transfers a DLS visit directory back home
+        # does most certainly not catch all possible scenarios
+        if visitDirectory.split('/')[len(visitDirectory.split('/')) - 2] == 'processed':
+            visit = visitDirectory.split('/')[len(visitDirectory.split('/')) - 3]
+        else:
+            visit = visitDirectory.split('/')[len(visitDirectory.split('/'))-1]
         beamline = 'unknown'
     return visit,beamline
 

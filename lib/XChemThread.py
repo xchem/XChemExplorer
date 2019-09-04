@@ -1991,6 +1991,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                     self.allSamples.append(e)
         else:
             self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit)
+        print 'here', self.allSamples
 #        self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit,rescore)
 
 
@@ -2178,6 +2179,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #        self.target = target
         self.processedDir =  processedDir
         self.visit,self.beamline = XChemMain.getVisitAndBeamline(self.processedDir)
+        print 'visit'
         self.projectDir = projectDir
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.target = target
@@ -2285,9 +2287,18 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
     def copyJPGs(self,xtal,run):
 #        for img in glob.glob(os.path.join(self.processedDir.replace('processed','jpegs'),xtal,run+'*t.png')):
 #        for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*t.png')):
+        self.Logfile.insert('%s: trying to copy crystal snapshots...' %xtal)
+        found = False
         for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*.0.png')):
+            found = True
             if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
+                self.Logfile.insert('%s: copying %s' % (xtal, img))
                 os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
+        if not found:
+            for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), xtal, run + '*.0.png')):
+                if not os.path.isfile(os.path.join(self.projectDir, xtal, 'jpg', self.visit + '-' + run, img[img.rfind('/') + 1:])):
+                    self.Logfile.insert('%s: copying %s' % (xtal, img))
+                    os.system('/bin/cp %s %s' % (img, os.path.join(self.projectDir, xtal, 'jpg', self.visit + '-' + run)))
 
     def findJPGs(self,xtal,run):
         jpgDict={}
@@ -2371,7 +2382,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
         runList = []
         for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
-            self.visit = collected_xtals.split('/')[5]
+            # why is this here? self.visit is derived in init function through XChemMain.getVisitAndBeamline
+#            self.visit = collected_xtals.split('/')[5]
             if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
                 continue
             if not os.path.isdir(collected_xtals):
