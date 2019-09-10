@@ -836,14 +836,49 @@ class XChemExplorer(QtGui.QApplication):
         settings_hbox_remote_qsub.addWidget(self.remote_qsub_command)
         vbox.addLayout(settings_hbox_remote_qsub)
 
-        apply_button = QtGui.QPushButton('Apply')
-        apply_button.clicked.connect(self.run_qsub_remotely)
-        settings_hbox_remote_qsub.addWidget(apply_button)
+        hbox = QtGui.QHBoxLayout()
+        hbox.addWidget(QtGui.QLabel('Additional CIF file for non-standard ligand:'))
+        self.second_cif_file_label = QtGui.QLabel(self.second_cif_file)
+        hbox.addWidget(self.second_cif_file_label)
+        button = QtGui.QPushButton("Select")
+        button.clicked.connect(self.set_second_cif_file)
+        hbox.addWidget(button)
+        vbox.addLayout(hbox)
+
+
+#        settings_hbox_max_queue_jobs.addWidget(adjust_max_queue_jobs_label)
+#        adjust_max_queue_jobs = QtGui.QLineEdit()
+#        adjust_max_queue_jobs.setFixedWidth(200)
+#        adjust_max_queue_jobs.setText(str(self.max_queue_jobs))
+#        adjust_max_queue_jobs.textChanged[str].connect(self.change_max_queue_jobs)
+#        settings_hbox_max_queue_jobs.addWidget(adjust_max_queue_jobs)
+#        vbox.addLayout(settings_hbox_max_queue_jobs)
+#
+#        apply_button = QtGui.QPushButton('Apply')
+#        apply_button.clicked.connect(self.run_qsub_remotely)
+#        settings_hbox_remote_qsub.addWidget(apply_button)
 
 
         preferencesLayout.addLayout(vbox, 0, 0)
 
         preferences.exec_();
+
+#    def set_second_cif_file(self):
+#        mb = QtGui.QMessageBox()
+#        mbLayout = mb.layout()
+#        vbox = QtGui.QVBoxLayout()
+#        vbox.addWidget(QtGui.QLabel('CIF file to be merged into ligand CIF files:'))
+#        self.second_cif_file_label = QtGui.QLabel(self.second_cif_file)
+#        vbox.addWidget(self.second_cif_file_label)
+#        button = QtGui.QPushButton("Select")
+#        button.clicked.connect(self.set_second_cif_file)
+#        vbox.addWidget(button)
+#        mbLayout.addLayout(vbox, 0, 0)
+#        mb.addButton(QtGui.QPushButton('Yes'), QtGui.QMessageBox.YesRole)
+#        mb.addButton(QtGui.QPushButton('No'), QtGui.QMessageBox.RejectRole)
+#        reply = mb.exec_();
+
+
 
     def dimple_change_twin_mode(self):
         if self.preferences['dimple_twin_mode']:
@@ -946,6 +981,9 @@ class XChemExplorer(QtGui.QApplication):
         vbox.addLayout(hbox)
         label_entryLayout.addLayout(vbox, 0, 0)
         label_entry.exec_();
+
+
+
 
 
 
@@ -2283,6 +2321,14 @@ class XChemExplorer(QtGui.QApplication):
             XChemLog.startLog(self.xce_logfile).create_logfile(self.xce_version)
             self.update_log = XChemLog.updateLog(self.xce_logfile)
 
+    def set_second_cif_file(self):
+        filepath_temp = QtGui.QFileDialog.getOpenFileNameAndFilter(self.window, 'Select CIF File',
+                                                                   self.initial_model_directory, '*.cif')
+        filepath = str(tuple(filepath_temp)[0])
+        self.second_cif_file = str(filepath)
+        self.second_cif_file_label.setText(str(self.second_cif_file))
+        self.update_log.insert('user selected %s as CIF file for merging into ligand CIF files' %self.second_cif_file)
+
     def select_datasource_columns_to_display(self):
         columns_to_show = QtGui.QMessageBox()
         columns_to_showLayout = columns_to_show.layout()
@@ -3172,6 +3218,9 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'Create CIF/PDB/PNG file of SELECTED compounds':
             self.create_cif_pdb_png_files('SELECTED')
 
+        elif instruction == 'Merge restraints from new ligand':
+            self.merge_cif_files()
+
         elif instruction == 'pandda.analyse':
             self.run_pandda_analyse('production_run')
 
@@ -3545,6 +3594,58 @@ class XChemExplorer(QtGui.QApplication):
                                                                           self.xce_logfile,
                                                                           self.max_queue_jobs,
                                                                           self.restraints_program)
+            self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
+            self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
+            self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
+            self.connect(self.work_thread, QtCore.SIGNAL("datasource_menu_reload_samples"),
+                         self.datasource_menu_reload_samples)
+            self.work_thread.start()
+
+    def merge_cif_files(self):
+        self.update_log.insert('trying to merge %s with ligand restraint files in project directory' %self.second_cif_file)
+        msgBox = QtGui.QMessageBox()
+        msgBox.setText(XChemToolTips.second_cif_file_info(self.second_cif_file))
+        msgBox.addButton(QtGui.QPushButton('Yes'), QtGui.QMessageBox.YesRole)
+        msgBox.addButton(QtGui.QPushButton('No'), QtGui.QMessageBox.RejectRole)
+        reply = msgBox.exec_();
+        if reply == 0:
+            start_thread = True
+        else:
+            start_thread = False
+
+        tmp = self.db.execute_statement(
+            "select CrystalName,CompoundCode from mainTable where CrystalName is not '' and CompoundSmiles is not '' and CompoundSmiles is not NULL;")
+        compound_list = []
+        for item in tmp:
+            xtal = str(item[0])
+            compoundID = str(item[1])
+            if compoundID == '' or compoundID == 'NULL':
+                self.update_log.warning('%s: no compound ID in database; skipping...' %xtal)
+            else:
+                self.update_log.warning('%s: %s is flagged for merging' %(xtal,compoundID))
+                compound_list.append([xtal, compoundID])
+        if compound_list == []:
+            self.update_log.error('no compound ID information in database')
+            start_thread = False
+
+        self.update_log.insert('checking compound code of second CIF file (%s)' %self.second_cif_file)
+        self.update_log.insert('Note: LIG and DRG are not allowed!')
+        import iotbx.cif
+        cif_model = iotbx.cif.reader(file_path=self.second_cif_file).model()
+        cif_block = cif_model["comp_list"]
+        ligID = cif_block["_chem_comp.id"]
+        self.update_log.insert('found the following compound codes in the supplied CIF file: %s' %str(list(ligID)))
+        if 'LIG' in list(ligID) or 'DRG' in list(ligID):
+            self.update_log.error('please change compound code to something other than LIG or DRG')
+            start_thread = False
+
+        if start_thread:
+
+            self.explorer_active = 1
+            self.work_thread = XChemThread.merge_cif_files(self.initial_model_directory,
+                                                            self.xce_logfile,
+                                                            self.second_cif_file,
+                                                            compound_list)
             self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
             self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
             self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)

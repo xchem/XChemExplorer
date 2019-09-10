@@ -393,3 +393,27 @@ def deposition_bounnd_state_preparation_ignore_event_map():
         'do NOT include PanDDA event maps (ONLY USE IN CASE IF DATA WERE NOT ANALYSED WITH PANDDA!)'
     )
     return msg
+
+def second_cif_file_info(second_cif_file):
+    if os.path.isfile(second_cif_file):
+        msg = (
+            'You have selected the following restraints file\n'
+            'for merging into the the ligand CIF files:\n'
+            +second_cif_file+
+            '\n'
+            'Press NO in case you do not want to continue\n'
+            'In case you want to use another file, open the preferences menu and set it there\n'
+            'Please check the XCE logfile in case of unexpected behaviour'
+        )
+    elif second_cif_file.replace(' ','') == '':
+        msg = (
+            'No restraints file was selected!'
+        )
+    else:
+        msg = (
+            'The selected restraints file does not exist:\n'
+            +second_cif_file+
+            '\n'
+            'Open the preferences menu and set it there\n'
+        )
+    return msg

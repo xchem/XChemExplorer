@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.8.11'
+        xce_object.xce_version = 'v1.3.8.12'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -197,6 +197,8 @@ class setup():
         xce_object.diffraction_data_reference_mtz = 'ignore'
         xce_object.html_export_directory = os.getcwd()
         xce_object.external_software = XChemUtils.external_software(xce_object.xce_logfile).check()
+
+        xce_object.second_cif_file = None
 
         software_list = ['acedrg', 'phenix.elbow', 'grade']
 
@@ -598,7 +600,8 @@ class setup():
                                          'Set only results from selected pipeline',
 #                                         'Create CIF/PDB/PNG file of ALL compounds',
 #                                         'Create CIF/PDB/PNG file of NEW compounds',
-                                         'Create CIF/PDB/PNG file of SELECTED compounds'
+                                         'Create CIF/PDB/PNG file of SELECTED compounds',
+                                         'Merge restraints from new ligand'
                                          ]
 
         xce_object.panddas_file_tasks = ['pandda.analyse',

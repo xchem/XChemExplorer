@@ -894,6 +894,66 @@ class create_png_and_cif_of_compound(QtCore.QThread):
 #        self.emit(QtCore.SIGNAL("finished()"))
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
+class merge_cif_files(QtCore.QThread):
+    def __init__(self,initial_model_directory,xce_logfile,second_cif_file,compound_list):
+        QtCore.QThread.__init__(self)
+        self.initial_model_directory=initial_model_directory
+        self.xce_logfile=xce_logfile
+        self.Logfile=XChemLog.updateLog(xce_logfile)
+        self.db=XChemDB.data_source(os.path.join(self.database_directory,self.data_source_file))
+        self.second_cif_file = second_cif_file
+        self.compound_list=compound_list
+
+    def run(self):
+        progress_step=100/float(len(self.compound_list))
+        progress=0
+        counter=1
+
+        for item in self.compound_list:
+            sampleID=item[0]
+            compoundID=item[1]
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), sampleID+' merging CIF files')
+
+            if os.path.isfile(os.path.join(self.initial_model_directory,sampleID,'compound',compoundID+'.cif')):
+                self.Logfile.insert('%s: found %s.cif file in compound sub-directory' %(sampleID,compoundID))
+            else:
+                self.Logfile.error('%s: %s.cif file does not exist in compound sub-directory; skipping...' %(sampleID,compoundID))
+                continue
+
+            os.chdir(os.path.join(self.initial_model_directory,sampleID))
+            if os.path.isfile(os.path.join(self.initial_model_directory,sampleID,compoundID+'.cif')):
+                self.Logfile.warning('%s: removing symbolic link to %s.cif from sample directory' %(sampleID,compoundID))
+            os.system('/bin/rm %s.cif 2> /dev/null' %compoundID)
+
+            self.run_libcheck(sampleID,compoundID)
+
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+        self.emit(QtCore.SIGNAL("finished()"))
+
+    def run_libcheck(self,sampleID,compoundID):
+        cmd = (
+                    '#!/bin/bash\n'
+                    '\n'
+                    '$CCP4/bin/libcheck << eof \n'
+                    '_Y\n'
+                    '_FILE_L compound/%s.cif\n' %compoundID+
+                    '_FILE_L2 '+self.second_cif_file+'\n'
+                    '_FILE_O '+compoundID+'.cif\n'
+                    '_END\n'
+                    'eof\n'
+                    )
+        self.Logfile.insert('%s: running libcheck with the following input:\n%s' %(sampleID,cmd))
+        os.system(cmd)
+
+        os.system('/mv %s %s' %(compoundID+'.lib.cif',compoundID+'.cif'))
+
+
+
+
+
+
 class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
     def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,
                  data_source_file,max_queue_jobs,xce_logfile, remote_submission, remote_submission_string,
