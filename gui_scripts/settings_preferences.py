@@ -601,7 +601,8 @@ class setup():
 #                                         'Create CIF/PDB/PNG file of ALL compounds',
 #                                         'Create CIF/PDB/PNG file of NEW compounds',
                                          'Create CIF/PDB/PNG file of SELECTED compounds',
-                                         'Merge restraints from new ligand'
+                                         'Merge ligand CIF file with selected compounds',
+                                         'Restore original CIF file of selected compounds'
                                          ]
 
         xce_object.panddas_file_tasks = ['pandda.analyse',

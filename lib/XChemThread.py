@@ -895,13 +895,14 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
 class merge_cif_files(QtCore.QThread):
-    def __init__(self,initial_model_directory,xce_logfile,second_cif_file,compound_list):
+    def __init__(self,initial_model_directory,xce_logfile,second_cif_file,compound_list,todo):
         QtCore.QThread.__init__(self)
         self.initial_model_directory=initial_model_directory
         self.xce_logfile=xce_logfile
         self.Logfile=XChemLog.updateLog(xce_logfile)
         self.second_cif_file = second_cif_file
         self.compound_list=compound_list
+        self.todo=todo
 
     def run(self):
         progress_step=100/float(len(self.compound_list))
@@ -911,20 +912,28 @@ class merge_cif_files(QtCore.QThread):
         for item in self.compound_list:
             sampleID=item[0]
             compoundID=item[1]
-            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), sampleID+' merging CIF files')
 
-            if os.path.isfile(os.path.join(self.initial_model_directory,sampleID,'compound',compoundID+'.cif')):
-                self.Logfile.insert('%s: found %s.cif file in compound sub-directory' %(sampleID,compoundID))
+            if os.path.isfile(os.path.join(self.initial_model_directory, sampleID, 'compound', compoundID + '.cif')):
+                self.Logfile.insert('%s: found %s.cif file in compound sub-directory' % (sampleID, compoundID))
             else:
-                self.Logfile.error('%s: %s.cif file does not exist in compound sub-directory; skipping...' %(sampleID,compoundID))
+                self.Logfile.error(
+                    '%s: %s.cif file does not exist in compound sub-directory; skipping...' % (sampleID, compoundID))
                 continue
 
             os.chdir(os.path.join(self.initial_model_directory,sampleID))
             if os.path.isfile(os.path.join(self.initial_model_directory,sampleID,compoundID+'.cif')):
-                self.Logfile.warning('%s: removing symbolic link to %s.cif from sample directory' %(sampleID,compoundID))
+                self.Logfile.warning('%s: removing symbolic link to (or file) %s.cif from sample directory' %(sampleID,compoundID))
             os.system('/bin/rm %s.cif 2> /dev/null' %compoundID)
 
-            self.run_libcheck(sampleID,compoundID)
+            if self.todo == 'merge':
+                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), sampleID+' merging CIF files')
+
+                self.run_libcheck(sampleID,compoundID)
+
+            elif self.todo == 'restore':
+                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), sampleID + ' restoring original CIF file')
+                self.Logfile.insert('%s: restoring symbolic link -> ln -s compounds/%s.cif .' %(sampleID,compoundID))
+                os.system('ln -s compounds/%s.cif .' %compoundID)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)

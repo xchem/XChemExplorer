@@ -3218,8 +3218,11 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'Create CIF/PDB/PNG file of SELECTED compounds':
             self.create_cif_pdb_png_files('SELECTED')
 
-        elif instruction == 'Merge restraints from new ligand':
-            self.merge_cif_files()
+        elif instruction == 'Merge ligand CIF file with selected compounds':
+            self.merge_cif_files('merge')
+
+        elif instruction == 'Restore original CIF file of selected compounds':
+            self.merge_cif_files('restore')
 
         elif instruction == 'pandda.analyse':
             self.run_pandda_analyse('production_run')
@@ -3601,39 +3604,44 @@ class XChemExplorer(QtGui.QApplication):
                          self.datasource_menu_reload_samples)
             self.work_thread.start()
 
-    def merge_cif_files(self):
-        self.update_log.insert('trying to merge %s with ligand restraint files in project directory' %self.second_cif_file)
+    def merge_cif_files(self,todo):
         start_thread = False
+        if todo == 'merge':
+            self.update_log.insert('trying to merge %s with ligand restraint files in project directory' %self.second_cif_file)
+        elif todo == 'restore':
+            self.update_log.insert('restoring original CIF files')
+            start_thread = True
 
-        if os.path.isfile(str(self.second_cif_file)):
-            self.update_log.insert('checking compound code of second CIF file (%s)' % self.second_cif_file)
-            self.update_log.insert('Note: LIG and DRG are not allowed!')
-            import iotbx.cif
-            cif_model = iotbx.cif.reader(file_path=self.second_cif_file).model()
-            cif_block = cif_model["comp_list"]
-            ligID = cif_block["_chem_comp.id"]
-            self.update_log.insert('found the following compound codes in the supplied CIF file: %s' % str(list(ligID)))
-            if 'LIG' in list(ligID) or 'DRG' in list(ligID):
-                self.update_log.error('please change compound code to something other than LIG or DRG')
-                start_thread = False
+        if todo == 'merge':
+            if os.path.isfile(str(self.second_cif_file)):
+                self.update_log.insert('checking compound code of second CIF file (%s)' % self.second_cif_file)
+                self.update_log.insert('Note: LIG and DRG are not allowed!')
+                import iotbx.cif
+                cif_model = iotbx.cif.reader(file_path=self.second_cif_file).model()
+                cif_block = cif_model["comp_list"]
+                ligID = cif_block["_chem_comp.id"]
+                self.update_log.insert('found the following compound codes in the supplied CIF file: %s' % str(list(ligID)))
+                if 'LIG' in list(ligID) or 'DRG' in list(ligID):
+                    self.update_log.error('please change compound code to something other than LIG or DRG')
+                    start_thread = False
+                else:
+                    start_thread = True
             else:
-                start_thread = True
-        else:
-            self.update_log.error(XChemToolTips.second_cif_file_not_exists())
-            start_thread = False
+                self.update_log.error(XChemToolTips.second_cif_file_not_exists())
+                start_thread = False
 
-        if start_thread:
-            msgBox = QtGui.QMessageBox()
-            msgBox.setText(XChemToolTips.second_cif_file_info(self.second_cif_file))
-            msgBox.addButton(QtGui.QPushButton('OK'), QtGui.QMessageBox.YesRole)
-            msgBox.addButton(QtGui.QPushButton('Cancel'), QtGui.QMessageBox.RejectRole)
-            reply = msgBox.exec_();
-            if reply == 0:
-                start_thread = True
+            if start_thread:
+                msgBox = QtGui.QMessageBox()
+                msgBox.setText(XChemToolTips.second_cif_file_info(self.second_cif_file))
+                msgBox.addButton(QtGui.QPushButton('OK'), QtGui.QMessageBox.YesRole)
+                msgBox.addButton(QtGui.QPushButton('Cancel'), QtGui.QMessageBox.RejectRole)
+                reply = msgBox.exec_();
+                if reply == 0:
+                    start_thread = True
+                else:
+                    start_thread = False
             else:
-                start_thread = False
-        else:
-            self.status_bar.showMessage('Error. Please check terminal window for further information')
+                self.status_bar.showMessage('Error. Please check terminal window for further information')
 
         tmp = self.db.execute_statement(
             "select CrystalName,CompoundCode from mainTable where CrystalName is not '' and CompoundSmiles is not '' and CompoundSmiles is not NULL;")
@@ -3659,13 +3667,15 @@ class XChemExplorer(QtGui.QApplication):
             self.work_thread = XChemThread.merge_cif_files(self.initial_model_directory,
                                                             self.xce_logfile,
                                                             self.second_cif_file,
-                                                            compound_list)
+                                                            compound_list,
+                                                            todo)
             self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
             self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
             self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
             self.connect(self.work_thread, QtCore.SIGNAL("datasource_menu_reload_samples"),
                          self.datasource_menu_reload_samples)
             self.work_thread.start()
+
 
     def update_deposition_table(self):
         # check if PanDDA models are ready for deposition
