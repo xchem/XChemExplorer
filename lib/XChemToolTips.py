@@ -395,7 +395,7 @@ def deposition_bounnd_state_preparation_ignore_event_map():
     return msg
 
 def second_cif_file_info(second_cif_file):
-    if os.path.isfile(second_cif_file):
+    if os.path.isfile(str(second_cif_file)):
         msg = (
             'You have selected the following restraints file\n'
             'for merging into the the ligand CIF files:\n'
@@ -405,7 +405,7 @@ def second_cif_file_info(second_cif_file):
             'In case you want to use another file, open the preferences menu and set it there\n'
             'Please check the XCE logfile in case of unexpected behaviour'
         )
-    elif second_cif_file.replace(' ','') == '':
+    elif second_cif_file.replace(' ','') == '' or second_cif_file.lower() == 'none':
         msg = (
             'No restraints file was selected!'
         )
