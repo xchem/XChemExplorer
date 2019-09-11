@@ -1,0 +1,94 @@
+v1.3.8.11 (04/09/2019)
+- added few changes to enable parsing of DLS visit directories transfered to other file system
+
+v1.3.8.10 (14/08/2019)
+- bug fix: update DB from file system now looks for refine.split.bound-state.pdb instead of refine.bound.pdb
+
+v1.3.8.9 (07/08/2019)
+- added option to parse Agamemnon data structure at DLS
+- removed obsolete 'Run DIMPLE on All Autoprocessing MTZ files' option from yellow Datasets action box
+
+v1.3.8.8 (25/06/2019) 
+- path to selected ground-state MTZ/PDB displayed (deposition tab)
+- selected PanDDA directoy for ground-state deposition displayed (deposition tab)
+- link to group deposition website added to ligand-bound deposition (deposition tab)
+- information about ground-state MTZ file added (deposition tab)
+
+v1.3.8.7 (06/06/2019)
+- 'model_building' is now the new default initial_model directory
+
+v1.3.8.6 (31/05/2019)
+- XChemCOOT-test: added menu funciton to set occupancy of all protein residues to 1 (IMPORTANT: requires COOT v0.8.9.2 or higher)
+
+v1.3.8.5 (29/05/2019)
+- bug fix: selection of ground-state mean-map after pandda pre-run: look for average-map instead of mean-map
+
+v1.3.8.4 (23/05/2019)
+- bug fix: new initial refinement mechanism does not use the dimple_rerun_on_selected_file subfolder which meant that the .free.mtz file was not selected after the run
+- XChemPanDDA export: changed how models will be selected for refinement
+- XChemPanDDA export: removed update of obsolete DimplePANDDAhit field in database
+- XChemPanDDA export: removed false alarm during export #217
+- XChemDeposit: added check for .free.mtz file
+- XChemCOOT: add XCE menu (test version only)
+- XChemCOOT: add menue item to set occupancy of all protein residues to 1.0 (test version only)
+
+v1.3.8.3 (22/05/2019)
+- XChemCOOT: xce-coot messages are now written to xce.log file (not all, yet)
+- XChemCOOT: warning message added in case cootOut/Refine_ folder exists
+- bug fix: XChemDB: remove hidden characters like \r and \n when updating depositTable
+- XChemDB: changed single to double quotation marks (and vice versa) in update depositTable function to allow for example 5' in structure title
+
+v1.3.8.2 (17/05/2019)
+- bug fix: avoid overwriting of ligand confidence when updating DN from file system: removed option to 'Update datasource with results from pandda.inspect' + changed XChemPanDDA that only the panddaTable gets only updated for models that ought to be exportet.
+- bug fix (temporary): removed label option because it does not behave as expected
+- XChemDB: removed PANDDA_site_ligand_placed constraint from query for pandda models
+
+v1.3.8.1 (17/05/2019) 
+- XCE now ignores empty directories when updating DB from file system
+
+v1.3.8 (25/04/2019)
+- added possibility to deposit protein-protein complex structure
+- XChemDeposit - create table_1 from final mmcif file
+- XChemDeposit - add option to not include event maps in SF mmcif file
+- bug fix: XChemDeposit - use beamline information from mainTable
+
+v1.3.7 (18/03/2019)
+- implemented pop-up window to remind users where they started xce - minor change
+
+v1.3.6 (14/03/2019)
+- new deposition tab with step-by-step instructions regarding PanDDA group depositions
+- some obsolete commands were removed from menu and action boxes
+- added instructions about how to update DB with PDB codes after group deposition of ligand bound structures
+- bug fix: add only structures which are '5-ready for deposition' to tar archive for PDB upload
+- increment existing .tar.bz2 files in group_deposition folder before creating a new one
+- bug fix: '5-ready for deposition' models can now be added and removed if respective field in COOT interface is triggered
+
+v1.3.5 (07/03/2019)
+- added option to use pipedream or phenix.ligand_pipeline for initial refinement (see preferences)
+
+v1.3.4 (01/03/2019)
+- bug fix: remove sourcing of pandda setup script in panddaRefine module in case of non-DLS refinement
+
+v1.3.3 (19/02/2019)
+- bug fix: wavelength information for apo mmcif file data_template is now also taken from ground-state mtz file
+- added additional instructions to deposition tab about ground-state aimless LOG file
+- bug fix: removed not supported 'group leader' and 'investigator' option from edit deposition data menu
+
+v1.3.2 (12/02/2019)
+- bug fix: removed reference to non-existent labels (prevented opening of pandda models/ maps)
+
+v1.3.1 (25/01/2019)
+- bug fix: support of new autoProc directory structure at DLS
+- bug fix: removal of non-existent DataProcessingProgram entries at DLS from collectionTable
+- bug fix: xce coot plugin: changed layout so that full window can be displayed on any screen
+
+v1.3 (16/01/2019)
+- bug fix: get space group from aimless log file if file contains output from other programs like unique
+- bug fix: change qsub command for dimple and restraints generation so that it works outside DLS
+- new feature: assign labels to datasets in xce-coot interface
+- bug fix: accomodate None value when querying DB for event map information
+- new feature: preparation of apo mmcif files containing SF's all all datasets used for pandda.analyse
+- improvement: refinement of pandda models enabled where ligand binding did not lead to any differences between bound-state and ground-state
+- bug fix: update data_rxxxxsf field in apo mmcif file
+- fix pandda button in settings tab
+- add XCE manual to help menu 
