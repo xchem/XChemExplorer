@@ -932,8 +932,8 @@ class merge_cif_files(QtCore.QThread):
 
             elif self.todo == 'restore':
                 self.emit(QtCore.SIGNAL('update_status_bar(QString)'), sampleID + ' restoring original CIF file')
-                self.Logfile.insert('%s: restoring symbolic link -> ln -s compounds/%s.cif .' %(sampleID,compoundID))
-                os.system('ln -s compounds/%s.cif .' %compoundID)
+                self.Logfile.insert('%s: restoring symbolic link -> ln -s compound/%s.cif .' %(sampleID,compoundID))
+                os.system('ln -s compound/%s.cif .' %compoundID)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
