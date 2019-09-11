@@ -394,8 +394,9 @@ def deposition_bounnd_state_preparation_ignore_event_map():
     )
     return msg
 
-def second_cif_file_info(second_cif_file):
-    if os.path.isfile(str(second_cif_file)):
+def second_cif_file_info(cif_file):
+    second_cif_file = str(cif_file)
+    if os.path.isfile(second_cif_file):
         msg = (
             'You have selected the following restraints file\n'
             'for merging into the the ligand CIF files:\n'
