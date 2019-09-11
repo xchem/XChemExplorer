@@ -418,3 +418,11 @@ def second_cif_file_info(cif_file):
             'Open the preferences menu and set it there\n'
         )
     return msg
+
+def second_cif_file_not_exists():
+    msg = (
+        'The CIF file for the non-standard ligand does not exist! '
+        'It was either not selected or the file was deleted/ moved in the meantime. '
+        'Please check Menu -> Preferences.'
+    )
+    return msg

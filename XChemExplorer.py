@@ -3603,15 +3603,37 @@ class XChemExplorer(QtGui.QApplication):
 
     def merge_cif_files(self):
         self.update_log.insert('trying to merge %s with ligand restraint files in project directory' %self.second_cif_file)
-        msgBox = QtGui.QMessageBox()
-        msgBox.setText(XChemToolTips.second_cif_file_info(self.second_cif_file))
-        msgBox.addButton(QtGui.QPushButton('Yes'), QtGui.QMessageBox.YesRole)
-        msgBox.addButton(QtGui.QPushButton('No'), QtGui.QMessageBox.RejectRole)
-        reply = msgBox.exec_();
-        if reply == 0:
-            start_thread = True
+        start_thread = False
+
+        if os.path.isfile(str(self.second_cif_file)):
+            self.update_log.insert('checking compound code of second CIF file (%s)' % self.second_cif_file)
+            self.update_log.insert('Note: LIG and DRG are not allowed!')
+            import iotbx.cif
+            cif_model = iotbx.cif.reader(file_path=self.second_cif_file).model()
+            cif_block = cif_model["comp_list"]
+            ligID = cif_block["_chem_comp.id"]
+            self.update_log.insert('found the following compound codes in the supplied CIF file: %s' % str(list(ligID)))
+            if 'LIG' in list(ligID) or 'DRG' in list(ligID):
+                self.update_log.error('please change compound code to something other than LIG or DRG')
+                start_thread = False
+            else:
+                start_thread = True
         else:
+            self.update_log.error(XChemToolTips.second_cif_file_not_exists)
             start_thread = False
+
+        if start_thread:
+            msgBox = QtGui.QMessageBox()
+            msgBox.setText(XChemToolTips.second_cif_file_info(self.second_cif_file))
+            msgBox.addButton(QtGui.QPushButton('OK'), QtGui.QMessageBox.YesRole)
+            msgBox.addButton(QtGui.QPushButton('Cancel'), QtGui.QMessageBox.RejectRole)
+            reply = msgBox.exec_();
+            if reply == 0:
+                start_thread = True
+            else:
+                start_thread = False
+        else:
+            self.status_bar.showMessage('Error. Please check terminal window for further information')
 
         tmp = self.db.execute_statement(
             "select CrystalName,CompoundCode from mainTable where CrystalName is not '' and CompoundSmiles is not '' and CompoundSmiles is not NULL;")
@@ -3622,21 +3644,13 @@ class XChemExplorer(QtGui.QApplication):
             if compoundID == '' or compoundID == 'NULL':
                 self.update_log.warning('%s: no compound ID in database; skipping...' %xtal)
             else:
-                self.update_log.warning('%s: %s is flagged for merging' %(xtal,compoundID))
-                compound_list.append([xtal, compoundID])
+                if str(item[0]) in self.initial_model_dimple_dict:
+                    if self.initial_model_dimple_dict[str(item[0])][0].isChecked():
+                        self.update_log.warning('%s: %s is flagged for merging' % (xtal, compoundID))
+                        compound_list.append([xtal, compoundID])
+
         if compound_list == []:
             self.update_log.error('no compound ID information in database')
-            start_thread = False
-
-        self.update_log.insert('checking compound code of second CIF file (%s)' %self.second_cif_file)
-        self.update_log.insert('Note: LIG and DRG are not allowed!')
-        import iotbx.cif
-        cif_model = iotbx.cif.reader(file_path=self.second_cif_file).model()
-        cif_block = cif_model["comp_list"]
-        ligID = cif_block["_chem_comp.id"]
-        self.update_log.insert('found the following compound codes in the supplied CIF file: %s' %str(list(ligID)))
-        if 'LIG' in list(ligID) or 'DRG' in list(ligID):
-            self.update_log.error('please change compound code to something other than LIG or DRG')
             start_thread = False
 
         if start_thread:
