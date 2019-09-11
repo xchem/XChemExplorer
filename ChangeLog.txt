@@ -1,3 +1,7 @@
+v1.3.8.12 (10/09/2019) 
+- new task for merging CIF file of non-standard ligand with compoound CIF files
+- added exception to catch IOError during opening of gzipped gda logfile
+
 v1.3.8.11 (04/09/2019)
 - added few changes to enable parsing of DLS visit directories transfered to other file system
 
