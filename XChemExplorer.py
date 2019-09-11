@@ -3650,7 +3650,7 @@ class XChemExplorer(QtGui.QApplication):
                         compound_list.append([xtal, compoundID])
 
         if compound_list == []:
-            self.update_log.error('no compound ID information in database')
+            self.update_log.error('Either no compound ID information in database or no sample selected!')
             start_thread = False
 
         if start_thread:

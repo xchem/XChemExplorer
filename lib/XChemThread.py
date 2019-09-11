@@ -900,7 +900,6 @@ class merge_cif_files(QtCore.QThread):
         self.initial_model_directory=initial_model_directory
         self.xce_logfile=xce_logfile
         self.Logfile=XChemLog.updateLog(xce_logfile)
-        self.db=XChemDB.data_source(os.path.join(self.database_directory,self.data_source_file))
         self.second_cif_file = second_cif_file
         self.compound_list=compound_list
 
