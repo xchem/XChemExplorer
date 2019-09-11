@@ -945,8 +945,13 @@ class merge_cif_files(QtCore.QThread):
                     )
         self.Logfile.insert('%s: running libcheck with the following input:\n%s' %(sampleID,cmd))
         os.system(cmd)
-
-        os.system('/mv %s %s' %(compoundID+'.lib.cif',compoundID+'.cif'))
+        if os.path.isfile(compoundID+'.cif.lib'):
+            self.Logfile.insert('%s: merged CIF file successfully created' %sampleID)
+            os.system('/mv %s %s' %(compoundID+'.cif.lib',compoundID+'.cif'))
+        else:
+            self.Logfile.error('%s: could not create merged CIF file' %sampleID)
+            self.Logfile.warning('%s: will re-create symbolic links to original restraints file' %sampleID)
+            os.system('ln -s compound/%s.cif .' %compoundID)
 
 
 
