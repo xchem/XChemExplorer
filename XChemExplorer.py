@@ -3619,7 +3619,7 @@ class XChemExplorer(QtGui.QApplication):
             else:
                 start_thread = True
         else:
-            self.update_log.error(XChemToolTips.second_cif_file_not_exists)
+            self.update_log.error(XChemToolTips.second_cif_file_not_exists())
             start_thread = False
 
         if start_thread:
