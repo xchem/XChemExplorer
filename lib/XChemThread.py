@@ -2258,6 +2258,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.target = target
         self.agamemnon = agamemnon
         if self.agamemnon:
+            print 'procDir'.self.processedDir
+            quit()
             self.visit = 'agamemnon'        # this is for trouble-shooting only
 
         self.db = XChemDB.data_source(os.path.join(database))
