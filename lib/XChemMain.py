@@ -48,9 +48,9 @@ def get_target_and_visit_list(beamline_directory,agamemnon):
                     target_list.append(target[target.rfind('/') + 1:])
         for target in glob.glob(beamline_directory[:beamline_directory.rfind('-') + 1] + '*/auto/*'):
             visit_list.append(beamline_directory[:beamline_directory.rfind('/')].replace('/auto', ''))
-                if target[target.rfind('/') + 1:] not in ['results', 'README-log', 'edna-latest.html']:
-                    if target[target.rfind('/') + 1:] not in target_list:
-                        target_list.append(target[target.rfind('/') + 1:])
+            if target[target.rfind('/') + 1:] not in ['results', 'README-log', 'edna-latest.html']:
+                if target[target.rfind('/') + 1:] not in target_list:
+                    target_list.append(target[target.rfind('/') + 1:])
     else:
         if len(beamline_directory.split('/')) and \
             beamline_directory.split('/')[1]=='dls' and beamline_directory.split('/')[3]=='data' \
