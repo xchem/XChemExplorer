@@ -2561,7 +2561,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     self.makeJPGdir(xtal,current_run)
                     self.copyJPGs(xtal, current_run)
 
-                    for item in toParse:
+                    for item in self.toParse:
                         procDir = os.path.join(run,item[0])
                         logfile = item[1]
                         mtzfile = item[2]
