@@ -2545,6 +2545,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 if xtal.endswith('_'):
                     continue    # happened sometime during testing, but should not happen anymore
 
+                self.Logfile.insert('%s: checking auto-processing results' %xtal)
+                self.createSampleDir(xtal)
+
                 for run in sorted(glob.glob(os.path.join(collected_xtals,'*'))):
                     current_run=run[run.rfind('/')+1:]
                     if current_run not in runList:
@@ -2567,78 +2570,21 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             for mtz in glob.glob(os.path.join(procDir,mtzfile)):
                                 print mtz
 
-            progress += progress_step
-            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
-            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+                        for folder in glob.glob(procDir):
+                            if self.junk(folder):
+                                continue
+                            if self.empty_folder(xtal,folder):
+                                continue
+                            if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
+                                autoproc = 'aP_staraniso'
+                            else:
+                                autoproc = self.getAutoProc(folder)
+                            if self.alreadyParsed(xtal,current_run,autoproc):
+                                continue
+                            self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
 
-        self.Logfile.insert('====== finished parsing beamline directory ======')
-        self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
-        self.emit(QtCore.SIGNAL("finished()"))
 
 
-
-
-
-
-        self.Logfile.insert('checking for new data processing results in '+self.processedDir)
-        progress = 0
-        progress_step = XChemMain.getProgressSteps(len(glob.glob(os.path.join(self.processedDir,'*'))))
-
-        runList = []
-        for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
-            # why is this here? self.visit is derived in init function through XChemMain.getVisitAndBeamline
-#            self.visit = collected_xtals.split('/')[5]
-            if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
-                continue
-            if not os.path.isdir(collected_xtals):
-                self.Logfile.warning(collected_xtals + ' is not a directory')
-                continue
-
-            xtal = collected_xtals[collected_xtals.rfind('/')+1:]
-            if self.agamemnon:
-                tmp = xtal[:xtal.rfind('_')]
-                xtal = tmp[:tmp.rfind('_')]
-
-            self.Logfile.insert('%s: checking auto-processing results' %xtal)
-            self.createSampleDir(xtal)
-
-            if self.target == '=== project directory ===':
-                runDir = os.path.join(collected_xtals,'processed','*')
-            elif self.agamemnon:
-                tmpDir = collected_xtals[:collected_xtals.rfind('/')]
-                runDir = os.path.join(tmpDir,xtal+'_*_')
-            else:
-                runDir = os.path.join(collected_xtals,'*')
-
-            for run in sorted(glob.glob(runDir)):
-                current_run=run[run.rfind('/')+1:]
-                if current_run in runList:
-                    continue
-                self.Logfile.insert('%s -> run: %s -> current run: %s' %(xtal,run,current_run))
-                timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
-
-                # create directory for crystal aligment images in projectDir
-                self.makeJPGdir(xtal,current_run)
-                self.copyJPGs(xtal, current_run)
-
-                for item in self.toParse:
-                    procDir = os.path.join(run,item[0])
-                    logfile = item[1]
-                    mtzfile = item[2]
-
-                    for folder in glob.glob(procDir):
-                        if self.junk(folder):
-                            continue
-                        if self.empty_folder(xtal,folder):
-                            continue
-                        if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-                            autoproc = 'aP_staraniso'
-                        else:
-                            autoproc = self.getAutoProc(folder)
-                        if self.alreadyParsed(xtal,current_run,autoproc):
-                            continue
-                        self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
-                runList.append(current_run)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
@@ -2647,3 +2593,4 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.Logfile.insert('====== finished parsing beamline directory ======')
         self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
         self.emit(QtCore.SIGNAL("finished()"))
+
