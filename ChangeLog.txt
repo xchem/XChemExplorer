@@ -1,3 +1,6 @@
+v1.3.8.13 (27/09/2019)
+- changes to parsing of auto-collected visits ("agamemnon") due to DLS changes to folder structure (now called 'auto' instead of 'agamemnon')
+
 v1.3.8.12 (10/09/2019) 
 - new task for merging CIF file of non-standard ligand with compoound CIF files
 - added exception to catch IOError during opening of gzipped gda logfile
