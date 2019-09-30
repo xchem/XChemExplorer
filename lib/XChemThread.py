@@ -2364,21 +2364,30 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)):
             os.mkdir(os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run))
 
-    def copyJPGs(self,xtal,run):
+    def copyJPGs(self,xtal,run,auto):
 #        for img in glob.glob(os.path.join(self.processedDir.replace('processed','jpegs'),xtal,run+'*t.png')):
 #        for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*t.png')):
         self.Logfile.insert('%s: trying to copy crystal snapshots...' %xtal)
         found = False
-        for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*.0.png')):
-            found = True
-            if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
-                self.Logfile.insert('%s: copying %s' % (xtal, img))
-                os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
-        if not found:
-            for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), xtal, run + '*.0.png')):
-                if not os.path.isfile(os.path.join(self.projectDir, xtal, 'jpg', self.visit + '-' + run, img[img.rfind('/') + 1:])):
+        if self.agamemnon:
+            proposal = self.visit.split('-')[0]
+            for img in glob.glob(os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,run + '*.0.png')):
+                if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
                     self.Logfile.insert('%s: copying %s' % (xtal, img))
-                    os.system('/bin/cp %s %s' % (img, os.path.join(self.projectDir, xtal, 'jpg', self.visit + '-' + run)))
+                    os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
+        else:
+            for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*.0.png')):
+                found = True
+                if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
+                    self.Logfile.insert('%s: copying %s' % (xtal, img))
+                    os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
+            if not found:
+                for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), xtal, run + '*.0.png')):
+                    if not os.path.isfile(os.path.join(self.projectDir, xtal, 'jpg', self.visit + '-' + run, img[img.rfind('/') + 1:])):
+                        self.Logfile.insert('%s: copying %s' % (xtal, img))
+                        os.system('/bin/cp %s %s' % (img, os.path.join(self.projectDir, xtal, 'jpg', self.visit + '-' + run)))
+
+
 
     def findJPGs(self,xtal,run):
         jpgDict={}
@@ -2495,7 +2504,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
                 # create directory for crystal aligment images in projectDir
                 self.makeJPGdir(xtal,current_run)
-                self.copyJPGs(xtal, current_run)
+                self.copyJPGs(xtal, current_run, 'non-auto')    # 'non-auto' is irrelevant here
 
                 for item in self.toParse:
                     procDir = os.path.join(run,item[0])
@@ -2527,7 +2536,17 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
     def parse_agamemnon_file_system(self):
         self.Logfile.insert('checking for new data processing results in '+self.processedDir)
         progress = 0
-        progress_step = XChemMain.getProgressSteps(len(glob.glob(os.path.join(self.processedDir,'*'))))
+        progress_step = 1
+
+        c = 0
+        for auto in autoDir:
+            for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir+'-*','processed',auto,self.target,'*'))):
+                if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
+                    continue
+                c += 1
+
+        if c > 0:
+            progress_step = 1/c
 
         runList = []
 
@@ -2559,7 +2578,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
                     # create directory for crystal aligment images in projectDir
                     self.makeJPGdir(xtal,current_run)
-                    self.copyJPGs(xtal, current_run)
+                    self.copyJPGs(xtal, current_run, auto)
 
                     for item in self.toParse:
                         procDir = os.path.join(run,item[0])
@@ -2586,9 +2605,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
 
 
-            progress += progress_step
-            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
-            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+                progress += progress_step
+                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
+                self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         self.Logfile.insert('====== finished parsing beamline directory ======')
         self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
