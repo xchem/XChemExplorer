@@ -2371,8 +2371,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         found = False
         if self.agamemnon:
             proposal = self.visit.split('-')[0]
-            self.Logfile.insert('looking for images in '+os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,run + '*.0.png'))
-            for img in glob.glob(os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,run + '*.0.png')):
+            self.Logfile.insert('looking for images in '+os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,self.target,xtal,run + '*.0.png'))
+            for img in glob.glob(os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,self.target,xtal,run + '*.0.png')):
                 if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
                     self.Logfile.insert('%s: copying %s' % (xtal, img))
                     os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
@@ -2549,7 +2549,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 c += 1
 
         if c > 0:
-            progress_step = 1/c
+            progress_step = 1/float(c)
+            self.Logfile.insert('found %s samples of target %s' %(str(c),self.target))
+        else:
+            self.Logfile.warning('found %s samples of target %s' %(str(c),self.target))
 
         runList = []
 
