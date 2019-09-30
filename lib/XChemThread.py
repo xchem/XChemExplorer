@@ -2371,6 +2371,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         found = False
         if self.agamemnon:
             proposal = self.visit.split('-')[0]
+            self.Logfile.insert('looking for images in '+os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,run + '*.0.png'))
             for img in glob.glob(os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,run + '*.0.png')):
                 if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
                     self.Logfile.insert('%s: copying %s' % (xtal, img))
@@ -2607,9 +2608,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
 
 
-                progress += progress_step
-                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
-                self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+                    progress += progress_step
+                    self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+collected_xtals)
+                    self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         self.Logfile.insert('====== finished parsing beamline directory ======')
         self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
