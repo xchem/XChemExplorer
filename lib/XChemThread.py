@@ -2544,10 +2544,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         c = 0
         for auto in autoDir:
             for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir+'-*','processed',auto,self.target,'*'))):
+                print collected_xtals
                 if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
                     continue
                 c += 1
-
+                print '-->',collected_xtals,'c',c
+        quit()
         if c > 0:
             progress_step = 1/float(c)
             self.Logfile.insert('found %s samples of target %s' %(str(c),self.target))
