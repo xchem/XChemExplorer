@@ -531,7 +531,7 @@ class Refine(object):
             os.system("%s -P labxchem -q medium.q refmac.csh'" %remote_command)
             print '%s -P labxchem -q medium.q refmac.csh' %remote_command
 
-        elif external_software['qsub']:
+        elif external_software['qsub'] and not os.uname()[1] == 'hestia':
             Logfile.insert('starting refinement on cluster')
             os.system("qsub -P labxchem -q medium.q refmac.csh")
 
