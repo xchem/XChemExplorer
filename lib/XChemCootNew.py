@@ -1088,7 +1088,7 @@ class GUI(object):
         #########################################################################################
         # ligand files
         # first remove old samples if present
-        for n, item in enumerate(self.ligandList):
+        for n, item in enumerate(self.mol_dict['ligand_stereo']):
             self.select_cpd_cb.remove_text(0)
 
         #########################################################################################
@@ -1126,7 +1126,8 @@ class GUI(object):
             self.select_cpd_cb.set_sensitive(True)
             self.select_cpd_cb.set_active(0)
         else:
-            self.select_cpd_cb.append_text('')
+            print 'no compound found in sample directory'
+#            self.select_cpd_cb.append_text('')
             self.select_cpd_cb.set_sensitive(False)
 
         if not os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
