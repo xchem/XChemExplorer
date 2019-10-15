@@ -1468,7 +1468,7 @@ class GUI(object):
         cpd = str(self.select_cpd_cb.get_active_text())
         for imol in coot_utils_XChem.molecule_number_list():
             print '>>>',self.mol_dict['ligand_stereo'],'>>>',imol
-            if not imol in self.mol_dict['ligand_stereo']:
+            if imol not in self.mol_dict['ligand_stereo']:
                 continue
             molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
             if molName == cpd:
@@ -1476,6 +1476,7 @@ class GUI(object):
                 coot.merge_molecules_py(imol, self.mol_dict['protein'])
             print '===> XCE: deleting ligand molecule',molName
             coot.close_molecule(imol)
+
         self.select_cpd_cb.set_active(False)
         if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.compoundID+'.cif')):
             os.system('/bin/rm %s' %os.path.join(self.project_directory,self.xtalID,self.compoundID+'.cif'))
