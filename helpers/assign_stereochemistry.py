@@ -36,7 +36,7 @@ def checkFiles(compoundID,sampleDir,db,stereosmiles,xtal):
     for cif in glob.glob(os.path.join(compoundID + '_*.cif')):
         foundCIF = True
         allCIF += cif+';'
-        print '---',cif,'==='allCIF
+        print '---',cif,'===',allCIF
     if foundCIF:
         db_dict = {}
         db_dict['CompoundStereo'] = 'TRUE'
