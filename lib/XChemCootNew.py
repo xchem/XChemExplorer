@@ -1473,6 +1473,7 @@ class GUI(object):
             molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
             if molName == cpd:
                 print '===> XCE: merge ligand into protein structure -->',cpd
+                print '___',imol,'___',self.mol_dict['protein']
                 coot.merge_molecules_py(imol, self.mol_dict['protein'])
             print '===> XCE: deleting ligand molecule',molName
             coot.close_molecule(imol)
