@@ -783,7 +783,8 @@ class GUI(object):
             print cpd,'-',imol,'-',coot.molecule_name(imol)
             if molName == cpd:
                 coot.set_mol_displayed(imol, 1)
-                coot.read_cif_dictionary(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.cif'))
+                print 'reading',os.path.join(self.project_directory,self.xtalID,'compound',molName+'_*.cif')
+                coot.read_cif_dictionary(os.path.join(self.project_directory,self.xtalID,'compound',molName+'_*.cif'))
             else:
                 coot.set_mol_displayed(imol, 0)
 
