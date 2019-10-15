@@ -16,6 +16,9 @@ def enumerateStereoChem(compoundID,sampleDir,db,xtal):
     Chem.AssignStereochemistry(mol,cleanIt=True,force=True,flagPossibleStereoCenters=True)
     if Chem.FindMolChiralCenters(mol,includeUnassigned=True) == []:
         print 'no chiral centres found'
+        db_dict = {}
+        db_dict['CompoundStereo'] = 'FALSE'
+        updateDB(db,db_dict,xtal)
     else:
         stereosmiles = Chem.MolToSmiles(mol,isomericSmiles=True)
         generateRestraints(compoundID,sampleDir,db,stereosmiles,xtal)
@@ -39,6 +42,7 @@ def checkFiles(compoundID,sampleDir,db,stereosmiles,xtal):
         db_dict['CompoundStereoSMILES'] = stereosmiles
         db_dict['CompoundStereoCIFprogram'] = 'phenix.elbow'
         db_dict['CompoundStereoCIFs'] = allCIF[:-1]
+        print '>>>',db_dict
         updateDB(db,db_dict,xtal)
 
 def updateDB(db,db_dict,xtal):
