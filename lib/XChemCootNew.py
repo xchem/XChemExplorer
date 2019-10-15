@@ -1072,13 +1072,12 @@ class GUI(object):
         #########################################################################################
         # ligand files
         # first remove old samples if present
-        if len(self.Todo) != 0:
         for n, item in enumerate(self.ligandList):
             self.select_cpd_cb.remove_text(0)
         for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'*.cif'))):
             cif = cifFile[cifFile.rfind('/')+1:]
             self.select_cpd_cb.append_text(cif)
-            
+
 
         #########################################################################################
         # update pdb & maps
