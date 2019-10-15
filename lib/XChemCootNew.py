@@ -1487,6 +1487,12 @@ class GUI(object):
             os.chdir(os.path.join(self.project_directory,self.xtalID))
             print 'changing symlink ln -s %s %s.cif' %(os.path.join('compound',cpd+'.cif'),self.compoundID)
             os.system('ln -s %s %s.cif' %(os.path.join('compound',cpd+'.cif'),self.compoundID))
+        if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.compoundID+'.pdb')):
+            os.system('/bin/rm %s' %os.path.join(self.project_directory,self.xtalID,self.compoundID+'.pdb'))
+            print 'changing directory',os.path.join(self.project_directory,self.xtalID)
+            os.chdir(os.path.join(self.project_directory,self.xtalID))
+            print 'changing symlink ln -s %s %s.pdb' %(os.path.join('compound',cpd+'.pdb'),self.compoundID)
+            os.system('ln -s %s %s.pdb' %(os.path.join('compound',cpd+'.pdb'),self.compoundID))
 
 #        print '===> XCE: merge ligand into protein structure'
 #        # merge_molecules(list(imols), imol) e.g. merge_molecules([1],0)
