@@ -28,6 +28,10 @@ class data_source:
             ['LibraryName',                          'LibraryName',                             'TEXT',                 1],
             ['CompoundSMILES',                       'Smiles',                                  'TEXT',                 1],
             ['CompoundCode',                         'Compound ID',                             'TEXT',                 1],
+            ['CompoundStereo',                       'Compound Stereo',                         'TEXT',                 1],
+            ['CompoundStereoSMILES',                 'Stereo SMILES',                           'TEXT',                 1],
+            ['CompoundStereoCIFprogram',             'Stereo CIF program',                      'TEXT',                 1],
+
             ['CrystalPlate',                         'CrystalPlate',                            'TEXT',                 1],
             ['CrystalWell',                          'CrystalWell',                             'TEXT',                 1],
             ['EchoX',                                'EchoX',                                   'TEXT',                 0],
