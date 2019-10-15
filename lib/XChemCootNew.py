@@ -777,10 +777,13 @@ class GUI(object):
     def select_cpd(self, widget):
         cpd = str(widget.get_active_text())
         for imol in coot_utils_XChem.molecule_number_list():
+            if imol not in self.mol_dict['ligand_stereo']:
+                continue
             molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
             print cpd,'-',imol,'-',coot.molecule_name(imol)
             if molName == cpd:
                 coot.set_mol_displayed(imol, 1)
+                coot.read_cif_dictionary(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.cif'))
             else:
                 coot.set_mol_displayed(imol, 0)
 
@@ -1119,6 +1122,7 @@ class GUI(object):
                 imol = coot.handle_read_draw_molecule_with_recentre(cifFile, 0)
                 self.mol_dict['ligand_stereo'].append(imol)
                 coot.set_mol_displayed(imol,0)
+            self.select_cpd_cb.set_active(0)
 
         if not os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
             os.chdir(os.path.join(self.project_directory, self.xtalID))
@@ -1444,10 +1448,20 @@ class GUI(object):
         return fig
 
     def place_ligand_here(self, widget):
-        print '===> XCE: moving ligand to pointer'
-        #        coot.move_molecule_here(<molecule_number>)
-        print 'LIGAND: ', self.mol_dict['ligand']
-        coot_utils_XChem.move_molecule_here(self.mol_dict['ligand'])
+        cpd = str(self.select_cpd_cb.get_active_text())
+        for imol in coot_utils_XChem.molecule_number_list():
+            if imol not in self.mol_dict['ligand_stereo']:
+                continue
+            molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
+            if molName == cpd:
+                print '===> XCE: moving ligand to pointer'
+                coot_utils_XChem.move_molecule_here(imol)
+                print 'LIGAND: ', molName
+#        print '===> XCE: moving ligand to pointer'
+#        #        coot.move_molecule_here(<molecule_number>)
+#        print 'LIGAND: ', self.mol_dict['ligand']
+#        coot_utils_XChem.move_molecule_here(self.mol_dict['ligand'])
+
 
     def merge_ligand_into_protein(self, widget):
         print '===> XCE: merge ligand into protein structure'
