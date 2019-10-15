@@ -105,6 +105,8 @@ class GUI(object):
         self.pdb_style = 'refine.pdb'
         self.mtz_style = 'refine.mtz'
 
+        self.ligandList = []
+
         self.label = None
 
         # stores imol of currently loaded molecules and maps
@@ -687,6 +689,9 @@ class GUI(object):
         self.place_ligand_here_button.connect("clicked", self.place_ligand_here)
         self.hbox_for_modeling.add(self.merge_ligand_button)
         self.merge_ligand_button.connect("clicked", self.merge_ligand_into_protein)
+        self.select_cpd_cb = gtk.combo_box_new_text()
+        self.select_cpd_cb.connect("changed", self.select_cpd)
+        self.hbox_for_modeling.add(self.select_cpd_cb)
         frame.add(self.hbox_for_modeling)
         self.vbox.pack_start(frame)
 
@@ -1063,6 +1068,17 @@ class GUI(object):
         #        self.canvas.set_size_request(190, 190)
         #        self.hbox_for_info_graphics.add(self.canvas)
         #        self.canvas.show()
+
+        #########################################################################################
+        # ligand files
+        # first remove old samples if present
+        if len(self.Todo) != 0:
+        for n, item in enumerate(self.ligandList):
+            self.select_cpd_cb.remove_text(0)
+        for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'*.cif'))):
+            cif = cifFile[cifFile.rfind('/')+1:]
+            self.select_cpd_cb.append_text(cif)
+            
 
         #########################################################################################
         # update pdb & maps
