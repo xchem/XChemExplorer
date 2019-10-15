@@ -1088,8 +1088,11 @@ class GUI(object):
         #########################################################################################
         # ligand files
         # first remove old samples if present
+        print '>>>',self.mol_dict['ligand_stereo']
         for n, item in enumerate(self.mol_dict['ligand_stereo']):
+            print '__',item
             self.select_cpd_cb.remove_text(0)
+        print 'done'
 
         #########################################################################################
         # update pdb & maps
