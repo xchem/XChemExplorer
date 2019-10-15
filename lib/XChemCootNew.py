@@ -1110,9 +1110,11 @@ class GUI(object):
             self.mol_dict['ligand_stereo'] = []
             self.mol_dict['ligand_stereo'].append(imol)
             for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.pdb'))):
+                if '_with_H' in cif:
+                    continue
                 cif = cifFile[cifFile.rfind('/')+1:]
                 self.select_cpd_cb.append_text(cif.replace('.pdb',''))
-                imol = coot.handle_read_draw_molecule_with_recentre(cif, 0)
+                imol = coot.handle_read_draw_molecule_with_recentre(cifFile, 0)
                 self.mol_dict['ligand_stereo'].append(imol)
                 coot.set_mol_displayed(imol,0)
 
