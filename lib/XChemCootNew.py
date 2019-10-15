@@ -777,6 +777,7 @@ class GUI(object):
     def select_cpd(self, widget):
         cpd = str(widget.get_active_text())
         for imol in coot_utils_XChem.molecule_number_list():
+            print cpd,'-',imol,'-',coot.molecule_name(imol)
             if coot.molecule_name(imol).startswith(cpd):
                 coot.set_mol_displayed(imol, 1)
             else:
