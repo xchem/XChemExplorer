@@ -1,5 +1,6 @@
 v1.3.8.14 (14/10/2019) 
 - new workflow to detect chiral centres in molecules and subsequent enumaration of stereoisomers with phenix.elbow
+- selection and modelling of different enantiomers implemented in XCE-COOT interface
 
 v1.3.8.13 (27/09/2019)
 - changes to parsing of auto-collected visits ("agamemnon") due to DLS changes to folder structure (now called 'auto' instead of 'agamemnon')
