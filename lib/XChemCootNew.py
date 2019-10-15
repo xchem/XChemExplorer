@@ -114,7 +114,8 @@ class GUI(object):
                          'ligand': -1,
                          '2fofc': -1,
                          'fofc': -1,
-                         'event': -1}
+                         'event': -1,
+                         'ligand_stereo': -1}
 
         # two dictionaries which are flushed when a new crystal is loaded
         # and which contain information to update the data source if necessary
@@ -775,7 +776,12 @@ class GUI(object):
 
     def select_cpd(self, widget):
         cpd = str(widget.get_active_text())
-        print cpd
+        for imol in coot_utils_XChem.molecule_number_list():
+            if coot.molecule_name(item).startswith(cpd):
+                coot.set_mol_displayed(imol, 1)
+            else:
+                coot.set_mol_displayed(imol, 0)
+
 
     def update_RefinementOutcome_radiobutton(self):
         # updating dataset outcome radiobuttons
@@ -1078,10 +1084,6 @@ class GUI(object):
         # first remove old samples if present
         for n, item in enumerate(self.ligandList):
             self.select_cpd_cb.remove_text(0)
-        for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'*.cif'))):
-            cif = cifFile[cifFile.rfind('/')+1:]
-            self.select_cpd_cb.append_text(cif)
-
 
         #########################################################################################
         # update pdb & maps
@@ -1104,6 +1106,16 @@ class GUI(object):
                 os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb'), 0)
             self.mol_dict['ligand'] = imol
             coot.read_cif_dictionary(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif'))
+            self.select_cpd_cb.append_text(self.compoundID + '.cif')
+            self.mol_dict['ligand_stereo'] = []
+            self.mol_dict['ligand_stereo'].append(imol)
+            for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.cif'))):
+                cif = cifFile[cifFile.rfind('/')+1:]
+                self.select_cpd_cb.append_text(cif)
+                imol = coot.handle_read_draw_molecule_with_recentre(cif, 0)
+                self.mol_dict['ligand_stereo'].append(imol)
+                coot.set_mol_displayed(imol,0)
+
         if not os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
             os.chdir(os.path.join(self.project_directory, self.xtalID))
 
