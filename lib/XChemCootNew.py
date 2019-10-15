@@ -773,6 +773,10 @@ class GUI(object):
 
         self.RefreshData()
 
+    def select_cpd(self, widget):
+        cpd = str(widget.get_active_text())
+        print cpd
+
     def update_RefinementOutcome_radiobutton(self):
         # updating dataset outcome radiobuttons
         current_stage = 0
