@@ -28,11 +28,18 @@ def generateRestraints(compoundID,sampleDir,db,stereosmiles,xtal):
 
 
 def checkFiles(compoundID,sampleDir,db,stereosmiles,xtal):
-    db_dict = {}
-    db_dict['CompoundStereo'] = 'TRUE'
-    db_dict['CompoundStereoSMILES'] = stereosmiles
-    db_dict['CompoundStereoCIFprogram'] = 'phenix.elbow'
-    updateDB(db,db_dict,xtal)
+    foundCIF = False
+    allCIF = ''
+    for cif in glob.glob(os.path.join(compoundID + '_*.cif')):
+        foundCIF = True
+        allCIF += cif+';'
+    if foundCIF:
+        db_dict = {}
+        db_dict['CompoundStereo'] = 'TRUE'
+        db_dict['CompoundStereoSMILES'] = stereosmiles
+        db_dict['CompoundStereoCIFprogram'] = 'phenix.elbow'
+        db_dict['CompoundStereoCIFs'] = allCIF[:-1]
+        updateDB(db,db_dict,xtal)
 
 def updateDB(db,db_dict,xtal):
     # update stereo field
