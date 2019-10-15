@@ -1467,7 +1467,8 @@ class GUI(object):
     def merge_ligand_into_protein(self, widget):
         cpd = str(self.select_cpd_cb.get_active_text())
         for imol in coot_utils_XChem.molecule_number_list():
-            if imol not in self.mol_dict['ligand_stereo']:
+            print '>>>',self.mol_dict['ligand_stereo'],'>>>',imol
+            if not imol in self.mol_dict['ligand_stereo']:
                 continue
             molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
             if molName == cpd:
