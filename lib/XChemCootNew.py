@@ -1473,7 +1473,7 @@ class GUI(object):
             if molName == cpd:
                 print '===> XCE: merge ligand into protein structure -->',cpd
                 coot.merge_molecules_py(imol, self.mol_dict['protein'])
-            print '===> XCE: deleting ligand molecule',pdb
+            print '===> XCE: deleting ligand molecule',molName
             coot.close_molecule(imol)
         self.select_cpd_cb.set_active(False)
         if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.compoundID+'.cif')):
