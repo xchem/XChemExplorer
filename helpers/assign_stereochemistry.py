@@ -1,4 +1,5 @@
 import os,sys
+import glob
 from rdkit import Chem
 #from rdkit.Chem.EnumerateStereoisomers import EnumerateStereoisomers, StereoEnumerationOptions
 
