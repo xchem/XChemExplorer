@@ -1465,11 +1465,29 @@ class GUI(object):
 
 
     def merge_ligand_into_protein(self, widget):
-        print '===> XCE: merge ligand into protein structure'
-        # merge_molecules(list(imols), imol) e.g. merge_molecules([1],0)
-        coot.merge_molecules_py([self.mol_dict['ligand']], self.mol_dict['protein'])
-        print '===> XCE: deleting ligand molecule'
-        coot.close_molecule(self.mol_dict['ligand'])
+        cpd = str(self.select_cpd_cb.get_active_text())
+        for imol in coot_utils_XChem.molecule_number_list():
+            if imol not in self.mol_dict['ligand_stereo']:
+                continue
+            molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
+            if molName == cpd:
+                print '===> XCE: merge ligand into protein structure -->',cpd
+                coot.merge_molecules_py(imol, self.mol_dict['protein'])
+            print '===> XCE: deleting ligand molecule',pdb
+            coot.close_molecule(imol)
+        self.select_cpd_cb.set_active(False)
+        if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.compoundID+'.cif')):
+            os.system('/bin/rm %s' %os.path.join(self.project_directory,self.xtalID,self.compoundID+'.cif'))
+            print 'changing directory',os.path.join(self.project_directory,self.xtalID)
+            os.chdir(os.path.join(self.project_directory,self.xtalID))
+            print 'changing symlink ln -s %s %s.cif' %(os.path.join('compound',cpd+'.cif'),self.compoundID)
+            os.system('ln -s %s %s.cif' %(os.path.join('compound',cpd+'.cif'),self.compoundID))
+
+#        print '===> XCE: merge ligand into protein structure'
+#        # merge_molecules(list(imols), imol) e.g. merge_molecules([1],0)
+#        coot.merge_molecules_py([self.mol_dict['ligand']], self.mol_dict['protein'])
+#        print '===> XCE: deleting ligand molecule'
+#        coot.close_molecule(self.mol_dict['ligand'])
 
     def show_molprobity_to_do(self, widget):
         print self.panddaSerial
