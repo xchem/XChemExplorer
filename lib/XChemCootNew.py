@@ -1106,12 +1106,12 @@ class GUI(object):
                 os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb'), 0)
             self.mol_dict['ligand'] = imol
             coot.read_cif_dictionary(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif'))
-            self.select_cpd_cb.append_text(self.compoundID + '.cif')
+            self.select_cpd_cb.append_text(self.compoundID)
             self.mol_dict['ligand_stereo'] = []
             self.mol_dict['ligand_stereo'].append(imol)
-            for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.cif'))):
+            for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.pdb'))):
                 cif = cifFile[cifFile.rfind('/')+1:]
-                self.select_cpd_cb.append_text(cif)
+                self.select_cpd_cb.append_text(cif.replace('.pdb',''))
                 imol = coot.handle_read_draw_molecule_with_recentre(cif, 0)
                 self.mol_dict['ligand_stereo'].append(imol)
                 coot.set_mol_displayed(imol,0)
