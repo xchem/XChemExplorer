@@ -45,6 +45,6 @@ if __name__=='__main__':
     sampleDir = sys.argv[2]
     xtal = sampleDir[sampleDir.rfind('/')+1:]
     database = sys.argv[3]
-    db=XChemDB.data_source(db_file)
+    db=XChemDB.data_source(database)
     enumerateStereoChem(compoundID,sampleDir,db,xtal)
 
