@@ -115,7 +115,7 @@ class GUI(object):
                          '2fofc': -1,
                          'fofc': -1,
                          'event': -1,
-                         'ligand_stereo': -1}
+                         'ligand_stereo': []}
 
         # two dictionaries which are flushed when a new crystal is loaded
         # and which contain information to update the data source if necessary
