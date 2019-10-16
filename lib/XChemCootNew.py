@@ -105,7 +105,7 @@ class GUI(object):
         self.pdb_style = 'refine.pdb'
         self.mtz_style = 'refine.mtz'
 
-        self.ligandList = []
+        self.covLinks = ['X', 'X', 'X', 'X']
 
         self.label = None
 
@@ -708,10 +708,16 @@ class GUI(object):
         self.hbox_for_refinement = gtk.HBox()
         self.REFINEbutton = gtk.Button(label="Refine")
         self.RefinementParamsButton = gtk.Button(label="refinement parameters")
+        self.covalentLinksbutton = gtk.Button(label="covalent links\n-define-")
+        self.covalentLinksCreatebutton = gtk.Button(label="covalent links\n-create-")
         self.REFINEbutton.connect("clicked", self.REFINE)
         self.hbox_for_refinement.add(self.REFINEbutton)
         self.RefinementParamsButton.connect("clicked", self.RefinementParams)
+        self.covalentLinksbutton.connect("clicked", self.covalentLinkDef)
+        self.covalentLinksCreatebutton.connect("clicked", self.covalentLinkCreate)
         self.hbox_for_refinement.add(self.RefinementParamsButton)
+        self.hbox_for_refinement.add(self.covalentLinksbutton)
+        self.hbox_for_refinement.add(self.covalentLinksCreatebutton)
         self.vbox.add(self.hbox_for_refinement)
 
         #        self.VALIDATEbutton = gtk.Button(label="validate structure")
@@ -1095,6 +1101,10 @@ class GUI(object):
         print 'done'
 
         #########################################################################################
+        # reset covalent links
+        self.covLinks = ['X', 'X', 'X', 'X']
+
+        #########################################################################################
         # update pdb & maps
 
         #########################################################################################
@@ -1416,6 +1426,42 @@ class GUI(object):
         print '\n==> XCE: changing refinement parameters'
         self.RefmacParams = XChemRefine.RefineParams(self.project_directory, self.xtalID, self.compoundID,
                                                      self.data_source).RefmacRefinementParams(self.RefmacParams)
+
+    def covalentLinkDef(self, widget):
+        coot.user_defined_click_py(2,self.testx)
+#        print '\n==> XCE: starting interface to define covalent links'
+#        self.covLinks = XChemRefine.covalentLinkDefinition().params()
+
+    def testx(self,*clicks):
+        print 'hallo'
+        if (len(clicks) == 2):
+            print 'fuefhuehf'
+            click_1 = clicks[0]
+            click_2 = clicks[1]
+            print click_1,click_2
+#            atom_1 =
+#            atom_2 =
+#        coot.add_geometry_distance(12,39,-41,77,12,38,-39,77)
+            print 'jjjjjjjjjjjjj'
+            print 'click_1',click_1
+            imol_1 = click_1[1]
+            imol_2 = click_2[1]
+            xyz_1 = atom_info_string(click_1[1],click_1[2],click_1[3],click_1[4],click_1[5],click_1[6])
+            xyz_2 = atom_info_string(click_2[1],click_2[2],click_2[3],click_2[4],click_2[5],click_2[6])
+            print '=============='
+            print 'xyz_1',xyz_1
+            print imol_1, xyz_1[3], xyz_1[4], xyz_1[5], imol_2, xyz_2[3], xyz_2[4], xyz_2[5]
+            coot.add_geometry_distance(imol_1, xyz_1[3], xyz_1[4], xyz_1[5], imol_2, xyz_2[3], xyz_2[4], xyz_2[5])
+            coot.set_show_symmetry_master(imol_1)
+            coot.set_go_to_atom_molecule(imol_2)
+
+            print '>---------------'
+
+    def covalentLinkCreate(self, widget):
+        if 'X' in self.covLinks:
+            print 'link not correctly defined; please try again...'
+#        make_link(3, [3, 'A', 301, '', ' C28', ''], [3, 'A', 73, '', ' SG ', 'A'], "CYS-LIG", 1.7)
+        print self.covLinks
 
     def set_selection_mode(self, widget):
         self.selection_mode = widget.get_active_text()

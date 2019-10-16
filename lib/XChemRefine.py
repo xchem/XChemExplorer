@@ -263,11 +263,106 @@ class RefineParams(object):
 
 
 
+class covalentLinkDefinition(object):
 
+    def __init__(self):
+        self.linkList = ['X', 'X', 'X', 'X']
 
+    def params(self):
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.connect("delete_event", gtk.main_quit)
+        self.window.set_border_width(10)
+        self.window.set_title("Covalent Link")
+        self.vbox = gtk.VBox()
 
+        frame = gtk.Frame()
+        table = gtk.Table(4, 3, False)
 
+        f1a = gtk.Frame()
+        f1a.add(gtk.Label('Protein'))
+        f2a = gtk.Frame()
+        f2a.add(gtk.Label('Ligand'))
+        table.attach(f1a, 0, 2, 0, 1)
+        table.attach(f2a, 2, 4, 0, 1)
 
+        f1b = gtk.Frame()
+        f1b.add(gtk.Label('Residue'))
+        f2b = gtk.Frame()
+        f2b.add(gtk.Label('ATOM'))
+        table.attach(f1b, 0, 1, 1, 2)
+        table.attach(f2b, 1, 2, 1, 2)
+
+        f1c = gtk.Frame()
+        f1c.add(gtk.Label('Residue'))
+        f2c = gtk.Frame()
+        f2c.add(gtk.Label('ATOM'))
+        table.attach(f1c, 2, 3, 1, 2)
+        table.attach(f2c, 3, 4, 1, 2)
+
+        proteinResname = gtk.Entry()
+        proteinResname.add_events(gtk.gdk.KEY_RELEASE_MASK)
+        proteinResname.connect("key-release-event", self.on_key_release_proteinResname)
+        proteinATOM = gtk.Entry()
+        proteinATOM.add_events(gtk.gdk.KEY_RELEASE_MASK)
+        proteinATOM.connect("key-release-event", self.on_key_release_proteinATOM)
+
+#        chain
+#        resnumber
+
+        f1d = gtk.Frame()
+        f1d.add(proteinResname)
+        f2d = gtk.Frame()
+        f2d.add(proteinATOM)
+        table.attach(f1d, 0, 1, 2, 3)
+        table.attach(f2d, 1, 2, 2, 3)
+
+        ligandResname = gtk.Entry()
+        ligandResname.add_events(gtk.gdk.KEY_RELEASE_MASK)
+        ligandResname.connect("key-release-event", self.on_key_release_ligandResname)
+        ligandATOM = gtk.Entry()
+        ligandATOM.add_events(gtk.gdk.KEY_RELEASE_MASK)
+        ligandATOM.connect("key-release-event", self.on_key_release_ligandATOM)
+
+        f1e = gtk.Frame()
+        f1e.add(ligandResname)
+        f2e = gtk.Frame()
+        f2e.add(ligandATOM)
+        table.attach(f1e, 2, 3, 2, 3)
+        table.attach(f2e, 3, 4, 2, 3)
+
+        frame.add(table)
+
+        self.vbox.add(frame)
+
+        self.OKbutton = gtk.Button(label="OK")
+        self.OKbutton.connect("clicked", self.OK)
+        self.vbox.add(self.OKbutton)
+
+        self.window.add(self.vbox)
+        self.window.show_all()
+        return self.linkList
+
+    def on_key_release_proteinResname(self, widget, event):
+        print widget.get_text()
+        print self.linkList
+        self.linkList[0] = widget.get_text()
+        print self.linkList
+        return self.linkList
+
+    def on_key_release_proteinATOM(self, widget, event):
+        self.linkList[1] = widget.get_text()
+        return self.linkList
+
+    def on_key_release_ligandResname(self, widget, event):
+        self.linkList[2] = widget.get_text()
+        return self.linkList
+
+    def on_key_release_ligandATOM(self, widget, event):
+        self.linkList[3] = widget.get_text()
+        return self.linkList
+
+    def OK(self,widget):
+        self.window.destroy()
 
 
 
@@ -751,6 +846,8 @@ class Refine(object):
             RfreeList=[0]
         print RefinementCycle,RcrystList,RfreeList
         return(sorted(RefinementCycle),RcrystList,RfreeList)
+
+
 
 
 class panddaRefine(object):
@@ -1840,8 +1937,5 @@ class RefineOld(object):
             RfreeList=[0]
         print RefinementCycle,RcrystList,RfreeList
         return(sorted(RefinementCycle),RcrystList,RfreeList)
-
-
-
 
 
