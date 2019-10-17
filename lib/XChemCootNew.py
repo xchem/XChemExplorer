@@ -105,7 +105,9 @@ class GUI(object):
         self.pdb_style = 'refine.pdb'
         self.mtz_style = 'refine.mtz'
 
-        self.covLinks = ['X', 'X', 'X', 'X']
+        self.covLink = ['X', 'X', 'X', 'X']
+        self.covLinkObject = coot.new_generic_object_number("covalent bond")
+        self.covLinkAtomSpec = None
 
         self.label = None
 
@@ -709,7 +711,7 @@ class GUI(object):
         self.REFINEbutton = gtk.Button(label="Refine")
         self.RefinementParamsButton = gtk.Button(label="refinement parameters")
         self.covalentLinksbutton = gtk.Button(label="covalent links\n-define-")
-        self.covalentLinksCreatebutton = gtk.Button(label="covalent links\n-create-")
+        self.covalentLinksCreatebutton = gtk.Button(label="covalent links\n-create & refine-")
         self.REFINEbutton.connect("clicked", self.REFINE)
         self.hbox_for_refinement.add(self.REFINEbutton)
         self.RefinementParamsButton.connect("clicked", self.RefinementParams)
@@ -1101,6 +1103,11 @@ class GUI(object):
         print 'done'
 
         #########################################################################################
+        # remove potential generic line which indicates a possible covalent link
+        generic_object_clear(self.covLinkObject)
+        self.covLinkAtomSpec = None
+
+        #########################################################################################
         # reset covalent links
         self.covLinks = ['X', 'X', 'X', 'X']
 
@@ -1325,7 +1332,9 @@ class GUI(object):
         self.cb.set_active(self.index)
 
     def REFINE(self, widget):
+        self.start_refinement()
 
+    def start_refinement(self):
         #        #######################################################
         #        if not os.path.isdir(os.path.join(self.project_directory,self.xtalID,'cootOut')):
         #            os.mkdir(os.path.join(self.project_directory,self.xtalID,'cootOut'))
@@ -1414,7 +1423,7 @@ class GUI(object):
                                                      'in.pdb'))
                     break
 
-            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile)
+            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
 
         self.index += 1
         if self.index >= len(self.Todo):
@@ -1428,40 +1437,51 @@ class GUI(object):
                                                      self.data_source).RefmacRefinementParams(self.RefmacParams)
 
     def covalentLinkDef(self, widget):
-        coot.user_defined_click_py(2,self.testx)
-#        print '\n==> XCE: starting interface to define covalent links'
-#        self.covLinks = XChemRefine.covalentLinkDefinition().params()
+        coot.user_defined_click_py(2,self.show_potential_link)
 
-    def testx(self,*clicks):
-        print 'hallo'
+    def show_potential_link(self,*clicks):
+        # first find imol of protein molecule
+        # it's a prerequisite that the ligand is merged into the protein
+        imol_protein = None
+        for imol in coot_utils_XChem.molecule_number_list():
+            print '>',coot.molecule_name(imol)
+            if coot.molecule_name(imol).endswith(self.pdb_style) or coot.molecule_name(imol).endswith('init.pdb') or coot.molecule_name(imol).endswith('dimple.pdb'):
+                imol_protein = imol
+                break
+
+        print 'please click on the two atoms you want to link'
         if (len(clicks) == 2):
-            print 'fuefhuehf'
             click_1 = clicks[0]
             click_2 = clicks[1]
-            print click_1,click_2
-#            atom_1 =
-#            atom_2 =
-#        coot.add_geometry_distance(12,39,-41,77,12,38,-39,77)
-            print 'jjjjjjjjjjjjj'
-            print 'click_1',click_1
             imol_1 = click_1[1]
             imol_2 = click_2[1]
-            xyz_1 = atom_info_string(click_1[1],click_1[2],click_1[3],click_1[4],click_1[5],click_1[6])
-            xyz_2 = atom_info_string(click_2[1],click_2[2],click_2[3],click_2[4],click_2[5],click_2[6])
-            print '=============='
-            print 'xyz_1',xyz_1
-            print imol_1, xyz_1[3], xyz_1[4], xyz_1[5], imol_2, xyz_2[3], xyz_2[4], xyz_2[5]
-            coot.add_geometry_distance(imol_1, xyz_1[3], xyz_1[4], xyz_1[5], imol_2, xyz_2[3], xyz_2[4], xyz_2[5])
-            coot.set_show_symmetry_master(imol_1)
-            coot.set_go_to_atom_molecule(imol_2)
-
-            print '>---------------'
+            print 'imolp',imol,'imo11',imol_1,'imol2',imol_2
+            if imol_1 == imol_2 and imol_1 == imol_protein:
+                print 'click_1',click_1
+                self.covLinkAtomSpec = None
+                xyz_1 = atom_info_string(click_1[1],click_1[2],click_1[3],click_1[4],click_1[5],click_1[6])
+                residue_1 = residue_name(click_1[1],click_1[2],click_1[3],click_1[4])
+                xyz_2 = atom_info_string(click_2[1],click_2[2],click_2[3],click_2[4],click_2[5],click_2[6])
+                residue_2 = residue_name(click_2[1],click_2[2],click_2[3],click_2[4])
+                thick = 4
+                to_generic_object_add_line(self.covLinkObject, "yellowtint", thick, xyz_1[3], xyz_1[4], xyz_1[5], xyz_2[3], xyz_2[4], xyz_2[5])
+                set_display_generic_object(self.covLinkObject, 1)
+                self.covLinkAtomSpec = [imol_protein,click_1,click_2,residue_1,residue_2]
+            else:
+                print 'error: both atoms must belong to the same object; did you merge the ligand with your protein?'
 
     def covalentLinkCreate(self, widget):
-        if 'X' in self.covLinks:
-            print 'link not correctly defined; please try again...'
-#        make_link(3, [3, 'A', 301, '', ' C28', ''], [3, 'A', 73, '', ' SG ', 'A'], "CYS-LIG", 1.7)
-        print self.covLinks
+        if self.covLinkAtomSpec is not None:
+            imol = self.covLinkAtomSpec[0]
+            atom1 = self.covLinkAtomSpec[1][1:]
+            atom2 = self.covLinkAtomSpec[2][1:]
+            residue_1 = self.covLinkAtomSpec[3]
+            residue_2 = self.covLinkAtomSpec[4]
+            make_link(imol, atom1, atom2, residue_1+'-'+residue_2, 1.7)
+            generic_object_clear(self.covLinkObject)
+            self.start_refinement()
+        else:
+            print 'error: no covalent link defined'
 
     def set_selection_mode(self, widget):
         self.selection_mode = widget.get_active_text()
