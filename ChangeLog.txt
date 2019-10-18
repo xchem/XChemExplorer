@@ -1,3 +1,7 @@
+v1.3.8.16 (17/10/2019)
+- added CompoundSMILESproduct field in DB to provide SMILES string of product of covalent binders
+- new function to use phenix.ligandfit and rhofit to fit ligands into initial maps (all enantiomers are tried and best one is selected)
+
 v1.3.8.15 (15/10/2019) 
 - new function to define covalent links in XCE COOT interface and to create them with ACEDRG
 

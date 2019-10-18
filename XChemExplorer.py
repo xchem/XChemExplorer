@@ -3227,6 +3227,9 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'Restore original CIF file of selected compounds':
             self.merge_cif_files('restore')
 
+        elif instruction == 'Fit ligands into maps after initial refinement':
+            self.fit_ligands_into_dimple_maps()
+
         elif instruction == 'pandda.analyse':
             self.run_pandda_analyse('production_run')
 
@@ -3606,6 +3609,52 @@ class XChemExplorer(QtGui.QApplication):
             self.connect(self.work_thread, QtCore.SIGNAL("datasource_menu_reload_samples"),
                          self.datasource_menu_reload_samples)
             self.work_thread.start()
+
+    def fit_ligands_into_dimple_maps(self):
+        tmp = self.db.execute_statement(
+            "select CrystalName,CompoundCode,CompoundSmiles from mainTable where CrystalName is not '' and CompoundSmiles is not '' and CompoundSmiles is not NULL;")
+        compound_list = []
+        for item in tmp:
+            if str(item[1]) == '' or str(item[1]) == 'NULL':
+                compoundID = 'compound'
+            else:
+                compoundID = str(item[1])
+
+            if str(item[0]) in self.initial_model_dimple_dict:
+                if self.initial_model_dimple_dict[str(item[0])][0].isChecked():
+                    compound_list.append([str(item[0]), compoundID, str(item[2])])
+
+        if compound_list:
+            self.update_log.insert(
+                'trying to auto-fitting into inital maps for ' + str(len(compound_list)) + ' compounds...')
+            if self.external_software['qsub']:
+                self.update_log.insert(
+                    'will try sending ' + str(len(compound_list)) + ' jobs to your computer cluster!')
+            elif self.external_software['qsub_array']:
+                self.update_log.insert('will try sending ' + str(
+                    len(compound_list)) + ' jobs as part of an ARRAY job to your computer cluster!')
+            else:
+                self.update_log.insert('apparently no cluster available, so will run ' + str(
+                    len(compound_list)) + ' sequential jobs on one core of your local machine.')
+                self.update_log.insert('this could take a while...')
+            self.explorer_active = 1
+            self.work_thread = XChemThread.fit_ligands(self.external_software,
+                                                                          self.initial_model_directory,
+                                                                          compound_list,
+                                                                          self.database_directory,
+                                                                          self.data_source_file,
+                                                                          self.ccp4_scratch_directory,
+                                                                          self.xce_logfile,
+                                                                          self.max_queue_jobs)
+            self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
+            self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
+            self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
+            self.connect(self.work_thread, QtCore.SIGNAL("datasource_menu_reload_samples"),
+                         self.datasource_menu_reload_samples)
+            self.work_thread.start()
+
+
+
 
     def merge_cif_files(self,todo):
         start_thread = False

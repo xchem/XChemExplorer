@@ -218,18 +218,35 @@ class helpers:
             if not external_software['qsub_array']:
                 header='#PBS -joe -N xce_acedrg\n'
 
+        # check if CompoundSMILEScovalent field is not Null
+        # CompoundSMILESproduct can be used to create only a CIF file for the product to make fitting easier
+        # however, the complete smiles string will be used to make the png file
+        productSmiles = None
+        db = XChemDB.data_source(os.path.join(database_directory,data_source_file))
+        sql = "select CompoundSMILESproduct from mainTable where CrystalName = '%s'" %sample
+        query = db.execute_statement(sql)
+        productSmiles = query[0][0]
+        if str(productSmiles).replace(' ','') == '':
+            productSmiles = smiles
+        elif 'none' in str(productSmiles).lower():
+            productSmiles = smiles
+        elif 'null' in str(productSmiles).lower():
+            productSmiles = smiles
+        else:
+            productSmiles = str(productSmiles)
+
         software=''
         if restraints_program=='acedrg':
             if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
                 software='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
             else:
-                software='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(smiles, compoundID.replace(' ',''))
+                software='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
         elif restraints_program=='phenix.elbow':
             if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
                 software='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
             else:
                 software='phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'\
-                    .format(smiles, compoundID.replace(' ',''))
+                    .format(productSmiles, compoundID.replace(' ',''))
         elif restraints_program=='grade':
             if os.getcwd().startswith('/dls'):
                 software+='module load buster\n'
@@ -239,7 +256,7 @@ class helpers:
                     .format(compoundID.replace(' ',''), compoundID.replace(' ',''))
             else:
                 software+='grade -resname LIG -nomogul "{0!s}" -ocif {1!s}.cif -opdb {2!s}.pdb\n'\
-                    .format(smiles, compoundID.replace(' ',''), compoundID.replace(' ',''))
+                    .format(productSmiles, compoundID.replace(' ',''), compoundID.replace(' ',''))
         # Removal of the hydrogen atoms in PDB files is required for REFMAC 5 run. With hydrogens some ligands fail to
         # pass the external restraints in pandda.giant.make_restraints.
         # Copy the file with hydrogens to retain in case needed

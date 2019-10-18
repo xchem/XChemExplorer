@@ -7,11 +7,21 @@ sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'),'lib'))
 import XChemDB
 
 def enumerateStereoChem(compoundID,sampleDir,db,xtal):
+    # first need to recreate the original CIF file with phenix.elbow because we cannot be sure
+    # which program was used to create the initial restrains
+    # this is because funny things happen to aromatic rings in case the file was made with GRADE
+    os.chdir(os.path.join(sampleDir,'compound'))
+    sql = "select CompoundSMILESproduct from mainTable where CrystalName = '%s'" % xtal
+    query = db.execute_statement(sql)
+    originalSMILES = query[0][0]
+    cmd = 'phenix.elbow --smiles="%s" --id=LIG --output=tmp' % (originalSMILES)
+    os.system(cmd)
+
     stereosmiles = None
-    if os.path.isfile(os.path.join(sampleDir,'compound',compoundID+'.pdb')):
-        pdb = os.path.join(sampleDir,'compound',compoundID+'.pdb')
+    if os.path.isfile(os.path.join(sampleDir,'compound','tmp.pdb')):
+        pdb = os.path.join(sampleDir,'compound','tmp.pdb')
     else:
-        print 'cannot find ' + compoundID + '.pdb'
+        print 'cannot find tmp.pdb'
         pass
     mol = Chem.MolFromPDBFile(pdb)
     Chem.AssignStereochemistry(mol,cleanIt=True,force=True,flagPossibleStereoCenters=True)
@@ -25,7 +35,6 @@ def enumerateStereoChem(compoundID,sampleDir,db,xtal):
         generateRestraints(compoundID,sampleDir,db,stereosmiles,xtal)
 
 def generateRestraints(compoundID,sampleDir,db,stereosmiles,xtal):
-    os.chdir(os.path.join(sampleDir,'compound'))
     cmd = 'phenix.elbow --smiles="%s" --chiral=enumerate --id=LIG --output=%s' %(stereosmiles,compoundID)
     os.system(cmd)
     checkFiles(compoundID,sampleDir,db,stereosmiles,xtal)

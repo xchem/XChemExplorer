@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.3.8.15'
+        xce_object.xce_version = 'v1.3.8.16'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -602,7 +602,8 @@ class setup():
 #                                         'Create CIF/PDB/PNG file of NEW compounds',
                                          'Create CIF/PDB/PNG file of SELECTED compounds',
                                          'Merge ligand CIF file with selected compounds',
-                                         'Restore original CIF file of selected compounds'
+                                         'Restore original CIF file of selected compounds',
+                                         'Fit ligands into maps after initial refinement'
                                          ]
 
         xce_object.panddas_file_tasks = ['pandda.analyse',

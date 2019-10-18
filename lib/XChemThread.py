@@ -894,6 +894,157 @@ class create_png_and_cif_of_compound(QtCore.QThread):
 #        self.emit(QtCore.SIGNAL("finished()"))
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
+
+
+class fit_ligands(QtCore.QThread):
+    def __init__(self,external_software,initial_model_directory,compound_list,database_directory,data_source_file,ccp4_scratch_directory,xce_logfile,max_queue_jobs):
+        QtCore.QThread.__init__(self)
+        self.external_software=external_software
+        self.queueing_system_available = external_software['qsub']
+        self.initial_model_directory=initial_model_directory
+        self.compound_list=compound_list
+        self.database_directory=database_directory
+        self.data_source_file=data_source_file
+        self.ccp4_scratch_directory=ccp4_scratch_directory
+        self.xce_logfile=xce_logfile
+        self.Logfile=XChemLog.updateLog(xce_logfile)
+        self.max_queue_jobs=max_queue_jobs
+        self.db=XChemDB.data_source(os.path.join(self.database_directory,self.data_source_file))
+        self.n = 1
+
+    def prepareInput(self,cmd,ligList):
+        for cif in ligList:
+            cmd += 'rhofit -m ../init.mtz -p ../init.pdb -l ../compound/%s.cif -d %s_rhofit\n' %(cif,cif)
+            cmd += 'phenix.ligandfit data=../init.mtz model=../init.pdb ligand=../compound/%s.cif clean_up=True\n' %cif
+            cmd += '/bin/mv LigandFit_run_1_ %s_phenix\n' %cif
+            cmd += '/bin/rm -fr PDS\n\n'
+        return cmd
+    # rhofit -m refine.mtz -p refine.pdb -l ../compound/NU074105a.cif -d NU074105a_rhofit
+    # phenix.ligandfit data=refine.mtz model=refine.pdb ligand=../compound/NU074105a.cif
+    # phenix.get_cc_mtz_pdb LigandFit_run_1_/ligand_fit_1_1.pdb refine.mtz > log
+    # grep 'local CC:' log
+
+    def get_header(self,sampleID):
+        if self.queueing_system_available:
+            top_line = '#PBS -joe -N XCE_dimple\n'
+        else:
+            top_line = '#!' + os.getenv('SHELL') + '\n'
+
+        cmd = (
+            '{0!s}\n'.format(top_line)+
+            '\n'
+            'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
+            '\n'
+            'cd %s\n' %os.path.join(self.initial_model_directory,sampleID,'autofit_ligand') +
+            '\n'
+        )
+
+        return cmd
+
+    def get_footer(self,cmd,sampleID,compoundID):
+        cmd += ('$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/find_best_fitting_ligand.py {0!s} {1!s} {2!s}'
+                .format(compoundID.replace(' ', ''), os.path.join(self.initial_model_directory, sampleID),
+                        os.path.join(self.database_directory, self.data_source_file)) )
+        return cmd
+
+    def run(self):
+        # first remove all ACEDRG input scripts in ccp4_scratch directory
+        self.Logfile.insert('removing all xce_fit_ligands scripts from '+self.ccp4_scratch_directory)
+        os.chdir(self.ccp4_scratch_directory)
+        os.system('/bin/rm -f xce_autofit_ligand*')
+
+        progress_step=100/float(len(self.compound_list))
+        progress=0
+        counter=1
+        for item in self.compound_list:
+            sampleID=item[0]
+            compoundID=item[1]
+
+            if os.path.isdir(os.path.join(self.initial_model_directory, sampleID, 'autofit_ligand')):
+                os.system('/bin/rm -fr ' + os.path.join(self.initial_model_directory, sampleID, 'autofit_ligand'))
+            os.mkdir(os.path.join(self.initial_model_directory, sampleID, 'autofit_ligand'))
+
+            # find ligands to fit (there might be more than one in case of stereoisomers
+            ligList = []
+            for file in glob.glob(os.path.join(self.initial_model_directory, sampleID, 'compound',compoundID+'*.cif')):
+                cif = file[file.rfind('/')+1:].replace('.cif','')
+                if 'with_H' in cif:
+                    continue
+                else:
+                    ligList.append(cif)
+
+            if ligList != []:
+                cmd = self.get_header(sampleID)
+                cmd = self.prepareInput(cmd,ligList)
+                cmd = self.get_footer(cmd, sampleID, compoundID)
+                self.write_script(cmd)
+                self.run_script()
+                self.n += 1
+
+
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+        #        self.emit(QtCore.SIGNAL("finished()"))
+        self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
+
+    def write_script(self,cmd):
+        os.chdir(self.ccp4_scratch_directory)
+        f = open('xce_autofit_ligand_{0!s}.sh'.format(str(self.n)), 'w')
+        f.write(cmd)
+        f.close()
+        os.system('chmod +x xce_autofit_ligand_{0!s}.sh'.format(str(self.n)))
+
+    def run_script(self):
+        # submit job
+        self.Logfile.insert('created input scripts for ' + str(self.n) + ' in ' + self.ccp4_scratch_directory)
+        os.chdir(self.ccp4_scratch_directory)
+        if os.path.isdir('/dls'):
+            if self.external_software['qsub_array']:
+                Cmds = (
+                        '#PBS -joe -N xce_autofit_ligand_master\n' +
+                        './xce_autofit_ligand_$SGE_TASK_ID.sh\n'
+                )
+                f = open('autofit_ligand_master.sh', 'w')
+                f.write(Cmds)
+                f.close()
+                self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
+                self.Logfile.insert('using the following command:')
+                self.Logfile.insert(
+                    'qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} autofit_ligand_master.sh'.format(str(self.n),
+                                                                                               self.max_queue_jobs))
+                os.system(
+                    'qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} autofit_ligand_master.sh'.format(str(self.n - 1),
+                                                                                               self.max_queue_jobs))
+            else:
+                self.Logfile.insert(
+                    "cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
+        elif self.external_software['qsub']:
+            self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(self.n))))
+            self.Logfile.insert('WARNING: this could potentially lead to a crash...')
+            for i in range(1, self.n):
+                self.Logfile.insert('qsub -q medium.q xce_autofit_ligand_{0!s}.sh'.format(str(i)))
+                os.system('qsub -q medium.q xce_autofit_ligand_{0!s}.sh'.format(str(i)))
+        else:
+            self.Logfile.insert(
+                'running {0!s} consecutive autofit_ligand jobs on your local machine'.format(str(self.n - 1)))
+            for i in range(1, self.n+1):
+                self.Logfile.insert('starting xce_autofit_ligand_{0!s}.sh'.format(str(i)))
+                os.system('./xce_autofit_ligand_{0!s}.sh'.format(str(i)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class merge_cif_files(QtCore.QThread):
     def __init__(self,initial_model_directory,xce_logfile,second_cif_file,compound_list,todo):
         QtCore.QThread.__init__(self)

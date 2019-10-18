@@ -788,11 +788,15 @@ class GUI(object):
             if imol not in self.mol_dict['ligand_stereo']:
                 continue
             molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
+            if 'rhofit' in coot.molecule_name(imol) or 'phenix' in coot.molecule_name(imol):
+                molNameCIF = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/') + 1:].replace('.pdb', '').replace('_phenix','').replace('_rhofit','')
+            else:
+                molNameCIF = molName
             print cpd,'-',imol,'-',coot.molecule_name(imol)
             if molName == cpd:
                 coot.set_mol_displayed(imol, 1)
-                print 'reading',os.path.join(self.project_directory,self.xtalID,'compound',molName+'.cif')
-                coot.read_cif_dictionary(os.path.join(self.project_directory,self.xtalID,'compound',molName+'.cif'))
+                print 'reading',os.path.join(self.project_directory,self.xtalID,'compound',molNameCIF+'.cif')
+                coot.read_cif_dictionary(os.path.join(self.project_directory,self.xtalID,'compound',molNameCIF+'.cif'))
             else:
                 coot.set_mol_displayed(imol, 0)
 
@@ -1135,6 +1139,7 @@ class GUI(object):
             self.select_cpd_cb.append_text(self.compoundID)
             self.mol_dict['ligand_stereo'] = []
             self.mol_dict['ligand_stereo'].append(imol)
+            # ligands in compound directory
             for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.pdb'))):
                 cif = cifFile[cifFile.rfind('/')+1:]
                 if '_with_H' in cif:
@@ -1143,6 +1148,14 @@ class GUI(object):
                 imol = coot.handle_read_draw_molecule_with_recentre(cifFile, 0)
                 self.mol_dict['ligand_stereo'].append(imol)
                 coot.set_mol_displayed(imol,0)
+            # autofitted ligands
+            for pdbFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'autofit_ligand','*','*.pdb'))):
+                autofitRun = pdbFile.split('/')[len(pdbFile.split('/')) - 2]
+                if pdbFile.endswith(autofitRun+'.pdb'):
+                    self.select_cpd_cb.append_text(autofitRun)
+                    imol = coot.handle_read_draw_molecule_with_recentre(pdbFile, 0)
+                    self.mol_dict['ligand_stereo'].append(imol)
+                    coot.set_mol_displayed(imol, 0)
             self.select_cpd_cb.set_sensitive(True)
             self.select_cpd_cb.set_active(0)
         else:
@@ -1547,22 +1560,27 @@ class GUI(object):
             if molName == cpd:
                 print '===> XCE: merge ligand into protein structure -->',cpd
                 coot.merge_molecules_py([imol], self.mol_dict['protein'])
+                if 'rhofit' in coot.molecule_name(imol) or 'phenix' in coot.molecule_name(imol):
+                    molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/') + 1:].replace('.pdb', '').replace('_phenix','').replace('_rhofit','')
+                if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif')):
+                    os.system('/bin/rm %s' % os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif'))
+                    print 'XCE: changing directory', os.path.join(self.project_directory, self.xtalID)
+                    os.chdir(os.path.join(self.project_directory, self.xtalID))
+                    print 'XCE: changing symlink ln -s %s %s.cif' % (
+                    os.path.join('compound', molName + '.cif'), self.compoundID)
+                    os.system('ln -s %s %s.cif' % (os.path.join('compound', molName + '.cif'), self.compoundID))
+                if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb')):
+                    os.system('/bin/rm %s' % os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb'))
+                    print 'XCE: changing directory', os.path.join(self.project_directory, self.xtalID)
+                    os.chdir(os.path.join(self.project_directory, self.xtalID))
+                    print 'XCE: changing symlink ln -s %s %s.pdb' % (
+                    os.path.join('compound', molName + '.pdb'), self.compoundID)
+                    os.system('ln -s %s %s.pdb' % (os.path.join('compound', molName
+                                                            + '.pdb'), self.compoundID))
             print '===> XCE: deleting ligand molecule',molName
             coot.close_molecule(imol)
 
         self.select_cpd_cb.set_sensitive(False)
-        if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.compoundID+'.cif')):
-            os.system('/bin/rm %s' %os.path.join(self.project_directory,self.xtalID,self.compoundID+'.cif'))
-            print 'changing directory',os.path.join(self.project_directory,self.xtalID)
-            os.chdir(os.path.join(self.project_directory,self.xtalID))
-            print 'changing symlink ln -s %s %s.cif' %(os.path.join('compound',cpd+'.cif'),self.compoundID)
-            os.system('ln -s %s %s.cif' %(os.path.join('compound',cpd+'.cif'),self.compoundID))
-        if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.compoundID+'.pdb')):
-            os.system('/bin/rm %s' %os.path.join(self.project_directory,self.xtalID,self.compoundID+'.pdb'))
-            print 'changing directory',os.path.join(self.project_directory,self.xtalID)
-            os.chdir(os.path.join(self.project_directory,self.xtalID))
-            print 'changing symlink ln -s %s %s.pdb' %(os.path.join('compound',cpd+'.pdb'),self.compoundID)
-            os.system('ln -s %s %s.pdb' %(os.path.join('compound',cpd+'.pdb'),self.compoundID))
 
 #        print '===> XCE: merge ligand into protein structure'
 #        # merge_molecules(list(imols), imol) e.g. merge_molecules([1],0)
