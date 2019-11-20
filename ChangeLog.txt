@@ -1,3 +1,6 @@
+v1.3.8.17 (20/11/2019)
+- bug fix: refine routine in XChemCootReference.py did not contain argument for covalent bonds
+
 v1.3.8.16 (17/10/2019)
 - added CompoundSMILESproduct field in DB to provide SMILES string of product of covalent binders
 - new function to use phenix.ligandfit and rhofit to fit ligands into initial maps (all enantiomers are tried and best one is selected)

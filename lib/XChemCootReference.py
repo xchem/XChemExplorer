@@ -466,7 +466,7 @@ class GUI(object):
                 coot.write_pdb_file(item,os.path.join(self.reference_directory,self.refinementDir,'Refine_'+str(self.Serial),'in.pdb'))
                 break
 
-        self.Refine.RunRefmac(self.Serial,self.RefmacParams,self.external_software,self.xce_logfile)
+        self.Refine.RunRefmac(self.Serial,self.RefmacParams,self.external_software,self.xce_logfile,None)
 #        self.spinnerBox.add(self.refinementRunning)
 #        self.refinementRunning.start()
         self.status_label.set_text('Refinement running...')
