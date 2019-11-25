@@ -484,7 +484,10 @@ def get_gda_barcodes(sampleList,gzipped_logs_parsed,gda_log_start_line,beamline,
                             Logfile.insert(
                             'found: sample={0!s}, barcode={1!s}, file={2!s}'.format(sampleID, barcode, gdaLogFile))
                         found_barcode_entry = False
-            gda_log_start_line = gda_log_start_line + n -1
+            try:
+                gda_log_start_line = gda_log_start_line + n -1
+            except UnboundLocalError:
+                gda_log_start_line = gda_log_start_line
 
     return pinDict,gda_log_start_line
 
