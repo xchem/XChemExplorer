@@ -588,6 +588,10 @@ class parse:
         except IndexError:
             pass
 
+        resolution_at_15_sigma_line_overall_found=False
+        resolution_at_20_sigma_line_overall_found=False
+
+
 #
 #        print '=====>',self.aimless['DataCollectionRun'],logfile
 #
