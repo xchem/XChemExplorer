@@ -2180,7 +2180,6 @@ class read_pinIDs_from_gda_logs(QtCore.QThread):
         for sample in pinDict:
             dbDict = {}
             dbDict['DataCollectionPinBarcode'] = pinDict[sample]
-            print sample,dbDict
             self.db.update_data_source(sample,dbDict)
 
 
