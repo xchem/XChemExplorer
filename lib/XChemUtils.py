@@ -641,15 +641,18 @@ class parse:
                 self.aimless['DataProcessingCChalfLow'] = line.split()[2]
                 self.aimless['DataProcessingCChalfHigh'] = line.split()[3]
             if line.startswith('Estimates of resolution limits: overall'):
-                resolution_at_sigma_line_overall_found=True
-            if resolution_at_sigma_line_overall_found:
+                resolution_at_15_sigma_line_overall_found=True
+                resolution_at_20_sigma_line_overall_found=True
+            if resolution_at_15_sigma_line_overall_found:
                 if 'from Mn(I/sd)' in line and len(line.split()) >= 7:
                     if '1.5' in line.split()[3]:
                         self.aimless['DataProcessingResolutionHigh15sigma']=line.split()[6][:-1]
-                        resolution_at_sigma_line_overall_found=False
+                        resolution_at_15_sigma_line_overall_found=False
+            if resolution_at_20_sigma_line_overall_found:
+                if 'from Mn(I/sd)' in line and len(line.split()) >= 7:
                     if '2.0' in line.split()[3]:
                         self.aimless['DataProcessingResolutionHigh20sigma']=line.split()[6][:-1]
-                        resolution_at_sigma_line_overall_found=False
+                        resolution_at_20_sigma_line_overall_found=False
             if (line.startswith('Average unit cell:') or line.startswith('  Unit cell parameters')) and len(line.split())==9:
                 tmp = [line.split()]
                 a = int(float(tmp[0][3]))

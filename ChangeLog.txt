@@ -1,3 +1,6 @@
+v1.3.8.19 (02/12/2019)
+- bug fix: xce to read resolution at Mn(I)/sig(I) of 2.0 (and 1.5 if possible) from aimless log; now only reads either one or the other. Datasets table now only shows reso at 2.0 since 1.5 not always shown
+
 v1.3.8.18 (25/11/2019)
 - bug fix: added except statement in get_gda_barcodes to catch errors during parsing of multiple visits
 
@@ -99,20 +102,4 @@ v1.3.3 (19/02/2019)
 - bug fix: removed not supported 'group leader' and 'investigator' option from edit deposition data menu
 
 v1.3.2 (12/02/2019)
-- bug fix: removed reference to non-existent labels (prevented opening of pandda models/ maps)
-
-v1.3.1 (25/01/2019)
-- bug fix: support of new autoProc directory structure at DLS
-- bug fix: removal of non-existent DataProcessingProgram entries at DLS from collectionTable
-- bug fix: xce coot plugin: changed layout so that full window can be displayed on any screen
-
-v1.3 (16/01/2019)
-- bug fix: get space group from aimless log file if file contains output from other programs like unique
-- bug fix: change qsub command for dimple and restraints generation so that it works outside DLS
-- new feature: assign labels to datasets in xce-coot interface
-- bug fix: accomodate None value when querying DB for event map information
-- new feature: preparation of apo mmcif files containing SF's all all datasets used for pandda.analyse
-- improvement: refinement of pandda models enabled where ligand binding did not lead to any differences between bound-state and ground-state
-- bug fix: update data_rxxxxsf field in apo mmcif file
-- fix pandda button in settings tab
-- add XCE manual to help menu 
+- bug fix: removed reference to non-existent labels (prevented opening of 

@@ -3810,7 +3810,7 @@ class XChemExplorer(QtGui.QApplication):
 
         column_name = ['Program',
                        'Resolution\nOverall',
-                       'Resolution\n[Mn<I/sig(I)> = 1.5]',
+                       'Resolution\n[Mn<I/sig(I)> = 2.0]',
                        'DataProcessing\nSpaceGroup',
                        'Mn<I/sig(I)>\nHigh',
                        'Rmerge\nLow',
