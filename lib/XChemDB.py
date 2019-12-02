@@ -774,7 +774,7 @@ class data_source:
             else:
                 update_string+=str(key)+' = null,'
         if update_string != '':
-#            print "UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"'"
+            print "UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"'"
             cursor.execute("UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"'")
             connect.commit()
 
