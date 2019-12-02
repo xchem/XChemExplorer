@@ -767,9 +767,7 @@ class data_source:
         cursor = connect.cursor()
         update_string=''
         for key in data_dict:
-            print key
             value=data_dict[key]
-            print value
             if key=='ID' or key=='CrystalName':
                 continue
             if not str(value).replace(' ','')=='':  # ignore empty fields
@@ -777,10 +775,9 @@ class data_source:
             else:
                 update_string+=str(key)+' = null,'
         if update_string != '':
-            print "UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"'"
+#            print "UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"'"
             cursor.execute("UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"'")
             connect.commit()
-        quit()
 
     def update_panddaTable(self,sampleID,site_index,data_dict):
         data_dict['LastUpdated']=str(datetime.now().strftime("%Y-%m-%d %H:%M"))
