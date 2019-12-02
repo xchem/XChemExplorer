@@ -2177,10 +2177,10 @@ class read_pinIDs_from_gda_logs(QtCore.QThread):
 
     def update_database(self,pinDict):
         self.Logfile.insert('updating database with pinDIs from GDA logfiles')
-        print pinDict
-        quit()
         for sample in pinDict:
-            dbDict = {'DataCollectionPinBarcode': pinDict[sample]}
+            dbDict = {}
+            dbDict['DataCollectionPinBarcode'] = pinDict[sample]
+            print sample,dbDict
             self.db.update_data_source(sample,dbDict)
 
 
