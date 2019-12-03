@@ -1,3 +1,6 @@
+v1.4.0 (03/12/2019)
+- introduced simple semantic versioning according to https://semver.org
+
 v1.3.8.19 (02/12/2019)
 - bug fix: xce to read resolution at Mn(I)/sig(I) of 2.0 (and 1.5 if possible) from aimless log; now only reads either one or the other. Datasets table now only shows reso at 2.0 since 1.5 not always shown
 - bug fix: read gda barcodes into DB and display in datasets table
