@@ -12,6 +12,7 @@ def enumerateStereoChem(compoundID,sampleDir,db,xtal):
     # this is because funny things happen to aromatic rings in case the file was made with GRADE
     os.chdir(os.path.join(sampleDir,'compound'))
     sql = "select CompoundSMILESproduct from mainTable where CrystalName = '%s'" % xtal
+    print 'sqlite query:',sql
     query = db.execute_statement(sql)
     originalSMILES = query[0][0]
     print originalSMILES
@@ -71,7 +72,9 @@ if __name__=='__main__':
     compoundID = sys.argv[1]
     sampleDir = sys.argv[2]
     xtal = sampleDir[sampleDir.rfind('/')+1:]
+    print 'sampleID:',xtal
     database = sys.argv[3]
+    print 'database:',database
     db=XChemDB.data_source(database)
     enumerateStereoChem(compoundID,sampleDir,db,xtal)
 
