@@ -267,6 +267,10 @@ class helpers:
 
         strip_hydrogens = 'phenix.reduce {0!s}.pdb -trim > {0!s}_tmp.pdb'.format(compoundID.replace(' ', ''))
 
+        module = ''
+        if os.path.isdir('/dls'):
+            module = 'module load mx\n'
+
         Cmds = (
 
             header +
@@ -274,6 +278,8 @@ class helpers:
             'export XChemExplorer_DIR="' + os.getenv('XChemExplorer_DIR') + '"' +
             '\n'
             'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh'
+            '\n'
+            + module +
             '\n'
             '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py {0!s} {1!s} {2!s} {3!s}'
             .format(os.path.join(database_directory, data_source_file), sample, 'RefinementCIFStatus', 'running') +
