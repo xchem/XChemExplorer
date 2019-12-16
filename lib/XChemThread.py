@@ -930,6 +930,10 @@ class fit_ligands(QtCore.QThread):
         else:
             top_line = '#!' + os.getenv('SHELL') + '\n'
 
+        module = ''
+        if os.path.isdir('/dls'):
+            module = 'module load mx\n'
+
         cmd = (
             '{0!s}\n'.format(top_line)+
             '\n'
@@ -937,6 +941,7 @@ class fit_ligands(QtCore.QThread):
             '\n'
             'cd %s\n' %os.path.join(self.initial_model_directory,sampleID,'autofit_ligand') +
             '\n'
+            + module
         )
 
         return cmd
