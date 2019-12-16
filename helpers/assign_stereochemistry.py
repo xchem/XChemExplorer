@@ -11,28 +11,34 @@ def enumerateStereoChem(compoundID,sampleDir,db,xtal):
     # which program was used to create the initial restrains
     # this is because funny things happen to aromatic rings in case the file was made with GRADE
     os.chdir(os.path.join(sampleDir,'compound'))
-    sql = "select CompoundSMILESproduct from mainTable where CrystalName = '%s'" % xtal
+    sql = "select CompoundSMILES from mainTable where CrystalName = '%s'" % xtal
+    print 'sqlite query:',sql
     query = db.execute_statement(sql)
     originalSMILES = query[0][0]
+    print originalSMILES
     cmd = 'phenix.elbow --smiles="%s" --id=LIG --output=tmp' % (originalSMILES)
+    print 'current working directory:',os.getcwd()
+    print 'runnning:',cmd
     os.system(cmd)
 
     stereosmiles = None
+    pdb = None
     if os.path.isfile(os.path.join(sampleDir,'compound','tmp.pdb')):
         pdb = os.path.join(sampleDir,'compound','tmp.pdb')
     else:
         print 'cannot find tmp.pdb'
         pass
-    mol = Chem.MolFromPDBFile(pdb)
-    Chem.AssignStereochemistry(mol,cleanIt=True,force=True,flagPossibleStereoCenters=True)
-    if Chem.FindMolChiralCenters(mol,includeUnassigned=True) == []:
-        print 'no chiral centres found'
-        db_dict = {}
-        db_dict['CompoundStereo'] = 'FALSE'
-        updateDB(db,db_dict,xtal)
-    else:
-        stereosmiles = Chem.MolToSmiles(mol,isomericSmiles=True)
-        generateRestraints(compoundID,sampleDir,db,stereosmiles,xtal)
+    if pdb:
+        mol = Chem.MolFromPDBFile(pdb)
+        Chem.AssignStereochemistry(mol,cleanIt=True,force=True,flagPossibleStereoCenters=True)
+        if Chem.FindMolChiralCenters(mol,includeUnassigned=True) == []:
+            print 'no chiral centres found'
+            db_dict = {}
+            db_dict['CompoundStereo'] = 'FALSE'
+            updateDB(db,db_dict,xtal)
+        else:
+            stereosmiles = Chem.MolToSmiles(mol,isomericSmiles=True)
+            generateRestraints(compoundID,sampleDir,db,stereosmiles,xtal)
 
 def generateRestraints(compoundID,sampleDir,db,stereosmiles,xtal):
     cmd = 'phenix.elbow --smiles="%s" --chiral=enumerate --id=LIG --output=%s' %(stereosmiles,compoundID)
@@ -66,7 +72,9 @@ if __name__=='__main__':
     compoundID = sys.argv[1]
     sampleDir = sys.argv[2]
     xtal = sampleDir[sampleDir.rfind('/')+1:]
+    print 'sampleID:',xtal
     database = sys.argv[3]
+    print 'database:',database
     db=XChemDB.data_source(database)
     enumerateStereoChem(compoundID,sampleDir,db,xtal)
 
