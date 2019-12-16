@@ -1,3 +1,8 @@
+v1.4.1 (16/12/2019)
+- bug fix: in helpers/assign_stereochemistry.py; use CompoundSMILES instead of CompoundSMILESproduct (which need to be provided by user)
+- bug fix: auto-fitting of ligands - use default ccp4 distribition and submission command
+- bug fix: add 'module load mx' to restraints generation script; uses default ccp4 installation, otherwise CLIB path for GRADE broken
+
 v1.4.0 (03/12/2019)
 - introduced simple semantic versioning according to https://semver.org
 
