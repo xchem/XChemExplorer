@@ -11,7 +11,7 @@ def enumerateStereoChem(compoundID,sampleDir,db,xtal):
     # which program was used to create the initial restrains
     # this is because funny things happen to aromatic rings in case the file was made with GRADE
     os.chdir(os.path.join(sampleDir,'compound'))
-    sql = "select CompoundSMILESproduct from mainTable where CrystalName = '%s'" % xtal
+    sql = "select CompoundSMILES from mainTable where CrystalName = '%s'" % xtal
     print 'sqlite query:',sql
     query = db.execute_statement(sql)
     originalSMILES = query[0][0]
