@@ -294,12 +294,18 @@ class Refine(object):
 
 
     def make_covalent_link(self,covLinkAtomSpec,Logfile):
+        residuesToModify = ['CYS','SER']
+
         atom1 = covLinkAtomSpec[1][5]
         atom2 = covLinkAtomSpec[2][5]
         residue_1 = covLinkAtomSpec[3]
         residue_2 = covLinkAtomSpec[4]
 
-        bond_text = 'LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1  %s  RES-NAME-2 %s ATOM-NAME-2  %s' %(residue_1,self.compoundID,atom1,residue_2,atom2)
+        if residue_2 in residuesToModify:
+            bond_text = 'LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1  %s  RES-NAME-2 %s ATOM-NAME-2  %s' %(residue_1,self.compoundID,atom1,residue_2,atom2)
+        else:
+            bond_text = 'LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1  %s  RES-NAME-2 %s ATOM-NAME-2  %s' % (residue_2, self.compoundID, atom2, residue_1, atom1)
+
         os.chdir(os.path.join(self.ProjectPath,self.xtalID))
         f = open('covalent_bond.txt','w')
         f.write(bond_text)

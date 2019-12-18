@@ -1,3 +1,6 @@
+v1.4.2 (17/12/2019)
+- bug fix: arbitrary clicking order for atoms making a new covalent link
+
 v1.4.1 (16/12/2019)
 - bug fix: in helpers/assign_stereochemistry.py; use CompoundSMILES instead of CompoundSMILESproduct (which need to be provided by user)
 - bug fix: auto-fitting of ligands - use default ccp4 distribition and submission command
