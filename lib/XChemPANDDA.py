@@ -510,7 +510,7 @@ class run_pandda_analyse(QtCore.QThread):
             char_string = 'exclude_from_characterisation="'
             char_string = append_to_ignore_string(char, char_string)
 
-            zmap_string = 'exclude_from_zmap_analysis="'
+            zmap_string = 'exclude_from_z_map_analysis="'
             zmap_string = append_to_ignore_string(zmap, zmap_string)
 
             for i in range(number_of_cyles):
