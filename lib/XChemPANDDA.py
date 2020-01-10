@@ -111,6 +111,9 @@ class run_pandda_export(QtCore.QThread):
 #                                   ' does not have a modelled structure. Check whether you expect this dataset to ' +
 #                                   ' have a modelled structure, compare pandda.inspect and datasource,'
 #                                   ' then tell XCHEMBB ')
+                else:
+                    self.Logfile.error('%s: cannot find %s-ensemble-model.pdb; cannot start refinement...' %(xtal,xtal))
+                    self.Logfile.error('Please check terminal window for any PanDDA related tracebacks')
 
             elif xtal in samples_to_export and not os.path.isfile(
                     os.path.join(self.initial_model_directory, xtal, xtal + '.free.mtz')):
