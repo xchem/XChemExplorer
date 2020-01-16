@@ -1,7 +1,10 @@
-v1.4.4 (10/01/2019)
+v1.4.5 (16/01/2020)
+- bug fix: removing and re-parsing of folders from project directory does not need the DataProcessingAutoAssigned flag to be reset if the MTZ file does not exist
+
+v1.4.4 (10/01/2020)
 - bug fix: corrected pandda.analyse keyword 'exclude_from_z_map_analysis'
 
-v1.4.3 (10/01/2019)
+v1.4.3 (10/01/2020)
 - added additional error message during pandda.export in case of missing ensemble model
 
 v1.4.2 (17/12/2019)

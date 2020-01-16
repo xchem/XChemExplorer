@@ -2228,8 +2228,12 @@ class choose_autoprocessing_outcome(QtCore.QThread):
     def run(self):
         for sample in sorted(self.allSamples):
             if self.db.autoprocessing_result_user_assigned(sample) and not self.rescore:
-                self.Logfile.warning('{0!s}: user has manually selected auto-processing result; will NOT auto-select!'.format(sample))
-                continue
+                if os.path.isfile(self.projectDir,sample,sample+'.mtz'):
+                    self.Logfile.warning('{0!s}: user has manually selected auto-processing result; will NOT auto-select!'.format(sample))
+                    continue
+                else:
+                    self.Logfile.warning('{0!s}: user has manually selected auto-processing result before, but {1!s}.mtz does not exist'.format(sample,sample))
+                    self.Logfile.insert('%s: selecting autoprocessing result' % sample)
             elif self.rescore:
                 self.Logfile.warning('{0!s}: rescore selected -> might overwrite user selection!'.format(sample))
             else:
