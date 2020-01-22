@@ -2567,6 +2567,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def readProcessingUpdateResults(self,xtal,folder,log,mtz,timestamp,current_run,autoproc):
         db_dict = {}
+        self.Logfile.warning('%s: looking for %s' %(xtal,os.path.join(folder, mtz)))
         for mtzfile in glob.glob(os.path.join(folder,mtz)):
             self.Logfile.insert('%s: found %s' %(xtal,mtzfile))
             self.Logfile.warning('%s: looking for %s' %(xtal,os.path.join(folder, log)))
@@ -2681,7 +2682,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     procDir = os.path.join(run,item[0])
                     logfile = item[1]
                     mtzfile = item[2]
-                    self.Logfile.insert('%s: search template: procDir - logfile - mtzfile')
+                    self.Logfile.insert('%s: search template: procDir - logfile - mtzfile' %xtal)
                     self.Logfile.insert('%s: procDir = %s' %(xtal,procDir))
                     self.Logfile.insert('%s: logfile = %s' %(xtal,logfile))
                     self.Logfile.insert('%s: mtzfile = %s' %(xtal,mtzfile))
