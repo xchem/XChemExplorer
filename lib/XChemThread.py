@@ -2569,6 +2569,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         db_dict = {}
         for mtzfile in glob.glob(os.path.join(folder,mtz)):
             self.Logfile.insert('%s: found %s' %(xtal,mtzfile))
+            self.Logfile.warning('%s: looking for %s' %(xtal,os.path.join(folder, log)))
             for logfile in glob.glob(os.path.join(folder, log)):
                 self.Logfile.insert('%s: found %s' % (xtal, logfile))
                 self.createAutoprocessingDir(xtal, current_run, autoproc)
