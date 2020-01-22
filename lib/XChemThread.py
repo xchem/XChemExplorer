@@ -2568,7 +2568,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
     def readProcessingUpdateResults(self,xtal,folder,log,mtz,timestamp,current_run,autoproc):
         db_dict = {}
         for mtzfile in glob.glob(os.path.join(folder,mtz)):
+            self.Logfile.insert('%s: found %s' %(xtal,mtzfile))
             for logfile in glob.glob(os.path.join(folder, log)):
+                self.Logfile.insert('%s: found %s' % (xtal, logfile))
                 self.createAutoprocessingDir(xtal, current_run, autoproc)
                 mtzNew,logNew = self.copyMTZandLOGfiles(xtal,current_run,autoproc,mtzfile,logfile)
                 if self.target == '=== project directory ===':
@@ -2678,12 +2680,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     procDir = os.path.join(run,item[0])
                     logfile = item[1]
                     mtzfile = item[2]
-                    if 'json' in logfile:
-                        print item
-                        print procDir,logfile,mtzfile
-                        quit()
 
                     for folder in glob.glob(procDir):
+                        self.Logfile.insert('%s: searching %s' %(xtal,folder))
                         if self.junk(folder):
                             continue
                         if self.empty_folder(xtal,folder):
