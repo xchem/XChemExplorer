@@ -2680,6 +2680,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     mtzfile = item[2]
                     if 'json' in logfile:
                         print item
+                        print procDir,logfile,mtzfile
                         quit()
 
                     for folder in glob.glob(procDir):
