@@ -610,6 +610,12 @@ class parse:
         if self.aimless['DataProcessingA'] != 'n/a' and self.aimless['DataProcessingB'] != 'n/a' and self.aimless['DataProcessingC'] != 'n/a' \
                 and self.aimless['DataProcessingAlpha'] != 'n/a' and self.aimless['DataProcessingBeta'] != 'n/a' and self.aimless['DataProcessingGamma'] != 'n/a' \
                 and self.aimless['DataProcessingLattice'] != 'n/a':
+            a = self.aimless['DataProcessingA']
+            b = self.aimless['DataProcessingB']
+            c = self.aimless['DataProcessingC']
+            alpha = self.aimless['DataProcessingAlpha']
+            beta = self.aimless['DataProcessingBeta']
+            gamma = self.aimless['DataProcessingGamma']
             self.aimless['DataProcessingUnitCellVolume'] = str(
                 self.calc_unitcell_volume_from_logfile(float(a), float(b), float(c),
                                                            math.radians(float(alpha)),
