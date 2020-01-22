@@ -1,5 +1,6 @@
 v1.4.6 (21/01/2020)
 - added xia2-* wildcard to read_write_autoprocessing_results_from_to_disc because autoprocessing folder names changed
+- added parsing of DIALS JSON merging statistics file and MMCIF cell parameter file
 
 v1.4.5 (16/01/2020)
 - bug fix: removing and re-parsing of folders from project directory does not need the DataProcessingAutoAssigned flag to be reset if the MTZ file does not exist

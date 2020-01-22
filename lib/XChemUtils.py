@@ -594,124 +594,41 @@ class parse:
         except IndexError:
             pass
 
-        resolution_at_15_sigma_line_overall_found=False
-        resolution_at_20_sigma_line_overall_found=False
 
+        if logfile.endswith('.log'):
+            self.aimless_logile(logfile)
+        elif logfile.endswith('.json'):
+            self.json_logfile(logfile)
 
-#
-#        print '=====>',self.aimless['DataCollectionRun'],logfile
-#
-        resolution_at_sigma_line_overall_found=False
-        for line_number,line in enumerate(open(logfile)):
-#            if 'Wavelength' in line:
-#                print 'here'
-#                print line.split()
-            if 'Wavelength' in line and len(line.split()) >= 2:
-                self.aimless['DataCollectionWavelength']=line.split()[1]
-            if 'Low resolution limit' in line and len(line.split())==6:
-                self.aimless['DataProcessingResolutionLow'] = line.split()[3]
-                self.aimless['DataProcessingResolutionHighOuterShell'] = line.split()[5]
-            if 'High resolution limit' in line and len(line.split())==6:
-                self.aimless['DataProcessingResolutionHigh'] = line.split()[3]
-                self.aimless['DataProcessingResolutionLowInnerShell'] = line.split()[4]
-            if 'Rmerge  (all I+ and I-)' in line and len(line.split())==8:
-                self.aimless['DataProcessingRmergeOverall'] = line.split()[5]
-                self.aimless['DataProcessingRmergeLow'] = line.split()[6]
-                self.aimless['DataProcessingRmergeHigh']  = line.split()[7]
-            if 'Rmerge  (all I+ & I-)' in line and len(line.split())==8:
-                self.aimless['DataProcessingRmergeOverall'] = line.split()[5]
-                self.aimless['DataProcessingRmergeLow'] = line.split()[6]
-                self.aimless['DataProcessingRmergeHigh']  = line.split()[7]
-            if 'Mean((I)/sd(I))' in line and len(line.split())==4:
-                self.aimless['DataProcessingIsigOverall'] = line.split()[1]
-                self.aimless['DataProcessingIsigHigh'] = line.split()[3]
-                self.aimless['DataProcessingIsigLow'] = line.split()[2]
-            if 'Mean(I)/sd(I)' in line and len(line.split())==4:
-                self.aimless['DataProcessingIsigOverall'] = line.split()[1]
-                self.aimless['DataProcessingIsigHigh'] = line.split()[3]
-                self.aimless['DataProcessingIsigLow'] = line.split()[2]
-            if line.startswith('Completeness') and len(line.split())==4:
-                self.aimless['DataProcessingCompletenessOverall'] = line.split()[1]
-                self.aimless['DataProcessingCompletenessHigh'] = line.split()[3]
-                self.aimless['DataProcessingCompletenessLow'] = line.split()[2]
-            if 'Completeness (ellipsoidal)' in line and len(line.split())==5:
-                self.aimless['DataProcessingCompletenessOverall'] = line.split()[2]
-                self.aimless['DataProcessingCompletenessHigh'] = line.split()[4]
-                self.aimless['DataProcessingCompletenessLow'] = line.split()[3]
-            if 'Multiplicity' in line and len(line.split())==4:
-                self.aimless['DataProcessingMultiplicityOverall'] = line.split()[1]
-                self.aimless['DataProcessingMultiplicityHigh'] = line.split()[3]
-                self.aimless['DataProcessingMultiplicityLow'] = line.split()[3]
-            if line.startswith('Mn(I) half-set correlation CC(1/2)') and len(line.split())==7:
-                self.aimless['DataProcessingCChalfOverall'] = line.split()[4]
-                self.aimless['DataProcessingCChalfLow'] = line.split()[5]
-                self.aimless['DataProcessingCChalfHigh'] = line.split()[6]
-            if line.startswith('     CC(1/2)') and len(line.split())==4:
-                self.aimless['DataProcessingCChalfOverall'] = line.split()[1]
-                self.aimless['DataProcessingCChalfLow'] = line.split()[2]
-                self.aimless['DataProcessingCChalfHigh'] = line.split()[3]
-            if line.startswith('Estimates of resolution limits: overall'):
-                resolution_at_15_sigma_line_overall_found=True
-                resolution_at_20_sigma_line_overall_found=True
-            if resolution_at_15_sigma_line_overall_found:
-                if 'from Mn(I/sd)' in line and len(line.split()) >= 7:
-                    if '1.5' in line.split()[3]:
-                        self.aimless['DataProcessingResolutionHigh15sigma']=line.split()[6][:-1]
-                        resolution_at_15_sigma_line_overall_found=False
-            if resolution_at_20_sigma_line_overall_found:
-                if 'from Mn(I/sd)' in line and len(line.split()) >= 7:
-                    if '2.0' in line.split()[3]:
-                        self.aimless['DataProcessingResolutionHigh20sigma']=line.split()[6][:-1]
-                        resolution_at_20_sigma_line_overall_found=False
-            if (line.startswith('Average unit cell:') or line.startswith('  Unit cell parameters')) and len(line.split())==9:
-                tmp = [line.split()]
-                a = int(float(tmp[0][3]))
-                b = int(float(tmp[0][4]))
-                c = int(float(tmp[0][5]))
-                alpha = int(float(tmp[0][6]))
-                beta = int(float(tmp[0][7]))
-                gamma = int(float(tmp[0][8]))
-                self.aimless['DataProcessingA']=str(a)
-                self.aimless['DataProcessingB']=str(b)
-                self.aimless['DataProcessingC']=str(c)
-                self.aimless['DataProcessingAlpha']=str(alpha)
-                self.aimless['DataProcessingBeta']=str(beta)
-                self.aimless['DataProcessingGamma']=str(gamma)
-            if 'Total number unique' in line and len(line.split())==6:
-                self.aimless['DataProcessingUniqueReflectionsOverall']=line.split()[3]
-            if line.startswith('Space group:') or line.startswith('  Spacegroup name'):
-                if 'Laue' in line:
-                    continue
-                if 'Spacegroup name' in line:
-                    self.aimless['DataProcessingSpaceGroup'] = line.replace('  Spacegroup name', '')[:-1].replace(' ','')
-                else:
-                    self.aimless['DataProcessingSpaceGroup']=line.replace('Space group: ','')[:-1]
-                self.aimless['DataProcessingLattice']=self.get_lattice_from_space_group(self.aimless['DataProcessingSpaceGroup'])
-                self.aimless['DataProcessingPointGroup']=self.get_pointgroup_from_space_group(self.aimless['DataProcessingSpaceGroup'])
-#                print a,b,c,alpha,beta,gamma,self.aimless['DataProcessingLattice']
-            if a != 'n/a' and b != 'n/a' and c != 'n/a' and \
-                   alpha != 'n/a' and beta != 'n/a' and gamma != 'n/a' and self.aimless['DataProcessingLattice'] != 'n/a':
-                self.aimless['DataProcessingUnitCellVolume']=str(self.calc_unitcell_volume_from_logfile(float(a),float(b),float(c),
-                                                                                 math.radians(float(alpha)),
-                                                                                 math.radians(float(beta)),
-                                                                                 math.radians(float(gamma)),
-                                                                                 self.aimless['DataProcessingLattice']))
-                try:
-                    high_symmetry_boost=self.nr_asu_in_unitcell_for_point_group[self.aimless['DataProcessingPointGroup']]
-                    self.aimless['DataProcessingScore'] = (float(self.aimless['DataProcessingUniqueReflectionsOverall'])*\
-                                                               float(self.aimless['DataProcessingCompletenessOverall'])*\
-                                                               high_symmetry_boost*\
-                                                               float(self.aimless['DataProcessingIsigOverall']))/float(self.aimless['DataProcessingUnitCellVolume'])
-                except ValueError:
-                    self.aimless['DataProcessingScore']=0.0
-        self.aimless['DataProcessingUnitCell']=str(a)+' '+str(b)+' '+str(c)+' '+str(alpha)+' '+str(beta)+' '+str(gamma)
-        self.aimless['DataProcessingResolutionOverall']=str(self.aimless['DataProcessingResolutionLow'])+' - '+str(self.aimless['DataProcessingResolutionHigh'])
 
         # Hex Color code:
         # red:      #FF0000
         # orange:   #FF9900
         # green:    #00FF00
         # gray:     #E0E0E0
+
+        if self.aimless['DataProcessingA'] != 'n/a' and self.aimless['DataProcessingA'] != 'n/a' and self.aimless['DataProcessingc'] != 'n/a' \
+                and self.aimless['DataProcessingAlpha'] != 'n/a' and self.aimless['DataProcessingBeta'] != 'n/a' and self.aimless['DataProcessingGamma'] != 'n/a' \
+                and self.aimless['DataProcessingLattice'] != 'n/a':
+            self.aimless['DataProcessingUnitCellVolume'] = str(
+                self.calc_unitcell_volume_from_logfile(float(a), float(b), float(c),
+                                                           math.radians(float(alpha)),
+                                                           math.radians(float(beta)),
+                                                           math.radians(float(gamma)),
+                                                           self.aimless['DataProcessingLattice']))
+            try:
+                high_symmetry_boost = self.nr_asu_in_unitcell_for_point_group[
+                        self.aimless['DataProcessingPointGroup']]
+                self.aimless['DataProcessingScore'] = (float(
+                        self.aimless['DataProcessingUniqueReflectionsOverall']) * float(self.aimless['DataProcessingCompletenessOverall']) * high_symmetry_boost * float(self.aimless['DataProcessingIsigOverall'])) / float(
+                        self.aimless['DataProcessingUnitCellVolume'])
+            except ValueError:
+                self.aimless['DataProcessingScore'] = 0.0
+        self.aimless['DataProcessingUnitCell'] = str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(alpha) + ' ' + str(
+            beta) + ' ' + str(gamma)
+        self.aimless['DataProcessingResolutionOverall'] = str(
+            self.aimless['DataProcessingResolutionLow']) + ' - ' + str(self.aimless['DataProcessingResolutionHigh'])
+
 
         if self.aimless['DataProcessingResolutionHigh']=='n/a' or self.aimless['DataProcessingRmergeLow'] =='n/a':
             self.aimless['DataProcessingAlert'] = '#FF0000'
@@ -726,7 +643,186 @@ class parse:
 
         return self.aimless
 
+    def aimless_logile(self,logfile):
+        resolution_at_15_sigma_line_overall_found = False
+        resolution_at_20_sigma_line_overall_found = False
+        resolution_at_sigma_line_overall_found = False
+        for line_number, line in enumerate(open(logfile)):
+            #            if 'Wavelength' in line:
+            #                print 'here'
+            #                print line.split()
+            if 'Wavelength' in line and len(line.split()) >= 2:
+                self.aimless['DataCollectionWavelength'] = line.split()[1]
+            if 'Low resolution limit' in line and len(line.split()) == 6:
+                self.aimless['DataProcessingResolutionLow'] = line.split()[3]
+                self.aimless['DataProcessingResolutionHighOuterShell'] = line.split()[5]
+            if 'High resolution limit' in line and len(line.split()) == 6:
+                self.aimless['DataProcessingResolutionHigh'] = line.split()[3]
+                self.aimless['DataProcessingResolutionLowInnerShell'] = line.split()[4]
+            if 'Rmerge  (all I+ and I-)' in line and len(line.split()) == 8:
+                self.aimless['DataProcessingRmergeOverall'] = line.split()[5]
+                self.aimless['DataProcessingRmergeLow'] = line.split()[6]
+                self.aimless['DataProcessingRmergeHigh'] = line.split()[7]
+            if 'Rmerge  (all I+ & I-)' in line and len(line.split()) == 8:
+                self.aimless['DataProcessingRmergeOverall'] = line.split()[5]
+                self.aimless['DataProcessingRmergeLow'] = line.split()[6]
+                self.aimless['DataProcessingRmergeHigh'] = line.split()[7]
+            if 'Mean((I)/sd(I))' in line and len(line.split()) == 4:
+                self.aimless['DataProcessingIsigOverall'] = line.split()[1]
+                self.aimless['DataProcessingIsigHigh'] = line.split()[3]
+                self.aimless['DataProcessingIsigLow'] = line.split()[2]
+            if 'Mean(I)/sd(I)' in line and len(line.split()) == 4:
+                self.aimless['DataProcessingIsigOverall'] = line.split()[1]
+                self.aimless['DataProcessingIsigHigh'] = line.split()[3]
+                self.aimless['DataProcessingIsigLow'] = line.split()[2]
+            if line.startswith('Completeness') and len(line.split()) == 4:
+                self.aimless['DataProcessingCompletenessOverall'] = line.split()[1]
+                self.aimless['DataProcessingCompletenessHigh'] = line.split()[3]
+                self.aimless['DataProcessingCompletenessLow'] = line.split()[2]
+            if 'Completeness (ellipsoidal)' in line and len(line.split()) == 5:
+                self.aimless['DataProcessingCompletenessOverall'] = line.split()[2]
+                self.aimless['DataProcessingCompletenessHigh'] = line.split()[4]
+                self.aimless['DataProcessingCompletenessLow'] = line.split()[3]
+            if 'Multiplicity' in line and len(line.split()) == 4:
+                self.aimless['DataProcessingMultiplicityOverall'] = line.split()[1]
+                self.aimless['DataProcessingMultiplicityHigh'] = line.split()[3]
+                self.aimless['DataProcessingMultiplicityLow'] = line.split()[3]
+            if line.startswith('Mn(I) half-set correlation CC(1/2)') and len(line.split()) == 7:
+                self.aimless['DataProcessingCChalfOverall'] = line.split()[4]
+                self.aimless['DataProcessingCChalfLow'] = line.split()[5]
+                self.aimless['DataProcessingCChalfHigh'] = line.split()[6]
+            if line.startswith('     CC(1/2)') and len(line.split()) == 4:
+                self.aimless['DataProcessingCChalfOverall'] = line.split()[1]
+                self.aimless['DataProcessingCChalfLow'] = line.split()[2]
+                self.aimless['DataProcessingCChalfHigh'] = line.split()[3]
+            if line.startswith('Estimates of resolution limits: overall'):
+                resolution_at_15_sigma_line_overall_found = True
+                resolution_at_20_sigma_line_overall_found = True
+            if resolution_at_15_sigma_line_overall_found:
+                if 'from Mn(I/sd)' in line and len(line.split()) >= 7:
+                    if '1.5' in line.split()[3]:
+                        self.aimless['DataProcessingResolutionHigh15sigma'] = line.split()[6][:-1]
+                        resolution_at_15_sigma_line_overall_found = False
+            if resolution_at_20_sigma_line_overall_found:
+                if 'from Mn(I/sd)' in line and len(line.split()) >= 7:
+                    if '2.0' in line.split()[3]:
+                        self.aimless['DataProcessingResolutionHigh20sigma'] = line.split()[6][:-1]
+                        resolution_at_20_sigma_line_overall_found = False
+            if (line.startswith('Average unit cell:') or line.startswith('  Unit cell parameters')) and len(
+                    line.split()) == 9:
+                tmp = [line.split()]
+                a = int(float(tmp[0][3]))
+                b = int(float(tmp[0][4]))
+                c = int(float(tmp[0][5]))
+                alpha = int(float(tmp[0][6]))
+                beta = int(float(tmp[0][7]))
+                gamma = int(float(tmp[0][8]))
+                self.aimless['DataProcessingA'] = str(a)
+                self.aimless['DataProcessingB'] = str(b)
+                self.aimless['DataProcessingC'] = str(c)
+                self.aimless['DataProcessingAlpha'] = str(alpha)
+                self.aimless['DataProcessingBeta'] = str(beta)
+                self.aimless['DataProcessingGamma'] = str(gamma)
+            if 'Total number unique' in line and len(line.split()) == 6:
+                self.aimless['DataProcessingUniqueReflectionsOverall'] = line.split()[3]
+            if line.startswith('Space group:') or line.startswith('  Spacegroup name'):
+                if 'Laue' in line:
+                    continue
+                if 'Spacegroup name' in line:
+                    self.aimless['DataProcessingSpaceGroup'] = line.replace('  Spacegroup name', '')[:-1].replace(' ',
+                                                                                                                  '')
+                else:
+                    self.aimless['DataProcessingSpaceGroup'] = line.replace('Space group: ', '')[:-1]
+                self.aimless['DataProcessingLattice'] = self.get_lattice_from_space_group(
+                    self.aimless['DataProcessingSpaceGroup'])
+                self.aimless['DataProcessingPointGroup'] = self.get_pointgroup_from_space_group(
+                    self.aimless['DataProcessingSpaceGroup'])
+            #                print a,b,c,alpha,beta,gamma,self.aimless['DataProcessingLattice']
+#            if a != 'n/a' and b != 'n/a' and c != 'n/a' and \
+#                    alpha != 'n/a' and beta != 'n/a' and gamma != 'n/a' and self.aimless[
+#                'DataProcessingLattice'] != 'n/a':
+#                self.aimless['DataProcessingUnitCellVolume'] = str(
+#                    self.calc_unitcell_volume_from_logfile(float(a), float(b), float(c),
+#                                                           math.radians(float(alpha)),
+#                                                           math.radians(float(beta)),
+#                                                           math.radians(float(gamma)),
+#                                                           self.aimless['DataProcessingLattice']))
+#                try:
+#                    high_symmetry_boost = self.nr_asu_in_unitcell_for_point_group[
+#                        self.aimless['DataProcessingPointGroup']]
+#                    self.aimless['DataProcessingScore'] = (float(
+#                        self.aimless['DataProcessingUniqueReflectionsOverall']) * float(self.aimless['DataProcessingCompletenessOverall']) * high_symmetry_boost * float(self.aimless['DataProcessingIsigOverall'])) / float(
+#                        self.aimless['DataProcessingUnitCellVolume'])
+#                except ValueError:
+#                    self.aimless['DataProcessingScore'] = 0.0
+#        self.aimless['DataProcessingUnitCell'] = str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(alpha) + ' ' + str(
+#            beta) + ' ' + str(gamma)
+#        self.aimless['DataProcessingResolutionOverall'] = str(
+#            self.aimless['DataProcessingResolutionLow']) + ' - ' + str(self.aimless['DataProcessingResolutionHigh'])
 
+    def json_logfile(self,logfile):
+        with open(logfile, 'r') as log:
+            data = log.read()
+        obj = json.loads(data)
+        self.aimless['DataProcessingResolutionLow'] = round(math.sqrt(1/float(obj['d_star_sq_max'][0])),2)
+        self.aimless['DataProcessingResolutionLowInnerShell'] = round(math.sqrt(1/float(obj['d_star_sq_max'][1])),2)
+        self.aimless['DataProcessingResolutionHigh'] = round(math.sqrt(1/float(obj['d_star_sq_min'][len(obj['d_star_sq_min'])-1])),2)
+        self.aimless['DataProcessingResolutionHighOuterShell'] = round(math.sqrt(1/float(obj['d_star_sq_min'][len(obj['d_star_sq_min'])-2])),2)
+        self.aimless['DataProcessingResolutionOverall'] = self.aimless['DataProcessingResolutionLow'] + '-' + self.aimless['DataProcessingResolutionHigh']
+        self.aimless['DataProcessingRmergeOverall'] = round(obj['overall']['r_merge'],3)
+        self.aimless['DataProcessingRmergeLow'] = round(obj['r_merge'][0],3)
+        self.aimless['DataProcessingRmergeHigh'] = round(obj['r_merge'][len(obj['r_merge'])-1],3)
+        self.aimless['DataProcessingIsigOverall'] = round(obj['overall']['i_over_sigma_mean'],1)
+        self.aimless['DataProcessingIsigLow'] = round(obj['i_over_sigma_mean'][0],1)
+        self.aimless['DataProcessingIsigHigh'] = round(obj['i_over_sigma_mean'][len(obj['i_over_sigma_mean'])-1],1)
+        self.aimless['DataProcessingCompletenessOverall'] = round(obj['overall']['completeness'],1)
+        self.aimless['DataProcessingCompletenessLow'] = round(obj['completeness'][0],1)
+        self.aimless['DataProcessingCompletenessHigh'] = round(obj['completeness'][len(obj['completeness'])-1],1)
+        self.aimless['DataProcessingMultiplicityOverall'] = round(obj['overall']['multiplicity'],1)
+        self.aimless['DataProcessingMultiplicityLow'] = round(obj['multiplicity'][0],1)
+        self.aimless['DataProcessingMultiplicityHigh'] = round(obj['multiplicity'][len(obj['multiplicity'])-1],1)
+        self.aimless['DataProcessingCChalfOverall'] = round(obj['overall']['cc_one_half'],2)
+        self.aimless['DataProcessingCChalfLow'] = round(obj['cc_one_half'][0],2)
+        self.aimless['DataProcessingCChalfHigh'] = round(obj['cc_one_half'][len(obj['cc_one_half'])-1],2)
+#        self.aimless['DataProcessingResolutionHigh15sigma'] =
+        self.aimless['DataProcessingUniqueReflectionsOverall'] = obj['overall']['n_obs']
+#        self.aimless['DataProcessingPointGroup'] =
+#        self.aimless['DataProcessingUnitCellVolume'] =
+#        self.aimless['DataProcessingAlert'] =
+#        self.aimless['DataProcessingScore'] =
+        json_name = logfile[logfile.rfind('/')+1:]
+        mmcif_file = logfile.replace('LogFiles','DataFiles').replace(json_name,'xia2.mmcif')
+        if os.path.isfile(mmcif_file):
+            self.read_mmcif(mmcif_file)
+
+
+    def read_mmcif(self,mmcif):
+        for line in open(mmcif):
+            if line.startswith('_cell.angle_alpha'):
+                self.aimless['DataProcessingAlpha'] = line.split()[1]
+            elif line.startswith('_cell.angle_beta'):
+                self.aimless['DataProcessingBeta'] = line.split()[1]
+            elif line.startswith('_cell.angle_gamma'):
+                self.aimless['DataProcessingGamma'] = line.split()[1]
+            elif line.startswith('_cell.length_a'):
+                self.aimless['DataProcessingA'] = line.split()[1]
+            elif line.startswith('_cell.length_b'):
+                self.aimless['DataProcessingB'] = line.split()[1]
+            elif line.startswith('_cell.length_c'):
+                self.aimless['DataProcessingC'] = line.split()[1]
+            elif line.startswith('_diffrn_radiation_wavelength.wavelength'):
+                self.aimless['DataCollectionWavelength'] = line.split()[1]
+            elif line.startswith('_symmetry.space_group_name_H-M'):
+                self.aimless['DataProcessingSpaceGroup'] = line[line.find("'")+1:line.rfind("'")].replace(' ','')
+                self.aimless['DataProcessingPointGroup'] = self.get_pointgroup_from_space_group(
+                    self.aimless['DataProcessingSpaceGroup'])
+            elif line.startswith('_space_group.crystal_system'):
+                self.aimless['DataProcessingLattice'] = line.split()[1]
+
+            self.aimless['DataProcessingUnitCell'] = self.aimless['DataProcessingA'] + ' ' + self.aimless[
+                    'DataProcessingA'] + ' ' + self.aimless['DataProcessingA'] + ' ' + self.aimless[
+                                                             'DataProcessingA'] + ' ' + self.aimless[
+                                                             'DataProcessingA'] + ' ' + self.aimless['DataProcessingA']
 
 
     def get_lattice_from_space_group(self,logfile_spacegroup):
