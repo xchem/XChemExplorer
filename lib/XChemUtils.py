@@ -607,7 +607,7 @@ class parse:
         # green:    #00FF00
         # gray:     #E0E0E0
 
-        if self.aimless['DataProcessingA'] != 'n/a' and self.aimless['DataProcessingA'] != 'n/a' and self.aimless['DataProcessingc'] != 'n/a' \
+        if self.aimless['DataProcessingA'] != 'n/a' and self.aimless['DataProcessingB'] != 'n/a' and self.aimless['DataProcessingC'] != 'n/a' \
                 and self.aimless['DataProcessingAlpha'] != 'n/a' and self.aimless['DataProcessingBeta'] != 'n/a' and self.aimless['DataProcessingGamma'] != 'n/a' \
                 and self.aimless['DataProcessingLattice'] != 'n/a':
             self.aimless['DataProcessingUnitCellVolume'] = str(
