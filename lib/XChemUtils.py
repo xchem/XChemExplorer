@@ -798,6 +798,7 @@ class parse:
 #        self.aimless['DataProcessingScore'] =
         json_name = logfile[logfile.rfind('/')+1:]
         mmcif_file = logfile.replace('LogFiles','DataFiles').replace(json_name,'xia2.mmcif')
+        print '>>>>..... logile:',logfile
         print '>>>>>>>>>> json: ',json_name
         print '>>>> looking for:',mmcif_file
         quit()
