@@ -804,17 +804,17 @@ class parse:
 
     def read_mmcif(self,mmcif):
         for line in open(mmcif):
-            if line.startswith('_cell.angle_alpha'):
+            if line.startswith('_cell.angle_alpha '):
                 self.aimless['DataProcessingAlpha'] = line.split()[1]
-            elif line.startswith('_cell.angle_beta'):
+            elif line.startswith('_cell.angle_beta '):
                 self.aimless['DataProcessingBeta'] = line.split()[1]
-            elif line.startswith('_cell.angle_gamma'):
+            elif line.startswith('_cell.angle_gamma '):
                 self.aimless['DataProcessingGamma'] = line.split()[1]
-            elif line.startswith('_cell.length_a'):
+            elif line.startswith('_cell.length_a '):
                 self.aimless['DataProcessingA'] = line.split()[1]
-            elif line.startswith('_cell.length_b'):
+            elif line.startswith('_cell.length_b '):
                 self.aimless['DataProcessingB'] = line.split()[1]
-            elif line.startswith('_cell.length_c'):
+            elif line.startswith('_cell.length_c '):
                 self.aimless['DataProcessingC'] = line.split()[1]
             elif line.startswith('_diffrn_radiation_wavelength.wavelength'):
                 self.aimless['DataCollectionWavelength'] = line.split()[1]
