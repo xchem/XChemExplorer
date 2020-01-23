@@ -2504,6 +2504,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         if not os.path.isfile(mtzfile[mtzfile.rfind('/') + 1:]):
             self.Logfile.insert('%s: copying %s' % (xtal, mtzfile))
             os.system('/bin/cp ' + mtzfile + ' .')
+            for mmcif in glob.glob(os.path.join(mtzfile[:mtzfile.rfind('/')],'*')):
+                if mmcif.endswith('.mmcif'):
+                    self.Logfile.insert('%s: copying %s' %(xtal,mmcif))
+                    os.system('/bin/cp ' + mmcif + ' .')
         if os.path.isfile(mtzfile[mtzfile.rfind('/')+1:]) and not os.path.isfile(xtal+'.mtz'):
             os.symlink(mtzfile[mtzfile.rfind('/')+1:], xtal + '.mtz')
         if os.path.isfile(mtzfile[mtzfile.rfind('/') + 1:]):
