@@ -2600,6 +2600,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
         else:
+            print folder
             for f in folder.split('/'):
                 print f
                 if 'xia2' or 'ap-run' or 'dials' or 'autoPROC' in f:
