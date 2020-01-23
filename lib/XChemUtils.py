@@ -10,7 +10,7 @@ import shutil
 import math
 import platform
 import tarfile
-
+import json
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
