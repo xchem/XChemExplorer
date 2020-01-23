@@ -2606,7 +2606,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     autoPROC = f
                     break
 #            autoproc = folder.split('/')[len(folder.split('/'))-1]
-        quit()
+            quit()
         return autoproc
 
     def update_data_collection_table(self,xtal,current_run,autoproc,db_dict):
