@@ -2708,7 +2708,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                         if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
                             autoproc = 'aP_staraniso'
                         else:
-                            autoproc = self.getAutoProc(folder)
+                            autoproc = self.getAutoProc(procDir)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
