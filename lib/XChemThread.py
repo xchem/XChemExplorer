@@ -2600,15 +2600,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
         else:
-            print folder
             for f in folder.split('/'):
                 print f
-                if 'xia2' or 'ap-run' or 'dials' or 'autoPROC' in f:
-                    autoPROC = f
+                if ('xia2' or 'dials' or 'autoPROC') in f:
+                    autoproc = f
                     break
 #            autoproc = folder.split('/')[len(folder.split('/'))-1]
-        print autoproc
-        quit()
         return autoproc
 
     def update_data_collection_table(self,xtal,current_run,autoproc,db_dict):
