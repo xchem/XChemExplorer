@@ -2781,11 +2781,17 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                         logfile = item[1]
                         mtzfile = item[2]
 
+                        self.Logfile.insert('%s: search template: procDir - logfile - mtzfile' % xtal)
+                        self.Logfile.insert('%s: procDir = %s' % (xtal, procDir))
+                        self.Logfile.insert('%s: logfile = %s' % (xtal, logfile))
+                        self.Logfile.insert('%s: mtzfile = %s' % (xtal, mtzfile))
+
 #                        for folder in glob.glob(procDir):
 #                            for mtz in glob.glob(os.path.join(procDir,mtzfile)):
 #                                print mtz
 
                         for folder in glob.glob(procDir):
+                            self.Logfile.insert('%s: searching %s' % (xtal, folder))
                             if self.junk(folder):
                                 continue
                             if self.empty_folder(xtal,folder):
