@@ -2758,8 +2758,11 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 self.Logfile.insert('%s: checking auto-processing results in %s %s' %(xtal,self.visit,auto))
                 self.createSampleDir(xtal)
 
+                foundRun = False
                 self.Logfile.insert('%s: checking for runs in %s' %(xtal,os.path.join(collected_xtals,'*')))
                 for run in sorted(glob.glob(os.path.join(collected_xtals,'*'))):
+                    foundRun = True
+                    self.Logfile.insert('%s: current run %s' %(xtal,run))
                     current_run=run[run.rfind('/')+1:]
                     if current_run not in runList:
                         self.Logfile.insert('%s: found new run -> %s' %(xtal,current_run))
@@ -2801,6 +2804,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     progress += progress_step
                     self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+collected_xtals)
                     self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+                if not foundRun:
+                    self.Logfile.error('%s: could not find run' %xtal)
 
         self.Logfile.insert('====== finished parsing beamline directory ======')
         self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
