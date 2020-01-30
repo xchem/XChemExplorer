@@ -2763,10 +2763,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 for run in sorted(glob.glob(os.path.join(collected_xtals,'*'))):
                     foundRun = True
                     self.Logfile.insert('%s: current run %s' %(xtal,run))
-                    current_run=run[run.rfind('/')+1:]
+                    current_run=auto+'_'+run[run.rfind('/')+1:]
                     if current_run not in runList:
                         self.Logfile.insert('%s: found new run -> %s' %(xtal,current_run))
-                        runList.append(current_run)
+                        runList.append(visit+'_'+auto+'_'+current_run)
                     else:
                         continue
                     self.Logfile.insert('%s -> run: %s -> current run: %s' %(xtal,run,current_run))
