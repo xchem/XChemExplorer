@@ -2601,7 +2601,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             autoproc = 'autoPROC'
         else:
             for f in folder.split('/'):
-                print f
+#                print f
                 if ('xia2' or 'dials' or 'autoPROC') in f:
                     autoproc = f
                     break
@@ -2755,7 +2755,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 if xtal.endswith('_'):
                     continue    # happened sometime during testing, but should not happen anymore
 
-                self.Logfile.insert('%s: checking auto-processing results' %xtal)
+                self.Logfile.insert('%s: checking auto-processing results in %s %s' %(xtal,self.visit,auto))
                 self.createSampleDir(xtal)
 
                 for run in sorted(glob.glob(os.path.join(collected_xtals,'*'))):
@@ -2776,9 +2776,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                         logfile = item[1]
                         mtzfile = item[2]
 
-                        for folder in glob.glob(procDir):
-                            for mtz in glob.glob(os.path.join(procDir,mtzfile)):
-                                print mtz
+#                        for folder in glob.glob(procDir):
+#                            for mtz in glob.glob(os.path.join(procDir,mtzfile)):
+#                                print mtz
 
                         for folder in glob.glob(procDir):
                             if self.junk(folder):
