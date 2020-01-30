@@ -2741,7 +2741,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
         runList = []
 
-        autoDir = ['auto','agamemnon']
+        autoDir = ['auto','agamemnon','recollect']
 
         for auto in autoDir:
             for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir+'-*','processed',auto,self.target,'*'))):
