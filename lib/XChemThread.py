@@ -2432,6 +2432,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 [   os.path.join('xia2', '*'),
                     os.path.join('LogFiles', '*aimless.log'),
                     os.path.join('DataFiles', '*free.mtz')],
+                [   os.path.join('xia2-3*'),
+                    os.path.join('LogFiles', '*aimless.log'),
+                    os.path.join('DataFiles', '*free.mtz')],
+                [   os.path.join('xia2-dials*'),
+                    os.path.join('LogFiles', '*merging-statistics.json'),
+                    os.path.join('DataFiles', '*free.mtz')],
                 [   os.path.join('multi-xia2', '*'),
                     os.path.join('LogFiles', '*aimless.log'),
                     os.path.join('DataFiles', '*free.mtz')],
@@ -2498,6 +2504,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         if not os.path.isfile(mtzfile[mtzfile.rfind('/') + 1:]):
             self.Logfile.insert('%s: copying %s' % (xtal, mtzfile))
             os.system('/bin/cp ' + mtzfile + ' .')
+            for mmcif in glob.glob(os.path.join(mtzfile[:mtzfile.rfind('/')],'*')):
+                if mmcif.endswith('.mmcif'):
+                    self.Logfile.insert('%s: copying %s' %(xtal,mmcif))
+                    os.system('/bin/cp ' + mmcif + ' .')
         if os.path.isfile(mtzfile[mtzfile.rfind('/')+1:]) and not os.path.isfile(xtal+'.mtz'):
             os.symlink(mtzfile[mtzfile.rfind('/')+1:], xtal + '.mtz')
         if os.path.isfile(mtzfile[mtzfile.rfind('/') + 1:]):
@@ -2536,7 +2546,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             for img in glob.glob(os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,self.target,xtal,run + '*.0.png')):
                 if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
                     self.Logfile.insert('%s: copying %s' % (xtal, img))
-                    os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
+                    os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + auto+'_'+ run)))
         else:
             for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*.0.png')):
                 found = True
@@ -2561,8 +2571,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def readProcessingUpdateResults(self,xtal,folder,log,mtz,timestamp,current_run,autoproc):
         db_dict = {}
+        self.Logfile.warning('%s: looking for %s' %(xtal,os.path.join(folder, mtz)))
         for mtzfile in glob.glob(os.path.join(folder,mtz)):
+            self.Logfile.insert('%s: found %s' %(xtal,mtzfile))
+            self.Logfile.warning('%s: looking for %s' %(xtal,os.path.join(folder, log)))
             for logfile in glob.glob(os.path.join(folder, log)):
+                self.Logfile.insert('%s: found %s' % (xtal, logfile))
                 self.createAutoprocessingDir(xtal, current_run, autoproc)
                 mtzNew,logNew = self.copyMTZandLOGfiles(xtal,current_run,autoproc,mtzfile,logfile)
                 if self.target == '=== project directory ===':
@@ -2582,11 +2596,18 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #        return db_dict
 
     def getAutoProc(self,folder):
-        autoproc='unkown'
+        autoproc='unknown'
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
+        elif 'autoPROC' in folder:
+            autoproc = 'autoPROC'
         else:
-            autoproc = folder.split('/')[len(folder.split('/'))-1]
+            for f in folder.split('/'):
+                print f
+                if ('xia2' or 'dials' or 'autoPROC') in f:
+                    autoproc = f
+                    break
+#            autoproc = folder.split('/')[len(folder.split('/'))-1]
         return autoproc
 
     def update_data_collection_table(self,xtal,current_run,autoproc,db_dict):
@@ -2672,8 +2693,13 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     procDir = os.path.join(run,item[0])
                     logfile = item[1]
                     mtzfile = item[2]
+                    self.Logfile.insert('%s: search template: procDir - logfile - mtzfile' %xtal)
+                    self.Logfile.insert('%s: procDir = %s' %(xtal,procDir))
+                    self.Logfile.insert('%s: logfile = %s' %(xtal,logfile))
+                    self.Logfile.insert('%s: mtzfile = %s' %(xtal,mtzfile))
 
                     for folder in glob.glob(procDir):
+                        self.Logfile.insert('%s: searching %s' %(xtal,folder))
                         if self.junk(folder):
                             continue
                         if self.empty_folder(xtal,folder):
@@ -2681,7 +2707,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                         if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
                             autoproc = 'aP_staraniso'
                         else:
-                            autoproc = self.getAutoProc(folder)
+                            autoproc = self.getAutoProc(procDir)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
@@ -2717,7 +2743,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
         runList = []
 
-        autoDir = ['auto','agamemnon']
+        autoDir = ['auto','agamemnon','recollect']
 
         for auto in autoDir:
             for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir+'-*','processed',auto,self.target,'*'))):
@@ -2731,13 +2757,18 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 if xtal.endswith('_'):
                     continue    # happened sometime during testing, but should not happen anymore
 
-                self.Logfile.insert('%s: checking auto-processing results' %xtal)
+                self.Logfile.insert('%s: checking auto-processing results in %s %s' %(xtal,self.visit,auto))
                 self.createSampleDir(xtal)
 
+                foundRun = False
+                self.Logfile.insert('%s: checking for runs in %s' %(xtal,os.path.join(collected_xtals,'*')))
                 for run in sorted(glob.glob(os.path.join(collected_xtals,'*'))):
-                    current_run=run[run.rfind('/')+1:]
+                    foundRun = True
+                    self.Logfile.insert('%s: current run %s' %(xtal,run))
+                    current_run=auto+'_'+run[run.rfind('/')+1:]
                     if current_run not in runList:
-                        runList.append(current_run)
+                        self.Logfile.insert('%s: found new run -> %s' %(xtal,current_run))
+                        runList.append(self.visit+'_'+auto+'_'+current_run)
                     else:
                         continue
                     self.Logfile.insert('%s -> run: %s -> current run: %s' %(xtal,run,current_run))
@@ -2745,18 +2776,24 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
                     # create directory for crystal aligment images in projectDir
                     self.makeJPGdir(xtal,current_run)
-                    self.copyJPGs(xtal, current_run, auto)
+                    self.copyJPGs(xtal, run[run.rfind('/')+1:], auto)
 
                     for item in self.toParse:
                         procDir = os.path.join(run,item[0])
                         logfile = item[1]
                         mtzfile = item[2]
 
-                        for folder in glob.glob(procDir):
-                            for mtz in glob.glob(os.path.join(procDir,mtzfile)):
-                                print mtz
+                        self.Logfile.insert('%s: search template: procDir - logfile - mtzfile' % xtal)
+                        self.Logfile.insert('%s: procDir = %s' % (xtal, procDir))
+                        self.Logfile.insert('%s: logfile = %s' % (xtal, logfile))
+                        self.Logfile.insert('%s: mtzfile = %s' % (xtal, mtzfile))
+
+#                        for folder in glob.glob(procDir):
+#                            for mtz in glob.glob(os.path.join(procDir,mtzfile)):
+#                                print mtz
 
                         for folder in glob.glob(procDir):
+                            self.Logfile.insert('%s: searching %s' % (xtal, folder))
                             if self.junk(folder):
                                 continue
                             if self.empty_folder(xtal,folder):
@@ -2775,6 +2812,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     progress += progress_step
                     self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+collected_xtals)
                     self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+                if not foundRun:
+                    self.Logfile.error('%s: could not find run' %xtal)
 
         self.Logfile.insert('====== finished parsing beamline directory ======')
         self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
