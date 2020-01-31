@@ -398,7 +398,7 @@ class parse:
                                                         '432':          24  }
 
         self.aimless = {    'DataProcessingProgram':                        'n/a',
-                            'DataCollectionRun':                            'n/a',
+#                            'DataCollectionRun':                            'n/a',
                             'DataProcessingSpaceGroup':                     'n/a',
                             'DataProcessingUnitCell':                       'n/a',
                             'DataProcessingA':                              'n/a',
@@ -1117,7 +1117,7 @@ class mtztools:
                                                         '432':          24  }
 
         self.aimless = {    'DataProcessingProgram':                        'n/a',
-                            'DataCollectionRun':                            'n/a',
+#                            'DataCollectionRun':                            'n/a',
                             'DataProcessingSpaceGroup':                     'n/a',
                             'DataProcessingUnitCell':                       'n/a',
                             'DataProcessingA':                              'n/a',

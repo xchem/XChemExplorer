@@ -2596,12 +2596,14 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #        return db_dict
 
     def getAutoProc(self,folder):
-        autoproc='unkown'
+        autoproc='unknown'
         if 'ap-run' in folder:
+            autoproc = 'autoPROC'
+        elif 'autoPROC' in folder:
             autoproc = 'autoPROC'
         else:
             for f in folder.split('/'):
-#                print f
+                print f
                 if ('xia2' or 'dials' or 'autoPROC') in f:
                     autoproc = f
                     break
