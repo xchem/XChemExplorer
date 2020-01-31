@@ -2774,7 +2774,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
                     # create directory for crystal aligment images in projectDir
                     self.makeJPGdir(xtal,current_run)
-                    self.copyJPGs(xtal, current_run, auto)
+                    self.copyJPGs(xtal, run[run.rfind('/')+1:], auto)
 
                     for item in self.toParse:
                         procDir = os.path.join(run,item[0])

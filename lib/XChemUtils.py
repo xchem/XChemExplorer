@@ -589,10 +589,10 @@ class parse:
         # Note: only works if file is in original directory, but not once it moved to 'inital_model' folder#
 ##        print self.Logfile.split('/')[9].split('_')[1]
 ##        if len(self.Logfile.split('/'))>8 and len(self.Logfile.split('/')[9].split('_'))==1:
-        try:
-            self.aimless['DataCollectionRun']=logfile.split('/')[9].split('_')[1]
-        except IndexError:
-            pass
+#        try:
+#            self.aimless['DataCollectionRun']=logfile.split('/')[9].split('_')[1]
+#        except IndexError:
+#            pass
 
 
         if logfile.endswith('.log') or logfile.endswith('.table1'):
