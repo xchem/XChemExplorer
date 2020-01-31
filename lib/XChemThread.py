@@ -2546,7 +2546,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             for img in glob.glob(os.path.join(self.processedDir.replace(proposal,self.visit),'jpegs',auto,self.target,xtal,run + '*.0.png')):
                 if not os.path.isfile(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,img[img.rfind('/')+1:])):
                     self.Logfile.insert('%s: copying %s' % (xtal, img))
-                    os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + run)))
+                    os.system('/bin/cp %s %s' %(img,os.path.join(self.projectDir,xtal,'jpg', self.visit + '-' + auto+'_'+ run)))
         else:
             for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*.0.png')):
                 found = True

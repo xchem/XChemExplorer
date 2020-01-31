@@ -578,7 +578,11 @@ class parse:
             self.aimless['DataProcessingProgram']='xia2 3d'
         elif '3dii-run' in logfile:
             self.aimless['DataProcessingProgram']='xia2 3dii'
+        elif 'xia2' in logfile:
+            self.aimless['DataProcessingProgram'] = 'xia2'
         elif 'dials-run' in logfile:
+            self.aimless['DataProcessingProgram']='dials'
+        elif 'dials' in logfile:
             self.aimless['DataProcessingProgram']='dials'
         elif 'autoPROC' in logfile:
             self.aimless['DataProcessingProgram']='autoPROC'
