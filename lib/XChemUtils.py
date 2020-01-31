@@ -595,7 +595,7 @@ class parse:
             pass
 
 
-        if logfile.endswith('.log'):
+        if logfile.endswith('.log') or logfile.endswith('.table1'):
             self.aimless_logile(logfile)
         elif logfile.endswith('.json'):
             self.json_logfile(logfile)
