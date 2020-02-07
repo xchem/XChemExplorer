@@ -1,3 +1,6 @@
+v1.4.7 (07/02/2020)
+- added script to helpers which can replace residues in bound and ground state based on a new reference model (change_residues_in_ground_and_bound-state.py); cannot be called from GUI at the moment
+
 v1.4.6 (21/01/2020)
 - added xia2-* wildcard to read_write_autoprocessing_results_from_to_disc because autoprocessing folder names changed
 - added parsing of DIALS JSON merging statistics file and MMCIF cell parameter file
