@@ -1,3 +1,6 @@
+v1.4.8 (07/02/2020)
+- bug fix: default labxchem folders are only selected if xce starts in /dls/labxchem/...; just having labxchem in current directory string is not sufficient
+
 v1.4.7 (07/02/2020)
 - added script to helpers which can replace residues in bound and ground state based on a new reference model (change_residues_in_ground_and_bound-state.py); cannot be called from GUI at the moment
 
