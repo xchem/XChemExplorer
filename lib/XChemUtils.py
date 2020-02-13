@@ -834,10 +834,6 @@ class parse:
                     'DataProcessingA'] + ' ' + self.aimless['DataProcessingA'] + ' ' + self.aimless[
                                                              'DataProcessingA'] + ' ' + self.aimless[
                                                              'DataProcessingA'] + ' ' + self.aimless['DataProcessingA']
-        print '=================================='
-        print self.aimless
-        print '=================================='
-
 
     def get_lattice_from_space_group(self,logfile_spacegroup):
         lattice_type='n/a'
