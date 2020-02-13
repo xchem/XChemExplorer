@@ -828,7 +828,8 @@ class parse:
                     self.aimless['DataProcessingSpaceGroup'])
             elif line.startswith('_space_group.crystal_system'):
                 self.aimless['DataProcessingLattice'] = line.split()[1]
-
+                if self.aimless['DataProcessingLattice'] == 'trigonal':
+                    self.aimless['DataProcessingLattice'] = 'hexagonal'
             self.aimless['DataProcessingUnitCell'] = self.aimless['DataProcessingA'] + ' ' + self.aimless[
                     'DataProcessingA'] + ' ' + self.aimless['DataProcessingA'] + ' ' + self.aimless[
                                                              'DataProcessingA'] + ' ' + self.aimless[
@@ -865,6 +866,7 @@ class parse:
             unitcell_volume=a*b*c* \
                             math.sqrt((1-math.cos(alpha)**2-math.cos(beta)**2-math.cos(gamma)**2) \
                                       +2*(math.cos(alpha)*math.cos(beta)*math.cos(gamma)))
+            print 'unit cell volume',unitcell_volume
 #        if lattice=='monoclinic':
         if 'monoclinic' in lattice:
             unitcell_volume=round(a*b*c*math.sin(beta),1)
