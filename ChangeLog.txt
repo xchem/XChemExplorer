@@ -1,4 +1,4 @@
-v1.4.9 (20/02/2020)
+v1.4.9 (13/02/2020)
 - bug fix: corrected DataProcessingUnitCellVolume calculation from merging-statistics.json file for trigonal lattice
 - show only 'resolution high' in tables because formatting for resolution at 1.5 or 2.0 I/sig(I) inconsistent in aimless logfiles and not reported in dials scaling logile
 
