@@ -808,8 +808,10 @@ class parse:
 
     def read_mmcif(self,mmcif):
         for line in open(mmcif):
+            print '=>', line
             if line.startswith('_cell.angle_alpha '):
                 self.aimless['DataProcessingAlpha'] = line.split()[1]
+                print '--------->',line
             elif line.startswith('_cell.angle_beta '):
                 self.aimless['DataProcessingBeta'] = line.split()[1]
             elif line.startswith('_cell.angle_gamma '):
