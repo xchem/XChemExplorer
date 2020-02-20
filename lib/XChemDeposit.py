@@ -109,37 +109,40 @@ class templates:
             counter+=1
 
         if depositDict['molecule_name_two'].replace(' ','') == '' or depositDict['molecule_name_two'].replace(' ','').lower() == 'none':
-            entity = (
-                    'loop_\n'
-                    '_entity.id\n'
-                    '_entity.type\n'
-                    '_entity.src_method\n'
-                    '_entity.pdbx_description\n'
-                    '_entity.pdbx_mutation\n'
-                    '1 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene'], depositDict['fragment_name_one_specific_mutation']) +
-                    '#\n'
-                    'loop_\n'
-                    '_entity_poly.entity_id\n'
-                    '_entity_poly.type\n'
-                    '_entity_poly.pdbx_seq_one_letter_code\n'
-                    '_entity_poly.pdbx_strand_id\n'
-                    '_entity_poly.pdbx_seq_db_id\n'
-                    '_entity_poly.pdbx_seq_db_name\n'
-                    '1 "polypeptide(L)"\n'
-                    + molecule_one_letter_sequence + '\n'
-                                                     ';\n'
-                    '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
-                    '#\n'
-                    'loop_\n'
-                    '_entity_src_gen.entity_id\n'
-                    '_entity_src_gen.gene_src_strain\n'
-                    '_entity_src_gen.pdbx_gene_src_scientific_name\n'
-                    '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
-                    '_entity_src_gen.pdbx_host_org_scientific_name\n'
-                    '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
-                    '1 ? "%s" %s  "%s" %s\n' % (depositDict['Source_organism_scientific_name'], pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'], pdbx_host_org_ncbi_taxonomy_id) +
-                    '#\n'
-            )
+            try:
+                entity = (
+                        'loop_\n'
+                        '_entity.id\n'
+                        '_entity.type\n'
+                        '_entity.src_method\n'
+                        '_entity.pdbx_description\n'
+                        '_entity.pdbx_mutation\n'
+                        '1 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene'], depositDict['fragment_name_one_specific_mutation']) +
+                        '#\n'
+                        'loop_\n'
+                        '_entity_poly.entity_id\n'
+                        '_entity_poly.type\n'
+                        '_entity_poly.pdbx_seq_one_letter_code\n'
+                        '_entity_poly.pdbx_strand_id\n'
+                        '_entity_poly.pdbx_seq_db_id\n'
+                        '_entity_poly.pdbx_seq_db_name\n'
+                        '1 "polypeptide(L)"\n'
+                        + molecule_one_letter_sequence + '\n'
+                                                         ';\n'
+                        '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
+                        '#\n'
+                        'loop_\n'
+                        '_entity_src_gen.entity_id\n'
+                        '_entity_src_gen.gene_src_strain\n'
+                        '_entity_src_gen.pdbx_gene_src_scientific_name\n'
+                        '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
+                        '_entity_src_gen.pdbx_host_org_scientific_name\n'
+                        '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
+                        '1 ? "%s" %s  "%s" %s\n' % (depositDict['Source_organism_scientific_name'], pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'], pdbx_host_org_ncbi_taxonomy_id) +
+                        '#\n'
+                )
+            except UnboundLocalError:
+                print 'Error: Something went wrong! Please check if you have saved the .deposit file to the database: Menu Deposition -> Edit Information'
         else:
             molecule_two_letter_sequence=';'
             counter=1
