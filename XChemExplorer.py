@@ -1203,6 +1203,12 @@ class XChemExplorer(QtGui.QApplication):
         self.contact_author_PI_phone_number.setFixedWidth(200)
         grid.addWidget(self.contact_author_PI_phone_number, 14, 1)
 
+        grid.addWidget(QtGui.QLabel('ORCID'), 15, 0)
+        self.contact_author_PI_ORCID = QtGui.QLineEdit()
+        self.contact_author_PI_ORCID.setText('')
+        self.contact_author_PI_ORCID.setFixedWidth(200)
+        grid.addWidget(self.contact_author_PI_ORCID, 15, 1)
+
         frame.setLayout(grid)
         hbox.addWidget(frame)
 
@@ -1297,6 +1303,12 @@ class XChemExplorer(QtGui.QApplication):
         self.contact_author_phone_number.setText('')
         self.contact_author_phone_number.setFixedWidth(200)
         grid.addWidget(self.contact_author_phone_number, 14, 1)
+
+        grid.addWidget(QtGui.QLabel('ORCID'), 15, 0)
+        self.contact_author_ORCID = QtGui.QLineEdit()
+        self.contact_author_ORCID.setText('')
+        self.contact_author_ORCID.setFixedWidth(200)
+        grid.addWidget(self.contact_author_ORCID, 15, 1)
 
         frame.setLayout(grid)
         hbox.addWidget(frame)
@@ -1505,7 +1517,7 @@ class XChemExplorer(QtGui.QApplication):
         self.molecule_name = QtGui.QLineEdit()
         self.molecule_name.setText('')
         self.molecule_name.setFixedWidth(300)
-        self.molecule_name.setStyleSheet("background-color: rgb(192, 192, 192);")
+#        self.molecule_name.setStyleSheet("background-color: rgb(192, 192, 192);")
         grid.addWidget(self.molecule_name, 2, 1)
         grid.addWidget(QtGui.QLabel('(e.g. RNA Hammerhead Ribozyme)'), 2, 2)
 
@@ -1620,7 +1632,7 @@ class XChemExplorer(QtGui.QApplication):
         self.molecule_name_two = QtGui.QLineEdit()
         self.molecule_name_two.setText('')
         self.molecule_name_two.setFixedWidth(300)
-        self.molecule_name_two.setStyleSheet("background-color: rgb(192, 192, 192);")
+#        self.molecule_name_two.setStyleSheet("background-color: rgb(192, 192, 192);")
         grid.addWidget(self.molecule_name_two, 2, 1)
         grid.addWidget(QtGui.QLabel('(e.g. RNA Hammerhead Ribozyme)'), 2, 2)
 
@@ -1747,57 +1759,68 @@ class XChemExplorer(QtGui.QApplication):
         grid.addWidget(self.structure_keywords, 1, 1)
         grid.addWidget(QtGui.QLabel('(e.g. beta barrel, protein-DNA complex)'), 1, 2)
 
-        grid.addWidget(QtGui.QLabel('Biological Assembly'), 2, 0)
+        grid.addWidget(QtGui.QLabel('Type'), 2, 0)
+        self.structure_keywords_type = QtGui.QComboBox()
+        for item in XChemMain.pdbx_keywords(): self.structure_keywords_type.addItem(item)
+        grid.addWidget(self.structure_keywords_type, 2, 1)
+#        self.structure_keywords = QtGui.QLineEdit()
+#        self.structure_keywords.setText('SGC - Diamond I04-1 fragment screening, PanDDA, XChemExplorer')
+#        self.structure_keywords.setFixedWidth(300)
+#        grid.addWidget(self.structure_keywords, 1, 1)
+#        grid.addWidget(QtGui.QLabel('(e.g. beta barrel, protein-DNA complex)'), 1, 2)
+
+        grid.addWidget(QtGui.QLabel('Biological Assembly'), 3, 0)
         self.biological_assembly_chain_number = QtGui.QLineEdit()
         self.biological_assembly_chain_number.setText('')
         self.biological_assembly_chain_number.setFixedWidth(300)
-        grid.addWidget(self.biological_assembly_chain_number, 2, 1)
-        grid.addWidget(QtGui.QLabel('(e.g.  1 for monomer, 2 for dimer ..)'), 2, 2)
+        grid.addWidget(self.biological_assembly_chain_number, 3, 1)
+        grid.addWidget(QtGui.QLabel('(e.g.  1 for monomer, 2 for dimer ..)'), 3, 2)
 
-        grid.addWidget(QtGui.QLabel('Sequence UNIPROT ID'), 3, 0)
+        grid.addWidget(QtGui.QLabel('Sequence UNIPROT ID'), 4, 0)
         self.molecule_one_letter_sequence_uniprot_id = QtGui.QLineEdit()
         self.molecule_one_letter_sequence_uniprot_id.setText('')
         self.molecule_one_letter_sequence_uniprot_id.setFixedWidth(300)
-        grid.addWidget(self.molecule_one_letter_sequence_uniprot_id, 3, 1)
-        grid.addWidget(QtGui.QLabel('(e.g.  Q6B0I6)'), 3, 2)
+        grid.addWidget(self.molecule_one_letter_sequence_uniprot_id, 4, 1)
+        grid.addWidget(QtGui.QLabel('(e.g.  Q6B0I6)'), 4, 2)
 
-        grid.addWidget(QtGui.QLabel('Sequence'), 4, 0)
+        grid.addWidget(QtGui.QLabel('Sequence'), 5, 0)
         self.molecule_one_letter_sequence = QtGui.QTextEdit()
         self.molecule_one_letter_sequence.setText('')
         self.molecule_one_letter_sequence.setFixedWidth(300)
-        grid.addWidget(self.molecule_one_letter_sequence, 4, 1, 7, 2)
+        grid.addWidget(self.molecule_one_letter_sequence, 5, 1, 8, 2)
 
-        grid.addWidget(QtGui.QLabel('Sequence information for entity 2 (Important: only fill in if you have a protein-protein complex'), 8, 0)
+        grid.addWidget(QtGui.QLabel('Sequence information for entity 2'), 10, 0)
+        grid.addWidget(QtGui.QLabel('(Important: only for protein-protein complex'), 10, 1)
 
-        grid.addWidget(QtGui.QLabel('Sequence UNIPROT ID (Entity 2)'), 9, 0)
+        grid.addWidget(QtGui.QLabel('Sequence UNIPROT ID (Entity 2)'), 13, 0)
         self.molecule_one_letter_sequence_uniprot_id_two = QtGui.QLineEdit()
         self.molecule_one_letter_sequence_uniprot_id_two.setText('')
         self.molecule_one_letter_sequence_uniprot_id_two.setFixedWidth(300)
-        grid.addWidget(self.molecule_one_letter_sequence_uniprot_id_two, 9, 1)
-        grid.addWidget(QtGui.QLabel('(e.g.  Q6B0I6)'), 9, 2)
+        grid.addWidget(self.molecule_one_letter_sequence_uniprot_id_two, 13, 1)
+        grid.addWidget(QtGui.QLabel('(e.g.  Q6B0I6)'), 13, 2)
 
-        grid.addWidget(QtGui.QLabel('Sequence (Entity 2)'), 10, 0)
+        grid.addWidget(QtGui.QLabel('Sequence (Entity 2)'), 14, 0)
         self.molecule_one_letter_sequence_two = QtGui.QTextEdit()
         self.molecule_one_letter_sequence_two.setText('')
         self.molecule_one_letter_sequence_two.setFixedWidth(300)
-        grid.addWidget(self.molecule_one_letter_sequence_two, 10, 1, 13, 2)
+        grid.addWidget(self.molecule_one_letter_sequence_two, 14, 1, 19, 2)
 
 
-        grid.addWidget(QtGui.QLabel('Structural Genomic (optional)'), 14, 0)
+        grid.addWidget(QtGui.QLabel('Structural Genomic (optional)'), 21, 0)
 
-        grid.addWidget(QtGui.QLabel('Project Name'), 15, 0)
+        grid.addWidget(QtGui.QLabel('Project Name'), 22, 0)
         self.SG_project_name = QtGui.QLineEdit()
         self.SG_project_name.setText('')
         self.SG_project_name.setFixedWidth(300)
-        grid.addWidget(self.SG_project_name, 15, 1)
-        grid.addWidget(QtGui.QLabel('(e.g. SGC, Structural Genomics Consortium)'), 15, 2)
+        grid.addWidget(self.SG_project_name, 22, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. SGC, Structural Genomics Consortium)'), 22, 2)
 
-        grid.addWidget(QtGui.QLabel('Full Name'), 16, 0)
+        grid.addWidget(QtGui.QLabel('Full Name'), 23, 0)
         self.full_name_of_SG_center = QtGui.QLineEdit()
         self.full_name_of_SG_center.setText('')
         self.full_name_of_SG_center.setFixedWidth(300)
-        grid.addWidget(self.full_name_of_SG_center, 16, 1)
-        grid.addWidget(QtGui.QLabel('(e.g. Structural Genomics Consortium)'), 16, 2)
+        grid.addWidget(self.full_name_of_SG_center, 23, 1)
+        grid.addWidget(QtGui.QLabel('(e.g. Structural Genomics Consortium)'), 23, 2)
 
         frame.setLayout(grid)
         vb.addWidget(frame)
@@ -1995,6 +2018,10 @@ class XChemExplorer(QtGui.QApplication):
         file_name = tuple(file_name_temp)[0]
         self.deposit_dict = pickle.load(open(file_name, "rb"))
         print self.deposit_dict
+        for key in self.get_deposit_dict_template():
+            if key not in self.deposit_dict:
+                self.update_log.warning('field not in .deposit file: ' + str(key))
+                self.deposit_dict[key] = ''
         self.update_deposit_input()
 
     def load_deposit_from_database(self):
@@ -2039,6 +2066,7 @@ class XChemExplorer(QtGui.QApplication):
             self.contact_author_PI_Zip_Code.setText(self.deposit_dict['contact_author_PI_Zip_Code'])
             self.contact_author_PI_Country.setText(self.deposit_dict['contact_author_PI_Country'])
             self.contact_author_PI_phone_number.setText(self.deposit_dict['contact_author_PI_phone_number'])
+            self.contact_author_PI_ORCID.setText(self.deposit_dict['contact_author_PI_ORCID'])
 
             self.contact_author_salutation.setText(self.deposit_dict['contact_author_salutation'])
             self.contact_author_first_name.setText(self.deposit_dict['contact_author_first_name'])
@@ -2058,6 +2086,7 @@ class XChemExplorer(QtGui.QApplication):
             self.contact_author_Zip_Code.setText(self.deposit_dict['contact_author_Zip_Code'])
             self.contact_author_Country.setText(self.deposit_dict['contact_author_Country'])
             self.contact_author_phone_number.setText(self.deposit_dict['contact_author_phone_number'])
+            self.contact_author_ORCID.setText(self.deposit_dict['contact_author_ORCID'])
             index = self.Release_status_for_coordinates.findText(self.deposit_dict['Release_status_for_coordinates'],
                                                                  QtCore.Qt.MatchFixedString)
             self.Release_status_for_coordinates.setCurrentIndex(index)
@@ -2187,9 +2216,9 @@ class XChemExplorer(QtGui.QApplication):
             index = self.phasing_software.findText(self.deposit_dict['phasing_software'], QtCore.Qt.MatchFixedString)
             self.phasing_software.setCurrentIndex(index)
 
-        except ValueError:
-            self.update_status_bar('Sorry, this is not a XChemExplorer deposit file!')
-            self.update_log.insert('Sorry, this is not a XChemExplorer deposit file!')
+        except ValueError, e:
+#            self.update_status_bar('Sorry, this is not a XChemExplorer deposit file!')
+            self.update_log.error('file is not a valid .deposit file: ' + str(e))
 
     def update_deposit_dict(self):
         self.deposit_dict = {
@@ -2207,6 +2236,7 @@ class XChemExplorer(QtGui.QApplication):
             'contact_author_PI_Zip_Code': str(self.contact_author_PI_Zip_Code.text()),
             'contact_author_PI_Country': str(self.contact_author_PI_Country.text()),
             'contact_author_PI_phone_number': str(self.contact_author_PI_phone_number.text()),
+            'contact_author_PI_ORCID': str(self.contact_author_PI_ORCID.text()),
 
             'contact_author_salutation': str(self.contact_author_salutation.text()),
             'contact_author_first_name': str(self.contact_author_first_name.text()),
@@ -2222,6 +2252,7 @@ class XChemExplorer(QtGui.QApplication):
             'contact_author_Zip_Code': str(self.contact_author_Zip_Code.text()),
             'contact_author_Country': str(self.contact_author_Country.text()),
             'contact_author_phone_number': str(self.contact_author_phone_number.text()),
+            'contact_author_ORCID': str(self.contact_author_ORCID.text()),
 
             'Release_status_for_coordinates': str(self.Release_status_for_coordinates.currentText()),
             'Release_status_for_sequence': str(self.Release_status_for_sequence.currentText()),
@@ -2305,6 +2336,114 @@ class XChemExplorer(QtGui.QApplication):
         for widget in self.primary_citation_author_name_List:
             primary_citation_author_name += str(widget.text()) + ';'
         self.deposit_dict['primary_citation_author_name'] = primary_citation_author_name[:-1]
+
+    def get_deposit_dict_template(self):
+        deposit_dict_template = {
+            'contact_author_PI_salutation': None,
+            'contact_author_PI_first_name': None,
+            'contact_author_PI_last_name': None,
+            'contact_author_PI_middle_name': None,
+            'contact_author_PI_role': None,
+            'contact_author_PI_organization_type': None,
+            'contact_author_PI_organization_name': None,
+            'contact_author_PI_email': None,
+            'contact_author_PI_address': None,
+            'contact_author_PI_city': None,
+            'contact_author_PI_State_or_Province': None,
+            'contact_author_PI_Zip_Code': None,
+            'contact_author_PI_Country': None,
+            'contact_author_PI_phone_number': None,
+            'contact_author_PI_ORCID': None,
+
+            'contact_author_salutation': None,
+            'contact_author_first_name': None,
+            'contact_author_last_name': None,
+            'contact_author_middle_name': None,
+            'contact_author_role': None,
+            'contact_author_organization_type': None,
+            'contact_author_organization_name': None,
+            'contact_author_email': None,
+            'contact_author_address': None,
+            'contact_author_city': None,
+            'contact_author_State_or_Province': None,
+            'contact_author_Zip_Code': None,
+            'contact_author_Country': None,
+            'contact_author_phone_number': None,
+            'contact_author_ORCID': None,
+
+            'Release_status_for_coordinates': None,
+            'Release_status_for_sequence': None,
+
+            'group_deposition_title': None,
+            'group_description': None,
+
+            'structure_title': None,
+            'structure_title_apo': None,
+
+            'primary_citation_id': None,
+            'primary_citation_journal_abbrev': None,
+            'primary_citation_title': None,
+            'primary_citation_year': None,
+            'primary_citation_journal_volume': None,
+            'primary_citation_page_first': None,
+            'primary_citation_page_last': None,
+            ### entity 1
+            'molecule_name': None,
+            'Source_organism_scientific_name': None,
+            'Source_organism_gene': None,
+            'Source_organism_strain': None,
+            'Expression_system_scientific_name': None,
+            'Expression_system_strain': None,
+            'Expression_system_plasmid_name': None,
+            'Expression_system_vector_type': None,
+            'Manipulated_source_details': None,
+            'fragment_name_one_specific_mutation': None,
+            'molecule_chain_one': None,
+
+            ### entity 2
+            'molecule_name_two': None,
+            'Source_organism_scientific_name_two': None,
+            'Source_organism_gene_two': None,
+            'Source_organism_strain_two': None,
+            'Expression_system_scientific_name_two': None,
+            'Expression_system_strain_two': None,
+            'Expression_system_plasmid_name_two': None,
+            'Expression_system_vector_type_two': None,
+            'Manipulated_source_details_two': None,
+            'fragment_name_two_specific_mutation': None,
+            'molecule_chain_two': None,
+
+            'structure_keywords': None,
+            'biological_assembly_chain_number': None,
+            'molecule_one_letter_sequence_uniprot_id': None,
+            'molecule_two_letter_sequence_uniprot_id': None,
+            'SG_project_name': None,
+            'full_name_of_SG_center': None,
+            'molecule_one_letter_sequence': None,
+            'molecule_two_letter_sequence': None,
+
+            'crystallization_method': None,
+            'crystallization_pH': None,
+            'crystallization_temperature': None,
+            'crystallization_details': None,
+
+            'radiation_source': None,
+            'radiation_source_type': None,
+            'radiation_wavelengths': None,
+            'radiation_detector': None,
+            'radiation_detector_type': None,
+            'data_collection_date': None,
+            'data_collection_temperature': None,
+            'data_collection_protocol': None,
+            'pdbx_starting_model': None,
+            'data_integration_software': None,
+            'phasing_software': None,
+            'structure_author_name': None,
+            'primary_citation_author_name': None
+
+        }
+
+        return deposit_dict_template
 
     def set_primary_citation_as_structure_authors(self, state):
         if state == QtCore.Qt.Checked:

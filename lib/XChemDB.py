@@ -296,6 +296,7 @@ class data_source:
             ['contact_author_PI_Country',                   'contact_author_PI_Country',                'TEXT'],
             ['contact_author_PI_fax_number',                'contact_author_PI_fax_number',             'TEXT'],
             ['contact_author_PI_phone_number',              'contact_author_PI_phone_number',           'TEXT'],
+            ['contact_author_PI_ORCID',                     'contact_author_PI_ORCID',                  'TEXT'],
 
             ['contact_author_salutation',                   'contact_author_salutation',                'TEXT'],
             ['contact_author_first_name',                   'contact_author_first_name',                'TEXT'],
@@ -312,6 +313,7 @@ class data_source:
             ['contact_author_Country',                      'contact_author_Country',                   'TEXT'],
             ['contact_author_fax_number',                   'contact_author_fax_number',                'TEXT'],
             ['contact_author_phone_number',                 'contact_author_phone_number',              'TEXT'],
+            ['contact_author_ORCID',                        'contact_author_ORCID',                     'TEXT'],
 
             ['Release_status_for_coordinates',              'Release_status_for_coordinates',           'TEXT'],
             ['Release_status_for_structure_factor',         'Release_status_for_structure_factor',      'TEXT'],

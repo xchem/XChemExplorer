@@ -109,37 +109,40 @@ class templates:
             counter+=1
 
         if depositDict['molecule_name_two'].replace(' ','') == '' or depositDict['molecule_name_two'].replace(' ','').lower() == 'none':
-            entity = (
-                    'loop_\n'
-                    '_entity.id\n'
-                    '_entity.type\n'
-                    '_entity.src_method\n'
-                    '_entity.pdbx_description\n'
-                    '_entity.pdbx_mutation\n'
-                    '1 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene'], depositDict['fragment_name_one_specific_mutation']) +
-                    '#\n'
-                    'loop_\n'
-                    '_entity_poly.entity_id\n'
-                    '_entity_poly.type\n'
-                    '_entity_poly.pdbx_seq_one_letter_code\n'
-                    '_entity_poly.pdbx_strand_id\n'
-                    '_entity_poly.pdbx_seq_db_id\n'
-                    '_entity_poly.pdbx_seq_db_name\n'
-                    '1 "polypeptide(L)"\n'
-                    + molecule_one_letter_sequence + '\n'
-                                                     ';\n'
-                    '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
-                    '#\n'
-                    'loop_\n'
-                    '_entity_src_gen.entity_id\n'
-                    '_entity_src_gen.gene_src_strain\n'
-                    '_entity_src_gen.pdbx_gene_src_scientific_name\n'
-                    '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
-                    '_entity_src_gen.pdbx_host_org_scientific_name\n'
-                    '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
-                    '1 ? "%s" %s  "%s" %s\n' % (depositDict['Source_organism_scientific_name'], pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'], pdbx_host_org_ncbi_taxonomy_id) +
-                    '#\n'
-            )
+            try:
+                entity = (
+                        'loop_\n'
+                        '_entity.id\n'
+                        '_entity.type\n'
+                        '_entity.src_method\n'
+                        '_entity.pdbx_description\n'
+                        '_entity.pdbx_mutation\n'
+                        '1 polymer     man "%s" %s\n' % (depositDict['Source_organism_gene'], depositDict['fragment_name_one_specific_mutation']) +
+                        '#\n'
+                        'loop_\n'
+                        '_entity_poly.entity_id\n'
+                        '_entity_poly.type\n'
+                        '_entity_poly.pdbx_seq_one_letter_code\n'
+                        '_entity_poly.pdbx_strand_id\n'
+                        '_entity_poly.pdbx_seq_db_id\n'
+                        '_entity_poly.pdbx_seq_db_name\n'
+                        '1 "polypeptide(L)"\n'
+                        + molecule_one_letter_sequence + '\n'
+                                                         ';\n'
+                        '%s %s UNP\n'                                        %(depositDict['protein_chains'],depositDict['molecule_one_letter_sequence_uniprot_id'])+
+                        '#\n'
+                        'loop_\n'
+                        '_entity_src_gen.entity_id\n'
+                        '_entity_src_gen.gene_src_strain\n'
+                        '_entity_src_gen.pdbx_gene_src_scientific_name\n'
+                        '_entity_src_gen.pdbx_gene_src_ncbi_taxonomy_id\n'
+                        '_entity_src_gen.pdbx_host_org_scientific_name\n'
+                        '_entity_src_gen.pdbx_host_org_ncbi_taxonomy_id\n'
+                        '1 ? "%s" %s  "%s" %s\n' % (depositDict['Source_organism_scientific_name'], pdbx_gene_src_ncbi_taxonomy_id,depositDict['Expression_system_scientific_name'], pdbx_host_org_ncbi_taxonomy_id) +
+                        '#\n'
+                )
+            except UnboundLocalError:
+                print 'Error: Something went wrong! Please check if you have saved the .deposit file to the database: Menu Deposition -> Edit Information'
         else:
             molecule_two_letter_sequence=';'
             counter=1
@@ -275,8 +278,9 @@ class templates:
             '_pdbx_contact_author.phone               \n'
             '_pdbx_contact_author.role                \n'
             '_pdbx_contact_author.organization_type   \n'
-            "1 '%s' '%s' '%s' '%s' '%s' %s %s '%s' '%s' '%s' '%s' %s\n" %(depositDict['contact_author_PI_address'],depositDict['contact_author_PI_organization_name'],depositDict['contact_author_PI_city'],depositDict['contact_author_PI_State_or_Province'],depositDict['contact_author_PI_Zip_Code'],depositDict['contact_author_PI_email'],depositDict['contact_author_PI_first_name'],depositDict['contact_author_PI_last_name'],depositDict['contact_author_PI_Country'],depositDict['contact_author_PI_phone_number'],depositDict['contact_author_PI_role'],depositDict['contact_author_PI_organization_type'])+
-            "2 '{0!s}' '{1!s}' '{2!s}' '{3!s}' '{4!s}' {5!s} {6!s} '{7!s}' '{8!s}' '{9!s}' '{10!s}' {11!s}\n".format(depositDict['contact_author_address'], depositDict['contact_author_organization_name'], depositDict['contact_author_city'], depositDict['contact_author_State_or_Province'], depositDict['contact_author_Zip_Code'].replace(' ',''), depositDict['contact_author_email'], depositDict['contact_author_first_name'], depositDict['contact_author_last_name'], depositDict['contact_author_Country'], depositDict['contact_author_phone_number'], depositDict['contact_author_role'], depositDict['contact_author_organization_type'])+
+            '_pdbx_contact_author.identifier_ORCID    \n'
+            "1 '%s' '%s' '%s' '?' '%s' %s %s '%s' '%s' '%s' '%s' %s %s\n" %(depositDict['contact_author_PI_address'],depositDict['contact_author_PI_organization_name'],depositDict['contact_author_PI_city'],depositDict['contact_author_PI_Zip_Code'],depositDict['contact_author_PI_email'],depositDict['contact_author_PI_first_name'],depositDict['contact_author_PI_last_name'],depositDict['contact_author_PI_Country'],depositDict['contact_author_PI_phone_number'],depositDict['contact_author_PI_role'],depositDict['contact_author_PI_organization_type'],depositDict['contact_author_PI_ORCID'])+
+            "2 '{0!s}' '{1!s}' '{2!s}' '?' '{3!s}' '{4!s}' {5!s} {6!s} '{7!s}' '{8!s}' '{9!s}' '{10!s}' {11!s}\n".format(depositDict['contact_author_address'], depositDict['contact_author_organization_name'], depositDict['contact_author_city'], depositDict['contact_author_Zip_Code'].replace(' ',''), depositDict['contact_author_email'], depositDict['contact_author_first_name'], depositDict['contact_author_last_name'], depositDict['contact_author_Country'], depositDict['contact_author_phone_number'], depositDict['contact_author_role'], depositDict['contact_author_organization_type'],depositDict['contact_author_ORCID'])+
             '#\n'
             'loop_\n'
             '_audit_author.name\n'
@@ -493,6 +497,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     continue
 
                 if not self.create_model_mmcif(xtal):
+                    continue
+
+                if not self.add_ligand_cif_to_model_mmcif(xtal):
                     continue
 
                 if not self.create_sf_mmcif(xtal):
@@ -934,20 +941,21 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                                                                                             'data_integration_software']) +
                     '{0!s} {1!s} ? ? program ? ? phasing ? ?\n'.format(str(max(softwareEntry) + 2),
                                                                                self.data_template_dict[
-                                                                                   'phasing_software']) +
-                    '#\n'
-                    "loop_\n"
-                    "_pdbx_related_exp_data_set.ordinal\n"
-                    "_pdbx_related_exp_data_set.data_reference\n"
-                    "_pdbx_related_exp_data_set.metadata_reference\n"
-                    "_pdbx_related_exp_data_set.data_set_type\n"
-                    "_pdbx_related_exp_data_set.details\n"
-                    " 1  "
-                    " 'doi:%s' "  %self.zenodo_dict['ZenodoDOI']+
-                    " 'doi:%s' "  %self.zenodo_dict['ZenodoDOI']+
-                    " 'other data'  "                 # 'other data' is only thing wwPDB accepts at the moment
-                    " 'Complete PanDDA analysis'\n"
-                    "\n" )
+                                                                                   'phasing_software'])
+#                    '#\n'
+#                    "loop_\n"
+#                    "_pdbx_related_exp_data_set.ordinal\n"
+#                    "_pdbx_related_exp_data_set.data_reference\n"
+#                    "_pdbx_related_exp_data_set.metadata_reference\n"
+#                    "_pdbx_related_exp_data_set.data_set_type\n"
+#                    "_pdbx_related_exp_data_set.details\n"
+#                    " 1  "
+#                    " 'doi:%s' "  %self.zenodo_dict['ZenodoDOI']+
+#                    " 'doi:%s' "  %self.zenodo_dict['ZenodoDOI']+
+#                    " 'other data'  "                 # 'other data' is only thing wwPDB accepts at the moment
+#                    " 'Complete PanDDA analysis'\n"
+#                    "\n"
+                )
 
                 sys.stdout.write(cifItem)
                 amendSoftwareBlock = False
@@ -963,6 +971,24 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #
 #            elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
 #                sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
+
+    def add_ligand_cif_to_model_mmcif(self,xtal):
+        filestatus = False
+        self.Logfile.insert('%s: looking for ligand restraints file...' %xtal)
+        os.chdir(os.path.join(self.projectDir, xtal))
+        if os.path.isfile(self.db_dict['CompoundCode']+'.cif'):
+            self.Logfile.insert('%s: found ligand restraints file -> %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
+            self.Logfile.insert('%s: adding ligand restraints file to model mmcif' %xtal)
+            cif = ''
+            for line in open(self.db_dict['CompoundCode']+'.cif'):
+                cif += line
+            f = open(xtal+'.mmcif','a')
+            f.write(cif)
+            f.close()
+            filestatus = True
+        else:
+            self.Logfile.warning('%s: could not find %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
+        return filestatus
 
 
     def make_table_one(self,xtal):

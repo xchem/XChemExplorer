@@ -1,3 +1,10 @@
+v1.4.10 (18/02/2020)
+- XChemDeposit: remove _pdbx_related_exp_data_set block because PanDDA ZENODO upload is not required
+- XChemDeposit: add _pdbx_contact_author.identifier_ORCID field
+- XChemDeposit: add pdbx_keywords dropdown
+- added helper script to reset occupancy of all protein residues with single conformer to 1.00
+- XChemDeposit: add ligand cif file to structure mmcif file
+
 v1.4.9 (13/02/2020)
 - bug fix: corrected DataProcessingUnitCellVolume calculation from merging-statistics.json file for trigonal lattice
 - show only 'resolution high' in tables because formatting for resolution at 1.5 or 2.0 I/sig(I) inconsistent in aimless logfiles and not reported in dials scaling logile
