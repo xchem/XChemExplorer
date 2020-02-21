@@ -82,6 +82,7 @@ class DepositionTab():
         deposition_ground_state_heading = self.layout_funcs.add_depo_heading('Group deposition of ground-state model')
         deposition_ground_state_heading.setStyleSheet("font: bold 20pt Arial")
 
+        deposition_ground_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.notification_about_changes_to_apo_deposition())
 
 
         deposition_ground_state_prerequisites = self.layout_funcs.add_depo_heading('Prerequisites')
@@ -92,23 +93,23 @@ class DepositionTab():
         deposition_ground_state_preparation = self.layout_funcs.add_depo_heading('Procedure')
         deposition_ground_state_preparation.setStyleSheet("font: italic bold 17pt Arial ")
 
-        deposition_ground_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_one_text())
+#        deposition_ground_state_preparation_step_one_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_one_text())
 
-        ground_state_pdb_button = QtGui.QPushButton('Select PDB file')
-        ground_state_pdb_button.clicked.connect(xce_object.select_ground_state_pdb)
-        ground_state_pdb_button.setMaximumWidth(200)
-        xce_object.ground_state_pdb_button_label = QtGui.QLabel('')
-        xce_object.ground_state_pdb_button_label.setStyleSheet('color: blue')
-
-        deposition_ground_state_log_info = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_log_info())
-
-        deposition_ground_state_preparation_step_two_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_two_text())
-
-        ground_state_mtz_button = QtGui.QPushButton('Select MTZ file')
-        ground_state_mtz_button.clicked.connect(xce_object.select_ground_state_mtz)
-        ground_state_mtz_button.setMaximumWidth(200)
-        xce_object.ground_state_mtz_button_label = QtGui.QLabel('')
-        xce_object.ground_state_mtz_button_label.setStyleSheet('color: blue')
+#        ground_state_pdb_button = QtGui.QPushButton('Select PDB file')
+#        ground_state_pdb_button.clicked.connect(xce_object.select_ground_state_pdb)
+#        ground_state_pdb_button.setMaximumWidth(200)
+#        xce_object.ground_state_pdb_button_label = QtGui.QLabel('')
+#        xce_object.ground_state_pdb_button_label.setStyleSheet('color: blue')
+#
+#        deposition_ground_state_log_info = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_log_info())
+#
+#        deposition_ground_state_preparation_step_two_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_two_text())
+#
+#        ground_state_mtz_button = QtGui.QPushButton('Select MTZ file')
+#        ground_state_mtz_button.clicked.connect(xce_object.select_ground_state_mtz)
+#        ground_state_mtz_button.setMaximumWidth(200)
+#        xce_object.ground_state_mtz_button_label = QtGui.QLabel('')
+#        xce_object.ground_state_mtz_button_label.setStyleSheet('color: blue')
 
         deposition_ground_state_preparation_step_three_text = self.layout_funcs.add_depo_text(XChemToolTips.deposition_ground_state_preparation_step_three_text())
         xce_object.ground_state_pandda_directory_label = QtGui.QLabel(xce_object.panddas_directory)
@@ -192,14 +193,14 @@ class DepositionTab():
                                   QtGui.QLabel(' \n\n\n '),
 
                                   deposition_ground_state_heading, QtGui.QLabel(' \n '),
+                                  deposition_ground_state_preparation_step_one_text, QtGui.QLabel(' \n '),
                                   deposition_ground_state_prerequisites,
                                   deposition_ground_state_prerequisites_text, QtGui.QLabel(' \n '),
                                   deposition_ground_state_preparation,
-                                  deposition_ground_state_preparation_step_one_text,
-                                  ground_state_pdb_button, xce_object.ground_state_pdb_button_label,
-                                  deposition_ground_state_log_info,
-                                  deposition_ground_state_preparation_step_two_text,
-                                  ground_state_mtz_button,xce_object.ground_state_mtz_button_label,
+#                                  ground_state_pdb_button, xce_object.ground_state_pdb_button_label,
+#                                  deposition_ground_state_log_info,
+#                                  deposition_ground_state_preparation_step_two_text,
+#                                  ground_state_mtz_button,xce_object.ground_state_mtz_button_label,
                                   deposition_ground_state_preparation_step_three_text,
                                   xce_object.ground_state_pandda_directory_label,
                                   deposition_ground_state_preparation_step_four_text,

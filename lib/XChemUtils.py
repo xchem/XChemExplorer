@@ -856,7 +856,7 @@ class parse:
 
 
     def calc_unitcell_volume_from_logfile(self,a,b,c,alpha,beta,gamma,lattice):
-        print '>>>',a,b,c,alpha,beta,gamma,lattice
+#        print '>>>',a,b,c,alpha,beta,gamma,lattice
         unitcell_volume=0
         if lattice=='triclinic':
             unitcell_volume=a*b*c* \

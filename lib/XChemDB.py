@@ -628,11 +628,11 @@ class data_source:
         data=[]
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
-        if sampleID == 'ground-state':      # just select first row in depositTable
-            cursor.execute("SELECT * FROM depositTable ORDER BY ROWID ASC LIMIT 1;")
-        else:
-            cursor.execute("select * from depositTable where CrystalName='{0!s}';".format(sampleID))
-
+#        if sampleID == 'ground-state':      # just select first row in depositTable
+#            cursor.execute("SELECT * FROM depositTable ORDER BY ROWID ASC LIMIT 1;")
+#        else:
+#            cursor.execute("select * from depositTable where CrystalName='{0!s}';".format(sampleID))
+        cursor.execute("select * from depositTable where CrystalName='{0!s}';".format(sampleID))
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
@@ -1617,6 +1617,9 @@ class data_source:
                 Logfile.insert('entry for ground-state model in depositTable does not exist')
             else:
                 Logfile.warning('entry for ground-state model in depositTable does already exist')
+                Logfile.warning('updating PDB, MTZ and DimplePANDDApath for ground-state entry')
+                cursor.execute("update depositTable set PDB_file='%s', MTZ_file='%s', DimplePANDDApath='%s' where StructureType='ground_state'" %(db_dict['PDB_file'],db_dict['MTZ_file'],db_dict['DimplePANDDApath']))
+                connect.commit()
                 return
 
         cursor.execute("select CrystalName,StructureType from depositTable where CrystalName is '{0!s}' and StructureType is '{1!s}'".format(xtal, type))
