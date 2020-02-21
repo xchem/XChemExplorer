@@ -1039,22 +1039,25 @@ class XChemExplorer(QtGui.QApplication):
         self.update_log.insert('preparing mmcif files for PDB group deposition...')
         ignore_event_map = False
         if structureType == 'ground-state':
-            self.update_log.insert('ground-state deposition')
-            data_template_dict = self.db.get_deposit_dict_for_sample('ground-state')
-            print data_template_dict
-            pdb = data_template_dict['PDB_file']
-            self.update_log.insert('looking for ground-state PDB: ' + pdb)
-            if not os.path.isfile(pdb):
-                self.update_log.error('ground-state PDB does not exist; stopping...')
-                start_thread = False
-            mtz = data_template_dict['MTZ_file']
-            self.update_log.insert('looking for ground-state MTZ: ' + mtz)
-            if not os.path.isfile(mtz):
-                self.update_log.error('ground-state MTZ does not exist; stopping...')
-                start_thread = False
-            ground_state = [ pdb,
-                             mtz,
-                             self.panddas_directory ]
+            try:
+                self.update_log.insert('ground-state deposition')
+                data_template_dict = self.db.get_deposit_dict_for_sample('ground-state')
+                print data_template_dict
+                pdb = data_template_dict['PDB_file']
+                self.update_log.insert('looking for ground-state PDB: ' + pdb)
+                if not os.path.isfile(pdb):
+                    self.update_log.error('ground-state PDB does not exist; stopping...')
+                    start_thread = False
+                mtz = data_template_dict['MTZ_file']
+                self.update_log.insert('looking for ground-state MTZ: ' + mtz)
+                if not os.path.isfile(mtz):
+                    self.update_log.error('ground-state MTZ does not exist; stopping...')
+                    start_thread = False
+                ground_state = [ pdb,
+                                 mtz,
+                                 self.panddas_directory ]
+            except KeyError:
+                self.update_log.error('seems like there is no entry for ground-state in database')
         else:
             ground_state = []
             if self.deposition_bounnd_state_preparation_ignore_event_map.isChecked():
