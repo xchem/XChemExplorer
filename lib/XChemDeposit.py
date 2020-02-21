@@ -393,6 +393,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.zenodo_dict = None
         self.pdb = None
         self.mtz = None
+        self.logDir = None
 
         self.ground_state = False
         self.ground_state_pdb = ''
@@ -404,6 +405,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.ground_state_pdb = ground_state[0]
             self.ground_state_mtz = ground_state[1]
             self.panddaDir = ground_state[2]
+            self.logDir = self.projectDir
             self.projectDir = self.panddaDir
             self.pdb = pdbtools(self.ground_state_pdb)
             self.mtz = mtztools(self.ground_state_mtz)
@@ -857,7 +859,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
-            aimless = os.path.join(self.projectDir,refXtal,refXtal+'.log')
+            aimless = os.path.join(self.logDir,refXtal,refXtal+'.log')
             self.Logfile.insert('aimless.log file: ' + aimless)
             Cmd = (pdb_extract_init +
                    ' -r {0!s}'.format(refSoft) +
