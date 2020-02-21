@@ -1038,10 +1038,10 @@ class XChemExplorer(QtGui.QApplication):
         start_thread = True
         self.update_log.insert('preparing mmcif files for PDB group deposition...')
         ignore_event_map = False
-        if structureType == 'ground-state':
+        if structureType == 'ground_state':
             try:
                 self.update_log.insert('ground-state deposition')
-                data_template_dict = self.db.get_deposit_dict_for_sample('ground-state')
+                data_template_dict = self.db.get_deposit_dict_for_sample('ground_state')
                 print data_template_dict
                 pdb = data_template_dict['PDB_file']
                 self.update_log.insert('looking for ground-state PDB: ' + pdb)
