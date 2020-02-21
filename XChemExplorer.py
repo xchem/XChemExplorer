@@ -1067,6 +1067,10 @@ class XChemExplorer(QtGui.QApplication):
 #        structureType = "ligand_bound"
 
         if start_thread:
+            if ground_state != []:
+                self.update_log.insert('apo PDB: ' + ground_state[0])
+                self.update_log.insert('apo MTZ: ' + ground_state[1])
+                self.update_log.insert('pandda directory: ' + ground_state[2])
             overwrite_existing_mmcif = True
             self.work_thread = XChemDeposit.prepare_mmcif_files_for_deposition(
                 os.path.join(self.database_directory, self.data_source_file),
