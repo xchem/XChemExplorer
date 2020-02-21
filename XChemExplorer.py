@@ -1042,10 +1042,12 @@ class XChemExplorer(QtGui.QApplication):
             self.update_log.insert('ground-state deposition')
             data_template_dict = self.db.get_deposit_dict_for_sample('ground-state')
             pdb = data_template_dict['PDB_file']
+            self.update_log.insert('looking for ground-state PDB: ' + pdb)
             if not os.path.isfile(pdb):
                 self.update_log.error('ground-state PDB does not exist; stopping...')
                 start_thread = False
             mtz = data_template_dict['MTZ_file']
+            self.update_log.insert('looking for ground-state MTZ: ' + mtz)
             if not os.path.isfile(mtz):
                 self.update_log.error('ground-state MTZ does not exist; stopping...')
                 start_thread = False
