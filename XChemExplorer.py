@@ -599,7 +599,7 @@ class XChemExplorer(QtGui.QApplication):
 
     def prepare_ground_state_mmcif(self):
         self.update_log.insert('preparing mmcif file for apo structure deposition')
-        self.prepare_models_for_deposition_ligand_bound('ground-state')
+        self.prepare_models_for_deposition_ligand_bound('ground_state')
 
     def open_icm(self):
         self.update_log.insert('starting ICM...')
