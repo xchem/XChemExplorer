@@ -406,6 +406,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.panddaDir = ground_state[2]
             self.projectDir = self.panddaDir
             self.pdb = pdbtools(self.ground_state_pdb)
+            self.mtz = mtztools(self.ground_state_mtz)
 #            self.mtz = mtztools(self.ground_state_mean_mtz)
 
     def run(self):
