@@ -857,6 +857,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
             aimless = os.path.join(self.projectDir,refXtal,refXtal+'.log')
+            self.Logfile.insert('aimless.log file: ' + aimless)
             Cmd = (pdb_extract_init +
                    ' -r {0!s}'.format(refSoft) +
                    ' -iPDB {0!s}'.format(self.ground_state_pdb) +

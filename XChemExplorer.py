@@ -1041,6 +1041,7 @@ class XChemExplorer(QtGui.QApplication):
         if structureType == 'ground-state':
             self.update_log.insert('ground-state deposition')
             data_template_dict = self.db.get_deposit_dict_for_sample('ground-state')
+            print data_template_dict
             pdb = data_template_dict['PDB_file']
             self.update_log.insert('looking for ground-state PDB: ' + pdb)
             if not os.path.isfile(pdb):
