@@ -1058,6 +1058,7 @@ class XChemExplorer(QtGui.QApplication):
                                  self.panddas_directory ]
             except KeyError:
                 self.update_log.error('seems like there is no entry for ground-state in database')
+                pass
         else:
             ground_state = []
             if self.deposition_bounnd_state_preparation_ignore_event_map.isChecked():
