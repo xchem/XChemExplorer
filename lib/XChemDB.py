@@ -1618,7 +1618,7 @@ class data_source:
             else:
                 Logfile.warning('entry for ground-state model in depositTable does already exist')
                 Logfile.warning('updating PDB, MTZ and DimplePANDDApath for ground-state entry')
-                cursor.execute("update depositTable set PDB_file='%s' MTZ_file='%s' DimplePANDDApath='%s' where StructureType='ground_state'" %(db_dict['PDB_file'],db_dict['MTZ_file'],db_dict['DimplePANDDApath']))
+                cursor.execute("update depositTable set PDB_file='%s', MTZ_file='%s', DimplePANDDApath='%s' where StructureType='ground_state'" %(db_dict['PDB_file'],db_dict['MTZ_file'],db_dict['DimplePANDDApath']))
                 connect.commit()
                 return
 
