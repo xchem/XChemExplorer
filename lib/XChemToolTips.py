@@ -338,7 +338,7 @@ def deposition_ground_state_preparation_step_two_text():
 
 def deposition_ground_state_preparation_step_three_text():
     msg = (
-        '3. Please check the settings tab that you have selected the correct pandda directory.\n'
+        '1. Please check the settings tab that you have selected the correct pandda directory.\n'
         '   (Note: we will take all the apo mmcif files from this directory)\n'
         '   Current PanDDA directory:'
     )
@@ -346,13 +346,13 @@ def deposition_ground_state_preparation_step_three_text():
 
 def deposition_ground_state_preparation_step_four_text():
     msg = (
-        '4. Add the ground-state entry to the database.'
+        '2. Add the ground-state entry to the database.'
     )
     return msg
 
 def deposition_ground_state_preparation_step_five_text():
     msg = (
-            '5. Enter meta-data for ground-state model:\n'
+            '3. Enter meta-data for ground-state model:\n'
             '     - Open "Deposition -> Edit information"\n'
             '     - Fill out form or load .deposit file\n'
             '     - Press "Save to Database"\n'
@@ -362,21 +362,21 @@ def deposition_ground_state_preparation_step_five_text():
 
 def deposition_ground_state_preparation_step_six_text():
     msg = (
-            '6. Prepare the ground-state mmcif file.\n'
+            '4. Prepare the ground-state mmcif file.\n'
             '     Note: the mmcif files are saved into the selected pandda directory'
     )
     return msg
 
 def deposition_ground_state_preparation_step_seven_text():
     msg = (
-        '7. Press the button below to copy the structire and structure factor mmcif files into the "group deposition directory" (see settings tab).\n'
+        '5. Press the button below to copy the structire and structure factor mmcif files into the "group deposition directory" (see settings tab).\n'
         'Both mmcif files will be bundled into a single, bzipped tar archive which can be uploaded into via the PDB group deposition website.'
     )
     return msg
 
 def deposition_ground_state_preparation_step_eight_text():
     msg = (
-        '8. Go to the group deposition website, create a session and upload the ligand-bound.tar.bz2 file from the group deposition directory.'
+        '6. Go to the group deposition website, create a session and upload the ligand-bound.tar.bz2 file from the group deposition directory.'
     )
     return msg
 
@@ -424,5 +424,21 @@ def second_cif_file_not_exists():
         'The CIF file for the non-standard ligand does not exist! '
         'It was either not selected or the file was deleted/ moved in the meantime. '
         'Please check Menu -> Preferences.'
+    )
+    return msg
+
+def notification_about_changes_to_apo_deposition():
+    msg = (
+        'The ground-state deposition procedure has changes in XCE v1.5.0!\n\n'
+        'Previously, users had to select a specific reference PDB file, which had to have a ground-state mean-map and logfile associated with it.\n'
+        'However, there were two main problems: (i) the map to mtz conversion did sometimes lead to strange maps or maps in space group P1 only\n'
+        'and (2) occasionally the resulting MTZ files had missing columns. This lead to errors and delays during deposition, while inclusion of\n'
+        'ground-state mean maps has little benefit since the mean map can be calculated with the deposited apo datasets. Hence, there is really\n'
+        'no need to include it in the deposition.\n\n'
+        'All you need to do is to select the relevant PanDDA directory and XCE will arbitrarily select a high resolution structure with low Rfree\n'
+        'as the model for the deposition bundle and then put all structure factor MMCIF files into a single file. Note that it does not matter\n'
+        'which PDB file gets chosen at this point since the positional modifications during refinement with REFMAC will be minimal.\n'
+        'If you still want to make the ground-state mean map available, we would recommend to deposit ground-state mean map and \n'
+        'everything else you think is relevant on ZENODO and ask the PDB annotator to include the respective DOI in the deposition\n'
     )
     return msg

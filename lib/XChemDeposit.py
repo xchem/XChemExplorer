@@ -396,17 +396,17 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         self.ground_state = False
         self.ground_state_pdb = ''
-        self.ground_state_mean_mtz = ''
+#        self.ground_state_mean_mtz = ''
         self.panddaDir = ''
         self.ignore_event_map = ignore_event_map
         if ground_state:
             self.ground_state = True
             self.ground_state_pdb = ground_state[0]
-            self.ground_state_mean_mtz = ground_state[1]
+            self.ground_state_mtz = ground_state[1]
             self.panddaDir = ground_state[2]
             self.projectDir = self.panddaDir
             self.pdb = pdbtools(self.ground_state_pdb)
-            self.mtz = mtztools(self.ground_state_mean_mtz)
+#            self.mtz = mtztools(self.ground_state_mean_mtz)
 
     def run(self):
 
@@ -438,8 +438,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.data_template_dict_exists(xtal):
                     continue
 
-                if not self.zenodo_dict_exists(xtal):
-                    continue
+#                if not self.zenodo_dict_exists(xtal):
+#                    continue
 
                 if not self.save_data_template_dict(xtal):
                     continue
@@ -447,8 +447,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.create_model_mmcif(xtal):
                     continue
 
-                if not self.create_sf_mmcif(xtal):
-                    continue
+#                if not self.create_sf_mmcif(xtal):
+#                    continue
 
                 if not self.apo_mmcif_exists():
                     continue
@@ -469,8 +469,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.db_dict_exists(xtal):
                     continue
 
-                if not self.zenodo_dict_exists(xtal):
-                    continue
+#                if not self.zenodo_dict_exists(xtal):
+#                    continue
 
                 if not self.refine_bound_exists(xtal):
                     continue
@@ -855,12 +855,14 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                                                   'pdb_extract/pdb-extract-prod/bin/pdb_extract')
 
         if self.ground_state:
+            refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
+            aimless = os.path.join(self.projectDir,refXtal,refXtal+'.log')
             Cmd = (pdb_extract_init +
                    ' -r {0!s}'.format(refSoft) +
                    ' -iPDB {0!s}'.format(self.ground_state_pdb) +
                    ' -e MR'
                    ' -s AIMLESS'
-                   ' -iLOG {0!s}'.format(self.ground_state_pdb.replace('.pdb','.log')) +
+                   ' -iLOG {0!s}'.format(aimless) +
                    ' -iENT data_template.cif'
                    ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
         else:
@@ -1031,8 +1033,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             for event in self.eventList:
                 mtzin += event + ' '
 
-        if self.ground_state:
-            mtzin = self.ground_state_mean_mtz
+#        if self.ground_state:
+#            mtzin = self.ground_state_mean_mtz
 
         if os.path.isdir('/dls'):
             pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n'
@@ -1086,12 +1088,21 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def add_apo_sf_mmcif_to_ground_state_mmcif(self):
         os.chdir(self.projectDir)
         self.Logfile.insert('checking pandda directory for apo mmcif files: '+self.panddaDir)
-        f = open('ground_state_sf.mmcif','a')
+        f = open('ground_state_sf.mmcif','w')
+
+        refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/'))-2]
+        xtalList = [refXtal] # make sure that mmcof belonging to ref PDB file is first
+        for dirs in glob.glob(os.path.join(self.panddaDir, 'processed_datasets', '*')):
+            xtal = dirs[dirs.rfind('/') + 1:]
+            if xtal not in xtalList:
+                xtalList.append(xtal)
+
         counter = 1
-        for dirs in glob.glob(os.path.join(self.panddaDir,'processed_datasets','*')):
-            if not os.path.isdir(dirs):         # this is needed in case single files are in processed_datasets
+        for xtal in xtalList:
+            if not os.path.isdir(os.path.join(self.panddaDir, 'processed_datasets', xtal)):         # this is needed in case single files are in processed_datasets
                 continue
-            xtal = dirs[dirs.rfind('/')+1:]
+            else:
+                dirs = os.path.join(self.panddaDir, 'processed_datasets', xtal)
             self.Logfile.insert('%s: reading saoked compound information from database' %xtal)
             xtalDict = self.db.get_db_dict_for_sample(xtal)
             if xtalDict['CompoundSMILES'].lower().replace(' ','') == '':

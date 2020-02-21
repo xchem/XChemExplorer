@@ -546,10 +546,10 @@ class XChemExplorer(QtGui.QApplication):
 #        self.update_log.insert('be patient, this may take a while, depending on the number of events')
 #        self.status_bar.showMessage('please check terminal window for further information')
 
-    def select_ground_state_pdb(self):
-        p = QtGui.QFileDialog.getOpenFileNameAndFilter(self.window, 'Select File', os.getcwd(),'*.pdb')
-        pdb = str(tuple(p)[0])
-        self.ground_state_pdb_button_label.setText(pdb)
+#    def select_ground_state_pdb(self):
+#        p = QtGui.QFileDialog.getOpenFileNameAndFilter(self.window, 'Select File', os.getcwd(),'*.pdb')
+#        pdb = str(tuple(p)[0])
+#        self.ground_state_pdb_button_label.setText(pdb)
 
     def select_ground_state_mtz(self):
         m = QtGui.QFileDialog.getOpenFileNameAndFilter(self.window, 'Select File', os.getcwd(),'*.mtz')
@@ -557,11 +557,45 @@ class XChemExplorer(QtGui.QApplication):
         self.ground_state_mtz_button_label.setText(mtz)
 
     def add_ground_state_db(self):
-        db_dict = {'DimplePANDDApath': self.panddas_directory,
-                   'PDB_file': str(self.ground_state_pdb_button_label.text()),
-                   'MTZ_file': str(self.ground_state_mtz_button_label.text())}
-        self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile, 'ground_state', 'ground_state',
+        pdb, mtz = self.auto_select_ground_state_reference_PDB()
+        if pdb != None:
+            db_dict = {'DimplePANDDApath': self.panddas_directory,
+                       'PDB_file': pdb,
+                       'MTZ_file': mtz}
+            self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile, 'ground_state', 'ground_state',
                                                                  db_dict)
+        else:
+            self.update_log.error('could not find a suitable reference file; see messages above!')
+
+    def auto_select_ground_state_reference_PDB(self):
+        pdb = None
+        mtz = None
+        xtalList = []
+        for dirs in glob.glob(os.path.join(self.panddas_directory,'processed_datasets','*')):
+            xtal = dirs[dirs.rfind('/')+1:]
+            if os.path.isfile(os.path.join(dirs,xtal+'-pandda-input.pdb')):
+                pdbHeader = parse().PDBheader(os.path.join(dirs,xtal+'-pandda-input.pdb'))
+                try:
+                    xtalList.append( [xtal, float(pdbHeader['Rfree']) , float(pdbHeader['ResolutionHigh']) ] )
+                except ValueError:
+                    self.update_log.error('%s: cannot read Rfree or Resolution from PDB header; skipping...')
+                    pass
+        self.update_log.insert('found %s PDB files in %s' %(str(len(xtalList)),os.path.join(self.panddas_directory,'processed_datasets')))
+        if len(xtalList) >= 10:
+            self.update_log.insert('sorting PDBs by Rfree and selecting the 10 with lowest value')
+            rfree = sorted(xtalList, key=lambda x: x[1])[:10]
+            self.update_log.insert('top 10 PDB files with lowest Rfree:')
+            for item in rfree:
+                self.update_log.insert('%s: Rfree = %s | Resolution = %s' %(item[0],str(round(item[1],3)),str(round(item[2],2))))
+            self.update_log.insert('selecting PDB with highest resolution')
+            reso = sorted(rfree, key=lambda x: x[2])[:1]
+            self.update_log.insert('selected the following PDB file: %s: Rfree = %s | Resolution = %s' %(reso[0][0],str(round(reso[0][1],3)),str(round(reso[0][2],2))))
+            pdb = os.path.join(self.panddas_directory,'processed_datasets',reso[0][0],reso[0][0]+'-pandda-input.pdb')
+            mtz = os.path.join(self.panddas_directory,'processed_datasets',reso[0][0],reso[0][0]+'-pandda-input.mtz')
+        else:
+            self.update_log.error('found less than 10 valid PDB files in %s' %os.path.join(self.panddas_directory,'processed_datasets'))
+        return pdb, mtz
+
 
     def prepare_ground_state_mmcif(self):
         self.update_log.insert('preparing mmcif file for apo structure deposition')
@@ -1001,11 +1035,22 @@ class XChemExplorer(QtGui.QApplication):
 #            self.xce_logfile)
 
     def prepare_models_for_deposition_ligand_bound(self,structureType):
-
+        start_thread = True
+        self.update_log.insert('preparing mmcif files for PDB group deposition...')
         ignore_event_map = False
         if structureType == 'ground-state':
-            ground_state = [ str(self.ground_state_pdb_button_label.text()),
-                             str(self.ground_state_mtz_button_label.text()),
+            self.update_log.insert('ground-state deposition')
+            data_template_dict = self.db.get_deposit_dict_for_sample('ground-state')
+            pdb = data_template_dict['PDB_file']
+            if not os.path.isfile(pdb):
+                self.update_log.error('ground-state PDB does not exist; stopping...')
+                start_thread = False
+            mtz = data_template_dict['MTZ_file']
+            if not os.path.isfile(mtz):
+                self.update_log.error('ground-state MTZ does not exist; stopping...')
+                start_thread = False
+            ground_state = [ pdb,
+                             mtz,
                              self.panddas_directory ]
         else:
             ground_state = []
@@ -1014,19 +1059,20 @@ class XChemExplorer(QtGui.QApplication):
 
 #        structureType = "ligand_bound"
 
-        overwrite_existing_mmcif = True
-        self.work_thread = XChemDeposit.prepare_mmcif_files_for_deposition(
-            os.path.join(self.database_directory, self.data_source_file),
-            self.xce_logfile,
-            overwrite_existing_mmcif,
-            self.initial_model_directory,
-            ground_state,
-            ignore_event_map)
-        self.explorer_active = 1
-        self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
-        self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
-        self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
-        self.work_thread.start()
+        if start_thread:
+            overwrite_existing_mmcif = True
+            self.work_thread = XChemDeposit.prepare_mmcif_files_for_deposition(
+                os.path.join(self.database_directory, self.data_source_file),
+                self.xce_logfile,
+                overwrite_existing_mmcif,
+                self.initial_model_directory,
+                ground_state,
+                ignore_event_map)
+            self.explorer_active = 1
+            self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
+            self.connect(self.work_thread, QtCore.SIGNAL("update_status_bar(QString)"), self.update_status_bar)
+            self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
+            self.work_thread.start()
 
     def prepare_models_for_deposition_apo(self):
 
