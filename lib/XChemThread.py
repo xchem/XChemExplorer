@@ -2610,15 +2610,17 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         autoproc='unknown'
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
-#        elif 'autoPROC' in folder:
-#            autoproc = 'autoPROC'
         else:
             for f in folder.split('/'):
-                print f
-                if ('xia2' or 'dials' or 'autoPROC') in f:
+                if 'autoPROC' in f:
                     autoproc = f
                     break
-#            autoproc = folder.split('/')[len(folder.split('/'))-1]
+                elif 'xia2' in f:
+                    autoproc = f
+                    break
+                elif 'dials' in f:
+                    autoproc = f
+                    break
         self.Logfile.insert('name of auto-processing pipeline: %s' %autoproc)
         return autoproc
 
