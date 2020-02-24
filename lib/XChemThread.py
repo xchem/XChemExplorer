@@ -2457,7 +2457,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     '*aimless.log',
                     '*truncate-unique.mtz'],
                 [   os.path.join('autoPROC-*'),
-                    '*summary.tar.gz',                  
+                    '*summary.tar.gz',
                     '*staraniso_alldata-unique.mtz'],
                 [   os.path.join('*'),
                     os.path.join('LogFiles', '*aimless.log'),
@@ -2713,7 +2713,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                         if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
                             autoproc = 'aP_staraniso'
                         else:
-                            autoproc = self.getAutoProc(procDir)
+                            autoproc = self.getAutoProc(folder)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
