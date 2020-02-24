@@ -2610,8 +2610,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         autoproc='unknown'
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
-        elif 'autoPROC' in folder:
-            autoproc = 'autoPROC'
+#        elif 'autoPROC' in folder:
+#            autoproc = 'autoPROC'
         else:
             for f in folder.split('/'):
                 print f
