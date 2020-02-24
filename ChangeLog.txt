@@ -1,5 +1,6 @@
 v1.5.1 (24/02/2020)
 - enable parsing of autoPROC/ staraniso auto-processing results with specific space groups applied (e.g. autoPROC-P21)
+- bug fix: names of auto-processing pipelines get now correctly determined
 
 v1.5.0 (20/02/2020)
 - ground-state mean maps are EXCLUDED from apo deposition, because either map2mtz conversion was faulty or columns were missing; moreover, they are not required to reproduce the maps and users can deposit them separately on ZENODO if they want
