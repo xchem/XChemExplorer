@@ -2453,6 +2453,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 [   os.path.join('autoPROC'),
                     '*summary.tar.gz',                  # staraniso_alldata-unique.table1 only available in tar archive
                     '*staraniso_alldata-unique.mtz'],
+                [   os.path.join('autoPROC-*'),
+                    '*aimless.log',
+                    '*truncate-unique.mtz'],
+                [   os.path.join('autoPROC-*'),
+                    '*summary.tar.gz',
+                    '*staraniso_alldata-unique.mtz'],
                 [   os.path.join('*'),
                     os.path.join('LogFiles', '*aimless.log'),
                     os.path.join('DataFiles', '*free.mtz')]
@@ -2481,11 +2487,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def createAutoprocessingDir(self,xtal,run,autoproc):
         # create all the directories if necessary
+        self.Logfile.insert('%s: checking if new directory needs to be created for %s' %(xtal,os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc)))
         if not os.path.isdir(os.path.join(self.projectDir,xtal,'autoprocessing')):
             os.mkdir(os.path.join(self.projectDir,xtal,'autoprocessing'))
         if not os.path.isdir(
                 os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc)):
+            self.Logfile.insert('%s: making directory %s' %(xtal,os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc)))
             os.mkdir(os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc))
+        else:
+            self.Logfile.warning('%s: directory exists; skipping...' %xtal)
 
     def cleanUpDir(self,xtal,run,autoproc,mtzfile,logfile):
         toKeep = ['staraniso_alldata-unique.mtz','staraniso_alldata-unique.table1',
@@ -2596,18 +2606,22 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #        return db_dict
 
     def getAutoProc(self,folder):
+        self.Logfile.insert('checking name of auto-processing pipeline...')
         autoproc='unknown'
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
-        elif 'autoPROC' in folder:
-            autoproc = 'autoPROC'
         else:
             for f in folder.split('/'):
-                print f
-                if ('xia2' or 'dials' or 'autoPROC') in f:
+                if 'autoPROC' in f:
                     autoproc = f
                     break
-#            autoproc = folder.split('/')[len(folder.split('/'))-1]
+                elif 'xia2' in f:
+                    autoproc = f
+                    break
+                elif 'dials' in f:
+                    autoproc = f
+                    break
+        self.Logfile.insert('name of auto-processing pipeline: %s' %autoproc)
         return autoproc
 
     def update_data_collection_table(self,xtal,current_run,autoproc,db_dict):
@@ -2707,7 +2721,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                         if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
                             autoproc = 'aP_staraniso'
                         else:
-                            autoproc = self.getAutoProc(procDir)
+                            autoproc = self.getAutoProc(folder)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
