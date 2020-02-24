@@ -2487,11 +2487,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def createAutoprocessingDir(self,xtal,run,autoproc):
         # create all the directories if necessary
+        self.Logfile.insert('%s: checking if new directory needs to be created for %s' %(xtal,os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc)))
         if not os.path.isdir(os.path.join(self.projectDir,xtal,'autoprocessing')):
             os.mkdir(os.path.join(self.projectDir,xtal,'autoprocessing'))
         if not os.path.isdir(
                 os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc)):
+            self.Logfile.insert('%s: making directory %s' %(xtal,os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc)))
             os.mkdir(os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc))
+        else:
+            self.Logfile.warning('%s: directory exists; skipping...' %xtal)
 
     def cleanUpDir(self,xtal,run,autoproc,mtzfile,logfile):
         toKeep = ['staraniso_alldata-unique.mtz','staraniso_alldata-unique.table1',
@@ -2602,6 +2606,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #        return db_dict
 
     def getAutoProc(self,folder):
+        self.Logfile.insert('checking name of auto-processing pipeline...')
         autoproc='unknown'
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
@@ -2614,6 +2619,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     autoproc = f
                     break
 #            autoproc = folder.split('/')[len(folder.split('/'))-1]
+        self.Logfile.insert('name of auto-processing pipeline: %s' %autoproc)
         return autoproc
 
     def update_data_collection_table(self,xtal,current_run,autoproc,db_dict):
