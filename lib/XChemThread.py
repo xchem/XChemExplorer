@@ -2357,9 +2357,9 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                 tmp.append(resultDict)
             if self.selection_mechanism == 'xia2 3dii - only' and '3dii-run' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
-            if self.selection_mechanism == 'autoProc - only' and resultDict['DataProcessingProgram'] == 'autoPROC':
+            if self.selection_mechanism == 'autoProc - only' and 'autoPROC' in resultDict['DataProcessingProgram'] and not 'staraniso' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
-            if self.selection_mechanism == 'autoProc_staraniso - only' and resultDict['DataProcessingProgram'] == 'aP_staraniso':
+            if self.selection_mechanism == 'autoProc_staraniso - only' and 'staraniso' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
         if not tmp:
             tmp = dbList
