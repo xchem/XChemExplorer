@@ -2350,6 +2350,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
     def selectSpecificPipelineOnly(self,dbList):
         tmp = []
+        self.Logfile.insert('selecting datasets by auto-processing pipeline: ' + self.selection_mechanism)
         for resultDict in dbList:
             if self.selection_mechanism == 'dials - only' and 'dials' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
