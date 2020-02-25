@@ -2294,7 +2294,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                     for reference_file in self.reference_file_list:
                         if not reference_file[4]==0:
                             self.Logfile.insert('unitcell volume reference:' + str(reference_file[4]))
-                            self.Logfile.insert('unitcell volume dataset:  ' + str(resultDict['DataProcessingUnitCellVolume'])
+                            self.Logfile.insert('unitcell volume dataset:  ' + str(resultDict['DataProcessingUnitCellVolume']))
                             unitcell_difference=round((math.fabs(reference_file[4]-float(resultDict['DataProcessingUnitCellVolume']))/reference_file[4])*100,1)
                             self.Logfile.insert(resultDict['DataProcessingProgram'] + ': ' +
                                                 str(unitcell_difference) + '% difference -> pg(ref): ' +
