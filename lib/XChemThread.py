@@ -2293,6 +2293,8 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                     self.Logfile.insert('checking unit cell volume difference and point group:')
                     for reference_file in self.reference_file_list:
                         if not reference_file[4]==0:
+                            self.Logfile.insert('unitcell volume reference:' + str(reference_file[4]))
+                            self.Logfile.insert('unitcell volume dataset:  ' + str(resultDict['DataProcessingUnitCellVolume']))
                             unitcell_difference=round((math.fabs(reference_file[4]-float(resultDict['DataProcessingUnitCellVolume']))/reference_file[4])*100,1)
                             self.Logfile.insert(resultDict['DataProcessingProgram'] + ': ' +
                                                 str(unitcell_difference) + '% difference -> pg(ref): ' +
@@ -2350,6 +2352,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
     def selectSpecificPipelineOnly(self,dbList):
         tmp = []
+        self.Logfile.insert('selecting datasets by auto-processing pipeline: ' + self.selection_mechanism)
         for resultDict in dbList:
             if self.selection_mechanism == 'dials - only' and 'dials' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
@@ -2357,9 +2360,9 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                 tmp.append(resultDict)
             if self.selection_mechanism == 'xia2 3dii - only' and '3dii-run' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
-            if self.selection_mechanism == 'autoProc - only' and resultDict['DataProcessingProgram'] == 'autoPROC':
+            if self.selection_mechanism == 'autoProc - only' and 'autoPROC' in resultDict['DataProcessingProgram'] and not 'staraniso' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
-            if self.selection_mechanism == 'autoProc_staraniso - only' and resultDict['DataProcessingProgram'] == 'aP_staraniso':
+            if self.selection_mechanism == 'autoProc_staraniso - only' and 'autoPROC' in resultDict['DataProcessingProgram'] and 'staraniso' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
         if not tmp:
             tmp = dbList
@@ -2605,7 +2608,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 #        return db_dict
 
-    def getAutoProc(self,folder):
+    def getAutoProc(self,folder,staraniso):
         self.Logfile.insert('checking name of auto-processing pipeline...')
         autoproc='unknown'
         if 'ap-run' in folder:
@@ -2613,7 +2616,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         else:
             for f in folder.split('/'):
                 if 'autoPROC' in f:
-                    autoproc = f
+                    autoproc = f + staraniso
                     break
                 elif 'xia2' in f:
                     autoproc = f
@@ -2713,15 +2716,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     self.Logfile.insert('%s: mtzfile = %s' %(xtal,mtzfile))
 
                     for folder in glob.glob(procDir):
+                        staraniso = ''
                         self.Logfile.insert('%s: searching %s' %(xtal,folder))
                         if self.junk(folder):
                             continue
                         if self.empty_folder(xtal,folder):
                             continue
                         if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-                            autoproc = 'aP_staraniso'
-                        else:
-                            autoproc = self.getAutoProc(folder)
+                            staraniso = '_staraniso'
+                        autoproc = self.getAutoProc(folder,staraniso)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
@@ -2807,15 +2810,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #                                print mtz
 
                         for folder in glob.glob(procDir):
+                            staraniso = ''
                             self.Logfile.insert('%s: searching %s' % (xtal, folder))
                             if self.junk(folder):
                                 continue
                             if self.empty_folder(xtal,folder):
                                 continue
                             if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-                                autoproc = 'aP_staraniso'
-                            else:
-                                autoproc = self.getAutoProc(folder)
+                                staraniso = '_staraniso'
+                            autoproc = self.getAutoProc(folder, staraniso)
                             if self.alreadyParsed(xtal,current_run,autoproc):
                                 continue
                             self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)

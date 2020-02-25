@@ -1,3 +1,6 @@
+v1.5.2 (25/02/2020)
+- bug fix: correct determination of staraniso runs for different space groups
+
 v1.5.1 (24/02/2020)
 - enable parsing of autoPROC/ staraniso auto-processing results with specific space groups applied (e.g. autoPROC-P21)
 - bug fix: names of auto-processing pipelines get now correctly determined

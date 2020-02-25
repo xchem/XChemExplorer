@@ -26,7 +26,7 @@ class startLog:
             '     #                                                                     #\n'
             '     # Version: %s                                       #\n' %pasteVersion+
             '     #                                                                     #\n'
-            '     # Date: 24/02/2020                                                    #\n'
+            '     # Date: 25/02/2020                                                    #\n'
             '     #                                                                     #\n'
             '     # Authors: Tobias Krojer, Structural Genomics Consortium, Oxford, UK  #\n'
             '     #          tobias.krojer@sgc.ox.ac.uk                                 #\n'
@@ -111,17 +111,17 @@ class updateLog:
         self.logfile=open(logfile, "a")
 
     def insert(self,message):
-        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
         print( str(present_time)+' ==> XCE: '+message, file = self.logfile)
         print('==> XCE: '+message)
 
     def warning(self,message):
-        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
         print( str(present_time)+' ==> XCE: WARNING! '+message, file = self.logfile)
         print('==> XCE: WARNING! '+message)
 
     def error(self,message):
-        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
         print( str(present_time)+' ==> XCE: ERROR!!! '+message, file = self.logfile)
         print('==> XCE: ERROR!!! '+message)
 
