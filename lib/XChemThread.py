@@ -2613,10 +2613,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         else:
             for f in folder.split('/'):
                 if 'autoPROC' in f:
-                    autoproc = f
+                    autoproc = f + staraniso
                     break
                 elif 'xia2' in f:
-                    autoproc = f + staraniso
+                    autoproc = f
                     break
                 elif 'dials' in f:
                     autoproc = f
