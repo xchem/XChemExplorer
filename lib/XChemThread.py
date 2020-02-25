@@ -2605,7 +2605,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 self.update_data_collection_table(xtal,current_run,autoproc,db_dict)
 #        return db_dict
 
-    def getAutoProc(self,folder):
+    def getAutoProc(self,folder,staraniso):
         self.Logfile.insert('checking name of auto-processing pipeline...')
         autoproc='unknown'
         if 'ap-run' in folder:
@@ -2616,7 +2616,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     autoproc = f
                     break
                 elif 'xia2' in f:
-                    autoproc = f
+                    autoproc = f + staraniso
                     break
                 elif 'dials' in f:
                     autoproc = f
@@ -2713,15 +2713,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     self.Logfile.insert('%s: mtzfile = %s' %(xtal,mtzfile))
 
                     for folder in glob.glob(procDir):
+                        staraniso = ''
                         self.Logfile.insert('%s: searching %s' %(xtal,folder))
                         if self.junk(folder):
                             continue
                         if self.empty_folder(xtal,folder):
                             continue
                         if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-                            autoproc = 'aP_staraniso'
-                        else:
-                            autoproc = self.getAutoProc(folder)
+                            staraniso = '_staraniso'
+                        autoproc = self.getAutoProc(folder,staraniso)
                         if self.alreadyParsed(xtal,current_run,autoproc):
                             continue
                         self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
@@ -2807,15 +2807,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #                                print mtz
 
                         for folder in glob.glob(procDir):
+                            staraniso = ''
                             self.Logfile.insert('%s: searching %s' % (xtal, folder))
                             if self.junk(folder):
                                 continue
                             if self.empty_folder(xtal,folder):
                                 continue
                             if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-                                autoproc = 'aP_staraniso'
-                            else:
-                                autoproc = self.getAutoProc(folder)
+                                staraniso = '_staraniso'
+                            autoproc = self.getAutoProc(folder, staraniso)
                             if self.alreadyParsed(xtal,current_run,autoproc):
                                 continue
                             self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
