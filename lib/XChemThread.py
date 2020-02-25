@@ -2211,6 +2211,8 @@ class choose_autoprocessing_outcome(QtCore.QThread):
         self.agamemnon = agamemnon
         self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
+        print '>>>>>>>>>>>',self.selection_mechanism
+        quit()
 
         self.db = XChemDB.data_source(os.path.join(database))
         if self.agamemnon:
