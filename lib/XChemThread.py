@@ -2362,7 +2362,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                 tmp.append(resultDict)
             if self.selection_mechanism == 'autoProc - only' and 'autoPROC' in resultDict['DataProcessingProgram'] and not 'staraniso' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
-            if self.selection_mechanism == 'autoProc_staraniso - only' and 'staraniso' in resultDict['DataProcessingProgram']:
+            if self.selection_mechanism == 'autoProc_staraniso - only' and 'autoPROC' in resultDict['DataProcessingProgram'] and 'staraniso' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
         if not tmp:
             tmp = dbList
