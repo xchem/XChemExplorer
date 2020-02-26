@@ -824,6 +824,10 @@ class parse:
                 self.aimless['DataCollectionWavelength'] = line.split()[1]
             elif line.startswith('_symmetry.space_group_name_H-M'):
                 self.aimless['DataProcessingSpaceGroup'] = line[line.find("'")+1:line.rfind("'")].replace(' ','')
+                if 'R32:H' in self.aimless['DataProcessingSpaceGroup']:
+                    self.aimless['DataProcessingSpaceGroup'] = 'H32'
+                if 'R3:H' in self.aimless['DataProcessingSpaceGroup']:
+                    self.aimless['DataProcessingSpaceGroup'] = 'H3'
                 self.aimless['DataProcessingPointGroup'] = self.get_pointgroup_from_space_group(
                     self.aimless['DataProcessingSpaceGroup'])
             elif line.startswith('_space_group.crystal_system'):
