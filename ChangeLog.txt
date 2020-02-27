@@ -1,3 +1,6 @@
+v1.5.4 (27/02/2020)
+- bug fix: iotbx spg symbol for H32 needed changing for unique step of initial map calculation
+
 v1.5.3 (26/02/2020)
 - bug fix: read spacegroup as H32 from xia2.mmcif ('R 3 2 :H')
 
