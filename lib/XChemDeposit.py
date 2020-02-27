@@ -1163,8 +1163,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     datasetCounter += 1
                     f.write(newLine)
                     a += 1
-                    if datasetCounter % 50 == 0:
-                        self.Logfile.insert('%s data_rxxxxsf records edited...' %str(datasetCounter))
+                    self.Logfile.insert('new dataset block: %s -> %s' %(str(counter),newLine.replace('\n','').replace('\r','')))
+#                    if datasetCounter % 50 == 0:
+#                        self.Logfile.insert('%s data_rxxxxsf records edited...' %str(datasetCounter))
                 else:
                     f.write(line)
             f.close()
