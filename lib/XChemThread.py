@@ -1248,6 +1248,8 @@ class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
                 symNoAbsence = 'H32'
             else:
                 symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
+            if symNoAbsence.replace(' ','') == "R32:":
+                symNoAbsence = 'H32'
 
             dls_stuff = ''
             if os.path.isdir('/dls'):
