@@ -1163,13 +1163,22 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     datasetCounter += 1
                     f.write(newLine)
                     a += 1
-                    if datasetCounter % 50 == 0:
-                        self.Logfile.insert('%s data_rxxxxsf records edited...' %str(datasetCounter))
+                    self.Logfile.insert('new dataset block: %s -> %s' %(str(datasetCounter),newLine.replace('\n','').replace('\r','')))
+#                    if datasetCounter % 50 == 0:
+#                        self.Logfile.insert('%s data_rxxxxsf records edited...' %str(datasetCounter))
                 else:
                     f.write(line)
             f.close()
         os.chdir(self.panddaDir)
         os.system('/bin/mv ground_state_sf_tmp.mmcif ground_state_sf.mmcif')
+
+        if os.path.isfile('ground_state_sf.mmcif') and os.path.getsize('ground_state_sf.mmcif') > 20000 :
+            self.Logfile.insert('ground_state: SF mmcif file successfully created')
+            self.db.execute_statement("update depositTable set mmCIF_SF_file='ground_state_sf.mmcif' where CrystalName is 'ground_state' and DimplePANDDApath is '{0!s}'".format(self.panddaDir))
+        else:
+            self.Logfile.error('%s: SF mmcif file was not created successfully')
+            self.add_to_errorList(xtal)
+
         return True
 
 
