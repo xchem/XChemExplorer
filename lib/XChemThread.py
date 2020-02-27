@@ -1123,268 +1123,268 @@ class merge_cif_files(QtCore.QThread):
 
 
 
-class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
-    def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,
-                 data_source_file,max_queue_jobs,xce_logfile, remote_submission, remote_submission_string,
-                 dimple_twin_mode,pipeline):
-        QtCore.QThread.__init__(self)
-        self.sample_list=sample_list
-        self.initial_model_directory=initial_model_directory
-        self.external_software=external_software
-        self.queueing_system_available=external_software['qsub']
-        self.ccp4_scratch_directory=ccp4_scratch_directory
-        self.database_directory=database_directory
-        self.data_source_file=data_source_file
-        self.max_queue_jobs=max_queue_jobs
-        self.xce_logfile=xce_logfile
-        self.Logfile=XChemLog.updateLog(xce_logfile)
-        self.pipeline=pipeline
-        self.using_remote_qsub_submission = remote_submission
-        self.remote_qsub_submission = remote_submission_string
-        self.dimple_twin_mode = dimple_twin_mode
-
-
-    def run(self):
-        progress_step=1
-        if len(self.sample_list) != 0:
-            progress_step=100/float(len(self.sample_list))
-        progress=0
-        self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-
-        os.chdir(self.ccp4_scratch_directory)
-        os.system('/bin/rm -f xce_dimple*sh')
-
-        db=XChemDB.data_source(os.path.join(self.database_directory,self.data_source_file))
-        database=os.path.join(self.database_directory,self.data_source_file)
-
-#        print(self.sample_list)
-
-        for n,item in enumerate(self.sample_list):
-
-            xtal =                  item[0]
-            visit_run_autoproc =    item[1]
-            mtzin =                 item[2]
-            ref_pdb =               item[3]
-            ref_mtz =               item[4]
-            ref_cif =               item[5]
-
-            # check if reference mtzfile has an Rfree column; if not, then ignore
-            # DIMPLE assumes an Rfree column and barfs if it is not present
-            # note: ref_mtz looks like this: ref mtz  -R reference.mtz
-#            if os.path.isfile(ref_mtz.split()[len(ref_mtz.split())-1]):
-#                mtz_column_dict=mtztools(ref_mtz.split()[len(ref_mtz.split())-1]).get_all_columns_as_dict()
-            if os.path.isfile(ref_mtz):
-                if 'FreeR_flag' not in mtz.object(ref_mtz).column_labels():
-#                mtz_column_dict=mtztools(ref_mtz).get_all_columns_as_dict()
-#                if 'FreeR_flag' not in mtz_column_dict['RFREE']:
-                    self.Logfile.insert('cannot find FreeR_flag in reference mtz file: {0!s} -> ignoring reference mtzfile!!!'.format(ref_mtz))
-                    ref_mtz = ''
-#                    if mtz_column_dict['RFREE'] != []:
-#                        self.Logfile.insert('found Rfree set with other column name though: {0!s}'.format(str(mtz_column_dict['RFREE'])))
-#                        self.Logfile.insert('try renaming Rfree column to FreeR_flag with CAD!')
-
-#            uniqueify = ''
-#            if 'FreeR_flag' in mtz.object(mtzin).column_labels():
-#                uniqueify = 'uniqueify -f FreeR_flag ' + mtzin + ' ' + xtal + '-unique.mtz' + '\n'
+#class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
+#    def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,
+#                 data_source_file,max_queue_jobs,xce_logfile, remote_submission, remote_submission_string,
+#                 dimple_twin_mode,pipeline):
+#        QtCore.QThread.__init__(self)
+#        self.sample_list=sample_list
+#        self.initial_model_directory=initial_model_directory
+#        self.external_software=external_software
+#        self.queueing_system_available=external_software['qsub']
+#        self.ccp4_scratch_directory=ccp4_scratch_directory
+#        self.database_directory=database_directory
+#        self.data_source_file=data_source_file
+#        self.max_queue_jobs=max_queue_jobs
+#        self.xce_logfile=xce_logfile
+#        self.Logfile=XChemLog.updateLog(xce_logfile)
+#        self.pipeline=pipeline
+#        self.using_remote_qsub_submission = remote_submission
+#        self.remote_qsub_submission = remote_submission_string
+#        self.dimple_twin_mode = dimple_twin_mode
+#
+#
+#    def run(self):
+#        progress_step=1
+#        if len(self.sample_list) != 0:
+#            progress_step=100/float(len(self.sample_list))
+#        progress=0
+#        self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+#
+#        os.chdir(self.ccp4_scratch_directory)
+#        os.system('/bin/rm -f xce_dimple*sh')
+#
+#        db=XChemDB.data_source(os.path.join(self.database_directory,self.data_source_file))
+#        database=os.path.join(self.database_directory,self.data_source_file)
+#
+##        print(self.sample_list)
+#
+#        for n,item in enumerate(self.sample_list):
+#
+#            xtal =                  item[0]
+#            visit_run_autoproc =    item[1]
+#            mtzin =                 item[2]
+#            ref_pdb =               item[3]
+#            ref_mtz =               item[4]
+#            ref_cif =               item[5]
+#
+#            # check if reference mtzfile has an Rfree column; if not, then ignore
+#            # DIMPLE assumes an Rfree column and barfs if it is not present
+#            # note: ref_mtz looks like this: ref mtz  -R reference.mtz
+##            if os.path.isfile(ref_mtz.split()[len(ref_mtz.split())-1]):
+##                mtz_column_dict=mtztools(ref_mtz.split()[len(ref_mtz.split())-1]).get_all_columns_as_dict()
+#            if os.path.isfile(ref_mtz):
+#                if 'FreeR_flag' not in mtz.object(ref_mtz).column_labels():
+##                mtz_column_dict=mtztools(ref_mtz).get_all_columns_as_dict()
+##                if 'FreeR_flag' not in mtz_column_dict['RFREE']:
+#                    self.Logfile.insert('cannot find FreeR_flag in reference mtz file: {0!s} -> ignoring reference mtzfile!!!'.format(ref_mtz))
+#                    ref_mtz = ''
+##                    if mtz_column_dict['RFREE'] != []:
+##                        self.Logfile.insert('found Rfree set with other column name though: {0!s}'.format(str(mtz_column_dict['RFREE'])))
+##                        self.Logfile.insert('try renaming Rfree column to FreeR_flag with CAD!')
+#
+##            uniqueify = ''
+##            if 'FreeR_flag' in mtz.object(mtzin).column_labels():
+##                uniqueify = 'uniqueify -f FreeR_flag ' + mtzin + ' ' + xtal + '-unique.mtz' + '\n'
+##            else:
+##                uniqueify = 'uniqueify ' + mtzin + ' ' + xtal + '-unique.mtz' + '\n'
+#
+#            db_dict= {'DimpleReferencePDB': ref_pdb}
+#            db.update_data_source(xtal,db_dict)
+#
+#            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'creating input script for '+xtal+' in '+visit_run_autoproc)
+#
+#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
+#                os.mkdir(os.path.join(self.initial_model_directory,xtal))
+#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
+#                os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
+#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc)):
+#                os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
+#            os.chdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
+#            os.system('touch dimple_run_in_progress')
+#            os.system('/bin/rm final.mtz 2> /dev/null')
+#            os.system('/bin/rm final.pdb 2> /dev/null')
+#
+#            if self.queueing_system_available:
+#                top_line='#PBS -joe -N XCE_dimple\n'
 #            else:
-#                uniqueify = 'uniqueify ' + mtzin + ' ' + xtal + '-unique.mtz' + '\n'
-
-            db_dict= {'DimpleReferencePDB': ref_pdb}
-            db.update_data_source(xtal,db_dict)
-
-            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'creating input script for '+xtal+' in '+visit_run_autoproc)
-
-            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
-                os.mkdir(os.path.join(self.initial_model_directory,xtal))
-            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
-                os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
-            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc)):
-                os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
-            os.chdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
-            os.system('touch dimple_run_in_progress')
-            os.system('/bin/rm final.mtz 2> /dev/null')
-            os.system('/bin/rm final.pdb 2> /dev/null')
-
-            if self.queueing_system_available:
-                top_line='#PBS -joe -N XCE_dimple\n'
-            else:
-                top_line='#!'+os.getenv('SHELL')+'\n'
-
-            if 'csh' in os.getenv('SHELL'):
-                ccp4_scratch='setenv CCP4_SCR '+self.ccp4_scratch_directory+'\n'
-            elif 'bash' in os.getenv('SHELL'):
-                ccp4_scratch='export CCP4_SCR='+self.ccp4_scratch_directory+'\n'
-            else:
-                ccp4_scratch=''
-
-            if 'dimple_rerun_on_selected_file' in visit_run_autoproc:
-                additional_cmds = (
-                            'cd {0!s}\n'.format(os.path.join(self.initial_model_directory,xtal)) +
-                            '/bin/rm dimple.pdb\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.pdb dimple.pdb\n'
-                            '/bin/rm dimple.mtz\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.mtz dimple.mtz\n'
-                            '/bin/rm 2fofc.map\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/2fofc.map .\n'
-                            '/bin/rm fofc.map\n'
-                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/fofc.map .\n'
-                            '\n'
-                            '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
-                            ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)  )
-
-            else:
-                additional_cmds=''
-
-#            resolution_high = 0.1
-#            o = iotbx.mtz.object(mtzin)
-#            low, high = o.max_min_resolution()
-            hkl = any_reflection_file(file_name=mtzin)
-            miller_arrays = hkl.as_miller_arrays()
-            mtzFile = miller_arrays[0]
-
-            if mtzFile.space_group_info().symbol_and_number() ==  'R 3 :H (No. 146)':
-                symNoAbsence = 'H3'
-            elif mtzFile.space_group_info().symbol_and_number() == 'R 3 2 :H (No. 155)':
-                symNoAbsence = 'H32'
-            else:
-                symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
-            if symNoAbsence.replace(' ','') == "R32:":
-                symNoAbsence = 'H32'
-
-            dls_stuff = ''
-            if os.path.isdir('/dls'):
-                dls_stuff = (
-                    'module unload ccp4\n'
-                    'source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
-                )
-
-            twin = ''
-            if self.dimple_twin_mode:
-                twin = "--refmac-key 'TWIN'"
-
-            Cmds = (
-                    '{0!s}\n'.format(top_line)+
-                    '\n'
-                    'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
-                    '\n'
-                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
-                    '\n'
-                    'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
-                    '\n'
-                    + dls_stuff +
-                    '\n'
-                    + ccp4_scratch +
-                    '\n'
-                    '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(database,xtal,'DimpleStatus','running') +
-                    '\n'
-                    'unique hklout unique.mtz << eof\n'
-                    ' cell %s\n' %str([round(float(i),2) for i in mtzFile.unit_cell().parameters()]).replace('[','').replace(']','')+
-                    ' symmetry %s\n' %symNoAbsence+
-                    ' resolution %s\n' %str(round(float(mtzFile.d_min()),3))+
-                    'eof\n'
-                    '\n'
-#                    'freerflag hklin unique.mtz hklout free.mtz > freerflag.log\n'
-                    '\n'
-                    'sftools << eof > sftools.log\n'
-                    ' read unique.mtz\n'
-                    ' calc col F = 10.0\n'
-                    ' calc col SIGF = 1.0\n'
-                    ' write sftools.mtz\n'
-                    'eof\n'
-                    '\n'
-                    'cad hklin1 sftools.mtz hklin2 %s hklout %s.999A.mtz << eof\n' %(mtzin,xtal) +
-                    ' monitor BRIEF\n'
-                    ' labin file 1 E1=F E2=SIGF\n'
-                    ' labout file 1 E1=F_unique E2=SIGF_unique\n'
-                    ' labin file 2 ALL\n'
-                    ' resolution file 1 999.0 %s\n' %str(round(float(mtzFile.d_min()),2))+
-                    'eof\n'
-                    '\n'
-                    "dimple --no-cleanup %s.999A.mtz %s %s %s %s dimple\n" %(xtal,ref_pdb,ref_mtz,ref_cif,twin) +
-                    '\n'
-                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc,'dimple') +
-#                    + uniqueify +
+#                top_line='#!'+os.getenv('SHELL')+'\n'
+#
+#            if 'csh' in os.getenv('SHELL'):
+#                ccp4_scratch='setenv CCP4_SCR '+self.ccp4_scratch_directory+'\n'
+#            elif 'bash' in os.getenv('SHELL'):
+#                ccp4_scratch='export CCP4_SCR='+self.ccp4_scratch_directory+'\n'
+#            else:
+#                ccp4_scratch=''
+#
+#            if 'dimple_rerun_on_selected_file' in visit_run_autoproc:
+#                additional_cmds = (
+#                            'cd {0!s}\n'.format(os.path.join(self.initial_model_directory,xtal)) +
+#                            '/bin/rm dimple.pdb\n'
+#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.pdb dimple.pdb\n'
+#                            '/bin/rm dimple.mtz\n'
+#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.mtz dimple.mtz\n'
+#                            '/bin/rm 2fofc.map\n'
+#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/2fofc.map .\n'
+#                            '/bin/rm fofc.map\n'
+#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/fofc.map .\n'
+#                            '\n'
+#                            '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
+#                            ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)  )
+#
+#            else:
+#                additional_cmds=''
+#
+##            resolution_high = 0.1
+##            o = iotbx.mtz.object(mtzin)
+##            low, high = o.max_min_resolution()
+#            hkl = any_reflection_file(file_name=mtzin)
+#            miller_arrays = hkl.as_miller_arrays()
+#            mtzFile = miller_arrays[0]
+#
+#            if mtzFile.space_group_info().symbol_and_number() ==  'R 3 :H (No. 146)':
+#                symNoAbsence = 'H3'
+#            elif mtzFile.space_group_info().symbol_and_number() == 'R 3 2 :H (No. 155)':
+#                symNoAbsence = 'H32'
+#            else:
+#                symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
+#            if symNoAbsence.replace(' ','') == "R32:":
+#                symNoAbsence = 'H32'
+#
+#            dls_stuff = ''
+#            if os.path.isdir('/dls'):
+#                dls_stuff = (
+#                    'module unload ccp4\n'
+#                    'source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
+#                )
+#
+#            twin = ''
+#            if self.dimple_twin_mode:
+#                twin = "--refmac-key 'TWIN'"
+#
+#            Cmds = (
+#                    '{0!s}\n'.format(top_line)+
 #                    '\n'
-#                    'cad hklin1 %s hklout %s <<eof\n' %(str(xtal + '-unique.mtz'), str(xtal + '-unique-2.mtz')) +
-#                    'monitor BRIEF\n'
-#                    'labin file 1 -\n' 
-#                    '    ALL\n'
-#                    'resolution file 1 999.0 %s\n' %(high) +
+#                    'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
+#                    '\n'
+#                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
+#                    '\n'
+#                    'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
+#                    '\n'
+#                    + dls_stuff +
+#                    '\n'
+#                    + ccp4_scratch +
+#                    '\n'
+#                    '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(database,xtal,'DimpleStatus','running') +
+#                    '\n'
+#                    'unique hklout unique.mtz << eof\n'
+#                    ' cell %s\n' %str([round(float(i),2) for i in mtzFile.unit_cell().parameters()]).replace('[','').replace(']','')+
+#                    ' symmetry %s\n' %symNoAbsence+
+#                    ' resolution %s\n' %str(round(float(mtzFile.d_min()),3))+
 #                    'eof\n'
-#                    'dimple --no-cleanup %s-unique-2.mtz %s %s %s dimple\n' %(xtal,ref_pdb,ref_mtz,ref_cif) +
+#                    '\n'
+##                    'freerflag hklin unique.mtz hklout free.mtz > freerflag.log\n'
+#                    '\n'
+#                    'sftools << eof > sftools.log\n'
+#                    ' read unique.mtz\n'
+#                    ' calc col F = 10.0\n'
+#                    ' calc col SIGF = 1.0\n'
+#                    ' write sftools.mtz\n'
+#                    'eof\n'
+#                    '\n'
+#                    'cad hklin1 sftools.mtz hklin2 %s hklout %s.999A.mtz << eof\n' %(mtzin,xtal) +
+#                    ' monitor BRIEF\n'
+#                    ' labin file 1 E1=F E2=SIGF\n'
+#                    ' labout file 1 E1=F_unique E2=SIGF_unique\n'
+#                    ' labin file 2 ALL\n'
+#                    ' resolution file 1 999.0 %s\n' %str(round(float(mtzFile.d_min()),2))+
+#                    'eof\n'
+#                    '\n'
+#                    "dimple --no-cleanup %s.999A.mtz %s %s %s %s dimple\n" %(xtal,ref_pdb,ref_mtz,ref_cif,twin) +
 #                    '\n'
 #                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc,'dimple') +
-                    '\n'
-                    'fft hklin final.mtz mapout 2fofc.map << EOF\n'
-                    ' labin F1=FWT PHI=PHWT\n'
-                    'EOF\n'
-                    '\n'
-                    'fft hklin final.mtz mapout fofc.map << EOF\n'
-                    ' labin F1=DELFWT PHI=PHDELWT\n'
-                    'EOF\n'
-                    '\n'
-                    +additional_cmds+
-                    '\n'
-                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
-                    '\n'
-                    '/bin/rm dimple_run_in_progress\n'
-                    '\n'
-                    'ln -s dimple/final.pdb .\n'
-                    'ln -s dimple/final.mtz .\n'
-                    )
-
-            # print(Cmds)
-
-            os.chdir(self.ccp4_scratch_directory)
-            f = open('xce_dimple_{0!s}.sh'.format(str(n+1)),'w')
-            f.write(Cmds)
-            f.close()
-            os.system('chmod +x xce_dimple_{0!s}.sh'.format(str(n+1)))
-            db_dict= {'DimpleStatus': 'started'}
-            self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
-            db.update_data_source(xtal,db_dict)
-
-
-            progress += progress_step
-            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-
-        # submit job
-        self.Logfile.insert('created input scripts for '+str(n+1)+' in '+self.ccp4_scratch_directory)
-        os.chdir(self.ccp4_scratch_directory)
-        if os.path.isdir('/dls'):
-            if self.external_software['qsub_array']:
-                Cmds = (
-                        '#PBS -joe -N xce_dimple_master\n'
-                        './xce_dimple_$SGE_TASK_ID.sh\n'
-                        )
-                f = open('dimple_master.sh','w')
-                f.write(Cmds)
-                f.close()
-                print(os.getcwd())
-                self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
-                self.Logfile.insert('using the following command:')
-                self.Logfile.insert('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} dimple_master.sh'.format(str(n+1), self.max_queue_jobs))
-                if self.using_remote_qsub_submission:
-                    os.system(str(self.remote_qsub_submission).replace("qsub'", str('cd ' + str(os.getcwd()) + '; ' + 'qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} dimple_master.sh'
-                                                                  .format(str(n+1), self.max_queue_jobs))) + "'")
-
-                else:
-                    os.system('qsub -P labxchem -t 1:{0!s} -tc {1!s} -N dimple-master dimple_master.sh'.format(str(n+1), self.max_queue_jobs))
-            else:
-                self.Logfile.insert("cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
-        elif self.external_software['qsub']:
-            self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(n+1))))
-            self.Logfile.insert('WARNING: this could potentially lead to a crash...')
-            for i in range(n+1):
-                self.Logfile.insert('qsub -q medium.q -N dimple xce_dimple_{0!s}.sh'.format((str(i+1))))
-                os.system('qsub -N dimple xce_dimple_{0!s}.sh'.format((str(i+1))))
-        else:
-            self.Logfile.insert('running %s consecutive DIMPLE jobs on your local machine')
-            for i in range(n+1):
-                self.Logfile.insert('starting xce_dimple_{0!s}.sh'.format((str(i+1))))
-                os.system('./xce_dimple_{0!s}.sh'.format((str(i+1))))
-
-        self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
+##                    + uniqueify +
+##                    '\n'
+##                    'cad hklin1 %s hklout %s <<eof\n' %(str(xtal + '-unique.mtz'), str(xtal + '-unique-2.mtz')) +
+##                    'monitor BRIEF\n'
+##                    'labin file 1 -\n'
+##                    '    ALL\n'
+##                    'resolution file 1 999.0 %s\n' %(high) +
+##                    'eof\n'
+##                    'dimple --no-cleanup %s-unique-2.mtz %s %s %s dimple\n' %(xtal,ref_pdb,ref_mtz,ref_cif) +
+##                    '\n'
+##                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc,'dimple') +
+#                    '\n'
+#                    'fft hklin final.mtz mapout 2fofc.map << EOF\n'
+#                    ' labin F1=FWT PHI=PHWT\n'
+#                    'EOF\n'
+#                    '\n'
+#                    'fft hklin final.mtz mapout fofc.map << EOF\n'
+#                    ' labin F1=DELFWT PHI=PHDELWT\n'
+#                    'EOF\n'
+#                    '\n'
+#                    +additional_cmds+
+#                    '\n'
+#                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
+#                    '\n'
+#                    '/bin/rm dimple_run_in_progress\n'
+#                    '\n'
+#                    'ln -s dimple/final.pdb .\n'
+#                    'ln -s dimple/final.mtz .\n'
+#                    )
+#
+#            # print(Cmds)
+#
+#            os.chdir(self.ccp4_scratch_directory)
+#            f = open('xce_dimple_{0!s}.sh'.format(str(n+1)),'w')
+#            f.write(Cmds)
+#            f.close()
+#            os.system('chmod +x xce_dimple_{0!s}.sh'.format(str(n+1)))
+#            db_dict= {'DimpleStatus': 'started'}
+#            self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
+#            db.update_data_source(xtal,db_dict)
+#
+#
+#            progress += progress_step
+#            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+#
+#        # submit job
+#        self.Logfile.insert('created input scripts for '+str(n+1)+' in '+self.ccp4_scratch_directory)
+#        os.chdir(self.ccp4_scratch_directory)
+#        if os.path.isdir('/dls'):
+#            if self.external_software['qsub_array']:
+#                Cmds = (
+#                        '#PBS -joe -N xce_dimple_master\n'
+#                        './xce_dimple_$SGE_TASK_ID.sh\n'
+#                        )
+#                f = open('dimple_master.sh','w')
+#                f.write(Cmds)
+#                f.close()
+#                print(os.getcwd())
+#                self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
+#                self.Logfile.insert('using the following command:')
+#                self.Logfile.insert('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} dimple_master.sh'.format(str(n+1), self.max_queue_jobs))
+#                if self.using_remote_qsub_submission:
+#                    os.system(str(self.remote_qsub_submission).replace("qsub'", str('cd ' + str(os.getcwd()) + '; ' + 'qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} dimple_master.sh'
+#                                                                  .format(str(n+1), self.max_queue_jobs))) + "'")
+#
+#                else:
+#                    os.system('qsub -P labxchem -t 1:{0!s} -tc {1!s} -N dimple-master dimple_master.sh'.format(str(n+1), self.max_queue_jobs))
+#            else:
+#                self.Logfile.insert("cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
+#        elif self.external_software['qsub']:
+#            self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(n+1))))
+#            self.Logfile.insert('WARNING: this could potentially lead to a crash...')
+#            for i in range(n+1):
+#                self.Logfile.insert('qsub -q medium.q -N dimple xce_dimple_{0!s}.sh'.format((str(i+1))))
+#                os.system('qsub -N dimple xce_dimple_{0!s}.sh'.format((str(i+1))))
+#        else:
+#            self.Logfile.insert('running %s consecutive DIMPLE jobs on your local machine')
+#            for i in range(n+1):
+#                self.Logfile.insert('starting xce_dimple_{0!s}.sh'.format((str(i+1))))
+#                os.system('./xce_dimple_{0!s}.sh'.format((str(i+1))))
+#
+#        self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
 class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
     def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,
@@ -1725,6 +1725,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if mtzFile.space_group_info().symbol_and_number() ==  'R 3 :H (No. 146)':
             symNoAbsence = 'H3'
+        elif mtzFile.space_group_info().symbol_and_number() == 'R 3 2 :H (No. 155)':
+            symNoAbsence = 'H32'
         else:
             symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
 
