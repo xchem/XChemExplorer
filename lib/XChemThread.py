@@ -1244,6 +1244,8 @@ class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
 
             if mtzFile.space_group_info().symbol_and_number() ==  'R 3 :H (No. 146)':
                 symNoAbsence = 'H3'
+            elif mtzFile.space_group_info().symbol_and_number() == 'R 3 2 :H (No. 155)':
+                symNoAbsence = 'H32'
             else:
                 symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
 
