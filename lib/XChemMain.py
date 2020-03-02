@@ -617,9 +617,11 @@ def detectorType():
 def NCBI_taxonomy_ID():
 
     taxonomy_dict = {   '9606':     'homo sapiens',
-                        '562':      'escherichia coli',
                         '7108':     'SPODOPTERA FRUGIPERDA',
-                        '5693 ':    'Trypanosoma cruzi' }
+                        '5693 ':    'Trypanosoma cruzi',
+                        '1508227':  'BAT SARS-LIKE CORONAVIRUS',
+                        '2697049':  'COVID-19',
+                        '562':      'escherichia coli' }
 
     return taxonomy_dict
 
