@@ -279,11 +279,11 @@ class export_to_html:
         if eventMAP == '' or 'none' in str(eventMAP).lower():
             self.Logfile.warning('%s: the respective field in the DB is apparently emtpy' %xtal)
             self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
-            eventMap = self.find_matching_event_map(xtal,ligID)
+            eventMAP = self.find_matching_event_map(xtal,ligID)
         elif not os.path.isfile(eventMAP):
             self.Logfile.warning('%s: event map file does not exist!' %xtal)
             self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
-            eventMap = self.find_matching_event_map(xtal,ligID)
+            eventMAP = self.find_matching_event_map(xtal,ligID)
         else:
             self.Logfile.insert('%s: found matching event map!' %xtal)
         return eventMAP
