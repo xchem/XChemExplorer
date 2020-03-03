@@ -53,7 +53,10 @@ class export_to_html:
                 ligNumber = ligand.split('-')[2]
                 eventMap = self.find_matching_event_map_from_database(xtal, ligand)
                 if eventMap:
+                    self.Logfile.insert('%s: using the following event map -> %s' %(xtal,eventMap))
                     self.cut_and_copy_map(xtal, ligand+'.pdb', eventMap, xtal + '_' + ligand + '_event.ccp4','F','PHIF')
+                else:
+                    self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
                 self.copy_spider_plot(xtal,ligand)
                 pdbID = self.db_dict['Deposition_PDB_ID']
