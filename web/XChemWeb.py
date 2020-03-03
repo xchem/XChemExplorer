@@ -53,7 +53,10 @@ class export_to_html:
                 ligNumber = ligand.split('-')[2]
                 eventMap = self.find_matching_event_map_from_database(xtal, ligand)
                 if eventMap:
+                    self.Logfile.insert('%s: using the following event map -> %s' %(xtal,eventMap))
                     self.cut_and_copy_map(xtal, ligand+'.pdb', eventMap, xtal + '_' + ligand + '_event.ccp4','F','PHIF')
+                else:
+                    self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
                 self.copy_spider_plot(xtal,ligand)
                 pdbID = self.db_dict['Deposition_PDB_ID']
@@ -272,15 +275,15 @@ class export_to_html:
         ligNumber = ligID.split('-')[2]
         eventMAP = self.db.get_event_map_for_ligand(xtal, ligChain, ligNumber, ligName)
         self.Logfile.insert('%s: the database thinks the following event map belongs to %s: %s' %(xtal,ligID,eventMAP))
-        print 'event map', eventMAP
+#        print 'event map', eventMAP
         if eventMAP == '' or 'none' in str(eventMAP).lower():
             self.Logfile.warning('%s: the respective field in the DB is apparently emtpy' %xtal)
             self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
-            eventMap = self.find_matching_event_map(xtal,ligID)
+            eventMAP = self.find_matching_event_map(xtal,ligID)
         elif not os.path.isfile(eventMAP):
             self.Logfile.warning('%s: event map file does not exist!' %xtal)
             self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
-            eventMap = self.find_matching_event_map(xtal,ligID)
+            eventMAP = self.find_matching_event_map(xtal,ligID)
         else:
             self.Logfile.insert('%s: found matching event map!' %xtal)
         return eventMAP
@@ -311,8 +314,8 @@ class export_to_html:
         else:
             self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,ligID,highestCC,mtz[mtz.rfind('/')+1:]))
             eventMAP = mtz[mtz.rfind('/')+1:].replace('.P1.mtz','.ccp4')
-            if not os.path.isfile(eventMAP):
-                eventMAP = []
+#            if not os.path.isfile(eventMAP):
+#                eventMAP = []
 #            else:
 #                self.cut_eventMAP(xtal,ligID,eventMAP)
         return eventMAP
