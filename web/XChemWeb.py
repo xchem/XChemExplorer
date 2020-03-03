@@ -275,7 +275,7 @@ class export_to_html:
         ligNumber = ligID.split('-')[2]
         eventMAP = self.db.get_event_map_for_ligand(xtal, ligChain, ligNumber, ligName)
         self.Logfile.insert('%s: the database thinks the following event map belongs to %s: %s' %(xtal,ligID,eventMAP))
-        print 'event map', eventMAP
+#        print 'event map', eventMAP
         if eventMAP == '' or 'none' in str(eventMAP).lower():
             self.Logfile.warning('%s: the respective field in the DB is apparently emtpy' %xtal)
             self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
@@ -314,8 +314,8 @@ class export_to_html:
         else:
             self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,ligID,highestCC,mtz[mtz.rfind('/')+1:]))
             eventMAP = mtz[mtz.rfind('/')+1:].replace('.P1.mtz','.ccp4')
-            if not os.path.isfile(eventMAP):
-                eventMAP = []
+#            if not os.path.isfile(eventMAP):
+#                eventMAP = []
 #            else:
 #                self.cut_eventMAP(xtal,ligID,eventMAP)
         return eventMAP
