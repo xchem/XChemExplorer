@@ -617,6 +617,7 @@ def detectorType():
 def NCBI_taxonomy_ID():
 
     taxonomy_dict = {   '9606':     'homo sapiens',
+                        '10090':    'mus musculus',
                         '7108':     'SPODOPTERA FRUGIPERDA',
                         '5693 ':    'Trypanosoma cruzi',
                         '1508227':  'BAT SARS-LIKE CORONAVIRUS',
