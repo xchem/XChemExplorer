@@ -55,6 +55,7 @@ class export_to_html:
                 if eventMap:
                     self.Logfile.insert('%s: using the following event map -> %s' %(xtal,eventMap))
                     self.cut_and_copy_map(xtal, ligand+'.pdb', eventMap, xtal + '_' + ligand + '_event.ccp4','F','PHIF')
+                    eventMap = xtal + '_' + ligand + '_event.ccp4'
                 else:
                     self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
