@@ -70,6 +70,10 @@ class export_to_html:
                 resoHigh = self.db_dict['DataProcessingResolutionHigh']
                 spg = self.db_dict['RefinementSpaceGroup']
                 unitCell = self.db_dict['DataProcessingUnitCell']
+                t = ''
+                for ax in unitCell.split():
+                    t += str(round(float(ax),1)) + ' '
+                unitCell = t[:-1]
                 os.chdir(os.path.join(self.projectDir,xtal))
                 FWT = xtal + '-' + ligand + '_2fofc.ccp4'
                 self.cut_and_copy_map(xtal, ligand + '.pdb', '2fofc.map', FWT,'FWT','PHWT')
