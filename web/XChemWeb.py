@@ -55,6 +55,7 @@ class export_to_html:
                 if eventMap:
                     self.Logfile.insert('%s: using the following event map -> %s' %(xtal,eventMap))
                     self.cut_and_copy_map(xtal, ligand+'.pdb', eventMap, xtal + '_' + ligand + '_event.ccp4','F','PHIF')
+                    eventMap = xtal + '_' + ligand + '_event.ccp4'
                 else:
                     self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
                 x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
@@ -69,6 +70,10 @@ class export_to_html:
                 resoHigh = self.db_dict['DataProcessingResolutionHigh']
                 spg = self.db_dict['RefinementSpaceGroup']
                 unitCell = self.db_dict['DataProcessingUnitCell']
+                t = ''
+                for ax in unitCell.split():
+                    t += str(round(float(ax),1)) + ' '
+                unitCell = t[:-1]
                 os.chdir(os.path.join(self.projectDir,xtal))
                 FWT = xtal + '-' + ligand + '_2fofc.ccp4'
                 self.cut_and_copy_map(xtal, ligand + '.pdb', '2fofc.map', FWT,'FWT','PHWT')
