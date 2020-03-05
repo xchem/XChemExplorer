@@ -220,7 +220,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
             db_dict['DataProcessingLOGfileName']=xtal+'.log'
             if db_dict['DataCollectionOutcome']=='None' or db_dict['DataCollectionOutcome']=='':
                 db_dict['DataCollectionOutcome']='success'
-            aimless_results=parse().read_aimless_logfile(xtal+'.log')
+#            aimless_results=parse().read_aimless_logfile(xtal+'.log')
+            aimless_results=parse().read_aimless_logfile(db_dict['DataProcessingPathToLogfile'])
             db_dict.update(aimless_results)
         else:
             db_dict['DataProcessingPathToLogfile']=''

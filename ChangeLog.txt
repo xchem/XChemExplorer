@@ -1,3 +1,6 @@
+v1.5.9 (05/03/2020)
+- bug fix: reading of .json scaling logfiles enabled during 'update database from filesystem'
+
 v1.5.8 (04/03/2020)
 - added Taxonomy ID for mus musculus
 
