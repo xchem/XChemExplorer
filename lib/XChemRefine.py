@@ -906,6 +906,25 @@ class panddaRefine(object):
                     )
                 Logfile.insert(cmd+'\n')
                 os.system(cmd)
+                link_line = ''
+                for line in open(bound_state):
+                    if line.startswith('LINK'):
+                        Logfile.insert('found LINK: ' + line[:-1])
+                        link_line += line
+                if link_line != '':
+                    if os.path.isfile('multi-state-model.pdb'):
+                        for line in open('multi-state-model.pdb'):
+                            if line.startswith('CRYST'):
+                                Logfile.insert('adding LINK lines to multi-state-model.pdb')
+                                out = link_line + line
+                            else:
+                                out += line
+                        Logfile.insert('writing updated multi-state-model.pdb')
+                        f = open('multi-state-model.pdb','w')
+                        f.write(out)
+                        f.close()
+                    else:
+                        Logfile.error('cannot find multi-state-model.pdb')
             else:
                 Logfile.error('cannot find modified version of bound state in %s' %os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial)))
                 return None
@@ -1068,7 +1087,7 @@ class panddaRefine(object):
         if make_all_links:
             add_links_line = (
             'ln -s Refine_%s/refine_%s.split.bound-state.pdb ./refine.split.bound-state.pdb\n' %(panddaSerial,Serial)+
-            'ln -s Refine_%s/refine_%s.split.ground-state.pdb ./refine.split.ground-state.pdb\n' %(panddaSerial,Serial)+
+            'ln -s Refine_%s/refine_%s.split.ground-state.pdb ./refine.split.ground-state.pdb\n' %(panddaSerial,Serial)
 #            'ln -s Refine_%s/refine_%s.output.bound-state.pdb ./refine.output.bound-state.pdb\n' %(panddaSerial,Serial)+
 #            'ln -s Refine_%s/refine_%s.output.ground-state.pdb ./refine.output.ground-state.pdb\n' %(panddaSerial,Serial)
             )
