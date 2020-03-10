@@ -1,3 +1,7 @@
+v1.5.11 (10/03/2020)
+- added linking of covalent binders for PanDDA models (refine.split-bound.pdb)
+- remove links to refine.output... PDB files after refinement
+
 v1.5.10 (05/03/2020)
 - bug fix: correct name of event map in files directory
 

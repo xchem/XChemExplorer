@@ -1400,7 +1400,7 @@ class GUI(object):
             XChemRefine.panddaRefine(self.project_directory, self.xtalID, self.compoundID,
                                      self.data_source).RunQuickRefine(self.Serial, self.RefmacParams,
                                                                       self.external_software, self.xce_logfile,
-                                                                      self.refinementProtocol)
+                                                                      self.refinementProtocol, self.covLinkAtomSpec)
         else:
             #######################################################
             # create folder for new refinement cycle and check if free.mtz exists
@@ -1458,7 +1458,10 @@ class GUI(object):
         imol_protein = None
         for imol in coot_utils_XChem.molecule_number_list():
             print '>',coot.molecule_name(imol)
-            if coot.molecule_name(imol).endswith(self.pdb_style) or coot.molecule_name(imol).endswith('init.pdb') or coot.molecule_name(imol).endswith('dimple.pdb'):
+            if coot.molecule_name(imol).endswith(self.pdb_style) or \
+                    coot.molecule_name(imol).endswith('init.pdb') or \
+                    coot.molecule_name(imol).endswith('dimple.pdb') or \
+                    coot.molecule_name(imol).endswith(self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb'):
                 imol_protein = imol
                 break
 
