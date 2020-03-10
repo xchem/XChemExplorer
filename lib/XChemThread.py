@@ -1773,7 +1773,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 ' resolution file 1 999.0 %s\n' %str(round(float(mtzFile.d_min()),2))+
                 'eof\n'
                 '\n'
-                "dimple --no-cleanup %s.999A.mtz %s %s %s %s dimple\n" % (xtal, ref_pdb, ref_mtz, ref_cif, twin) +
+                'pointless hklin %s.999A.mtz hklout %s.999A.reind.mtz xyzin %s > pointless.reind.log\n' %(xtal,xtal,ref_pdb) +
+                '\n'
+                "dimple --no-cleanup %s.999A.reind.mtz %s %s %s %s dimple\n" % (xtal, ref_pdb, ref_mtz, ref_cif, twin) +
                 '\n'
                 'fft hklin dimple/final.mtz mapout 2fofc.map << EOF\n'
                 ' labin F1=FWT PHI=PHWT\n'
