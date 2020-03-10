@@ -1458,7 +1458,10 @@ class GUI(object):
         imol_protein = None
         for imol in coot_utils_XChem.molecule_number_list():
             print '>',coot.molecule_name(imol)
-            if coot.molecule_name(imol).endswith(self.pdb_style) or coot.molecule_name(imol).endswith('init.pdb') or coot.molecule_name(imol).endswith('dimple.pdb'):
+            if coot.molecule_name(imol).endswith(self.pdb_style) or \
+                    coot.molecule_name(imol).endswith('init.pdb') or \
+                    coot.molecule_name(imol).endswith('dimple.pdb') \
+                    coot.molecule_name(imol).endswith(self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb'):
                 imol_protein = imol
                 break
 
