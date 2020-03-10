@@ -1069,8 +1069,8 @@ class panddaRefine(object):
             add_links_line = (
             'ln -s Refine_%s/refine_%s.split.bound-state.pdb ./refine.split.bound-state.pdb\n' %(panddaSerial,Serial)+
             'ln -s Refine_%s/refine_%s.split.ground-state.pdb ./refine.split.ground-state.pdb\n' %(panddaSerial,Serial)+
-            'ln -s Refine_%s/refine_%s.output.bound-state.pdb ./refine.output.bound-state.pdb\n' %(panddaSerial,Serial)+
-            'ln -s Refine_%s/refine_%s.output.ground-state.pdb ./refine.output.ground-state.pdb\n' %(panddaSerial,Serial)
+#            'ln -s Refine_%s/refine_%s.output.bound-state.pdb ./refine.output.bound-state.pdb\n' %(panddaSerial,Serial)+
+#            'ln -s Refine_%s/refine_%s.output.ground-state.pdb ./refine.output.ground-state.pdb\n' %(panddaSerial,Serial)
             )
 
 
