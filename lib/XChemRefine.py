@@ -827,7 +827,7 @@ class panddaRefine(object):
 
 
 
-    def RunQuickRefine(self,Serial,RefmacParams,external_software,xce_logfile,refinementProtocol):
+    def RunQuickRefine(self,Serial,RefmacParams,external_software,xce_logfile,refinementProtocol,covLinkAtomSpec):
         Logfile=XChemLog.updateLog(xce_logfile)
         Logfile.insert('preparing files for giant.quick_refine')
         # panddaSerial because giant.quick_refine writes Refine_0001 instead of Refine_1

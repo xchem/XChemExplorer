@@ -1400,7 +1400,7 @@ class GUI(object):
             XChemRefine.panddaRefine(self.project_directory, self.xtalID, self.compoundID,
                                      self.data_source).RunQuickRefine(self.Serial, self.RefmacParams,
                                                                       self.external_software, self.xce_logfile,
-                                                                      self.refinementProtocol)
+                                                                      self.refinementProtocol, self.covLinkAtomSpec)
         else:
             #######################################################
             # create folder for new refinement cycle and check if free.mtz exists
