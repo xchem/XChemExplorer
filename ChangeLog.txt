@@ -1,3 +1,6 @@
+v1.5.13 (11/03/2020)
+- bug fix: include covlinks argument is None in XChemPANDDA quickRefine
+
 v1.5.12 (10/03/2020)
 - DIMPLE: added pointless step before dimple to reindex according to ref_pdb if necessary
 

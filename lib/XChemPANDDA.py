@@ -103,7 +103,7 @@ class run_pandda_export(QtCore.QThread):
                         os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
                     Refine=XChemRefine.panddaRefine(self.initial_model_directory,xtal,compoundID,self.datasource)
                     os.symlink(os.path.join(self.initial_model_directory,xtal,xtal+'-ensemble-model.pdb'),xtal+'-ensemble-model.pdb')
-                    Refine.RunQuickRefine(Serial,self.RefmacParams,self.external_software,self.xce_logfile,'pandda_refmac')
+                    Refine.RunQuickRefine(Serial,self.RefmacParams,self.external_software,self.xce_logfile,'pandda_refmac',None)
 
 #            elif xtal in os.path.join(self.panddas_directory,'processed_datasets',xtal,'modelled_structures',
 #                                      '{}-pandda-model.pdb'.format(xtal)):
