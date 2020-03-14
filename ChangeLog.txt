@@ -1,3 +1,6 @@
+v1.5.14 (14/03/2020)
+- HTML export: enable changing of contour level of event maps
+
 v1.5.13 (11/03/2020)
 - bug fix: include covlinks argument is None in XChemPANDDA quickRefine
 
