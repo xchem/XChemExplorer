@@ -948,9 +948,16 @@ def html_ngl(firstPDB,firstEvent,firstMap,firstDiffMap,ligID):
     'stage.mouseControls.remove("scroll-shift")\n'
     '\n'
     "stage.mouseControls.add('scroll-shift', function (stage, delta) {\n"
+    "  if (eventMap) {\n"
     "    var d = Math.sign(delta) / 5\n"
     "    var l = eventMap.getParameters().isolevel\n"
     "eventMap.setParameters({ isolevel: l + d })\n"
+    " }\n"
+    "  if (fwtMap) {\n"
+    "    var d = Math.sign(delta) / 5\n"
+    "    var l = eventMap.getParameters().isolevel\n"
+    "fwtMap.setParameters({ isolevel: l + d })\n"
+    " }\n"
     "});\n"
     "\n"
 
@@ -1085,7 +1092,7 @@ def html_download(protein_name):
 
     download = (
     '    <div class="viewport-wrapper">\n'
-    '        <h1>Human %s - XChem results</h1>\n' %protein_name +
+    '        <h1>%s - XChem results</h1>\n' %protein_name +
     "        <button id='viewer_toggle' onclick='toggleViewer()'>Viewer</button>\n"
     '        <div id="viewer_container">\n'
     '            <h2 id="data_set_id"></h2>\n'
