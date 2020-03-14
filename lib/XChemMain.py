@@ -960,8 +960,9 @@ def html_ngl(firstPDB,firstEvent,firstMap,firstDiffMap,ligID):
     " }\n"
     "});\n"
     "\n"
-
-
+    'stage.mouseControls.remove("scroll-alt")\n'
+    'stage.mouseControls.add("scroll-alt", NGL.MouseActions.focusScroll);\n'
+    "\n"
     "                stage.mouseControls.add('scroll', function () {\n"
     '                    if (fwtMap) {\n'
     '                        var level2fofc = fwtMap.getParameters().isolevel.toFixed(1);\n'
