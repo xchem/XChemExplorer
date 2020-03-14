@@ -1,5 +1,6 @@
 v1.5.14 (14/03/2020)
 - HTML export: enable changing of contour level of event maps
+- HTML export: set ligand confidence to "not assigned" for deposition ready model that have "0 - no ligand bound"
 
 v1.5.13 (11/03/2020)
 - bug fix: include covlinks argument is None in XChemPANDDA quickRefine
