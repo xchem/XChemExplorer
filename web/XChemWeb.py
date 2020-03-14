@@ -82,7 +82,9 @@ class export_to_html:
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
                     self.Logfile.warning('%s: ligand confidence of %s-%s-%s is %s; ignoring...' %(xtal,ligChain,ligNumber,ligName,ligConfidence))
-                    continue
+                    self.Logfile.warning('%s: this seems unlikely because this structure is apparently ready for deposition' %xtal)
+                    self.Logfile.warning('%s: will set it to "not assigned" for now, but please update in soakDB' %xtal)
+                    ligConfidence = 'not assigned'
                 modelStatus = self.db_dict['RefinementOutcome']
                 if firstFile:
                     html += XChemMain.html_ngl(pdb,eventMap.replace(self.projectDir,''),FWT,DELFWT,ligand)
