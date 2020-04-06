@@ -87,6 +87,7 @@ class data_source:
             ['DataCollectionDate',                   'Data Collection\nDate',                   'TEXT',                 1],
             ['DataCollectionOutcome',                'DataCollection\nOutcome',                 'TEXT',                 1],
             ['DataCollectionRun',                    'Run',                                     'TEXT',                 0],
+            ['DataCollectionSubdir',                 'SubDir',                                  'TEXT',                 0],
             ['DataCollectionComment',                'DataCollection\nComment',                 'TEXT',                 0],
             ['DataCollectionWavelength',             'Wavelength',                              'TEXT',                 0],
             ['DataCollectionPinBarcode',             'GDA\nBarcode',                            'TEXT',                 1],
@@ -413,6 +414,7 @@ class data_source:
 
             ['DataCollectionVisit',                    'Visit',                                     'TEXT',                 0],
             ['DataCollectionRun',                    'Run',                                     'TEXT',                 0],
+            ['DataCollectionSubdir',                    'SubDir',                                     'TEXT',                 0],
             ['DataCollectionBeamline',               'Beamline',                                'TEXT',                 0],
             ['DataCollectionOutcome',                'DataCollection\nOutcome',                 'TEXT',                 1],
             ['DataCollectionDate',                   'Data Collection\nDate',                   'TEXT',                 1],
