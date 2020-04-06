@@ -226,7 +226,7 @@ class setup():
                                                       'highest_resolution',
                                                       'lowest_Rfree',
                                                       'dials - only',
-                                                      'xia2 3d - only',
+#                                                      'xia2 3d - only',
                                                       'xia2 3dii - only',
                                                       'autoProc - only',
                                                       'autoProc_staraniso - only']
