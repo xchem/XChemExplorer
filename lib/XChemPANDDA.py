@@ -142,12 +142,14 @@ class run_pandda_export(QtCore.QThread):
 
         with open(os.path.join(self.panddas_directory,'analyses','pandda_inspect_sites.csv'),'rb') as csv_import:
             csv_dict = csv.DictReader(csv_import)
+            self.Logfile.insert('reding pandda_inspect_sites.csv')
             for i,line in enumerate(csv_dict):
+                self.Logfile.insert(line.replace('\n','').replace('\r',''))
                 site_index=line['site_idx']
                 name=line['Name'].replace("'","")
                 comment=line['Comment']
                 site_list.append([site_index,name,comment])
-
+                self.Logfile.insert('add to site_list_:' + str([site_index,name,comment]))
 
         progress_step=1
         for i,line in enumerate(open(os.path.join(self.panddas_directory,'analyses','pandda_inspect_events.csv'))):
