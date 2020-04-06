@@ -2730,8 +2730,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 continue
 
             xtal = collected_xtals[collected_xtals.rfind('/')+1:]
-            if xtal != 'Mpro-x2023':
-                continue
             if self.agamemnon:
                 tmp = xtal[:xtal.rfind('_')]
                 xtal = tmp[:tmp.rfind('_')]
