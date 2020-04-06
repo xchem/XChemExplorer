@@ -2441,13 +2441,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.exisitingSamples = self.getExistingSamples()
 
         self.toParse = [
-                [   os.path.join('xia2', '*'),
+                [   os.path.join('*'),
                     os.path.join('LogFiles', '*aimless.log'),
                     os.path.join('DataFiles', '*free.mtz')],
-                [   os.path.join('xia2-3*'),
-                    os.path.join('LogFiles', '*aimless.log'),
-                    os.path.join('DataFiles', '*free.mtz')],
-                [   os.path.join('xia2-dials*'),
+                [   os.path.join('*'),
                     os.path.join('LogFiles', '*merging-statistics.json'),
                     os.path.join('DataFiles', '*free.mtz')],
                 [   os.path.join('multi-xia2', '*'),
@@ -2475,6 +2472,43 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     os.path.join('LogFiles', '*aimless.log'),
                     os.path.join('DataFiles', '*free.mtz')]
                         ]
+
+#        self.toParse = [
+#                [   os.path.join('xia2', '*'),
+#                    os.path.join('LogFiles', '*aimless.log'),
+#                    os.path.join('DataFiles', '*free.mtz')],
+#                [   os.path.join('xia2-3*'),
+#                    os.path.join('LogFiles', '*aimless.log'),
+#                    os.path.join('DataFiles', '*free.mtz')],
+#                [   os.path.join('xia2-dials*'),
+#                    os.path.join('LogFiles', '*merging-statistics.json'),
+#                    os.path.join('DataFiles', '*free.mtz')],
+#                [   os.path.join('multi-xia2', '*'),
+#                    os.path.join('LogFiles', '*aimless.log'),
+#                    os.path.join('DataFiles', '*free.mtz')],
+#                [   os.path.join('autoPROC', '*'),
+#                    '*aimless.log',
+#                    '*truncate-unique.mtz'],
+#                [   os.path.join('autoPROC', '*'),
+#                    '*staraniso_alldata-unique.table1',
+#                    '*staraniso_alldata-unique.mtz'],
+#                [   os.path.join('autoPROC'),
+#                    '*aimless.log',
+#                    '*truncate-unique.mtz'],
+#                [   os.path.join('autoPROC'),
+#                    '*summary.tar.gz',                  # staraniso_alldata-unique.table1 only available in tar archive
+#                    '*staraniso_alldata-unique.mtz'],
+#                [   os.path.join('autoPROC-*'),
+#                    '*aimless.log',
+#                    '*truncate-unique.mtz'],
+#                [   os.path.join('autoPROC-*'),
+#                    '*summary.tar.gz',
+#                    '*staraniso_alldata-unique.mtz'],
+#                [   os.path.join('*'),
+#                    os.path.join('LogFiles', '*aimless.log'),
+#                    os.path.join('DataFiles', '*free.mtz')]
+#                        ]
+
 
     def run(self):
         if self.agamemnon:
@@ -2689,6 +2723,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 continue
 
             xtal = collected_xtals[collected_xtals.rfind('/')+1:]
+            if xtal != 'Mpro-x2023':
+                continue
             if self.agamemnon:
                 tmp = xtal[:xtal.rfind('_')]
                 xtal = tmp[:tmp.rfind('_')]
@@ -2700,9 +2736,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 runDir = os.path.join(collected_xtals,'processed','*')
             elif self.agamemnon:
                 tmpDir = collected_xtals[:collected_xtals.rfind('/')]
-                runDir = os.path.join(tmpDir,xtal+'_*_')
+                runDir = os.path.join(tmpDir,xtal+'_*_','*')
             else:
-                runDir = os.path.join(collected_xtals,'*')
+                runDir = os.path.join(collected_xtals,'*','*')
 
             for run in sorted(glob.glob(runDir)):
                 current_run=run[run.rfind('/')+1:]
