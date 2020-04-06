@@ -144,7 +144,7 @@ class run_pandda_export(QtCore.QThread):
             csv_dict = csv.DictReader(csv_import)
             self.Logfile.insert('reding pandda_inspect_sites.csv')
             for i,line in enumerate(csv_dict):
-                self.Logfile.insert(str(line.replace('\n','').replace('\r','')))
+                self.Logfile.insert(str(line).replace('\n','').replace('\r',''))
                 site_index=line['site_idx']
                 name=line['Name'].replace("'","")
                 comment=line['Comment']
