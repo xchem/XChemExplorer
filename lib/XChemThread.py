@@ -2365,9 +2365,9 @@ class choose_autoprocessing_outcome(QtCore.QThread):
         for resultDict in dbList:
             if self.selection_mechanism == 'dials - only' and 'dials' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
-            if self.selection_mechanism == 'xia2 3d - only' and '3d-run' in resultDict['DataProcessingProgram']:
+            if self.selection_mechanism == 'xia2 3d - only' and '3d-' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
-            if self.selection_mechanism == 'xia2 3dii - only' and '3dii-run' in resultDict['DataProcessingProgram']:
+            if self.selection_mechanism == 'xia2 3dii - only' and '3dii' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
             if self.selection_mechanism == 'autoProc - only' and 'autoPROC' in resultDict['DataProcessingProgram'] and not 'staraniso' in resultDict['DataProcessingProgram']:
                 tmp.append(resultDict)
