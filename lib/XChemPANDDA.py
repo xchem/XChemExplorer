@@ -175,6 +175,7 @@ class run_pandda_export(QtCore.QThread):
                     pandda_hit_list.append(sampleID)
                 site_index=line['site_idx']
                 event_index=line['event_idx']
+                self.Logfile.insert(str(line))
                 self.Logfile.insert('reading {0!s} -> site {1!s} -> event {2!s}'.format(sampleID, site_index, event_index))
 
                 for entry in site_list:
