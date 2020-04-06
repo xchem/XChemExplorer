@@ -2568,6 +2568,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             os.symlink(mtzfile[mtzfile.rfind('/')+1:], xtal + '.mtz')
         if os.path.isfile(mtzfile[mtzfile.rfind('/') + 1:]):
             mtzNew=os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc+ '_' + proc_code, mtzfile[mtzfile.rfind('/')+1:])
+        # MTZ file unmerged
+        if os.path.isfile(mtzfile.replace('_free.mtz','_scaled_unmerged.mtz')):
+            self.Logfile.insert('%s: found unmerged mtz file' %xtal)
+            if not os.path.isfile(xtal+'_unmerged.mtz'):
+                self.Logfile.insert('%s: copying %s' %(xtal,mtzfile.replace('_free.mtz','_scaled_unmerged.mtz')))
+                os.system('/bin/cp ' + mtzfile.replace('_free.mtz','_scaled_unmerged.mtz') + ' .')
         # AIMLESS logfile
         if not os.path.isfile(logfile[logfile.rfind('/')+1:]):
             self.Logfile.insert('%s: copying %s' % (xtal, logfile))
