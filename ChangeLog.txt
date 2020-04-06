@@ -1,3 +1,6 @@
+v1.5.15 (06/04/2020)
+- bug fix: found instance in pandda_inspect_events.csv where sites/ events displayed as float instead of int; added fix
+
 v1.5.14 (14/03/2020)
 - HTML export: enable changing of contour level of event maps
 - HTML export: set ligand confidence to "not assigned" for deposition ready model that have "0 - no ligand bound"
