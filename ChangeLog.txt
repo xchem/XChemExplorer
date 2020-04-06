@@ -1,3 +1,9 @@
+v1.5.16 (06/04/2020)
+- XChemThread: copy un-merged MTZ file for xia2, dials & 3d(ii)
+- XChemThread: change parsing of auto-processing results to enable reading of multiple runs with same name, e.g. xia-3dii
+- bug fix: enable 3dii only selection of auto-processing results
+- remove xia2-3d only auto-processing selection option
+
 v1.5.15 (06/04/2020)
 - bug fix: found instance in pandda_inspect_events.csv where sites/ events displayed as float instead of int; added fix
 

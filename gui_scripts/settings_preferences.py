@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.5.15'
+        xce_object.xce_version = 'v1.5.16'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -226,7 +226,7 @@ class setup():
                                                       'highest_resolution',
                                                       'lowest_Rfree',
                                                       'dials - only',
-                                                      'xia2 3d - only',
+#                                                      'xia2 3d - only',
                                                       'xia2 3dii - only',
                                                       'autoProc - only',
                                                       'autoProc_staraniso - only']

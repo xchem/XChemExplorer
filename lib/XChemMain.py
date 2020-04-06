@@ -496,6 +496,11 @@ def linkAutoProcessingResult(xtal,dbDict,projectDir,xce_logfile):
     Logfile=XChemLog.updateLog(xce_logfile)
 
     run =      dbDict['DataCollectionRun']
+    subDir =   dbDict['DataCollectionSubdir']
+    if subDir != '':
+        procCode = '_' + subDir
+    else:
+        procCode = ''
     visit =    dbDict['DataCollectionVisit']
     autoproc = dbDict['DataProcessingProgram']
     mtzFileAbs = dbDict['DataProcessingPathToMTZfile']
@@ -509,18 +514,18 @@ def linkAutoProcessingResult(xtal,dbDict,projectDir,xce_logfile):
     # MTZ file
     Logfile.warning('removing %s.mtz' %xtal)
     os.system('/bin/rm %s.mtz' %xtal)
-    print xtal,os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile)
-    if os.path.isfile(os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile)):
-        os.symlink(os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile), xtal + '.mtz')
+    print xtal,os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, mtzfile)
+    if os.path.isfile(os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, mtzfile)):
+        os.symlink(os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, mtzfile), xtal + '.mtz')
         Logfile.insert('linking MTZ file from different auto-processing pipeline:')
-        Logfile.insert('ln -s ' + os.path.join('autoprocessing', visit + '-' + run + autoproc, mtzfile) + ' ' + xtal + '.mtz')
+        Logfile.insert('ln -s ' + os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, mtzfile) + ' ' + xtal + '.mtz')
     # LOG file
     Logfile.warning('removing %s.log'  %xtal)
     os.system('/bin/rm %s.log' %xtal)
-    if os.path.isfile(os.path.join('autoprocessing', visit + '-' + run + autoproc, logfile)):
-        os.symlink(os.path.join('autoprocessing', visit + '-' + run + autoproc, logfile), xtal + '.log')
+    if os.path.isfile(os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, logfile)):
+        os.symlink(os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, logfile), xtal + '.log')
         Logfile.insert('linking LOG file from different auto-processing pipeline:')
-        Logfile.insert('ln -s ' + os.path.join('autoprocessing', visit + '-' + run + autoproc, logfile) + ' ' + xtal + '.log')
+        Logfile.insert('ln -s ' + os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, logfile) + ' ' + xtal + '.log')
 
 
 
