@@ -1,3 +1,6 @@
+v1.5.17 (07/04/2020)
+- add option to specify $SampleID in structure deposition title
+
 v1.5.16 (06/04/2020)
 - XChemThread: copy un-merged MTZ file for xia2, dials & 3d(ii)
 - XChemThread: change parsing of auto-processing results to enable reading of multiple runs with same name, e.g. xia-3dii

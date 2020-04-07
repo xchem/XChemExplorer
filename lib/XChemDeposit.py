@@ -789,7 +789,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #                self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
 
                 title = self.data_template_dict['structure_title'].replace('$ProteinName', self.data_template_dict[
-                    'Source_organism_gene']).replace('$CompoundName', self.db_dict['CompoundCode'])
+                    'Source_organism_gene']).replace('$CompoundName', self.db_dict['CompoundCode']).replace('($SampleID)','('+xtal+')')
 
                 self.data_template_dict['group_type'] = 'changed state'
 
