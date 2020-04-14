@@ -415,7 +415,7 @@ class Refine(object):
             ' -autoncs'
             ' -M TLSbasic'
             ' -WAT'
-            '-d Refine_%s\n' %str(Serial)
+            ' -d Refine_%s\n' %str(Serial)
         )
         return cmd
 
@@ -481,7 +481,7 @@ class Refine(object):
         if qsub and not os.uname()[1] == 'hestia':
             os.system("qsub -P labxchem -q medium.q %s.sh" %program)
         else:
-            os.system('chmod +x refmac.csh')
+            os.system('chmod +x %s.sh' %program)
             os.system('./%s.sh &' %program)
 
 
