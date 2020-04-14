@@ -629,7 +629,7 @@ class setup():
                                          'Build ground state model']
 
         xce_object.refine_file_tasks = ['Open COOT',
-                                        'Open COOT - test -']
+                                        'Open COOT - BUSTER refinement -']
 
 #        xce_object.refine_file_tasks = ['Open COOT',
 #                                        'Open COOT for old PanDDA',

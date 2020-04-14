@@ -3481,6 +3481,8 @@ class XChemExplorer(QtGui.QApplication):
                     interface = 'panddaV1'
                 elif instruction == 'Build ground state model':
                     interface = 'reference'
+                elif instruction == 'Open COOT - BUSTER refinement -':
+                    interface = 'buster'
                 else:
                     interface = 'old'
                     print self.settings
