@@ -80,7 +80,7 @@ class refine_bound_state_with_buster(QtCore.QThread):
                         os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
                     os.system('/bin/cp %s in.pdb' %os.path.join(self.initial_model_directory,xtal,xtal+'-pandda-model.pdb'))
                     Refine=XChemRefine.Refine(self.initial_model_directory,xtal,compoundID,self.datasource)
-                    Refine.RunBuster(self.external_software,self.xce_logfile,None)
+                    Refine.RunBuster(str(Serial),self.external_software,self.xce_logfile,None)
                 else:
                     self.Logfile.error('%s: cannot find %s-pandda-model.pdb; cannot start refinement...' %(xtal,xtal))
 

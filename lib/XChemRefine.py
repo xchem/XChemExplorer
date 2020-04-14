@@ -489,7 +489,7 @@ class Refine(object):
 
 
 
-    def RunBuster(self,external_software,xce_logfile,covLinkAtomSpec):
+    def RunBuster(self,Serial,external_software,xce_logfile,covLinkAtomSpec):
 
         if os.path.isfile(xce_logfile): Logfile=XChemLog.updateLog(xce_logfile)
         Serial=str(Serial)
