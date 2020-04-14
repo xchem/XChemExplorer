@@ -99,7 +99,7 @@ class GUI(object):
         self.spider_plot = ''
         self.ligand_confidence = ''
         self.refinement_folder = ''
-        self.refinementProtocol = 'pandda_refmac'
+#        self.refinementProtocol = 'pandda_refmac'
         #        self.datasetOutcome=''
 
         self.pdb_style = 'refine.pdb'
@@ -1166,82 +1166,82 @@ class GUI(object):
         if not os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
             os.chdir(os.path.join(self.project_directory, self.xtalID))
 
-        if self.refinementProtocol.startswith('pandda'):
-            self.Logfile.insert('==> COOT: looking for ground-state model ' + os.path.join(self.project_directory, self.xtalID,
-                                                                         self.pdb_style.replace('.pdb',
-                                                                                                '') + '.split.ground-state.pdb'))
-#            print '=> XCE: looking for ground-state model', os.path.join(self.project_directory, self.xtalID,
+#        if self.refinementProtocol.startswith('pandda'):
+#            self.Logfile.insert('==> COOT: looking for ground-state model ' + os.path.join(self.project_directory, self.xtalID,
 #                                                                         self.pdb_style.replace('.pdb',
-#                                                                                                '') + '.split.ground-state.pdb')
-            if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
-                                           self.pdb_style.replace('.pdb', '') + '.split.ground-state.pdb')):
-                self.Logfile.insert('==> COOT: found ground-state model')
-#                print '=> XCE: found ground-state model'
-                os.chdir(os.path.join(self.project_directory, self.xtalID))
-                coot.set_colour_map_rotation_on_read_pdb(0)
-                try:
-                    color_wheel_rotation = 160 / float(imol + 2)
-                except UnboundLocalError:
-                    color_wheel_rotation = 80
-                coot.set_colour_map_rotation_on_read_pdb(color_wheel_rotation)
-                imol = coot.handle_read_draw_molecule_with_recentre(os.path.join(self.project_directory, self.xtalID,
-                                                                                 self.pdb_style.replace('.pdb',
-                                                                                                        '') + '.split.ground-state.pdb'),
-                                                                    0)
-                coot.set_colour_by_molecule(imol)
-                coot.set_mol_active(imol, 0)
-            else:
-                self.Logfile.error('==> COOT - cannot find ground-state model')
-#                print '=> XCE - ERROR: cannot find ground-state model'
-            self.Logfile.insert('==> COOT: looking for bound-state model '+ os.path.join(self.project_directory, self.xtalID,
-                                                                        self.pdb_style.replace('.pdb',
-                                                                                               '') + '.split.bound-state.pdb'))
+#                                                                                                '') + '.split.ground-state.pdb'))
+##            print '=> XCE: looking for ground-state model', os.path.join(self.project_directory, self.xtalID,
+##                                                                         self.pdb_style.replace('.pdb',
+##                                                                                                '') + '.split.ground-state.pdb')
+#            if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
+#                                           self.pdb_style.replace('.pdb', '') + '.split.ground-state.pdb')):
+#                self.Logfile.insert('==> COOT: found ground-state model')
+##                print '=> XCE: found ground-state model'
+#                os.chdir(os.path.join(self.project_directory, self.xtalID))
+#                coot.set_colour_map_rotation_on_read_pdb(0)
+#                try:
+#                    color_wheel_rotation = 160 / float(imol + 2)
+#                except UnboundLocalError:
+#                    color_wheel_rotation = 80
+#                coot.set_colour_map_rotation_on_read_pdb(color_wheel_rotation)
+#                imol = coot.handle_read_draw_molecule_with_recentre(os.path.join(self.project_directory, self.xtalID,
+#                                                                                 self.pdb_style.replace('.pdb',
+#                                                                                                        '') + '.split.ground-state.pdb'),
+#                                                                    0)
+#                coot.set_colour_by_molecule(imol)
+#                coot.set_mol_active(imol, 0)
+#            else:
+#                self.Logfile.error('==> COOT - cannot find ground-state model')
+##                print '=> XCE - ERROR: cannot find ground-state model'
+#            self.Logfile.insert('==> COOT: looking for bound-state model '+ os.path.join(self.project_directory, self.xtalID,
+#                                                                        self.pdb_style.replace('.pdb',
+#                                                                                               '') + '.split.bound-state.pdb'))
 #            print '=> XCE: looking for bound-state model', os.path.join(self.project_directory, self.xtalID,
 #                                                                        self.pdb_style.replace('.pdb',
 #                                                                                               '') + '.split.bound-state.pdb')
-            if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
-                                           self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb')):
-                self.Logfile.insert('==> COOT: found bound-state model')
-#                print '=> XCE: found bound-state model'
-                os.chdir(os.path.join(self.project_directory, self.xtalID))
-                coot.set_colour_map_rotation_on_read_pdb(0)
-                color_wheel_rotation = 21 / float(imol + 2)
-                coot.set_colour_map_rotation_on_read_pdb(color_wheel_rotation)
-                imol = coot.handle_read_draw_molecule_with_recentre(os.path.join(self.project_directory, self.xtalID,
-                                                                                 self.pdb_style.replace('.pdb',
-                                                                                                        '') + '.split.bound-state.pdb'),
-                                                                    0)
-                self.mol_dict['protein'] = imol
-            else:
-                self.Logfile.error('==> COOT: cannot find bound-state model')
-#                print '=> XCE - ERROR: cannot find bound-state model'
-                self.Logfile.warning('==> COOT: moving to next crystal...')
-#                print '=> XCE: moving to next crystal...'
-                self.go_to_next_xtal()
+#            if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
+#                                           self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb')):
+#                self.Logfile.insert('==> COOT: found bound-state model')
+##                print '=> XCE: found bound-state model'
+#                os.chdir(os.path.join(self.project_directory, self.xtalID))
+#                coot.set_colour_map_rotation_on_read_pdb(0)
+#                color_wheel_rotation = 21 / float(imol + 2)
+#                coot.set_colour_map_rotation_on_read_pdb(color_wheel_rotation)
+#                imol = coot.handle_read_draw_molecule_with_recentre(os.path.join(self.project_directory, self.xtalID,
+#                                                                                 self.pdb_style.replace('.pdb',
+#                                                                                                        '') + '.split.bound-state.pdb'),
+#                                                                    0)
+#                self.mol_dict['protein'] = imol
+#            else:
+#                self.Logfile.error('==> COOT: cannot find bound-state model')
+##                print '=> XCE - ERROR: cannot find bound-state model'
+#                self.Logfile.warning('==> COOT: moving to next crystal...')
+##                print '=> XCE: moving to next crystal...'
+#                self.go_to_next_xtal()
+#        else:
+        if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
+            os.chdir(os.path.join(self.project_directory, self.xtalID))
+            imol = coot.handle_read_draw_molecule_with_recentre(
+                os.path.join(self.project_directory, self.xtalID, self.pdb_style), 0)
+        elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.pdb')):
+            os.chdir(os.path.join(self.project_directory, self.xtalID))
+            imol = coot.handle_read_draw_molecule_with_recentre(
+                os.path.join(self.project_directory, self.xtalID, 'init.pdb'), 0)
+        elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.pdb')):
+            os.chdir(os.path.join(self.project_directory, self.xtalID))
+            imol = coot.handle_read_draw_molecule_with_recentre(
+                os.path.join(self.project_directory, self.xtalID, 'dimple.pdb'), 0)
         else:
-            if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
-                os.chdir(os.path.join(self.project_directory, self.xtalID))
-                imol = coot.handle_read_draw_molecule_with_recentre(
-                    os.path.join(self.project_directory, self.xtalID, self.pdb_style), 0)
-            elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.pdb')):
-                os.chdir(os.path.join(self.project_directory, self.xtalID))
-                imol = coot.handle_read_draw_molecule_with_recentre(
-                    os.path.join(self.project_directory, self.xtalID, 'init.pdb'), 0)
-            elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.pdb')):
-                os.chdir(os.path.join(self.project_directory, self.xtalID))
-                imol = coot.handle_read_draw_molecule_with_recentre(
-                    os.path.join(self.project_directory, self.xtalID, 'dimple.pdb'), 0)
-            else:
-                self.go_to_next_xtal()
-            self.mol_dict['protein'] = imol
+            self.go_to_next_xtal()
+        self.mol_dict['protein'] = imol
 
-            # read any one event map if present
-            for event_map in glob.glob(
-                    os.path.join(self.project_directory, self.xtalID, self.xtalID + '-event_*.native.ccp4')):
-                coot.handle_read_ccp4_map((event_map), 0)
-                coot.set_contour_level_in_sigma(imol, 2)
-                coot.set_last_map_colour(0.74, 0.44, 0.02)
-                break
+        # read any one event map if present
+        for event_map in glob.glob(
+                os.path.join(self.project_directory, self.xtalID, self.xtalID + '-event_*.native.ccp4')):
+            coot.handle_read_ccp4_map((event_map), 0)
+            coot.set_contour_level_in_sigma(imol, 2)
+            coot.set_last_map_colour(0.74, 0.44, 0.02)
+            break
 
         for item in coot_utils_XChem.molecule_number_list():
             if coot.molecule_name(item).endswith(
