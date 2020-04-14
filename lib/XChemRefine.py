@@ -425,18 +425,16 @@ class Refine(object):
         elif program == 'buster':
             Serial = ''
         cmd += (
-            'phenix.molprobity refine_%s.pdb refine_%s.mtz\n' %(Serial,Serial)+
+            'phenix.molprobity refine%s.pdb refine%s.mtz\n' %(Serial,Serial)+
             '/bin/mv molprobity.out refine_molprobity.log\n'
-            'mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG > validate_ligands.txt\n' %(Serial,Serial)+
+            'mmtbx.validate_ligands refine%s.pdb refine%s.mtz LIG > validate_ligands.txt\n' %(Serial,Serial)+
             'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
-            '#ln -s %s/%s/Refine_%s/refine_%s.pdb refine.pdb\n' %(self.ProjectPath,self.xtalID,Serial,Serial)+
-            '#ln -s %s/%s/Refine_%s/refine_%s.mtz refine.mtz\n' %(self.ProjectPath,self.xtalID,Serial,Serial)+
-            'ln -s ./Refine_%s/refine_%s.pdb refine.pdb\n' %(Serial,Serial)+
-            'ln -s ./Refine_%s/refine_%s.mtz refine.mtz\n' %(Serial,Serial)+
+            'ln -s ./Refine_%s/refine%s.pdb refine.pdb\n' %(cycle,Serial)+
+            'ln -s ./Refine_%s/refine%s.mtz refine.mtz\n' %(cycle,Serial)+
             'ln -s refine.pdb refine.split.bound-state.pdb\n'
             '\n'
-            'ln -s Refine_%s/validate_ligands.txt .\n' %Serial+
-            'ln -s Refine_%s/refine_molprobity.log .\n' %Serial+
+            'ln -s Refine_%s/validate_ligands.txt .\n' %cycle+
+            'ln -s Refine_%s/refine_molprobity.log .\n' %cycle+
             'mmtbx.validation_summary refine.pdb > validation_summary.txt\n'
             '\n'
         )
