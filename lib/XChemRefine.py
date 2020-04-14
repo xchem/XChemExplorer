@@ -347,7 +347,7 @@ class Refine(object):
             xyzin = os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'in.pdb')
             xyzout = os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'refine_'+Serial+'.pdb')
         elif os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial),'in.pdb')):
-            xyzin = os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial),'in.pdb'))
+            xyzin = os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial),'in.pdb')
         else:
             print 'error'
             return None
