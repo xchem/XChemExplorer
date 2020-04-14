@@ -624,7 +624,7 @@ class setup():
                                          'Event Map -> SF',
                                          'apo -> mmcif',
                                          'check modelled ligands',
-                                         'refine ALL bound-state models with BUSTER'
+                                         'refine ALL bound-state models with BUSTER',
                                          'pre-run for ground state model',
                                          'Build ground state model']
 
