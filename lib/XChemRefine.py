@@ -403,8 +403,7 @@ class Refine(object):
     def set_refinement_status(self,cmd):
         cmd += ('$CCP4/bin/ccp4-python '
                 ' $XChemExplorer_DIR/helpers/update_status_flag.py '
-                 + self.datasource + ' ' +
-                 + self.xtalID + ' RefinementStatus running')
+                 + self.datasource + ' ' + self.xtalID + ' RefinementStatus running')
         return cmd
 
     def add_buster_command(self,cmd,xyzin,hklin,libin,Serial):
