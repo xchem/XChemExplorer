@@ -52,7 +52,7 @@ class refine_bound_state_with_buster(QtCore.QThread):
 
         samples_to_export=self.export_models()
 
-#        self.refine_exported_models(samples_to_export)
+        self.refine_exported_models(samples_to_export)
 
 
     def refine_exported_models(self,samples_to_export):
@@ -160,16 +160,16 @@ class refine_bound_state_with_buster(QtCore.QThread):
                 self.Logfile.insert('changing directory to ' + os.path.join(self.initial_model_directory,sample))
                 os.chdir(os.path.join(self.initial_model_directory,sample))
                 self.Logfile.insert(sample + ': copying ' + os.path.join(self.panddas_directory,'processed_datasets',sample,'modelled_structures',sample+'-pandda-model.pdb'))
-#                os.system('/bin/cp %s .' %os.path.join(self.panddas_directory,'processed_datasets',sample,'modelled_structures',sample+'-pandda-model.pdb'))
+                os.system('/bin/cp %s .' %os.path.join(self.panddas_directory,'processed_datasets',sample,'modelled_structures',sample+'-pandda-model.pdb'))
                 db_dict= {'RefinementOutcome': '2 - PANDDA model', 'DatePanDDAModelCreated': samples_to_export[sample]}
                 for old_event_map in glob.glob('*-BDC_*.ccp4'):
                     if not os.path.isdir('old_event_maps'):
-#                        os.mkdir('old_event_maps')
+                        os.mkdir('old_event_maps')
                         self.Logfile.warning(sample + ': moving ' + old_event_map + ' to old_event_maps folder')
-#                        os.system('/bin/mv %s old_event_maps' %old_event_map)
+                        os.system('/bin/mv %s old_event_maps' %old_event_map)
                 for event_map in glob.glob(os.path.join(self.panddas_directory,'processed_datasets',sample,'*-BDC_*.ccp4')):
                     self.Logfile.insert(sample + ': copying ' + event_map)
-#                    os.system('/bin/cp %s .' %event_map)
+                    os.system('/bin/cp %s .' %event_map)
                 select_dir_string+="select_dir={0!s} ".format(sample)
                 select_dir_string_new_pannda+='{0!s} '.format(sample)
                 self.Logfile.insert('updating database for '+sample+' setting time model was created to '+db_dict['DatePanDDAModelCreated']+' and RefinementOutcome to '+db_dict['RefinementOutcome'])
