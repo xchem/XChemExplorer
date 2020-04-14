@@ -167,7 +167,7 @@ class refine_bound_state_with_buster(QtCore.QThread):
 #                        os.mkdir('old_event_maps')
                         self.Logfile.warning(sample + ': moving ' + old_event_map + ' to old_event_maps folder')
 #                        os.system('/bin/mv %s old_event_maps' %old_event_map)
-                for event_map in glob.glob(os.path.join(self.panddas_directory,'processed_datasets',sample,'modelled_structures','*-BDC_*.ccp4')):
+                for event_map in glob.glob(os.path.join(self.panddas_directory,'processed_datasets',sample,'*-BDC_*.ccp4')):
                     self.Logfile.insert(sample + ': copying ' + event_map)
 #                    os.system('/bin/cp %s .' %event_map)
                 select_dir_string+="select_dir={0!s} ".format(sample)
