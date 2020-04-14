@@ -323,6 +323,212 @@ class Refine(object):
         else:
             Logfile.error('could not create linkfile; please check logs in %s/%s' %(self.ProjectPath,self.xtalID))
 
+    def get_hklin_hklout(self,Serial):
+        #######################################################
+        # HKLIN & HKLOUT
+        hklin = None
+        hklout = None
+        if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'.free.mtz')):
+            hklin=os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'.free.mtz')
+#        elif os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')):
+#            RefmacParams['HKLIN']='HKLIN '+os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz \\\n')
+        else:
+            Logfile.error('%s: cannot find HKLIN for refinement; aborting...' %self.xtalID)
+            return None
+        hklout=os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'refine_'+Serial+'.mtz')
+        return hklin, hklout
+
+    def get_xyzin_xyzout(self,Serial):
+        #######################################################
+        # XYZIN & XYZOUT
+        xyzin = None
+        xyzout = None
+        if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'in.pdb')):
+            xyzin = os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'in.pdb')
+            xyzout = os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'refine_'+Serial+'.pdb')
+        elif os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial),'in.pdb')):
+            xyzin = os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial),'in.pdb'))
+        else:
+            print 'error'
+            return None
+        return xyzin, xyzout
+
+    def get_libin_libout(self,Serial):
+        #######################################################
+        # LIBIN & LIBOUT
+        libin = None
+        libout = None
+        if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.compoundID+'.cif')):
+            libin = os.path.join(self.ProjectPath,self.xtalID,self.compoundID+'.cif')
+            libout = os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'refine_'+Serial+'.cif')
+        else:
+            print 'error'
+            return None
+        return libin, libout
+
+    def write_refinement_in_progress(self):
+        #######################################################
+        # we write 'REFINEMENT_IN_PROGRESS' immediately to avoid unncessary refiment
+        os.chdir(os.path.join(self.ProjectPath,self.xtalID))
+        os.system('touch REFINEMENT_IN_PROGRESS')
+
+    def clean_up_before_refinement(self):
+        #######################################################
+        # clean up!
+        # and remove all files which will be re-created by current refinement cycle
+        os.chdir(os.path.join(self.ProjectPath,self.xtalID))
+        os.system('/bin/rm refine.pdb refine.mtz refine.split.bound-state.pdb validation_summary.txt validate_ligands.txt 2fofc.map fofc.map refine_molprobity.log')
+
+    def get_shebang(self,program,qsub):
+        cmd = '#!'+os.getenv('SHELL')+'\n'
+        if qsub:
+            cmd += '#PBS -joe -N xce_%s\n' %program
+        return cmd
+
+    def load_modules(self,cmd):
+        #######################################################
+        # PHENIX stuff (if working at DLS)
+        if os.getcwd().startswith('/dls'):
+            cmd += 'module load phenix\n'
+            cmd += 'module load buster\n'
+        return cmd
+
+    def get_source_line(self,cmd):
+        if 'bash' in os.getenv('SHELL'):
+            cmd += 'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
+        elif 'csh' in os.getenv('SHELL'):
+            cmd += 'setenv XChemExplorer_DIR '+os.getenv('XChemExplorer_DIR')+'\n'
+        return cmd
+
+    def set_refinement_status(self,cmd):
+        cmd += ('$CCP4/bin/ccp4-python '
+                ' $XChemExplorer_DIR/helpers/update_status_flag.py '
+                 + self.datasource + ' ' +
+                 + self.xtalID + ' RefinementStatus running')
+        return cmd
+
+    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial):
+        cmd += (
+            'refine '
+            ' -p %s' %xyzin +
+            ' -m %s' %hklin +
+            ' -l %s' %libin +
+            ' -autoncs'
+            ' -M TLSbasic'
+            ' -WAT'
+            '-d Refine_%s\n' %str(Serial)
+        )
+        return cmd
+
+    def add_validation(self,cmd,cycle,program):
+        if program == 'refmac':
+            Serial = '_' + cycle
+        elif program == 'buster':
+            Serial = ''
+        cmd += (
+            'phenix.molprobity refine_%s.pdb refine_%s.mtz\n' %(Serial,Serial)+
+            '/bin/mv molprobity.out refine_molprobity.log\n'
+            'mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG > validate_ligands.txt\n' %(Serial,Serial)+
+            'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
+            '#ln -s %s/%s/Refine_%s/refine_%s.pdb refine.pdb\n' %(self.ProjectPath,self.xtalID,Serial,Serial)+
+            '#ln -s %s/%s/Refine_%s/refine_%s.mtz refine.mtz\n' %(self.ProjectPath,self.xtalID,Serial,Serial)+
+            'ln -s ./Refine_%s/refine_%s.pdb refine.pdb\n' %(Serial,Serial)+
+            'ln -s ./Refine_%s/refine_%s.mtz refine.mtz\n' %(Serial,Serial)+
+            'ln -s refine.pdb refine.split.bound-state.pdb\n'
+            '\n'
+            'ln -s Refine_%s/validate_ligands.txt .\n' %Serial+
+            'ln -s Refine_%s/refine_molprobity.log .\n' %Serial+
+            'mmtbx.validation_summary refine.pdb > validation_summary.txt\n'
+            '\n'
+        )
+        return cmd
+
+    def calculate_maps(self,cmd,program):
+        if program == 'refmac':
+            FWT = 'FWT'
+            PHWT = 'PHWT'
+            DELFWT = 'DELFWT'
+            PHDELWT = 'PHDELWT'
+        elif program == 'buster':
+            FWT = '2FOFCWT'
+            PHWT = 'PH2FOFCWT'
+            DELFWT = 'FOFCWT'
+            PHDELWT = 'PHFOFCWT'
+        cmd += (
+            'fft hklin refine.mtz mapout 2fofc.map << EOF\n'
+            'labin F1=%s PHI=%s\n' %(FWT,PHWT) +
+            'EOF\n'
+            '\n'
+            'fft hklin refine.mtz mapout fofc.map << EOF\n'
+            'labin F1=%s PHI=%s\n' %(DELFWT,PHDELWT) +
+            'EOF\n'
+        )
+        return cmd
+
+    def update_database(self,cmd,Serial):
+        cmd += ( '$CCP4/bin/ccp4-python '
+                 +os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_after_refinement.py')+
+                ' %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial))    )
+        cmd += '/bin/rm %s/%s/REFINEMENT_IN_PROGRESS\n' %(self.ProjectPath,self.xtalID)
+
+        return cmd
+
+    def write_refinement_script(self,cmd,program):
+        os.chdir(os.path.join(self.ProjectPath,self.xtalID))
+        f = open(program + '.sh','w')
+        f.write(cmd)
+        f.close()
+
+    def run_script(self,program,qsub):
+        os.chdir(os.path.join(self.ProjectPath,self.xtalID))
+        if qsub and not os.uname()[1] == 'hestia':
+            os.system("qsub -P labxchem -q medium.q %s.sh" %program)
+        else:
+            os.system('chmod +x refmac.csh')
+            os.system('./%s.sh &' %program)
+
+
+
+    def RunBuster(self,external_software,xce_logfile,covLinkAtomSpec):
+
+        if os.path.isfile(xce_logfile): Logfile=XChemLog.updateLog(xce_logfile)
+        Serial=str(Serial)
+
+        if covLinkAtomSpec is not None:
+            self.make_covalent_link(covLinkAtomSpec,Logfile)
+
+        # first check if refinement is ongoing and exit if yes
+        if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'REFINEMENT_IN_PROGRESS')):
+            Logfile.insert('cannot start new refinement for %s: *** REFINEMENT IN PROGRESS ***' %self.xtalID)
+            return None
+
+        hklin, hklout = self.get_hklin_hklout(Serial)
+
+        xyzin, xyzout = self.get_xyzin_xyzout(Serial)
+
+        libin, libout = self.get_libin_libout(Serial)
+
+        self.write_refinement_in_progress()
+
+        cmd = self.get_shebang('buster',external_software['qsub'])
+
+        cmd = self.load_modules(cmd)
+
+        cmd = self.get_source_line(cmd)
+
+        cmd = self.set_refinement_status(cmd)
+
+        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial)
+
+        cmd = self.add_validation(cmd,Serial,'buster')
+
+        cmd = self.calculate_maps(cmd,'buster')
+
+        cmd = self.update_database(cmd,Serial)
+
+        self.write_refinement_script(cmd,'buster')
+
+        self.run_script('buster',external_software['qsub'])
 
     def RunRefmac(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
@@ -345,7 +551,7 @@ class Refine(object):
 #        elif os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')):
 #            RefmacParams['HKLIN']='HKLIN '+os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz \\\n')
         else:
-            Logfile.insert('%s: cannot find HKLIN for refinement; aborting...' %self.xtalID)
+            Logfile.error('%s: cannot find HKLIN for refinement; aborting...' %self.xtalID)
             return None
         RefmacParams['HKLOUT']='HKLOUT '+os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'refine_'+Serial+'.mtz \\\n')
 
@@ -852,7 +1058,7 @@ class panddaRefine(object):
         elif os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')):
             RefmacParams['HKLIN']=os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')
         else:
-            Logfile.insert('%s: cannot find HKLIN for refinement; aborting...' %self.xtalID)
+            Logfile.error('%s: cannot find HKLIN for refinement; aborting...' %self.xtalID)
             return None
 
         #######################################################
