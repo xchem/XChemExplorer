@@ -525,7 +525,7 @@ class Refine(object):
 
         self.write_refinement_script(cmd,'buster')
 
-#        self.run_script('buster',external_software['qsub'])
+        self.run_script('buster',external_software['qsub'])
 
     def RunRefmac(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
