@@ -1402,6 +1402,20 @@ class GUI(object):
                                                                       self.external_software, self.xce_logfile,
                                                                       self.refinementProtocol, self.covLinkAtomSpec)
         else:
+
+            #######################################################
+            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
+                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
+            # create folder for new refinement cycle
+            try:
+                self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+            except OSError:
+                self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
+#                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
+                self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
+
+
             #######################################################
             # create folder for new refinement cycle and check if free.mtz exists
             if not os.path.isdir(os.path.join(self.project_directory, self.xtalID)):
