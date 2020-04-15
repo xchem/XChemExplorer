@@ -1444,7 +1444,7 @@ class GUI(object):
                 break
         if foundPDB:
             coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
-                                                           'Refine_' + str(self.Serial), 'refine.modified.pdb'))
+                                                           'Refine_' + str(self.Serial), 'in.pdb'))
 
 #            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
             self.Refine.RunBuster(self.Serial, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
