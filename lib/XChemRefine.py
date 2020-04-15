@@ -505,6 +505,8 @@ class Refine(object):
 
         libin, libout = self.get_libin_libout(Serial)
 
+        self.clean_up_before_refinement()
+
         self.write_refinement_in_progress()
 
         cmd = self.get_shebang('buster',external_software['qsub'])
