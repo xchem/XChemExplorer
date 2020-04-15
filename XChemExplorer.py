@@ -3450,6 +3450,9 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'refine ALL bound-state models with BUSTER':
             self.run_refine_bound_state_with_buster('all')
 
+        elif instruction == 'refine NEW bound-state models with BUSTER':
+            self.run_refine_bound_state_with_buster('new')
+
         elif instruction == 'cluster datasets':
             self.cluster_datasets_for_pandda()
 
