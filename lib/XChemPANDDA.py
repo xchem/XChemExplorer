@@ -31,6 +31,168 @@ def get_names_of_current_clusters(xce_logfile,panddas_directory):
     return cluster_dict
 
 
+
+class refine_bound_state_with_buster(QtCore.QThread):
+
+    def __init__(self,panddas_directory,datasource,initial_model_directory,xce_logfile,which_models):
+        QtCore.QThread.__init__(self)
+        self.panddas_directory=panddas_directory
+        self.datasource=datasource
+        self.initial_model_directory=initial_model_directory
+        self.db=XChemDB.data_source(self.datasource)
+        self.db.create_missing_columns()
+        self.db_list=self.db.get_empty_db_dict()
+        self.external_software=XChemUtils.external_software(xce_logfile).check()
+        self.xce_logfile=xce_logfile
+        self.Logfile=XChemLog.updateLog(xce_logfile)
+        self.which_models=which_models
+        self.already_exported_models=[]
+
+    def run(self):
+
+        samples_to_export=self.export_models()
+
+        self.refine_exported_models(samples_to_export)
+
+
+    def refine_exported_models(self,samples_to_export):
+        self.Logfile.insert('will try to refine the following crystals:')
+        for xtal in sorted(samples_to_export):
+            self.Logfile.insert(xtal)
+        for xtal in sorted(samples_to_export):
+            self.Logfile.insert('%s: getting compound code from database' %xtal)
+            query=self.db.execute_statement("select CompoundCode from mainTable where CrystalName='%s';" %xtal)
+            compoundID=str(query[0][0])
+            self.Logfile.insert('%s: compounds code = %s' %(xtal,compoundID))
+#            compoundID=str(item[1])
+            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'.free.mtz')):
+                if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'-pandda-model.pdb')):
+                    self.Logfile.insert('running inital refinement on PANDDA model of '+xtal)
+                    Serial=XChemRefine.GetSerial(self.initial_model_directory,xtal)
+                    #######################################################
+                    if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'cootOut')):
+                        os.mkdir(os.path.join(self.initial_model_directory,xtal,'cootOut'))
+                    # create folder for new refinement cycle
+                    if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial))):
+                        os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                    else:
+                        os.mkdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                        os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                    os.system('/bin/cp %s in.pdb' %os.path.join(self.initial_model_directory,xtal,xtal+'-pandda-model.pdb'))
+                    Refine=XChemRefine.Refine(self.initial_model_directory,xtal,compoundID,self.datasource)
+                    Refine.RunBuster(str(Serial),self.external_software,self.xce_logfile,None)
+                else:
+                    self.Logfile.error('%s: cannot find %s-pandda-model.pdb; cannot start refinement...' %(xtal,xtal))
+
+            elif xtal in samples_to_export and not os.path.isfile(
+                    os.path.join(self.initial_model_directory, xtal, xtal + '.free.mtz')):
+                self.Logfile.error('%s: cannot start refinement because %s.free.mtz is missing in %s' % (
+                xtal, xtal, os.path.join(self.initial_model_directory, xtal)))
+            else:
+                self.Logfile.insert('%s: nothing to refine' % (xtal))
+
+
+    def export_models(self):
+
+        self.Logfile.insert('finding out which PanDDA models need to be exported')
+
+        # first find which samples are in interesting datasets and have a model
+        # and determine the timestamp
+        fileModelsDict={}
+        queryModels=''
+        for model in glob.glob(os.path.join(self.panddas_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb')):
+            sample=model[model.rfind('/')+1:].replace('-pandda-model.pdb','')
+            timestamp=datetime.fromtimestamp(os.path.getmtime(model)).strftime('%Y-%m-%d %H:%M:%S')
+            self.Logfile.insert(sample+'-pandda-model.pdb was created on '+str(timestamp))
+            queryModels+="'"+sample+"',"
+            fileModelsDict[sample]=timestamp
+
+        # now get these models from the database and compare the datestamps
+        # Note: only get the models that underwent some form of refinement,
+        #       because only if the model was updated in pandda.inspect will it be exported and refined
+        dbModelsDict={}
+        if queryModels != '':
+            dbEntries=self.db.execute_statement("select CrystalName,DatePanDDAModelCreated from mainTable where CrystalName in ("+queryModels[:-1]+") and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')")
+            for item in dbEntries:
+                xtal=str(item[0])
+                timestamp=str(item[1])
+                dbModelsDict[xtal]=timestamp
+                self.Logfile.insert('PanDDA model for '+xtal+' is in database and was created on '+str(timestamp))
+
+        # compare timestamps and only export the ones where the timestamp of the file is newer than the one in the DB
+        samples_to_export={}
+        self.Logfile.insert('checking which PanDDA models were newly created or updated')
+        if self.which_models=='all':
+            self.Logfile.insert('Note: you chose to export ALL available PanDDA!')
+
+        for sample in fileModelsDict:
+            if self.which_models=='all':
+                self.Logfile.insert('exporting '+sample)
+                samples_to_export[sample]=fileModelsDict[sample]
+            else:
+                if sample in dbModelsDict:
+                    try:
+                        difference=(datetime.strptime(fileModelsDict[sample],'%Y-%m-%d %H:%M:%S') - datetime.strptime(dbModelsDict[sample],'%Y-%m-%d %H:%M:%S')  )
+                        if difference.seconds != 0:
+                            self.Logfile.insert('exporting '+sample+' -> was already refined, but newer PanDDA model available')
+                            samples_to_export[sample]=fileModelsDict[sample]
+                    except ValueError:
+                        # this will be raised if timestamp is not properly formatted;
+                        # which will usually be the case when respective field in database is blank
+                        # these are hopefully legacy cases which are from before this extensive check was introduced (13/01/2017)
+                        advice = (  'The pandda model of '+xtal+' was changed, but it was already refined! '
+                                    'This is most likely because this was done with an older version of XCE. '
+                                    'If you really want to export and refine this model, you need to open the database '
+                                    'with DBbroweser (sqlitebrowser.org); then change the RefinementOutcome field '
+                                    'of the respective sample to "2 - PANDDA model", save the database and repeat the export prodedure.'        )
+                        self.Logfile.insert(advice)
+                else:
+                    self.Logfile.insert('exporting '+sample+' -> first time to be exported and refined')
+                    samples_to_export[sample]=fileModelsDict[sample]
+
+        # update the DB:
+        # set timestamp to current timestamp of file and set RefinementOutcome to '2-pandda...'
+
+        if samples_to_export != {}:
+            select_dir_string=''
+            select_dir_string_new_pannda=' '
+            for sample in samples_to_export:
+                self.Logfile.insert('changing directory to ' + os.path.join(self.initial_model_directory,sample))
+                os.chdir(os.path.join(self.initial_model_directory,sample))
+                self.Logfile.insert(sample + ': copying ' + os.path.join(self.panddas_directory,'processed_datasets',sample,'modelled_structures',sample+'-pandda-model.pdb'))
+                os.system('/bin/cp %s .' %os.path.join(self.panddas_directory,'processed_datasets',sample,'modelled_structures',sample+'-pandda-model.pdb'))
+                db_dict= {'RefinementOutcome': '2 - PANDDA model', 'DatePanDDAModelCreated': samples_to_export[sample]}
+                for old_event_map in glob.glob('*-BDC_*.ccp4'):
+                    if not os.path.isdir('old_event_maps'):
+                        os.mkdir('old_event_maps')
+                        self.Logfile.warning(sample + ': moving ' + old_event_map + ' to old_event_maps folder')
+                        os.system('/bin/mv %s old_event_maps' %old_event_map)
+                for event_map in glob.glob(os.path.join(self.panddas_directory,'processed_datasets',sample,'*-BDC_*.ccp4')):
+                    self.Logfile.insert(sample + ': copying ' + event_map)
+                    os.system('/bin/cp %s .' %event_map)
+                select_dir_string+="select_dir={0!s} ".format(sample)
+                select_dir_string_new_pannda+='{0!s} '.format(sample)
+                self.Logfile.insert('updating database for '+sample+' setting time model was created to '+db_dict['DatePanDDAModelCreated']+' and RefinementOutcome to '+db_dict['RefinementOutcome'])
+                self.db.update_data_source(sample,db_dict)
+
+
+        return samples_to_export
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class run_pandda_export(QtCore.QThread):
 
     def __init__(self,panddas_directory,datasource,initial_model_directory,xce_logfile,update_datasource_only,which_models):

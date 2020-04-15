@@ -2066,6 +2066,8 @@ class start_COOT(QtCore.QThread):
             self.pylib='XChemCootOld.py'
         elif interface=='reference':
             self.pylib='XChemCootReference.py'
+        elif interface=='buster':
+            self.pylib='XChemCootBuster.py'
 
     def run(self):
         cwd=os.getcwd()
