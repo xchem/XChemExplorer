@@ -1051,6 +1051,7 @@ class GUI(object):
                                                       self.xtalID + '-ground-state-mean-map.native.ccp4')
 
         # initialize Refinement library
+#        self.Refine = XChemRefine.Refine(self.project_directory, self.xtalID, self.compoundID, self.data_source)
         self.Refine = XChemRefine.Refine(self.project_directory, self.xtalID, self.compoundID, self.data_source)
         self.Serial = XChemRefine.GetSerial(self.project_directory, self.xtalID)
         self.panddaSerial = panddaSerial = m = (4 - len(str(self.Serial))) * '0' + str(self.Serial)
@@ -1368,90 +1369,85 @@ class GUI(object):
         #
 
         #######################################################
-        if self.refinementProtocol.startswith('pandda'):
+#        if self.refinementProtocol.startswith('pandda'):
+#
+#            #######################################################
+#            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
+#                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
+#            # create folder for new refinement cycle
+#            try:
+#                self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+#                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+#            except OSError:
+#                self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
+##                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
+#                self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
+#
+#            #######################################################
+#            # write PDB file
+#            # now take protein pdb file and write it to newly create Refine_<serial> folder
+#            # note: the user has to make sure that the ligand file was merged into main file
+#            for item in coot_utils_XChem.molecule_number_list():
+#                if coot.molecule_name(item).endswith(
+#                                self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
+#                        item).endswith(self.pdb_style):
+#                    coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
+#                                                           'Refine_' + str(self.Serial), 'refine.modified.pdb'))
+#                    break
+#                #                elif coot.molecule_name(item).endswith('dimple.pdb'):
+#                #                    coot.write_pdb_file(item,os.path.join(self.project_directory,self.xtalID,'cootOut','Refine_'+str(self.Serial),'refine.modified.pdb'))
+#                #                    break
+#
+#            XChemRefine.panddaRefine(self.project_directory, self.xtalID, self.compoundID,
+#                                     self.data_source).RunQuickRefine(self.Serial, self.RefmacParams,
+#                                                                      self.external_software, self.xce_logfile,
+#                                                                      self.refinementProtocol, self.covLinkAtomSpec)
+#        else:
 
-            #######################################################
-            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
-            # create folder for new refinement cycle
-            try:
-                self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
-            except OSError:
-                self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
+        #######################################################
+        if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
+            os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
+        # create folder for new refinement cycle
+        try:
+            self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+            os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+        except OSError:
+            self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
 #                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
-                self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
+            self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
 
-            #######################################################
-            # write PDB file
-            # now take protein pdb file and write it to newly create Refine_<serial> folder
-            # note: the user has to make sure that the ligand file was merged into main file
-            for item in coot_utils_XChem.molecule_number_list():
-                if coot.molecule_name(item).endswith(
-                                self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
-                        item).endswith(self.pdb_style):
-                    coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
+
+#        #######################################################
+#        # create folder for new refinement cycle and check if free.mtz exists
+#        if not os.path.isdir(os.path.join(self.project_directory, self.xtalID)):
+#            os.mkdir(os.path.join(self.project_directory, self.xtalID))
+#        if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial))):
+#            os.mkdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial)))
+
+        #######################################################
+        # write PDB file
+        # now take protein pdb file and write it to newly create Refine_<serial> folder
+        # note: the user has to make sure that the ligand file was merged into main file
+        foundPDB = False
+        for item in coot_utils_XChem.molecule_number_list():
+            if coot.molecule_name(item).endswith(self.pdb_style):
+                foundPDB = True
+                break
+            elif coot.molecule_name(item).endswith('refine.split.bound-state.pdb'):
+                foundPDB = True
+                break
+            elif coot.molecule_name(item).endswith('init.pdb'):
+                foundPDB = True
+                break
+            elif coot.molecule_name(item).endswith('dimple.pdb'):
+                foundPDB = True
+                break
+        if foundPDB:
+            coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
                                                            'Refine_' + str(self.Serial), 'refine.modified.pdb'))
-                    break
-                #                elif coot.molecule_name(item).endswith('dimple.pdb'):
-                #                    coot.write_pdb_file(item,os.path.join(self.project_directory,self.xtalID,'cootOut','Refine_'+str(self.Serial),'refine.modified.pdb'))
-                #                    break
 
-            XChemRefine.panddaRefine(self.project_directory, self.xtalID, self.compoundID,
-                                     self.data_source).RunQuickRefine(self.Serial, self.RefmacParams,
-                                                                      self.external_software, self.xce_logfile,
-                                                                      self.refinementProtocol, self.covLinkAtomSpec)
-        else:
-
-            #######################################################
-            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
-            # create folder for new refinement cycle
-            try:
-                self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
-            except OSError:
-                self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
-#                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
-                self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
-
-
-            #######################################################
-            # create folder for new refinement cycle and check if free.mtz exists
-            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID)):
-                os.mkdir(os.path.join(self.project_directory, self.xtalID))
-            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial))):
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial)))
-
-            #######################################################
-            # write PDB file
-            # now take protein pdb file and write it to newly create Refine_<serial> folder
-            # note: the user has to make sure that the ligand file was merged into main file
-            for item in coot_utils_XChem.molecule_number_list():
-                if coot.molecule_name(item).endswith(self.pdb_style):
-                    coot.write_pdb_file(item,
-                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
-                                                     'in.pdb'))
-                    break
-                elif coot.molecule_name(item).endswith('refine.split.bound-state.pdb'):
-                    coot.write_pdb_file(item,
-                                        os.path.join(self.project_directory, self.xtalID,
-                                                        'Refine_' + str(self.Serial),
-                                                        'in.pdb'))
-                    break
-                elif coot.molecule_name(item).endswith('init.pdb'):
-                    coot.write_pdb_file(item,
-                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
-                                                     'in.pdb'))
-                    break
-                elif coot.molecule_name(item).endswith('dimple.pdb'):
-                    coot.write_pdb_file(item,
-                                        os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial),
-                                                     'in.pdb'))
-                    break
-
-            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
-
+#            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
+            self.Refine.RunBuster(self.Serial, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
         self.index += 1
         if self.index >= len(self.Todo):
             #            self.index = len(self.Todo)
