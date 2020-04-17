@@ -5136,7 +5136,7 @@ class XChemExplorer(QtGui.QApplication):
             except IndexError:
                 stage = 0
 
-            if stage >= 3:
+            if stage >= 3 and stage < 7:
                 row = self.refinement_table.rowCount()
                 if xtal not in self.refinement_table_dict:
                     self.refinement_table.insertRow(row)

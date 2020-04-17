@@ -1606,6 +1606,7 @@ class data_source:
         connect=sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
         Logfile=XChemLog.updateLog(xce_logfile)
+        oldRefiStage = ''
         if type == 'ligand_bound':
             cursor.execute("select RefinementOutcome from mainTable where CrystalName is '{0!s}'".format(xtal))
             tmp = cursor.fetchall()
@@ -1633,9 +1634,10 @@ class data_source:
                 cursor.execute(sqlite)
                 connect.commit()
             else:
-                if int(db_dict['RefinementOutcome'].split()[0]) < 5:
+                if int(db_dict['RefinementOutcome'].split()[0]) != 5:
                     sqlite="delete from depositTable where CrystalName is '{0!s}' and StructureType is '{1!s}'".format(xtal, type)
-                    Logfile.insert('removing entry for '+str(type)+' structure of '+xtal+' from depositTable')
+                    if oldRefiStage.startswith('5'):
+                        Logfile.insert('removing entry for '+str(type)+' structure of '+xtal+' from depositTable')
                     cursor.execute(sqlite)
                     connect.commit()
         elif type == 'ground_state':

@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.6.0'
+        xce_object.xce_version = 'v1.6.1'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -186,7 +186,8 @@ class setup():
                                        '3 - In Refinement',
                                        '4 - CompChem ready',
                                        '5 - Deposition ready',
-                                       '6 - Deposited']
+                                       '6 - Deposited',
+                                       '7 - Analysed & Rejected']
 
         self.set_xce_logfile(xce_object)
 
