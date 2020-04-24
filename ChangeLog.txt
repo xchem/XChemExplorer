@@ -1,3 +1,6 @@
+v1.6.2 (24/04/2020)
+- restraints generation: use program name in script name for easier trouble-shooting
+
 v1.6.1 (17/04/2020)
 - added 7 - Analysed & Rejected' to refinement table combobox
 

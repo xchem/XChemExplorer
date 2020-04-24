@@ -868,29 +868,29 @@ class create_png_and_cif_of_compound(QtCore.QThread):
             if os.path.isdir('/dls'):
                 if self.external_software['qsub_array']:
                     Cmds = (
-                            '#PBS -joe -N xce_acedrg_master\n'
-                            './xce_acedrg_$SGE_TASK_ID.sh\n'
+                            '#PBS -joe -N xce_%s_master\n' %self.restraints_program +
+                            './xce_%s_$SGE_TASK_ID.sh\n' %self.restraints_program
                             )
-                    f = open('acedrg_master.sh','w')
+                    f = open('%s_master.sh' %self.restraints_program,'w')
                     f.write(Cmds)
                     f.close()
                     self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
                     self.Logfile.insert('using the following command:')
-                    self.Logfile.insert('         qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} acedrg_master.sh'.format(str(counter), self.max_queue_jobs))
-                    os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} -N acedrg acedrg_master.sh'.format(str(counter), self.max_queue_jobs))
+                    self.Logfile.insert('         qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(counter), self.max_queue_jobs,self.restraints_program))
+                    os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} -N {2!s} {3!s}_master.sh'.format(str(counter), self.max_queue_jobs,self.restraints_program,self.restraints_program))
                 else:
                     self.Logfile.insert("cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
             elif self.external_software['qsub']:
                 self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(counter))))
                 self.Logfile.insert('WARNING: this could potentially lead to a crash...')
                 for i in range(counter):
-                    self.Logfile.insert('qsub -q medium.q -N acedrg xce_acedrg_{0!s}.sh'.format((str(i+1))))
-                    os.system('qsub -N acedrg xce_acedrg_{0!s}.sh'.format((str(i+1))))
+                    self.Logfile.insert('qsub -q medium.q -N {0!s} xce_{1!s}_{2!s}.sh'.format(self.restraints_program,self.restraints_program,(str(i+1))))
+                    os.system('qsub -N {0!s} xce_{1!s}_{2!s}.sh'.format(self.restraints_program,self.restraints_program,(str(i+1))))
             else:
-                self.Logfile.insert('running %s consecutive ACEDRG jobs on your local machine')
+                self.Logfile.insert('running %s consecutive %s jobs on your local machine' %self.restraints_program)
                 for i in range(counter):
-                    self.Logfile.insert('starting xce_acedrg_{0!s}.sh'.format((str(i+1))))
-                    os.system('./xce_acedrg_{0!s}.sh'.format((str(i+1))))
+                    self.Logfile.insert('starting xce_{0!s}_{1!s}.sh'.format(self.restraints_program,(str(i+1))))
+                    os.system('./xce_{0!s}_{1!s}.sh'.format(self.restraints_program,(str(i+1))))
 
 #        self.emit(QtCore.SIGNAL("finished()"))
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
