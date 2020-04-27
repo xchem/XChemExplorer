@@ -251,12 +251,16 @@ class helpers:
             if os.getcwd().startswith('/dls'):
                 software+='module load buster\n'
             software+="export BDG_TOOL_OBABEL='none'\n"
-            if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software+='grade -resname LIG -nomogul -in ../old.cif -ocif {0!s}.cif -opdb {1!s}.pdb\n'\
-                    .format(compoundID.replace(' ',''), compoundID.replace(' ',''))
+            if external_software['mogul']:
+                mogul = ''
             else:
-                software+='grade -resname LIG -nomogul "{0!s}" -ocif {1!s}.cif -opdb {2!s}.pdb\n'\
-                    .format(productSmiles, compoundID.replace(' ',''), compoundID.replace(' ',''))
+                mogul = '-nomogul'
+            if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
+                software+='grade -resname LIG {0!s} -in ../old.cif -ocif {1!s}.cif -opdb {2!s}.pdb\n'\
+                    .format(mogul, compoundID.replace(' ',''), compoundID.replace(' ',''))
+            else:
+                software+='grade -resname LIG {0!s} "{1!s}" -ocif {2!s}.cif -opdb {3!s}.pdb\n'\
+                    .format(mogul, productSmiles, compoundID.replace(' ',''), compoundID.replace(' ',''))
         # Removal of the hydrogen atoms in PDB files is required for REFMAC 5 run. With hydrogens some ligands fail to
         # pass the external restraints in pandda.giant.make_restraints.
         # Copy the file with hydrogens to retain in case needed
@@ -1587,6 +1591,21 @@ class external_software:
             status='not found'
         self.Logfile.insert('{0:50} {1:10}'.format('checking for giant.create_occupancy_params:', status))
 
+        self.Logfile.insert('checking if MOGUL is configured...')
+        if "BDG_TOOL_MOGUL" in os.environ:
+            self.Logfile.insert('BDG_TOOL_MOGUL is set to ' + os.environ['BDG_TOOL_MOGUL'])
+            try:
+                subprocess.call(['mogul'], stdout=FNULL, stderr=subprocess.STDOUT)
+                self.available_programs['mogul']=True
+                status='found'
+            except OSError:
+                self.available_programs['mogul']=False
+                status='not found'
+        else:
+            self.Logfile.warning('BDG_TOOL_MOGUL is not set!')
+            self.Logfile.hint('try adding "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul" to your .bashrc file')
+            status='not found'
+        self.Logfile.insert('{0:50} {1:10}'.format('checking for mogul:', status))
 
         return self.available_programs
 

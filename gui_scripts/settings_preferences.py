@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.6.2'
+        xce_object.xce_version = 'v1.6.3'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -214,7 +214,7 @@ class setup():
                                                                            ' restraints')
             else:
                 xce_object.restraints_program = ''
-                xce_object.update_log.insert(
+                xce_object.update_log.warning(
                     'No program for generation of ligand coordinates and restraints available!')
 
     def preferences(self, xce_object):
