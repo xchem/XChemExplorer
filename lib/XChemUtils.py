@@ -1593,6 +1593,8 @@ class external_software:
 
         self.Logfile.insert('checking if MOGUL is configured...')
         if "BDG_TOOL_MOGUL" in os.environ:
+            for x in os.environ:
+                print x,os.environ[x]
             self.Logfile.insert('BDG_TOOL_MOGUL is set to ' + os.environ['BDG_TOOL_MOGUL'])
             if str(os.environ['BDG_TOOL_MOGUL']).lower() == 'none':
                 self.Logfile.warning('BDG_TOOL_MOGUL is not properly configured!')
