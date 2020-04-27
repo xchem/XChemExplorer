@@ -249,7 +249,8 @@ class helpers:
                     .format(productSmiles, compoundID.replace(' ',''))
         elif restraints_program=='grade':
             if os.getcwd().startswith('/dls'):
-                software+='module load buster\n'
+                software += 'module load buster\n'
+                software += 'export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n'
             software+="export BDG_TOOL_OBABEL='none'\n"
             if external_software['mogul']:
                 mogul = ''
