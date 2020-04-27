@@ -26,7 +26,7 @@ class startLog:
             '     #                                                                     #\n'
             '     # Version: %s                                       #\n' %pasteVersion+
             '     #                                                                     #\n'
-            '     # Date: 24/04/2020                                                    #\n'
+            '     # Date: 27/04/2020                                                    #\n'
             '     #                                                                     #\n'
             '     # Authors: Tobias Krojer, Structural Genomics Consortium, Oxford, UK  #\n'
             '     #          tobias.krojer@sgc.ox.ac.uk                                 #\n'
@@ -125,4 +125,8 @@ class updateLog:
         print( str(present_time)+' ==> XCE: ERROR!!! '+message, file = self.logfile)
         print('==> XCE: ERROR!!! '+message)
 
+    def hint(self,message):
+        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
+        print( str(present_time)+' ==> XCE: HINT -> '+message, file = self.logfile)
+        print('==> XCE: HINT -> '+message)
 

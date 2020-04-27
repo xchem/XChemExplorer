@@ -1,3 +1,6 @@
+v1.6.3 (25/04/2020) 
+- grade will use mogul for restraints generation if program available 
+
 v1.6.2 (24/04/2020)
 - restraints generation: use program name in script name for easier trouble-shooting
 - assign_stereochemistry.py option removed from restraints generation
