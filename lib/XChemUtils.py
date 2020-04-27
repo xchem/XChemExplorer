@@ -1592,17 +1592,18 @@ class external_software:
         self.Logfile.insert('{0:50} {1:10}'.format('checking for giant.create_occupancy_params:', status))
 
         self.Logfile.insert('checking if MOGUL is configured...')
+        self.available_programs['mogul']=False
         if "BDG_TOOL_MOGUL" in os.environ:
             self.Logfile.insert('BDG_TOOL_MOGUL is set to ' + os.environ['BDG_TOOL_MOGUL'])
             if str(os.environ['BDG_TOOL_MOGUL']).lower() == 'none':
                 self.Logfile.warning('BDG_TOOL_MOGUL is not properly configured!')
                 self.Logfile.hint('try adding "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul" to your .bashrc file')
+            else:
                 if os.path.isfile(os.getenv('BDG_TOOL_MOGUL')):
                     self.available_programs['mogul']=True
                     status='found'
                 else:
-                    self.available_programs['mogul']=False
-                    status='not found'
+s                    status='not found'
                     self.Logfile.hint('try adding "export PATH=/dls_sw/apps/ccdc/CSD_2020/bin:$PATH" to your .bashrc file')
         else:
             self.Logfile.warning('BDG_TOOL_MOGUL is not set!')
