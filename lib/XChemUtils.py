@@ -1601,6 +1601,7 @@ class external_software:
             except OSError:
                 self.available_programs['mogul']=False
                 status='not found'
+                self.Logfile.hint('try adding "export PATH=/dls_sw/apps/ccdc/CSD_2020/bin:$PATH" to your .bashrc file')
         else:
             self.Logfile.warning('BDG_TOOL_MOGUL is not set!')
             self.Logfile.hint('try adding "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul" to your .bashrc file')
