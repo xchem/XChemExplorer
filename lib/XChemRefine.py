@@ -426,23 +426,26 @@ class Refine(object):
         elif program == 'buster':
             Serial = ''
             if os.getcwd().startswith('/dls'):
-                buster_report += 'module load buster\n'
+                buster_report += 'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+cycle+'\n'
+                buster_report += 'corr -p refine.pdb -m refine.mtz -F 2FOFCWT -P PH2FOFCWT\n'
+                buster_report += 'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
                 buster_report += 'export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n'
                 buster_report += 'buster-report -d Refine_%s\n' %cycle
 
         cmd += (
-            'phenix.molprobity refine%s.pdb refine%s.mtz\n' %(Serial,Serial)+
-            '/bin/mv molprobity.out refine_molprobity.log\n'
-            'mmtbx.validate_ligands refine%s.pdb refine%s.mtz LIG > validate_ligands.txt\n' %(Serial,Serial)+
+            '\n'
+            + buster_report +
             'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
             'ln -s ./Refine_%s/refine%s.pdb refine.pdb\n' %(cycle,Serial)+
             'ln -s ./Refine_%s/refine%s.mtz refine.mtz\n' %(cycle,Serial)+
             'ln -s refine.pdb refine.split.bound-state.pdb\n'
             '\n'
-            + buster_report +
+            'phenix.molprobity refine%s.pdb refine%s.mtz\n' %(Serial,Serial)+
+            '/bin/mv molprobity.out refine_molprobity.log\n'
+            'mmtbx.validate_ligands refine%s.pdb refine%s.mtz LIG > validate_ligands.txt\n' %(Serial,Serial)+
             '\n'
-            'ln -s Refine_%s/validate_ligands.txt .\n' %cycle+
-            'ln -s Refine_%s/refine_molprobity.log .\n' %cycle+
+#            'ln -s Refine_%s/validate_ligands.txt .\n' %cycle+
+#            'ln -s Refine_%s/refine_molprobity.log .\n' %cycle+
             'mmtbx.validation_summary refine.pdb > validation_summary.txt\n'
             '\n'
         )
