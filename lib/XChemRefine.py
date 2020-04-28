@@ -30,8 +30,12 @@ def GetSerial(ProjectPath,xtalID):
     if os.path.isdir(os.path.join(ProjectPath,xtalID)):
         for item in glob.glob(os.path.join(ProjectPath,xtalID,'*')):
             if item.startswith(os.path.join(ProjectPath,xtalID,'Refine_')):
-                    print int(item[item.rfind('_')+1:])
-                    temp.append(int(item[item.rfind('_')+1:]))
+                    if item.endswith('-report'):
+                        continue
+                    try:
+                        temp.append(int(item[item.rfind('_')+1:]))
+                    except ValueError:
+                        continue
                     found = 1
     if found:
         Serial = max(temp) + 1
@@ -273,6 +277,8 @@ class Refine(object):
         self.compoundID = compoundID
         self.prefix = 'refine'
         self.datasource=datasource
+        self.error = False
+        self.Logfile = None
 
     def GetSerial(self):
         # check if there were already previous refinements
@@ -333,8 +339,8 @@ class Refine(object):
 #        elif os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz')):
 #            RefmacParams['HKLIN']='HKLIN '+os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-input.mtz \\\n')
         else:
-            Logfile.error('%s: cannot find HKLIN for refinement; aborting...' %self.xtalID)
-            return None
+            self.Logfile.error('%s: cannot find HKLIN for refinement' %self.xtalID)
+            self.error = True
         hklout=os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'refine_'+Serial+'.mtz')
         return hklin, hklout
 
@@ -349,8 +355,8 @@ class Refine(object):
         elif os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial),'in.pdb')):
             xyzin = os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial),'in.pdb')
         else:
-            print 'error'
-            return None
+            self.Logfile.error('%s: cannot find XYZIN for refinement' %self.xtalID)
+            self.error = True
         return xyzin, xyzout
 
     def get_libin_libout(self,Serial):
@@ -362,8 +368,8 @@ class Refine(object):
             libin = os.path.join(self.ProjectPath,self.xtalID,self.compoundID+'.cif')
             libout = os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial,'refine_'+Serial+'.cif')
         else:
-            print 'error'
-            return None
+            self.Logfile.error('%s: cannot find CIF file for refinement' %self.xtalID)
+            self.error = True
         return libin, libout
 
     def write_refinement_in_progress(self):
@@ -499,7 +505,10 @@ class Refine(object):
 
     def RunBuster(self,Serial,external_software,xce_logfile,covLinkAtomSpec):
 
-        if os.path.isfile(xce_logfile): Logfile=XChemLog.updateLog(xce_logfile)
+        self.error = False
+
+        if os.path.isfile(xce_logfile):
+            self.Logfile=XChemLog.updateLog(xce_logfile)
         Serial=str(Serial)
 
         if covLinkAtomSpec is not None:
@@ -536,9 +545,13 @@ class Refine(object):
 
         cmd = self.update_database(cmd,Serial)
 
-        self.write_refinement_script(cmd,'buster')
-
-        self.run_script('buster',external_software['qsub'])
+        if self.error:
+            self.Logfile.error('%s: cannot start refinement; check error message above' %self.xtalID)
+        else:
+            self.Logfile.insert('%s: writing buster.sh file in %s' %(self.xtalID,os.path.join(self.ProjectPath,self.xtalID)))
+            self.write_refinement_script(cmd,'buster')
+            self.Logfile.insert('%s: starting refinement...' %self.xtalID)
+            self.run_script('buster',external_software['qsub'])
 
     def RunRefmac(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
