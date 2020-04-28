@@ -512,11 +512,11 @@ class Refine(object):
         Serial=str(Serial)
 
         if covLinkAtomSpec is not None:
-            self.make_covalent_link(covLinkAtomSpec,Logfile)
+            self.make_covalent_link(covLinkAtomSpec,self.Logfile)
 
         # first check if refinement is ongoing and exit if yes
         if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,'REFINEMENT_IN_PROGRESS')):
-            Logfile.insert('cannot start new refinement for %s: *** REFINEMENT IN PROGRESS ***' %self.xtalID)
+            self.Logfile.insert('cannot start new refinement for %s: *** REFINEMENT IN PROGRESS ***' %self.xtalID)
             return None
 
         hklin, hklout = self.get_hklin_hklout(Serial)
