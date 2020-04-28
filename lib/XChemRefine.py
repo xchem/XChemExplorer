@@ -30,8 +30,12 @@ def GetSerial(ProjectPath,xtalID):
     if os.path.isdir(os.path.join(ProjectPath,xtalID)):
         for item in glob.glob(os.path.join(ProjectPath,xtalID,'*')):
             if item.startswith(os.path.join(ProjectPath,xtalID,'Refine_')):
-                    print int(item[item.rfind('_')+1:])
-                    temp.append(int(item[item.rfind('_')+1:]))
+                    if item.endswith('-report'):
+                        continue
+                    try:
+                        temp.append(int(item[item.rfind('_')+1:]))
+                    except ValueError:
+                        continue
                     found = 1
     if found:
         Serial = max(temp) + 1
