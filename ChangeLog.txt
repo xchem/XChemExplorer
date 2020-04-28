@@ -1,3 +1,6 @@
+v1.6.4 (28/04/2020)
+- added validation with buster-reports after refinement with buster
+
 v1.6.3 (25/04/2020) 
 - grade will use mogul for restraints generation if program available 
 
