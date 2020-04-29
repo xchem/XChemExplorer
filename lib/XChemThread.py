@@ -1434,18 +1434,18 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
             if 'dimple_rerun_on_selected_file' in visit_run_autoproc:
                 if self.pipeline=='dimple':
-                    self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                    twin = self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
                 elif self.pipeline=='pipedream':
-                    self.prepare_pipedream_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                    twin = self.prepare_pipedream_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
                 elif self.pipeline=='phenix.ligand_pipeline':
-                    self.prepare_phenix_ligand_pipeline_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                    twin = self.prepare_phenix_ligand_pipeline_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
             else:
-                self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                twin = self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
-        self.run_script()
+        self.run_script(twin)
 
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
@@ -1571,6 +1571,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
+        twin = ''
+        return twin
 
 
     def prepare_pipedream_shell_script(self,xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif):
@@ -1669,7 +1671,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
-
+        twin = ''
+        return twin
 
 
 
@@ -1698,10 +1701,21 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
             os.mkdir(os.path.join(self.initial_model_directory,xtal))
         os.chdir(os.path.join(self.initial_model_directory,xtal))
-        if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
-            os.system('/bin/rm -fr dimple')
-        os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
-        os.system('touch dimple_run_in_progress')
+
+        twin = ''
+        twinRefmac = ""
+        if self.dimple_twin_mode:
+            twinRefmac = "--refmac-key 'TWIN'"
+            twin = '_twin'
+            if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple_twin')):
+                os.system('/bin/rm -fr dimple_twin')
+            os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple_twin'))
+            os.system('touch dimple_twin_run_in_progress')
+        else:
+            if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
+                os.system('/bin/rm -fr dimple')
+            os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
+            os.system('touch dimple_run_in_progress')
         os.system('/bin/rm final.mtz 2> /dev/null')
         os.system('/bin/rm final.pdb 2> /dev/null')
 
@@ -1731,16 +1745,12 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         else:
             symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
 
-        twin = ''
-        if self.dimple_twin_mode:
-            twin = "--refmac-key 'TWIN'"
-
         Cmds = (
                 '{0!s}\n'.format(top_line)+
                 '\n'
                 'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
                 '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple') +
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple%s' %twin) +
                 '\n'
                 'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
                 '\n'
@@ -1748,7 +1758,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(os.path.join(self.database_directory,self.data_source_file),xtal,'DimpleStatus','running') +
                 '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple') +
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple%s' %twin) +
                 '\n'
                 'unique hklout unique.mtz << eof\n'
                 ' cell %s\n' %str([round(float(i),2) for i in mtzFile.unit_cell().parameters()]).replace('[','').replace(']','')+
@@ -1775,37 +1785,37 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 'pointless hklin %s.999A.mtz hklout %s.999A.reind.mtz xyzin %s > pointless.reind.log\n' %(xtal,xtal,ref_pdb) +
                 '\n'
-                "dimple --no-cleanup %s.999A.reind.mtz %s %s %s %s dimple\n" % (xtal, ref_pdb, ref_mtz, ref_cif, twin) +
+                "dimple --no-cleanup %s.999A.reind.mtz %s %s %s %s dimple%s\n" % (xtal, ref_pdb, ref_mtz, ref_cif, twinRefmac, twin) +
                 '\n'
-                'fft hklin dimple/final.mtz mapout 2fofc.map << EOF\n'
+                'fft hklin dimple%s/final.mtz mapout 2fofc%s.map << EOF\n' %(twin,twin) +
                 ' labin F1=FWT PHI=PHWT\n'
                 'EOF\n'
                 '\n'
-                'fft hklin dimple/final.mtz mapout fofc.map << EOF\n'
+                'fft hklin dimple%s/final.mtz mapout fofc%s.map << EOF\n' %(twin,twin) +
                 ' labin F1=DELFWT PHI=PHDELWT\n'
                 'EOF\n'
                 '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
-                '/bin/rm dimple.pdb\n'
-                '/bin/rm dimple.mtz\n'
+                '/bin/rm dimple%s.pdb\n' %twin +
+                '/bin/rm dimple%s.mtz\n' %twin +
                 '\n'
-                'ln -s dimple/dimple/final.pdb dimple.pdb\n'
-                'ln -s dimple/dimple/final.mtz dimple.mtz\n'
+                'ln -s dimple%s/dimple%s/final.pdb dimple%s.pdb\n' %(twin,twin,twin) +
+                'ln -s dimple%s/dimple%s/final.mtz dimple%s.mtz\n' %(twin,twin,twin) +
                 '\n'
-                '/bin/rm init.pdb\n'
-                '/bin/rm init.mtz\n'
+                '/bin/rm init%s.pdb\n' %twin +
+                '/bin/rm init%s.mtz\n' %twin +
                 '\n'
-                'ln -s dimple.pdb init.pdb\n'
-                'ln -s dimple.mtz init.mtz\n'
+                'ln -s dimple%s.pdb init%s.pdb\n' %(twin,twin) +
+                'ln -s dimple%s.mtz init%s.mtz\n' %(twin,twin) +
                 '\n'
-                '/bin/rm 2fofc.map\n'
-                '/bin/rm fofc.map\n'
+                '/bin/rm 2fofc%s.map\n' %twin +
+                '/bin/rm fofc%s.map\n' %twin +
                 '\n'
-                'ln -s dimple/2fofc.map .\n'
-                'ln -s dimple/fofc.map .\n'
+                'ln -s dimple%s/2fofc%s.map .\n' %(twin,twin) +
+                'ln -s dimple%s/fofc%s.map .\n' %(twin,twin) +
                 '\n'
-                '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
+                '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple%s_pdb.py' %twin)+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory) +
                 '\n'
                 '/bin/rm dimple_run_in_progress\n'
@@ -1813,46 +1823,46 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 )
 
         os.chdir(self.ccp4_scratch_directory)
-        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)),'w')
+        f = open('xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin, str(self.n)),'w')
         f.write(Cmds)
         f.close()
-        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)))
+        os.system('chmod +x xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline, twin, str(self.n)))
         self.n+=1
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
+        return twin
 
-
-    def run_script(self):
+    def run_script(self,twin):
         # submit job
         self.Logfile.insert('created input scripts for '+str(self.n)+' in '+self.ccp4_scratch_directory)
         os.chdir(self.ccp4_scratch_directory)
         if os.path.isdir('/dls'):
             if self.external_software['qsub_array']:
                 Cmds = (
-                        '#PBS -joe -N xce_{0!s}_master\n'.format(self.pipeline)+
-                        './xce_{0!s}_$SGE_TASK_ID.sh\n'.format(self.pipeline)
+                        '#PBS -joe -N xce_{0!s}{1!s}_master\n'.format(self.pipeline,twin)+
+                        './xce_{0!s}{1!s}_$SGE_TASK_ID.sh\n'.format(self.pipeline,twin)
                         )
-                f = open('{0!s}_master.sh'.format(self.pipeline),'w')
+                f = open('{0!s}{1!s}_master.sh'.format(self.pipeline,twin),'w')
                 f.write(Cmds)
                 f.close()
                 self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
                 self.Logfile.insert('using the following command:')
                 self.Logfile.insert('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(self.n), self.max_queue_jobs, self.pipeline))
-                os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(self.n-1), self.max_queue_jobs, self.pipeline))
+                os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}{3!s}_master.sh'.format(str(self.n-1), self.max_queue_jobs, self.pipeline,twin))
             else:
                 self.Logfile.insert("cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
         elif self.external_software['qsub']:
             self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(self.n))))
             self.Logfile.insert('WARNING: this could potentially lead to a crash...')
             for i in range(1,self.n):
-                self.Logfile.insert('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
-                os.system('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
+                self.Logfile.insert('qsub -q medium.q xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
+                os.system('qsub -q medium.q xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
         else:
             self.Logfile.insert('running {0!s} consecutive {1!s} jobs on your local machine'.format(str(self.n-1),self.pipeline))
             for i in range(1,self.n):
-                self.Logfile.insert('starting xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
-                os.system('./xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
+                self.Logfile.insert('starting xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
+                os.system('./xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
 
 
 

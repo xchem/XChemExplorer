@@ -167,6 +167,17 @@ class data_source:
             ['DimpleReferencePDB',                          'Dimple\nReference PDB',                        'TEXT',                 1],
             ['DimpleStatus',                                'Dimple\nStatus',                               'TEXT',                 1],
 
+            ['DimpleTwinResolutionHigh',                    'Dimple - twin\nResolution High',               'TEXT',                 1],
+            ['DimpleTwinRcryst',                            'Dimple - twin\nRcryst',                        'TEXT',                 1],
+            ['DimpleTwinRfree',                             'Dimple - twin\nRfree',                         'TEXT',                 1],
+            ['DimpleTwinPathToPDB',                         'Dimple - twin\nPath to PDB file',              'TEXT',                 1],
+            ['DimpleTwinPathToMTZ',                         'Dimple - twin\nPath to MTZ file',              'TEXT',                 1],
+            ['DimpleTwinReferencePDB',                      'Dimple - twin\nReference PDB',                 'TEXT',                 1],
+            ['DimpleTwinStatus',                            'Dimple - twin\nStatus',                        'TEXT',                 1],
+            ['DimpleTwinFraction',                          'Dimple - twin\nFraction',                      'TEXT',                 1],
+            ['DataProcessingDimpleTwinSuccessful',          'DataProcessingDimpleTwinSuccessful',           'TEXT',                 0],
+
+
             ['DimplePANDDAwasRun',                          'PanDDA\nlaunched?',                            'TEXT',                 1],
             ['DimplePANDDAhit',                             'PanDDA\nhit?',                                 'TEXT',                 1],
             ['DimplePANDDAreject',                          'PanDDA\nreject?',                              'TEXT',                 1],
@@ -188,7 +199,10 @@ class data_source:
             ['RefinementRmsdAngles',                        'RefinementRmsdAngles',                         'TEXT',                 1],
             ['RefinementRmsdAnglesTL',                      'RefinementRmsdAnglesTL',                       'TEXT',                 0],
             ['RefinementOutcome',                           'Refinement\nOutcome',                          'TEXT',                 1],
+
             ['RefinementMTZfree',                           'RefinementMTZfree',                            'TEXT',                 1],
+            ['RefinementTwinMTZfree',                       'RefinementTwinMTZfree',                        'TEXT',                 1],
+
             ['RefinementCIF',                               'RefinementCIF',                                'TEXT',                 1],
             ['RefinementCIFStatus',                         'Compound\nStatus',                             'TEXT',                 1],
             ['RefinementCIFprogram',                        'RefinementCIFprogram',                         'TEXT',                 1],
