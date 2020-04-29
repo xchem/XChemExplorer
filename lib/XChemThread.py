@@ -1700,6 +1700,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         os.chdir(os.path.join(self.initial_model_directory,xtal))
 
         twin = ''
+        twinRefmac = ""
         if self.dimple_twin_mode:
             twinRefmac = "--refmac-key 'TWIN'"
             twin = '_twin'
