@@ -907,7 +907,8 @@ class parse:
                     'rmsdBonds':        'n/a',
                     'rmsdBondsTL':      'gray',
                     'rmsdAngles':       'n/a',
-                    'rmsdAnglesTL':     'gray'}
+                    'rmsdAnglesTL':     'gray',
+                    'TwinFraction':     'n/a' }
 
         a='n/a'
         b='n/a'
@@ -968,6 +969,13 @@ class parse:
                         if float(line.split()[9]) >= 3.0:                                       PDBinfo['rmsdAnglesTL'] = 'red'
                     except ValueError:
                         pass
+
+                if line.startswith('REMARK   3      TWIN FRACTION'):
+                    try:
+                        PDBinfo['TwinFraction'] = line.split()[5]
+                    except IndexError:
+                        pass
+
 
                 if line.startswith('CRYST1'):
                     a=int(float(line.split()[1]))

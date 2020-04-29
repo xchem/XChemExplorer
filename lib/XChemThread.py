@@ -1698,10 +1698,20 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
             os.mkdir(os.path.join(self.initial_model_directory,xtal))
         os.chdir(os.path.join(self.initial_model_directory,xtal))
-        if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
-            os.system('/bin/rm -fr dimple')
-        os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
-        os.system('touch dimple_run_in_progress')
+
+        twin = ''
+        if self.dimple_twin_mode:
+            twinRefmac = "--refmac-key 'TWIN'"
+            twin = '_twin'
+            if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple_twin')):
+                os.system('/bin/rm -fr dimple_twin')
+            os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple_twin'))
+            os.system('touch dimple_twin_run_in_progress')
+        else:
+            if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
+                os.system('/bin/rm -fr dimple')
+            os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
+            os.system('touch dimple_run_in_progress')
         os.system('/bin/rm final.mtz 2> /dev/null')
         os.system('/bin/rm final.pdb 2> /dev/null')
 
@@ -1731,16 +1741,12 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         else:
             symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
 
-        twin = ''
-        if self.dimple_twin_mode:
-            twin = "--refmac-key 'TWIN'"
-
         Cmds = (
                 '{0!s}\n'.format(top_line)+
                 '\n'
                 'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
                 '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple') +
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple%s' %twin) +
                 '\n'
                 'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
                 '\n'
@@ -1748,7 +1754,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(os.path.join(self.database_directory,self.data_source_file),xtal,'DimpleStatus','running') +
                 '\n'
-                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple') +
+                'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple%s' %twin) +
                 '\n'
                 'unique hklout unique.mtz << eof\n'
                 ' cell %s\n' %str([round(float(i),2) for i in mtzFile.unit_cell().parameters()]).replace('[','').replace(']','')+
@@ -1775,37 +1781,37 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 '\n'
                 'pointless hklin %s.999A.mtz hklout %s.999A.reind.mtz xyzin %s > pointless.reind.log\n' %(xtal,xtal,ref_pdb) +
                 '\n'
-                "dimple --no-cleanup %s.999A.reind.mtz %s %s %s %s dimple\n" % (xtal, ref_pdb, ref_mtz, ref_cif, twin) +
+                "dimple --no-cleanup %s.999A.reind.mtz %s %s %s %s dimple%s\n" % (xtal, ref_pdb, ref_mtz, ref_cif, twinRefmac, twin) +
                 '\n'
-                'fft hklin dimple/final.mtz mapout 2fofc.map << EOF\n'
+                'fft hklin dimple%s/final.mtz mapout 2fofc%s.map << EOF\n' %(twin,twin) +
                 ' labin F1=FWT PHI=PHWT\n'
                 'EOF\n'
                 '\n'
-                'fft hklin dimple/final.mtz mapout fofc.map << EOF\n'
+                'fft hklin dimple%s/final.mtz mapout fofc%s.map << EOF\n' %(twin,twin) +
                 ' labin F1=DELFWT PHI=PHDELWT\n'
                 'EOF\n'
                 '\n'
                 'cd %s\n' %os.path.join(self.initial_model_directory,xtal) +
                 '\n'
-                '/bin/rm dimple.pdb\n'
-                '/bin/rm dimple.mtz\n'
+                '/bin/rm dimple%s.pdb\n' %twin +
+                '/bin/rm dimple%s.mtz\n' %twin +
                 '\n'
-                'ln -s dimple/dimple/final.pdb dimple.pdb\n'
-                'ln -s dimple/dimple/final.mtz dimple.mtz\n'
+                'ln -s dimple%s/dimple%s/final.pdb dimple%s.pdb\n' %(twin,twin,twin) +
+                'ln -s dimple%s/dimple%s/final.mtz dimple%s.mtz\n' %(twin,twin,twin) +
                 '\n'
-                '/bin/rm init.pdb\n'
-                '/bin/rm init.mtz\n'
+                '/bin/rm init%s.pdb\n' %twin +
+                '/bin/rm init%s.mtz\n' %twin +
                 '\n'
-                'ln -s dimple.pdb init.pdb\n'
-                'ln -s dimple.mtz init.mtz\n'
+                'ln -s dimple%s.pdb init%s.pdb\n' %(twin,twin) +
+                'ln -s dimple%s.mtz init%s.mtz\n' %(twin,twin) +
                 '\n'
-                '/bin/rm 2fofc.map\n'
-                '/bin/rm fofc.map\n'
+                '/bin/rm 2fofc%s.map\n' %twin +
+                '/bin/rm fofc%s.map\n' %twin +
                 '\n'
-                'ln -s dimple/2fofc.map .\n'
-                'ln -s dimple/fofc.map .\n'
+                'ln -s dimple%s/2fofc%s.map .\n' %(twin,twin) +
+                'ln -s dimple%s/fofc%s.map .\n' %(twin,twin) +
                 '\n'
-                '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
+                '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple%s_pdb.py' %twin)+
                 ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory) +
                 '\n'
                 '/bin/rm dimple_run_in_progress\n'
