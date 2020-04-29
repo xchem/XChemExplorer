@@ -1434,18 +1434,18 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
             if 'dimple_rerun_on_selected_file' in visit_run_autoproc:
                 if self.pipeline=='dimple':
-                    self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                    twin = self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
                 elif self.pipeline=='pipedream':
-                    self.prepare_pipedream_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                    twin = self.prepare_pipedream_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
                 elif self.pipeline=='phenix.ligand_pipeline':
-                    self.prepare_phenix_ligand_pipeline_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                    twin = self.prepare_phenix_ligand_pipeline_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
             else:
-                self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
+                twin = self.prepare_dimple_shell_script(xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
-        self.run_script()
+        self.run_script(twin)
 
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
@@ -1571,6 +1571,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
+        twin = ''
+        return twin
 
 
     def prepare_pipedream_shell_script(self,xtal,visit_run_autoproc,mtzin,ref_pdb,ref_mtz,ref_cif):
@@ -1669,7 +1671,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
-
+        twin = ''
+        return twin
 
 
 
@@ -1820,46 +1823,46 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 )
 
         os.chdir(self.ccp4_scratch_directory)
-        f = open('xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)),'w')
+        f = open('xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin, str(self.n)),'w')
         f.write(Cmds)
         f.close()
-        os.system('chmod +x xce_{0!s}_{1!s}.sh'.format(self.pipeline, str(self.n)))
+        os.system('chmod +x xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline, twin, str(self.n)))
         self.n+=1
         db_dict= {'DimpleStatus': 'started'}
         self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
         self.db.update_data_source(xtal,db_dict)
+        return twin
 
-
-    def run_script(self):
+    def run_script(self,twin):
         # submit job
         self.Logfile.insert('created input scripts for '+str(self.n)+' in '+self.ccp4_scratch_directory)
         os.chdir(self.ccp4_scratch_directory)
         if os.path.isdir('/dls'):
             if self.external_software['qsub_array']:
                 Cmds = (
-                        '#PBS -joe -N xce_{0!s}_master\n'.format(self.pipeline)+
-                        './xce_{0!s}_$SGE_TASK_ID.sh\n'.format(self.pipeline)
+                        '#PBS -joe -N xce_{0!s}{1!s}_master\n'.format(self.pipeline,twin)+
+                        './xce_{0!s}{1!s}_$SGE_TASK_ID.sh\n'.format(self.pipeline,twin)
                         )
-                f = open('{0!s}_master.sh'.format(self.pipeline),'w')
+                f = open('{0!s}{1!s}_master.sh'.format(self.pipeline,twin),'w')
                 f.write(Cmds)
                 f.close()
                 self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
                 self.Logfile.insert('using the following command:')
                 self.Logfile.insert('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(self.n), self.max_queue_jobs, self.pipeline))
-                os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh'.format(str(self.n-1), self.max_queue_jobs, self.pipeline))
+                os.system('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}{3!s}_master.sh'.format(str(self.n-1), self.max_queue_jobs, self.pipeline,twin))
             else:
                 self.Logfile.insert("cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
         elif self.external_software['qsub']:
             self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(self.n))))
             self.Logfile.insert('WARNING: this could potentially lead to a crash...')
             for i in range(1,self.n):
-                self.Logfile.insert('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
-                os.system('qsub -q medium.q xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
+                self.Logfile.insert('qsub -q medium.q xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
+                os.system('qsub -q medium.q xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
         else:
             self.Logfile.insert('running {0!s} consecutive {1!s} jobs on your local machine'.format(str(self.n-1),self.pipeline))
             for i in range(1,self.n):
-                self.Logfile.insert('starting xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
-                os.system('./xce_{0!s}_{1!s}.sh'.format(self.pipeline,str(i)))
+                self.Logfile.insert('starting xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
+                os.system('./xce_{0!s}{1!s}_{2!s}.sh'.format(self.pipeline,twin,str(i)))
 
 
 
