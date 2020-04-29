@@ -21,7 +21,7 @@ if __name__=='__main__':
         if os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple_twin.mtz')):
             db_dict['DimpleTwinPathToMTZ']=os.path.join(inital_model_directory,xtal,'dimple_twin.mtz')
             dimple_ran_successfully=True
-            db_dict['DataTwinProcessingDimpleSuccessful']='True'
+            db_dict['DataProcessingDimpleTwinSuccessful']='True'
             db_dict['DimpleTwinStatus'] = 'finished'
         if not dimple_ran_successfully:
             db_dict['DataProcessingDimpleTwinSuccessful']='False'

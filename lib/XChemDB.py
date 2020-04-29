@@ -175,6 +175,7 @@ class data_source:
             ['DimpleTwinReferencePDB',                      'Dimple - twin\nReference PDB',                 'TEXT',                 1],
             ['DimpleTwinStatus',                            'Dimple - twin\nStatus',                        'TEXT',                 1],
             ['DimpleTwinFraction',                          'Dimple - twin\nFraction',                      'TEXT',                 1],
+            ['DataProcessingDimpleTwinSuccessful',          'DataProcessingDimpleTwinSuccessful',           'TEXT',                 0],
 
 
             ['DimplePANDDAwasRun',                          'PanDDA\nlaunched?',                            'TEXT',                 1],
