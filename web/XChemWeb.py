@@ -23,13 +23,13 @@ class export_to_html:
         self.pdb = None
         self.protein_name = None
 
-    def prepare(self):
+    def prepare(self,whichSamples):
         self.Logfile.insert('======== preparing HTML summary ========')
         self.makeFolders()
         self.copy_jscss()
         html = XChemMain.html_header()
         firstFile = True
-        for xtal in self.db.samples_for_html_summary():
+        for xtal in self.db.samples_for_html_summary(whichSamples):
             self.db_dict = self.db.get_db_dict_for_sample(xtal)
             if firstFile:
                 if self.db_dict['ProteinName'] == 'None':

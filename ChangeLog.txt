@@ -1,3 +1,6 @@
+v1.6.8 (30/04/2020) 
+- enable html export of '4 - CompChem ready' structures only 
+
 v1.6.7 (29/04/2020)
 - initial twin refinement with dimple in separate folder and additional fields in XChemDB
 
