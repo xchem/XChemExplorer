@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.6.7'
+        xce_object.xce_version = 'v1.6.8'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -450,6 +450,7 @@ class setup():
                                                   [
                                                       ['Edit information', '', xce_object.deposition_data],
                                                       ['Export to HTML', '', xce_object.export_to_html],
+                                                      ['Export to HTML - CompChem', '', xce_object.export_to_html_CompChem],
 #                                                      ['Find PanDDA apo structures', '',
 #                                                       xce_object.create_missing_apo_records_in_depositTable],
 #                                                      ['Update file info of apo structures', '',
