@@ -2078,6 +2078,8 @@ class start_COOT(QtCore.QThread):
             self.pylib='XChemCootReference.py'
         elif interface=='buster':
             self.pylib='XChemCootBuster.py'
+        elif interface=='dimple_twin':
+            self.pylib='XChemCootTwin.py'
 
     def run(self):
         cwd=os.getcwd()
