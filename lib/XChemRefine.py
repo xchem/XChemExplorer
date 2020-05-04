@@ -425,6 +425,18 @@ class Refine(object):
         )
         return cmd
 
+    def run_giant_score_model(self,cmd,cycle):
+        if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-model.pdb')):
+            cmd = ( 'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+cycle+'\n'
+                    'giant.score_model '
+                    ' pdb1=../%s-pandda-model.pdb ' %self.xtalID +
+                    ' mtz1=../dimple.mtz '
+                    ' pdb2=refine.pdb '
+                    ' mtz2=refine.mtz'  )
+        return cmd
+
+
+
     def add_validation(self,cmd,cycle,program):
         buster_report = ''
         if program == 'refmac':
@@ -478,6 +490,7 @@ class Refine(object):
             'EOF\n'
         )
         return cmd
+
 
     def update_database(self,cmd,Serial):
         cmd += ( '$CCP4/bin/ccp4-python '
@@ -538,6 +551,8 @@ class Refine(object):
         cmd = self.set_refinement_status(cmd)
 
         cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial)
+
+        cmd = self.run_giant_score_model(cmd,cycle)
 
         cmd = self.add_validation(cmd,Serial,'buster')
 
