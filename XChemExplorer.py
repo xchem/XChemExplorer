@@ -3492,6 +3492,8 @@ class XChemExplorer(QtGui.QApplication):
                     interface = 'reference'
                 elif instruction == 'Open COOT - BUSTER refinement -':
                     interface = 'buster'
+                elif instruction == 'Open COOT - dimple_twin -':
+                    interface = 'dimple_twin'
                 else:
                     interface = 'old'
                     print self.settings

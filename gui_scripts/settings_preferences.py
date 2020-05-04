@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.6.8'
+        xce_object.xce_version = 'v1.6.9'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -632,7 +632,8 @@ class setup():
                                          'Build ground state model']
 
         xce_object.refine_file_tasks = ['Open COOT',
-                                        'Open COOT - BUSTER refinement -']
+                                        'Open COOT - BUSTER refinement -',
+                                        'Open COOT - dimple_twin -' ]
 
 #        xce_object.refine_file_tasks = ['Open COOT',
 #                                        'Open COOT for old PanDDA',
