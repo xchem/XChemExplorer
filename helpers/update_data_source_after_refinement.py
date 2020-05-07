@@ -211,7 +211,7 @@ def update_data_source(db_dict):
 
 
 def update_buster_report_index_html(refinement_directory,db_dict):
-    if os.path.isfile(refinement_directory+'-report/index.html')
+    if os.path.isfile(refinement_directory+'-report/index.html'):
         db_dict['RefinementBusterReportHTML'] = refinement_directory+'-report/index.html'
     return db_dict
 
