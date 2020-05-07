@@ -432,7 +432,7 @@ class Refine(object):
                     ' pdb1=../%s-pandda-model.pdb ' %self.xtalID +
                     ' mtz1=../dimple.mtz '
                     ' pdb2=refine.pdb '
-                    ' mtz2=refine.mtz'  )
+                    ' mtz2=refine.mtz\n'  )
         return cmd
 
 
@@ -552,7 +552,7 @@ class Refine(object):
 
         cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial)
 
-        cmd = self.run_giant_score_model(cmd,cycle)
+        cmd = self.run_giant_score_model(cmd,Serial)
 
         cmd = self.add_validation(cmd,Serial,'buster')
 
