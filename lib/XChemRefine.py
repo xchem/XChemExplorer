@@ -427,12 +427,12 @@ class Refine(object):
 
     def run_giant_score_model(self,cmd,cycle):
         if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-model.pdb')):
-            cmd = ( 'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+cycle+'\n'
-                    'giant.score_model '
-                    ' pdb1=../%s-pandda-model.pdb ' %self.xtalID +
-                    ' mtz1=../dimple.mtz '
-                    ' pdb2=refine.pdb '
-                    ' mtz2=refine.mtz\n'  )
+            cmd += ( 'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+cycle+'\n'
+                     'giant.score_model '
+                     ' pdb1=../%s-pandda-model.pdb ' %self.xtalID +
+                     ' mtz1=../dimple.mtz '
+                     ' pdb2=refine.pdb '
+                     ' mtz2=refine.mtz\n'  )
         return cmd
 
 
