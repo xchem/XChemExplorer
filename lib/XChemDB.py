@@ -222,6 +222,7 @@ class data_source:
             ['RefinementRamachandranFavoredTL',             'RefinementRamachandranFavoredTL',              'TEXT',                 0],
             ['RefinementProgram',                           'RefinementProgram',                            'TEXT',                 1],
             ['RefinementStatus',                            'Refinement\nStatus',                           'TEXT',                 1],
+            ['RefinementBusterReportHTML',                  'RefinementBusterReportHTML',                   'TEXT',                 1],
 
             ['Deposition_PDB_ID',                           'Deposition_PDB_ID',                            'TEXT',                 1],
             ['Deposition_PDB_file',                         'Deposition_PDB_file',                          'TEXT',                 0],

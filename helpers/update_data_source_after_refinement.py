@@ -209,6 +209,12 @@ def update_data_source(db_dict):
                 )
         db.execute_statement(sqlite)
 
+
+def update_buster_report_index_html(refinement_directory,db_dict):
+    if os.path.isfile(refinement_directory+'-report/index.html'):
+        db_dict['RefinementBusterReportHTML'] = refinement_directory+'-report/index.html'
+    return db_dict
+
 if __name__=='__main__':
 
     print 'hallo'
@@ -226,7 +232,7 @@ if __name__=='__main__':
     db_dict=check_refmac_matrix_weight(refinement_directory,db_dict)
     db_dict=parse_molprobity_output(inital_model_directory,xtal,db_dict)
     db_dict=check_refmac_logfile(refinement_directory,db_dict)
-
+    db_dict=update_buster_report_index_html(refinement_directory,db_dict)
     update_ligand_information_in_panddaTable(inital_model_directory,xtal)
 
     parse_ligand_validation(inital_model_directory,refinement_directory,xtal)
