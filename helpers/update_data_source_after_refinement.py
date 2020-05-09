@@ -30,6 +30,7 @@ def parse_pdb(inital_model_directory,xtal,db_dict):
     else:
         db_dict['RefinementStatus'] =               'failed'
 
+
     if os.path.isfile(os.path.join(inital_model_directory,xtal,'refine.bound.pdb')):
         db_dict['RefinementBoundConformation']=os.path.realpath(os.path.join(inital_model_directory,xtal,'refine.bound.pdb'))
     elif os.path.isfile(os.path.join(inital_model_directory,xtal,'refine.split.bound-state.pdb')):
@@ -215,6 +216,13 @@ def update_buster_report_index_html(refinement_directory,db_dict):
         db_dict['RefinementBusterReportHTML'] = refinement_directory+'-report/index.html'
     return db_dict
 
+def update_mmcif_file_location(refinement_directory,db_dict):
+    if os.path.isfile(os.path.join(refinement_directory,'BUSTER_model.cif')):
+        db_dict['RefinementMMCIFmodel_latest'] = os.path.join(refinement_directory,'BUSTER_model.cif')
+    if os.path.isfile(os.path.join(refinement_directory,'BUSTER_refln.cif')):
+        db_dict['RefinementMMCIFreflections_latest'] = os.path.join(refinement_directory,'BUSTER_refln.cif')
+    return db_dict
+
 if __name__=='__main__':
 
     print 'hallo'
@@ -233,6 +241,7 @@ if __name__=='__main__':
     db_dict=parse_molprobity_output(inital_model_directory,xtal,db_dict)
     db_dict=check_refmac_logfile(refinement_directory,db_dict)
     db_dict=update_buster_report_index_html(refinement_directory,db_dict)
+    db_dict=update_mmcif_file_location(refinement_directory,db_dict)
     update_ligand_information_in_panddaTable(inital_model_directory,xtal)
 
     parse_ligand_validation(inital_model_directory,refinement_directory,xtal)

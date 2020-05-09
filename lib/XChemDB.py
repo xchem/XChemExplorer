@@ -208,6 +208,9 @@ class data_source:
             ['RefinementCIFprogram',                        'RefinementCIFprogram',                         'TEXT',                 1],
             ['RefinementPDB_latest',                        'RefinementPDB_latest',                         'TEXT',                 1],
             ['RefinementMTZ_latest',                        'RefinementMTZ_latest',                         'TEXT',                 1],
+            ['RefinementMMCIFmodel_latest',                 'RefinementMMCIFmodel_latest',                  'TEXT',                 1],
+            ['RefinementMMCIFreflections_latest',           'RefinementMMCIFreflections_latest',            'TEXT',                 1],
+
             ['RefinementMatrixWeight',                      'RefinementMatrixWeight',                       'TEXT',                 0],
             ['RefinementComment',                           'RefinementComment',                            'TEXT',                 0],
             ['RefinementPathToRefinementFolder',            'RefinementPathToRefinementFolder',             'TEXT',                 0],

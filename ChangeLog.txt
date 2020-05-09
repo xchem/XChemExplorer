@@ -1,3 +1,6 @@
+v1.6.12 (09/05/2020)
+- capture refinement mmcif file location in DB after refinement (if available)
+
 v1.6.11 (04/05/2020) 
 - added giant.score_model after buster refinement
 - added field and capture of path to buster-reports in DB
