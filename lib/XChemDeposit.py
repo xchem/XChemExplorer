@@ -870,14 +870,25 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                    ' -iENT data_template.cif'
                    ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
         else:
-            Cmd = (pdb_extract_init +
-                   ' -r {0!s}'.format(refSoft) +
-                   ' -iPDB {0!s}'.format('refine.split.bound-state.pdb') +
-                   ' -e MR'
-                   ' -s AIMLESS'
-                   ' -iLOG {0!s}.log'.format(xtal) +
-                   ' -iENT data_template.cif'
-                   ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
+            if os.path.isfile(self.db_dict['RefinementMMCIFmodel_latest']):
+                self.Logfile.insert('%s: found MMCIF file; will use instead of PDB: %s' %(xtal,self.db_dict['RefinementMMCIFmodel_latest']))
+                Cmd = (pdb_extract_init +
+                       ' -r {0!s}'.format(refSoft) +
+                       ' -iCIF {0!s}'.format(self.db_dict['RefinementMMCIFmodel_latest']) +
+                       ' -e MR'
+                       ' -s AIMLESS'
+                       ' -iLOG {0!s}.log'.format(xtal) +
+                       ' -iENT data_template.cif'
+                       ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
+            else:
+                Cmd = (pdb_extract_init +
+                       ' -r {0!s}'.format(refSoft) +
+                       ' -iPDB {0!s}'.format('refine.split.bound-state.pdb') +
+                       ' -e MR'
+                       ' -s AIMLESS'
+                       ' -iLOG {0!s}.log'.format(xtal) +
+                       ' -iENT data_template.cif'
+                       ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
 
         self.Logfile.insert(xtal + ': running pdb_extract: ' + Cmd)
         os.system(Cmd)

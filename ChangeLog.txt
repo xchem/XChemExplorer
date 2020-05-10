@@ -1,3 +1,6 @@
+v1.6.13 (10/05/2020)
+- XChemDeposit: use RefinementMMCIFmodel_latest (if available) instead of refine.split.bound-state.pdb
+
 v1.6.12 (09/05/2020)
 - capture refinement mmcif file location in DB after refinement (if available)
 
