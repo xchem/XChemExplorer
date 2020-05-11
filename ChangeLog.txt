@@ -1,4 +1,5 @@
 v1.6.14 (11/05/2020)
+- XChemDeposit: usage of model mmcif file disabled because of unclear errors during group deposition
 - XChemDeposit: do not add ligand cif to model mmcif because Buster does already include it
 - XChemDeposit: use pdb_extract v3.26 when using mmcif instead of pdb files
 
