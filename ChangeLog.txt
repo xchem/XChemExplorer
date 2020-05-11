@@ -1,3 +1,6 @@
+v1.6.14 (11/05/2020)
+- XChemDeposit: do not add ligand cif to model mmcif because Buster does already include it
+
 v1.6.13 (10/05/2020)
 - XChemDeposit: use RefinementMMCIFmodel_latest (if available) instead of refine.split.bound-state.pdb
 

@@ -993,18 +993,22 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         filestatus = False
         self.Logfile.insert('%s: looking for ligand restraints file...' %xtal)
         os.chdir(os.path.join(self.projectDir, xtal))
-        if os.path.isfile(self.db_dict['CompoundCode']+'.cif'):
-            self.Logfile.insert('%s: found ligand restraints file -> %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
-            self.Logfile.insert('%s: adding ligand restraints file to model mmcif' %xtal)
-            cif = ''
-            for line in open(self.db_dict['CompoundCode']+'.cif'):
-                cif += line
-            f = open(xtal+'.mmcif','a')
-            f.write(cif)
-            f.close()
+        if os.path.isfile(self.db_dict['RefinementMMCIFmodel_latest']):
+            self.Logfile.insert('%s: found %s; assuming that ligand cif dictionary is already included...' %(xtal,self.db_dict['RefinementMMCIFmodel_latest']))
             filestatus = True
         else:
-            self.Logfile.warning('%s: could not find %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
+            if os.path.isfile(self.db_dict['CompoundCode']+'.cif'):
+                self.Logfile.insert('%s: found ligand restraints file -> %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
+                self.Logfile.insert('%s: adding ligand restraints file to model mmcif' %xtal)
+                cif = ''
+                for line in open(self.db_dict['CompoundCode']+'.cif'):
+                    cif += line
+                f = open(xtal+'.mmcif','a')
+                f.write(cif)
+                f.close()
+                filestatus = True
+            else:
+                self.Logfile.warning('%s: could not find %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
         return filestatus
 
 
