@@ -849,8 +849,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         refSoft = self.pdb.get_refinement_program()
 
         if os.path.isdir('/dls'):
-            pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n'
-            pdb_extract_init += '/dls/science/groups/i04-1/software/pdb-extract-prod/bin/pdb_extract'
+            if os.path.isfile(self.db_dict['RefinementMMCIFmodel_latest']):
+                pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-v3.26/pdb-extract-v3.26-prod-src/setup.sh\n'
+                pdb_extract_init += '/dls/science/groups/i04-1/software/pdb-extract-v3.26/pdb-extract-v3.26-prod-src/bin/pdb_extract'
+            else:
+                pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n'
+                pdb_extract_init += '/dls/science/groups/i04-1/software/pdb-extract-prod/bin/pdb_extract'
         else:
             pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
                                                         'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
