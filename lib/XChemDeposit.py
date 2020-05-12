@@ -849,6 +849,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         refSoft = self.pdb.get_refinement_program()
 
         if os.path.isdir('/dls'):
+#            if os.path.isfile(self.db_dict['RefinementMMCIFmodel_latest']):
+#                pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-v3.26/pdb-extract-v3.26-prod-src/setup.sh\n'
+#                pdb_extract_init += '/dls/science/groups/i04-1/software/pdb-extract-v3.26/pdb-extract-v3.26-prod-src/bin/pdb_extract'
+#            else:
             pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n'
             pdb_extract_init += '/dls/science/groups/i04-1/software/pdb-extract-prod/bin/pdb_extract'
         else:
@@ -870,18 +874,18 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                    ' -iENT data_template.cif'
                    ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
         else:
-            if os.path.isfile(self.db_dict['RefinementMMCIFmodel_latest']):
-                self.Logfile.insert('%s: found MMCIF file; will use instead of PDB: %s' %(xtal,self.db_dict['RefinementMMCIFmodel_latest']))
-                Cmd = (pdb_extract_init +
-                       ' -r {0!s}'.format(refSoft) +
-                       ' -iCIF {0!s}'.format(self.db_dict['RefinementMMCIFmodel_latest']) +
-                       ' -e MR'
-                       ' -s AIMLESS'
-                       ' -iLOG {0!s}.log'.format(xtal) +
-                       ' -iENT data_template.cif'
-                       ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
-            else:
-                Cmd = (pdb_extract_init +
+#            if os.path.isfile(self.db_dict['RefinementMMCIFmodel_latest']):
+#                self.Logfile.insert('%s: found MMCIF file; will use instead of PDB: %s' %(xtal,self.db_dict['RefinementMMCIFmodel_latest']))
+#                Cmd = (pdb_extract_init +
+#                       ' -r {0!s}'.format(refSoft) +
+#                       ' -iCIF {0!s}'.format(self.db_dict['RefinementMMCIFmodel_latest']) +
+#                       ' -e MR'
+#                       ' -s AIMLESS'
+#                       ' -iLOG {0!s}.log'.format(xtal) +
+#                       ' -iENT data_template.cif'
+#                       ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
+#            else:
+            Cmd = (pdb_extract_init +
                        ' -r {0!s}'.format(refSoft) +
                        ' -iPDB {0!s}'.format('refine.split.bound-state.pdb') +
                        ' -e MR'
@@ -993,18 +997,22 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         filestatus = False
         self.Logfile.insert('%s: looking for ligand restraints file...' %xtal)
         os.chdir(os.path.join(self.projectDir, xtal))
-        if os.path.isfile(self.db_dict['CompoundCode']+'.cif'):
-            self.Logfile.insert('%s: found ligand restraints file -> %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
-            self.Logfile.insert('%s: adding ligand restraints file to model mmcif' %xtal)
-            cif = ''
-            for line in open(self.db_dict['CompoundCode']+'.cif'):
-                cif += line
-            f = open(xtal+'.mmcif','a')
-            f.write(cif)
-            f.close()
+        if os.path.isfile(self.db_dict['RefinementMMCIFmodel_latest']):
+            self.Logfile.insert('%s: found %s; assuming that ligand cif dictionary is already included...' %(xtal,self.db_dict['RefinementMMCIFmodel_latest']))
             filestatus = True
         else:
-            self.Logfile.warning('%s: could not find %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
+            if os.path.isfile(self.db_dict['CompoundCode']+'.cif'):
+                self.Logfile.insert('%s: found ligand restraints file -> %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
+                self.Logfile.insert('%s: adding ligand restraints file to model mmcif' %xtal)
+                cif = ''
+                for line in open(self.db_dict['CompoundCode']+'.cif'):
+                    cif += line
+                f = open(xtal+'.mmcif','a')
+                f.write(cif)
+                f.close()
+                filestatus = True
+            else:
+                self.Logfile.warning('%s: could not find %s' %(xtal,self.db_dict['CompoundCode']+'.cif'))
         return filestatus
 
 

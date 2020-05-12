@@ -1828,6 +1828,8 @@ class pdbtools(object):
                     program = 'REFMAC'
                 elif 'phenix' in remark.lower():
                     program = 'PHENIX'
+                elif 'buster' in remark.lower():
+                    program = 'BUSTER'
         return  program
 
     def get_residues_with_resname(self,resname):
