@@ -255,6 +255,9 @@ class export_to_html:
                 os.system('/bin/cp %s %s_%s.png' % (plot, xtal, ligID))
             else:
                 self.Logfile.error('%s: cannot find spider plot for %s' %(xtal,ligID.replace('LIG-','')+'.png'))
+                self.Logfile.warning('%s: using %s instead' %(xtal,'NO_SPIDER_PLOT_AVAILABLE.png'))
+                os.system('/bin/cp %s %s_%s.png' % (os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'NO_SPIDER_PLOT_AVAILABLE.png'), xtal, ligID))
+                #
         else:
             self.Logfile.error('%s: cannot find refine.pdb, i.e. cannot start looking for spider plots...' %xtal)
 

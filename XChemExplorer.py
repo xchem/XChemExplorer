@@ -529,13 +529,19 @@ class XChemExplorer(QtGui.QApplication):
         XChemWeb.export_to_html(self.html_export_directory,
                                 self.initial_model_directory,
                                 os.path.join(self.database_directory, self.data_source_file),
-                                self.xce_logfile).prepare(None)
+                                self.xce_logfile).prepare('0')
 
     def export_to_html_CompChem(self):
         XChemWeb.export_to_html(self.html_export_directory,
                                 self.initial_model_directory,
                                 os.path.join(self.database_directory, self.data_source_file),
                                 self.xce_logfile).prepare('4')
+
+    def export_to_html_deposition_ready(self):
+        XChemWeb.export_to_html(self.html_export_directory,
+                                self.initial_model_directory,
+                                os.path.join(self.database_directory, self.data_source_file),
+                                self.xce_logfile).prepare('5')
 
 #        self.update_log.insert('exporting contents of SQLite database into ' + self.html_export_directory)
 #        os.system(
