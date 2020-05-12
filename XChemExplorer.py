@@ -15,9 +15,9 @@
 ########################################################################################################################
 
 # solve gtk startup error
-import gtk
+#import gtk
 
-gtk.set_interactive(False)
+#gtk.set_interactive(False)
 
 import base64
 import getpass
