@@ -1886,6 +1886,8 @@ class data_source:
         cursor = connect.cursor()
         if whichSamples.startswith('4'):
             cursor.execute("select CrystalName from mainTable where RefinementOutcome like '4%' order by CrystalName ASC")
+        elif whichSamples.startswith('5'):
+            cursor.execute("select CrystalName from mainTable where RefinementOutcome like '5%' order by CrystalName ASC")
         else:
             cursor.execute("select CrystalName from mainTable where RefinementOutcome like '4%' or "
                                                                    "RefinementOutcome like '5%' or "
