@@ -1,3 +1,6 @@
+v1.6.17 (17/05/2020)
+- DIMPLE: added 'tolerance 5' keyword to pointless step to allow reindexing in case of slightly larger unit cell differences
+
 v1.6.16 (12/05/2020)
 - XChemExplorer.py removed unused 'import gtk' statement which is incompatible with ccp4 7.1
 
