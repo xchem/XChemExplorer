@@ -1,3 +1,6 @@
+v1.6.16 (12/05/2020)
+- XChemExplorer.py removed unused 'import gtk' statement which is incompatible with ccp4 7.1
+
 v1.6.15 (12/05/2020)
 - added html summary for all '5-deposition ready' structures
 - HTML summary: show NO_SPIDER_PLOT_AVAILABLE.png if spider plot is missing
