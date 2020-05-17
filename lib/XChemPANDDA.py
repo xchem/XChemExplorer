@@ -586,6 +586,7 @@ class run_pandda_analyse(QtCore.QThread):
         number_of_cyles=int(self.number_of_datasets)/int(self.max_new_datasets)
         if int(self.number_of_datasets) % int(self.max_new_datasets) != 0:  # modulo gives remainder after integer division
             number_of_cyles+=1
+        self.Logfile.insert('will run %s rounds of pandda.analyse' %str(number_of_cyles))
 
         if os.path.isfile(os.path.join(self.panddas_directory,'pandda.running')):
             self.Logfile.insert('it looks as if a pandda.analyse job is currently running in: '+self.panddas_directory)
@@ -736,6 +737,8 @@ class run_pandda_analyse(QtCore.QThread):
 
 #            #>>> for testing
 #            self.submit_mode='local machine'
+
+            self.Logfile.insert('trying to run pandda.analyse on ' + str(self.submit_mode))
 
             if self.submit_mode=='local machine':
                 self.Logfile.insert('running PANDDA on local machine')
