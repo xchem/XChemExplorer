@@ -2777,6 +2777,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     runDir = os.path.join(tmpDir,xtal+'_*_')
                 else:
                     runDir = os.path.join(collected_xtals,'*')
+                self.Logfile.insert('current runDir: ' + runDir)
 
                 for run in sorted(glob.glob(runDir)):
                     current_run=run[run.rfind('/')+1:]
