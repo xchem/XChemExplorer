@@ -2527,10 +2527,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
 
     def run(self):
-        if self.agamemnon:
-            self.parse_agamemnon_file_system()
-        else:
-            self.parse_file_system()
+#        if self.agamemnon:
+#            self.parse_agamemnon_file_system()
+#        else:
+#            self.parse_file_system()
+        self.parse_file_system()
+
 
     def getExistingSamples(self):
         existingSamples={}
