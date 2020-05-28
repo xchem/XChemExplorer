@@ -2815,9 +2815,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                                 self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc,proc_code)
                         runList.append(current_run+proc_code)
 
-            progress += progress_step
-            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
-            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+                progress += progress_step
+                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
+                self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         self.Logfile.insert('====== finished parsing beamline directory ======')
         self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
