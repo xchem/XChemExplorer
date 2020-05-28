@@ -2446,12 +2446,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.target = target
         self.agamemnon = agamemnon
-        if self.agamemnon:
-#            print 'procDir',self.processedDir
-#            if len(procDir.split('/')) >= 8:
-#                if procDir.split('/')[7] == 'agamemnon'
-#            quit()
-            self.visit = 'agamemnon'        # this is for trouble-shooting only
+#        if self.agamemnon:
+##            print 'procDir',self.processedDir
+##            if len(procDir.split('/')) >= 8:
+##                if procDir.split('/')[7] == 'agamemnon'
+##            quit()
+#            self.visit = 'agamemnon'        # this is for trouble-shooting only
 
         self.db = XChemDB.data_source(os.path.join(database))
         self.exisitingSamples = self.getExistingSamples()
