@@ -2745,7 +2745,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         runList = []
 
         for auto in autoDir:
-            for nx,collected_xtals in enumerate(sorted(glob.glob(os.path.join(self.processedDir+'*','processed',auto,self.target,'*')))):
+            for nx,collected_xtals in enumerate(sorted(glob.glob(os.path.join(self.processedDir,'processed',auto,self.target,'*')))):
                 self.Logfile.insert('%s: %s' %(nx,collected_xtals))
                 self.visit = collected_xtals.split('/')[5]
                 if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
@@ -2772,9 +2772,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
                 if self.target == '=== project directory ===':
                     runDir = os.path.join(collected_xtals,'processed','*')
-                elif self.agamemnon:
-                    tmpDir = collected_xtals[:collected_xtals.rfind('/')]
-                    runDir = os.path.join(tmpDir,xtal+'_*_')
+#                elif self.agamemnon:
+#                    tmpDir = collected_xtals[:collected_xtals.rfind('/')]
+#                    runDir = os.path.join(tmpDir,xtal+'_*_')
                 else:
                     runDir = os.path.join(collected_xtals,'*')
                 self.Logfile.insert('current runDir: ' + runDir)
