@@ -2733,91 +2733,93 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         return do_not_parse
 
     def parse_file_system(self):
-        self.Logfile.insert('checking for new data processing results in '+self.processedDir)
-        progress = 0
-        progress_step = XChemMain.getProgressSteps(len(glob.glob(os.path.join(self.processedDir,'*'))))
-
         if self.agamemnon:
-            autoDir = ['auto','agamemnon','recollect']
+            d = self.processedDir[:self.processedDir.rfind('/')]
+            t = self.processedDir[self.processedDir.rfind('/')+1:]
+            autoDir = os.path.join(d,'auto',t)
         else:
-            autoDir = ['']
+            autoDir = self.projectDir
+
+        self.Logfile.insert('checking for new data processing results in '+autoDir)
+        progress = 0
+        progress_step = XChemMain.getProgressSteps(len(glob.glob(os.path.join(autoDir,'*'))))
 
         runList = []
-        for auto in autoDir:
-            self.Logfile.insert('--> ' + os.path.join(self.processedDir,auto,self.target,'*'))
-            for nx,collected_xtals in enumerate(sorted(glob.glob(os.path.join(self.processedDir,auto,self.target,'*')))):
-                self.Logfile.insert('%s: %s' %(nx,collected_xtals))
-                self.visit = collected_xtals.split('/')[5]
-                if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
-                    continue
-                if not os.path.isdir(collected_xtals):
-                    continue
+#        for auto in autoDir:
+        self.Logfile.insert('--> ' + os.path.join(autoDir,'*'))
+        for nx,collected_xtals in enumerate(sorted(glob.glob(os.path.join(autoDir,'*')))):
+            self.Logfile.insert('%s: %s' %(nx,collected_xtals))
+            self.visit = collected_xtals.split('/')[5]
+            if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
+                continue
+            if not os.path.isdir(collected_xtals):
+                continue
 
 #        for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
             # why is this here? self.visit is derived in init function through XChemMain.getVisitAndBeamline
 #            self.visit = collected_xtals.split('/')[5]
-                if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
-                    continue
-                if not os.path.isdir(collected_xtals):
-                    self.Logfile.warning(collected_xtals + ' is not a directory')
-                    continue
+            if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
+                continue
+            if not os.path.isdir(collected_xtals):
+                self.Logfile.warning(collected_xtals + ' is not a directory')
+                continue
 
-                xtal = collected_xtals[collected_xtals.rfind('/')+1:]
-                if self.agamemnon:
-                    tmp = xtal[:xtal.rfind('_')]
-                    xtal = tmp[:tmp.rfind('_')]
+            xtal = collected_xtals[collected_xtals.rfind('/')+1:]
+            if self.agamemnon:
+                tmp = xtal[:xtal.rfind('_')]
+                xtal = tmp[:tmp.rfind('_')]
 
-                self.Logfile.insert('%s: checking auto-processing results' %xtal)
-                self.createSampleDir(xtal)
+            self.Logfile.insert('%s: checking auto-processing results' %xtal)
+            self.createSampleDir(xtal)
 
-                if self.target == '=== project directory ===':
-                    runDir = os.path.join(collected_xtals,'processed','*')
+            if self.target == '=== project directory ===':
+                runDir = os.path.join(collected_xtals,'processed','*')
 #                elif self.agamemnon:
 #                    tmpDir = collected_xtals[:collected_xtals.rfind('/')]
 #                    runDir = os.path.join(tmpDir,xtal+'_*_')
-                else:
-                    runDir = os.path.join(collected_xtals,'*')
-                self.Logfile.insert('current runDir: ' + runDir)
+            else:
+                runDir = os.path.join(collected_xtals,'*')
+            self.Logfile.insert('current runDir: ' + runDir)
 
-                for run in sorted(glob.glob(runDir)):
-                    current_run=run[run.rfind('/')+1:]
-                    for code in glob.glob(os.path.join(run,'*')):
-                        proc_code = code[code.rfind('/')+1:]
-                        if current_run+proc_code in runList:
-                            continue
-                        self.Logfile.insert('%s -> run: %s -> current run: %s -> %s' %(xtal,run,current_run,proc_code))
-                        timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
-                        # create directory for crystal aligment images in projectDir
-                        self.makeJPGdir(xtal,current_run)
-                        self.copyJPGs(xtal, current_run, 'non-auto')    # 'non-auto' is irrelevant here
+            for run in sorted(glob.glob(runDir)):
+                current_run=run[run.rfind('/')+1:]
+                for code in glob.glob(os.path.join(run,'*')):
+                    proc_code = code[code.rfind('/')+1:]
+                    if current_run+proc_code in runList:
+                        continue
+                    self.Logfile.insert('%s -> run: %s -> current run: %s -> %s' %(xtal,run,current_run,proc_code))
+                    timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
+                    # create directory for crystal aligment images in projectDir
+                    self.makeJPGdir(xtal,current_run)
+                    self.copyJPGs(xtal, current_run, 'non-auto')    # 'non-auto' is irrelevant here
 
-                        for item in self.toParse:
-                            procDir = os.path.join(code,item[0])
-                            logfile = item[1]
-                            mtzfile = item[2]
-                            self.Logfile.insert('%s: search template: procDir - logfile - mtzfile' %xtal)
-                            self.Logfile.insert('%s: procDir = %s' %(xtal,procDir))
-                            self.Logfile.insert('%s: logfile = %s' %(xtal,logfile))
-                            self.Logfile.insert('%s: mtzfile = %s' %(xtal,mtzfile))
+                    for item in self.toParse:
+                        procDir = os.path.join(code,item[0])
+                        logfile = item[1]
+                        mtzfile = item[2]
+                        self.Logfile.insert('%s: search template: procDir - logfile - mtzfile' %xtal)
+                        self.Logfile.insert('%s: procDir = %s' %(xtal,procDir))
+                        self.Logfile.insert('%s: logfile = %s' %(xtal,logfile))
+                        self.Logfile.insert('%s: mtzfile = %s' %(xtal,mtzfile))
 
-                            for folder in glob.glob(procDir):
-                                staraniso = ''
-                                self.Logfile.insert('%s: searching %s' %(xtal,folder))
-                                if self.junk(folder):
-                                    continue
-                                if self.empty_folder(xtal,folder):
-                                    continue
-                                if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-                                    staraniso = '_staraniso'
-                                autoproc = self.getAutoProc(folder,staraniso)
-                                if self.alreadyParsed(xtal,current_run+proc_code,autoproc):
-                                    continue
-                                self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc,proc_code)
-                        runList.append(current_run+proc_code)
+                        for folder in glob.glob(procDir):
+                            staraniso = ''
+                            self.Logfile.insert('%s: searching %s' %(xtal,folder))
+                            if self.junk(folder):
+                                continue
+                            if self.empty_folder(xtal,folder):
+                                continue
+                            if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
+                                staraniso = '_staraniso'
+                            autoproc = self.getAutoProc(folder,staraniso)
+                            if self.alreadyParsed(xtal,current_run+proc_code,autoproc):
+                                continue
+                            self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc,proc_code)
+                    runList.append(current_run+proc_code)
 
-                progress += progress_step
-                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
-                self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         self.Logfile.insert('====== finished parsing beamline directory ======')
         self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
