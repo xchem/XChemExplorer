@@ -2744,8 +2744,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
         runList = []
         for auto in autoDir:
-            self.Logfile.insert('--> ' + os.path.join(self.processedDir,'processed',auto,self.target,'*'))
-            for nx,collected_xtals in enumerate(sorted(glob.glob(os.path.join(self.processedDir,'processed',auto,self.target,'*')))):
+            self.Logfile.insert('--> ' + os.path.join(self.processedDir,auto,self.target,'*'))
+            for nx,collected_xtals in enumerate(sorted(glob.glob(os.path.join(self.processedDir,auto,self.target,'*')))):
                 self.Logfile.insert('%s: %s' %(nx,collected_xtals))
                 self.visit = collected_xtals.split('/')[5]
                 if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
