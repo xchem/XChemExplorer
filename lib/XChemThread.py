@@ -2744,7 +2744,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
         runList = []
         for auto in autoDir:
-            self.Logfile.insert('--> ' + glob.glob(os.path.join(self.processedDir,'processed',auto,self.target,'*')))
+            self.Logfile.insert('--> ' + os.path.join(self.processedDir,'processed',auto,self.target,'*'))
             for nx,collected_xtals in enumerate(sorted(glob.glob(os.path.join(self.processedDir,'processed',auto,self.target,'*')))):
                 self.Logfile.insert('%s: %s' %(nx,collected_xtals))
                 self.visit = collected_xtals.split('/')[5]
