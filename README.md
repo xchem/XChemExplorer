@@ -135,3 +135,8 @@ ccp4-python -m pip install panddas
 (Note, this is not supported – you really are on your own!  Recommended only for geeks.)
 
 3. If your IT team doesn’t want to help you, try setting up a virtual machine – then you have root permissions and can do whatever you like.  Performance ought to be okay.
+
+
+## Requirements
+
+XChemExplorer is licensed under the MIT license.
