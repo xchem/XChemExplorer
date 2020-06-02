@@ -2738,7 +2738,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             t = self.processedDir[self.processedDir.rfind('/')+1:]
             autoDir = os.path.join(d,'auto',t)
         else:
-            autoDir = self.projectDir
+            autoDir = self.processedDir
 
         self.Logfile.insert('checking for new data processing results in '+autoDir)
         progress = 0
