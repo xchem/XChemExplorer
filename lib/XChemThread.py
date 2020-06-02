@@ -2765,9 +2765,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 continue
 
             xtal = collected_xtals[collected_xtals.rfind('/')+1:]
-            if self.agamemnon:
-                tmp = xtal[:xtal.rfind('_')]
-                xtal = tmp[:tmp.rfind('_')]
+#            if self.agamemnon:
+#                tmp = xtal[:xtal.rfind('_')]
+#                xtal = tmp[:tmp.rfind('_')]
 
             self.Logfile.insert('%s: checking auto-processing results' %xtal)
             self.createSampleDir(xtal)
