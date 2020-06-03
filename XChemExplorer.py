@@ -338,12 +338,12 @@ class XChemExplorer(QtGui.QApplication):
         elif self.target == '=== project directory ===':
             processedDir = self.initial_model_directory
             start_thread = True
-        elif self.read_agamemnon.isChecked():
-            tmp = '/'.join(self.beamline_directory.split('/')[:6])
-            processedDir = tmp[:tmp.rfind('-')]
-#            processedDir = os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*/processed/agamemnon/'+self.target)
-#            processedDir = os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*/processed/*/'+self.target)
-            start_thread = True
+#        elif self.read_agamemnon.isChecked():
+#            tmp = '/'.join(self.beamline_directory.split('/')[:6])
+#            processedDir = tmp[:tmp.rfind('-')]
+##            processedDir = os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*/processed/agamemnon/'+self.target)
+##            processedDir = os.path.join(self.beamline_directory[:self.beamline_directory.rfind('-') + 1] + '*/processed/*/'+self.target)
+#            start_thread = True
         else:
             processedDir = os.path.join(self.beamline_directory, 'processed', self.target)
             start_thread = True

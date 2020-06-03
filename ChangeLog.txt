@@ -1,3 +1,6 @@
+v1.6.19 (28/05/2020)
+- combined parsing of 'agamemnon' auto-collection into single function
+
 v1.6.18 (17/05/2020)
 - removed dls specific source files from pandda.analyse script when running on local machine
 
