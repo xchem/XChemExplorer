@@ -1,3 +1,6 @@
+v1.6.20 (03/06/2020)
+- enable remote cluster submission of (Buster) refinement jobs
+
 v1.6.19 (28/05/2020)
 - combined parsing of 'agamemnon' auto-collection into single function
 

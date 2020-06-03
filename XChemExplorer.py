@@ -867,7 +867,7 @@ class XChemExplorer(QtGui.QApplication):
         remote_qsub_label = QtGui.QLabel('remote qsub:')
         settings_hbox_remote_qsub.addWidget(remote_qsub_label)
         self.remote_qsub_checkbox = QtGui.QCheckBox('use')
-        #self.remote_qsub_checkbox.toggled.connect(self.run_qsub_remotely)
+        self.remote_qsub_checkbox.toggled.connect(self.run_qsub_remotely)
 
         settings_hbox_dimple_twin_mode = QtGui.QHBoxLayout()
         self.dimple_twin_mode_label_checkbox = QtGui.QCheckBox('run DIMPLE in TWIN mode')
