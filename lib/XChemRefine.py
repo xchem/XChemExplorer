@@ -506,11 +506,18 @@ class Refine(object):
         f.write(cmd)
         f.close()
 
-    def run_script(self,program,qsub):
+    def run_script(self,program,external_software):
         os.chdir(os.path.join(self.ProjectPath,self.xtalID))
-        if qsub and not os.uname()[1] == 'hestia':
+        if external_software['qsub'] and not os.uname()[1] == 'hestia':
+            self.Logfile.insert('starting refinement with command: qsub -P labxchem -q medium.q %s.sh' %program)
             os.system("qsub -P labxchem -q medium.q %s.sh" %program)
+        elif external_software['qsub_remote'] != '':
+            Logfile.insert('starting refinement on remote cluster')
+            remote_command=external_software['qsub_remote'].replace('qsub','cd %s; qsub' %os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial)))
+            self.Logfile.insert('starting refinement with command: %s' %remote_command)
+            os.system('%s -P labxchem refmac.csh' %remote_command)
         else:
+            self.Logfile.insert('starting refinement with command: ./%s.sh &' %program)
             os.system('chmod +x %s.sh' %program)
             os.system('./%s.sh &' %program)
 
@@ -566,7 +573,7 @@ class Refine(object):
             self.Logfile.insert('%s: writing buster.sh file in %s' %(self.xtalID,os.path.join(self.ProjectPath,self.xtalID)))
             self.write_refinement_script(cmd,'buster')
             self.Logfile.insert('%s: starting refinement...' %self.xtalID)
-            self.run_script('buster',external_software['qsub'])
+            self.run_script('buster',external_software)
 
     def RunRefmac(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
