@@ -1,3 +1,6 @@
+v1.6.21 (04/06/2020)
+- source ccp4 7.0 at Diamond before running giant.score_model during Buster refinement
+
 v1.6.20 (03/06/2020)
 - enable remote cluster submission of (Buster) refinement jobs
 
