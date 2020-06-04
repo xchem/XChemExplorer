@@ -427,7 +427,7 @@ class Refine(object):
 
     def run_giant_score_model(self,cmd,cycle):
         old_ccp4 = ''
-        if os.path.isfile('source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh'):
+        if os.path.isfile('/dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh'):
             # giant.score_model does not work with ccp4 7.1-000
             old_ccp4 = 'source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
         if os.path.isfile(os.path.join(self.ProjectPath,self.xtalID,self.xtalID+'-pandda-model.pdb')):
