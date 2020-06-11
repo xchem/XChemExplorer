@@ -486,13 +486,25 @@ class Refine(object):
             DELFWT = 'FOFCWT'
             PHDELWT = 'PHFOFCWT'
         cmd += (
-            'fft hklin refine.mtz mapout 2fofc.map << EOF\n'
+            'fft hklin refine.mtz mapout 2fofc_asu.map << EOF\n'
             'labin F1=%s PHI=%s\n' %(FWT,PHWT) +
             'EOF\n'
             '\n'
-            'fft hklin refine.mtz mapout fofc.map << EOF\n'
+            'mapmask mapin 2fofc_asu.map xyzin refine.pdb mapout 2fofc.map << EOF\n'
+            ' border 5\n'
+            'EOF\n'
+            '\n'
+            '/bin/rm 2fofc_asu.map\n'
+            '\n'
+            'fft hklin refine.mtz mapout fofc_asu.map << EOF\n'
             'labin F1=%s PHI=%s\n' %(DELFWT,PHDELWT) +
             'EOF\n'
+            '\n'
+            'mapmask mapin fofc_asu.map xyzin refine.pdb mapout fofc.map << EOF\n'
+            ' border 5\n'
+            'EOF\n'
+            '\n'
+            '/bin/rm fofc_asu.map'
         )
         return cmd
 

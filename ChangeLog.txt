@@ -1,3 +1,6 @@
+v1.6.22 (11/06/2020)
+- added mapmask step after map calculation in buster refinement in order to cover entire molecule (required for nglview)
+
 v1.6.21 (04/06/2020)
 - source ccp4 7.0 at Diamond before running giant.score_model during Buster refinement
 
