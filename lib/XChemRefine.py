@@ -494,7 +494,7 @@ class Refine(object):
             ' border 5\n'
             'EOF\n'
             '\n'
-            '/bin/rm 2fofc_asu.map'
+            '/bin/rm 2fofc_asu.map\n'
             '\n'
             'fft hklin refine.mtz mapout fofc_asu.map << EOF\n'
             'labin F1=%s PHI=%s\n' %(DELFWT,PHDELWT) +
@@ -505,10 +505,6 @@ class Refine(object):
             'EOF\n'
             '\n'
             '/bin/rm fofc_asu.map'
-            '\n'
-            'fft hklin refine.mtz mapout fofc.map << EOF\n'
-            'labin F1=%s PHI=%s\n' %(DELFWT,PHDELWT) +
-            'EOF\n'
         )
         return cmd
 
