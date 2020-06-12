@@ -1650,6 +1650,6 @@ class find_event_map_for_ligand(QtCore.QThread):
         if os.path.isfile(emap.replace('.ccp4','.mtz')):
             self.Logfile.warning('mtz file of event map exists; skipping...')
             return
-        cmd = 'gemmi map2sf tmpEvent.ccp4 tmpEvent.mtz FWT PHWT --dmin=%s' %p.resolution
+        cmd = 'gemmi map2sf %s %s FWT PHWT --dmin=%s' %(emap,emap.replace('.ccp4','.mtz'),p.resolution)
         self.Logfile.insert('converting map with command:\n' + cmd)
         os.system(cmd)
