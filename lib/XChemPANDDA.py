@@ -1558,6 +1558,7 @@ class find_event_map_for_ligand(QtCore.QThread):
             import gemmi
         except ImportError:
             self.external_software['gemmi'] = False
+            self.Logfile.warning('cannot import gemmi; will use phenix.map_to_structure_factors instead')
 
     def run(self):
         self.Logfile.insert('======== checking ligand CC in event maps ========')
