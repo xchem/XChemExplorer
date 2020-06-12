@@ -1549,10 +1549,15 @@ class check_number_of_modelled_ligands(QtCore.QThread):
 
 class find_event_map_for_ligand(QtCore.QThread):
 
-    def __init__(self,project_directory,xce_logfile):
+    def __init__(self,project_directory,xce_logfile,external_software):
         QtCore.QThread.__init__(self)
         self.Logfile=XChemLog.updateLog(xce_logfile)
         self.project_directory=project_directory
+        self.external_software=external_software
+        try:
+            import gemmi
+        except ImportError:
+            self.external_software['gemmi'] = False
 
     def run(self):
         self.Logfile.insert('======== checking ligand CC in event maps ========')
@@ -1567,15 +1572,24 @@ class find_event_map_for_ligand(QtCore.QThread):
                 self.Logfile.insert('%s: found %s ligands of type LIG in refine.pdb' %(xtal,str(len(ligList))))
 
                 for maps in glob.glob(os.path.join(dirs,'*event*.native.ccp4')):
-                    self.expand_map_to_p1(maps)
-                    self.convert_map_to_sf(maps.replace('.ccp4','.P1.ccp4'),reso)
+                    if self.external_software['gemmi']:
+                        self.convert_map_to_sf_with_gemmi(maps)
+                    else:
+                        self.expand_map_to_p1(maps)
+                        self.convert_map_to_sf(maps.replace('.ccp4','.P1.ccp4'),reso)
 
                 summary = ''
                 for lig in sorted(ligList):
-                    for mtz in sorted(glob.glob(os.path.join(dirs,'*event*.native*P1.mtz'))):
-                        self.get_lig_cc(mtz,lig)
-                        cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
-                        summary += '%s: %s LIG CC = %s (%s)\n' %(xtal,lig,cc,mtz[mtz.rfind('/')+1:])
+                    if self.external_software['gemmi']:
+                        for mtz in sorted(glob.glob(os.path.join(dirs,'*event*.native.mtz'))):
+                            self.get_lig_cc(mtz,lig)
+                            cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
+                            summary += '%s: %s LIG CC = %s (%s)\n' %(xtal,lig,cc,mtz[mtz.rfind('/')+1:])
+                    else:
+                        for mtz in sorted(glob.glob(os.path.join(dirs,'*event*.native*P1.mtz'))):
+                            self.get_lig_cc(mtz,lig)
+                            cc = self.check_lig_cc(mtz.replace('.mtz', '_CC.log'))
+                            summary += '%s: %s LIG CC = %s (%s)\n' %(xtal,lig,cc,mtz[mtz.rfind('/')+1:])
                 self.Logfile.insert('\nsummary of CC analysis:\n======================:\n'+summary)
 
     def expand_map_to_p1(self,emap):
@@ -1618,3 +1632,13 @@ class find_event_map_for_ligand(QtCore.QThread):
         else:
             self.Logfile.error('logfile does not exist: %s' %log)
         return cc
+
+    def convert_map_to_sf_with_gemmi(self,emap):
+        self.Logfile.insert('converting ccp4 map to mtz with gemmi map2sf: %s' %emap)
+        if os.path.isfile(emap.replace('.ccp4','.mtz')):
+            self.Logfile.warning('mtz file of event map exists; skipping...')
+            return
+        p = gemmi.read_structure('refine.pdb')
+        cmd = 'gemmi map2sf tmpEvent.ccp4 tmpEvent.mtz FWT PHWT --dmin=%s' %p.resolution
+        self.Logfile.insert('converting map with command:\n' + cmd)
+        os.system(cmd)
