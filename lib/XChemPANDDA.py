@@ -12,6 +12,11 @@ import XChemLog
 import XChemToolTips
 import csv
 
+try:
+    import gemmi
+except ImportError:
+    pass
+
 def get_names_of_current_clusters(xce_logfile,panddas_directory):
     Logfile=XChemLog.updateLog(xce_logfile)
     Logfile.insert('parsing {0!s}/cluster_analysis'.format(panddas_directory))
@@ -1556,6 +1561,7 @@ class find_event_map_for_ligand(QtCore.QThread):
         self.external_software=external_software
         try:
             import gemmi
+            self.Logfile.insert('found gemmi library in ccp4-python')
         except ImportError:
             self.external_software['gemmi'] = False
             self.Logfile.warning('cannot import gemmi; will use phenix.map_to_structure_factors instead')
@@ -1568,13 +1574,18 @@ class find_event_map_for_ligand(QtCore.QThread):
                os.path.isfile(os.path.join(dirs,'refine.mtz')):
                 self.Logfile.insert('%s: found refine.pdb' %xtal)
                 os.chdir(dirs)
+                try:
+                    p = gemmi.read_structure('refine.pdb')
+                except:
+                    self.Logfile.error('gemmi library not available')
+                    self.external_software['gemmi'] = False
                 reso = XChemUtils.mtztools('refine.mtz').get_dmin()
                 ligList = XChemUtils.pdbtools('refine.pdb').save_residues_with_resname(dirs,'LIG')
                 self.Logfile.insert('%s: found %s ligands of type LIG in refine.pdb' %(xtal,str(len(ligList))))
 
                 for maps in glob.glob(os.path.join(dirs,'*event*.native.ccp4')):
                     if self.external_software['gemmi']:
-                        self.convert_map_to_sf_with_gemmi(maps)
+                        self.convert_map_to_sf_with_gemmi(maps,p)
                     else:
                         self.expand_map_to_p1(maps)
                         self.convert_map_to_sf(maps.replace('.ccp4','.P1.ccp4'),reso)
@@ -1634,12 +1645,11 @@ class find_event_map_for_ligand(QtCore.QThread):
             self.Logfile.error('logfile does not exist: %s' %log)
         return cc
 
-    def convert_map_to_sf_with_gemmi(self,emap):
+    def convert_map_to_sf_with_gemmi(self,emap,p):
         self.Logfile.insert('converting ccp4 map to mtz with gemmi map2sf: %s' %emap)
         if os.path.isfile(emap.replace('.ccp4','.mtz')):
             self.Logfile.warning('mtz file of event map exists; skipping...')
             return
-        p = gemmi.read_structure('refine.pdb')
         cmd = 'gemmi map2sf tmpEvent.ccp4 tmpEvent.mtz FWT PHWT --dmin=%s' %p.resolution
         self.Logfile.insert('converting map with command:\n' + cmd)
         os.system(cmd)
