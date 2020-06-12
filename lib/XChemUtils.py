@@ -1620,6 +1620,15 @@ class external_software:
             status='not found'
         self.Logfile.insert('{0:50} {1:10}'.format('checking for mogul:', status))
 
+        try:
+            subprocess.call(['gemmi'], stdout=FNULL, stderr=subprocess.STDOUT)
+            self.available_programs['gemmi']=True
+            status='found'
+        except OSError:
+            self.available_programs['gemmi']=False
+            status='not found'
+        self.Logfile.insert('{0:50} {1:10}'.format('checking for gemmi:', status))
+
         return self.available_programs
 
 

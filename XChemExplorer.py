@@ -3699,7 +3699,7 @@ class XChemExplorer(QtGui.QApplication):
 #                                                                          os.path.join(self.database_directory,
 #                                                                                       self.data_source_file))
         self.work_thread = XChemPANDDA.find_event_map_for_ligand(self.initial_model_directory,
-                                                                          self.xce_logfile)
+                                                                          self.xce_logfile,self.external_software)
 
         self.explorer_active = 1
         self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
