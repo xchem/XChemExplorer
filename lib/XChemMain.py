@@ -1286,8 +1286,8 @@ def make_thumbnail(xtal,ligID,sampleDir):
 
 def backup_soakDB(database,xce_logfile):
     Logfile=XChemLog.updateLog(xce_logfile)
-    Logfile.insert('backing up soakDB: ' + database+str(datetime.datetime.now()).replace(' ','_'))
-    print('/bin/cp %s %s' %(database,database+str(datetime.datetime.now()).replace(' ','_')))
+    Logfile.insert('backing up soakDB: ' + database+str(datetime.now()).replace(' ','_'))
+    print('/bin/cp %s %s' %(database,database+str(datetime.now()).replace(' ','_')))
 
 class find_diffraction_image_directory(QtCore.QThread):
     def __init__(self,diffraction_data_directory):
