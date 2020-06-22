@@ -1,3 +1,6 @@
+v1.6.24 (22/06/2020)
+- bug fix: missing '\n' in calculate_maps (XChemRefine) deleted soakDB file
+
 v1.6.23 (12/06/2020)
 - use gemmi (if available) to convert event maps to mtz
 
