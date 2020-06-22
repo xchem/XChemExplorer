@@ -504,7 +504,8 @@ class Refine(object):
             ' border 5\n'
             'EOF\n'
             '\n'
-            '/bin/rm fofc_asu.map'
+            '/bin/rm fofc_asu.map\n'
+            '\n'
         )
         return cmd
 
