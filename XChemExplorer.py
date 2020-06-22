@@ -93,6 +93,12 @@ class XChemExplorer(QtGui.QApplication):
 
         self.checkLabXChemDir()
 
+        if os.path.isfile(os.path.join(self.database_directory, self.data_source_file)):
+            self.backup_soakDB()
+
+    def backup_soakDB(self):
+        XChemMain.backup_soakDB(os.path.join(self.database_directory, self.data_source_file),self.xce_logfile)
+
     def checkLabXChemDir(self):
         dirCheck = QtGui.QMessageBox()
         dirCheckLayout = dirCheck.layout()

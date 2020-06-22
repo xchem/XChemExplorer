@@ -1,3 +1,6 @@
+v1.6.25 (22/06/2020)
+- backup soakDB after restart and 'update database from filesystem'
+
 v1.6.24 (22/06/2020)
 - bug fix: missing '\n' in calculate_maps (XChemRefine) deleted soakDB file
 
