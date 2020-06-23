@@ -50,12 +50,15 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         self.db=XChemDB.data_source(self.datasource)
         self.all_samples_in_datasource=self.db.get_all_samples_in_data_source_as_list()
         self.panddas_directory=panddas_directory
+        self.xce_logfile = xce_logfile
         self.Logfile=XChemLog.updateLog(xce_logfile)
         self.mode=mode
 
     def run(self):
         self.Logfile.insert('synchronising database and filesystem')
         self.Logfile.insert('current project directory: '+self.initial_model_directory)
+
+        XChemMain.backup_soakDB(self.datasource,self.xce_logfile)
 
         #
         # get list of xtals
