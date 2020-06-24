@@ -1,3 +1,6 @@
+v1.6.26 (24/06/2020)
+- added option for anisotropic B-factor refinement with Buster
+
 v1.6.25 (22/06/2020)
 - backup soakDB after restart and 'update database from filesystem'
 

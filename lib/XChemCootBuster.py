@@ -1447,7 +1447,7 @@ class GUI(object):
                                                            'Refine_' + str(self.Serial), 'in.pdb'))
 
 #            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
-            self.Refine.RunBuster(self.Serial, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
+            self.Refine.RunBuster(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
         self.index += 1
         if self.index >= len(self.Todo):
             #            self.index = len(self.Todo)

@@ -412,14 +412,14 @@ class Refine(object):
                  + self.datasource + ' ' + self.xtalID + ' RefinementStatus running\n')
         return cmd
 
-    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial):
+    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor):
         cmd += (
             'refine '
             ' -p %s' %xyzin +
             ' -m %s' %hklin +
             ' -l %s' %libin +
             ' -autoncs'
-            ' -M TLSbasic'
+            + anisotropic_Bfactor +
             ' -WAT'
             ' -d Refine_%s\n' %str(Serial)
         )
@@ -541,7 +541,12 @@ class Refine(object):
 
 
 
-    def RunBuster(self,Serial,external_software,xce_logfile,covLinkAtomSpec):
+    def RunBuster(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
+
+        if 'ANIS' in RefmacParams['BREF']:
+            anisotropic_Bfactor = ' -M ADP '
+        else:
+            anisotropic_Bfactor = ' -M TLSbasic '
 
         self.error = False
 
@@ -575,7 +580,7 @@ class Refine(object):
 
         cmd = self.set_refinement_status(cmd)
 
-        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial)
+        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor)
 
         cmd = self.run_giant_score_model(cmd,Serial)
 
