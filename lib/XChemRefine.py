@@ -543,7 +543,7 @@ class Refine(object):
 
     def RunBuster(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
-        if 'ANIS' in self.RefmacParams['BREF']:
+        if 'ANIS' in RefmacParams['BREF']:
             anisotropic_Bfactor = '-M ADP'
         else:
             anisotropic_Bfactor = '-M TLSbasic'
