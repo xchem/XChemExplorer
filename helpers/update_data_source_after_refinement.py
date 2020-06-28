@@ -231,6 +231,8 @@ if __name__=='__main__':
     xtal=sys.argv[2]
     inital_model_directory=sys.argv[3]
     refinement_directory=sys.argv[4]
+    refiner = sys.argv[5]
+    date = sys.argv[6]
 
     db=XChemDB.data_source(db_file)
     db_dict={}

@@ -11,6 +11,7 @@ import sys
 import getpass
 import fileinput
 import time
+from datetime import datetime
 #sys.path.append(os.path.join(os.getenv('CCP4'),'lib/python2.7/site-packages'))
 #import coot
 #sys.path.append('/usr/local/coot/SoakProc/lib')
@@ -523,9 +524,11 @@ class Refine(object):
 
 
     def update_database(self,cmd,Serial):
+        date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
+        user = getpass.getuser()
         cmd += ( '$CCP4/bin/ccp4-python '
                  +os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_after_refinement.py')+
-                ' %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial))    )
+                ' %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial),user,date)    )
         cmd += '/bin/rm %s/%s/REFINEMENT_IN_PROGRESS\n' %(self.ProjectPath,self.xtalID)
 
         return cmd
@@ -677,10 +680,12 @@ class Refine(object):
         # no DB will be specified when a reference model is built and refined
         refinementStatus=''
         updateDB=''
+        date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
+        user = getpass.getuser()
         if os.path.isfile(self.datasource):
             refinementStatus='$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(self.datasource,self.xtalID,'RefinementStatus','running')
             updateDB = (    '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_after_refinement.py')+
-                            ' %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial))    )
+                            ' %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial),user,date)    )
 
 
         #######################################################
@@ -1384,6 +1389,8 @@ class panddaRefine(object):
 #            'ln -s Refine_%s/refine_%s.output.ground-state.pdb ./refine.output.ground-state.pdb\n' %(panddaSerial,Serial)
             )
 
+        date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
+        user = getpass.getuser()
 
         refmacCmds = (
             '#!'+os.getenv('SHELL')+'\n'
@@ -1442,7 +1449,7 @@ class panddaRefine(object):
             + mapCalculation +
             '\n'
             '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_after_refinement.py')+
-            ' %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+str(panddaSerial)))+
+            ' %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+str(panddaSerial)),user,date)+
             '\n'
             '/bin/rm %s/%s/REFINEMENT_IN_PROGRESS\n' %(self.ProjectPath,self.xtalID)+
             '\n'
