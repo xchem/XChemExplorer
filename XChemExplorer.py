@@ -4332,7 +4332,7 @@ class XChemExplorer(QtGui.QApplication):
             if self.sender() == self.refinement_table_dict[xtal]:
 #                db_dict = {'RefinementOutcome': str(self.sender().currentText())}
                 db_dict = {}
-                db_dict['RefinementOutcome'] = data
+                db_dict['RefinementOutcome'] = str(self.sender().currentText())
                 db_dict['RefinementOutcomePerson'] = getpass.getuser()
                 db_dict['RefinementOutcomeDate'] = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
                 self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile, xtal, 'ligand_bound',
