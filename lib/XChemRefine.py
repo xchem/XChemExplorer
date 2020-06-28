@@ -110,6 +110,11 @@ class RefineParams(object):
         if self.RefmacParams['TWIN']=='TWIN\n': self.TWIN.set_active(True)
         self.vbox.pack_start(self.TWIN,False)
 
+        self.WATER = gtk.CheckButton('Update waters (BUSTER)')
+        self.WATER.connect("toggled", self.WATERCallback)
+        if self.RefmacParams['WATER']=='WATER\n': self.WATER.set_active(True)
+        self.vbox.pack_start(self.WATER,False)
+
         self.OKbutton = gtk.Button(label="OK")
         self.OKbutton.connect("clicked",self.OK)
         self.vbox.add(self.OKbutton)
@@ -162,6 +167,13 @@ class RefineParams(object):
             self.RefmacParams['TWIN']=''
         return self.RefmacParams
 
+    def WATERCallback(self, widget):
+        if widget.get_active():
+            self.RefmacParams['WATER']='WATER\n'
+        else:
+            self.RefmacParams['WATER']=''
+        return self.RefmacParams
+
     def OK(self,widget):
         self.window.destroy()
 
@@ -178,7 +190,8 @@ class RefineParams(object):
                        'BREF':   '    bref ISOT\n',
                        'TLS':    '',
                        'NCS':    '',
-                       'TWIN':   ''    }
+                       'TWIN':   '',
+                       'WATER':  '' }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
@@ -412,15 +425,14 @@ class Refine(object):
                  + self.datasource + ' ' + self.xtalID + ' RefinementStatus running\n')
         return cmd
 
-    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor):
+    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water):
         cmd += (
             'refine '
             ' -p %s' %xyzin +
             ' -m %s' %hklin +
             ' -l %s' %libin +
             ' -autoncs'
-            + anisotropic_Bfactor +
-            ' -WAT'
+            + anisotropic_Bfactor + update_water +
             ' -d Refine_%s\n' %str(Serial)
         )
         return cmd
@@ -548,6 +560,11 @@ class Refine(object):
         else:
             anisotropic_Bfactor = ' -M TLSbasic '
 
+        if 'WATER' in RefmacParams['WATER']:
+            update_water = ' -WAT '
+        else:
+            update_water = ''
+
         self.error = False
 
         if os.path.isfile(xce_logfile):
@@ -580,7 +597,7 @@ class Refine(object):
 
         cmd = self.set_refinement_status(cmd)
 
-        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor)
+        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water)
 
         cmd = self.run_giant_score_model(cmd,Serial)
 
@@ -968,7 +985,8 @@ class Refine(object):
                        'BREF':   '    bref ISOT\n',
                        'TLS':    '',
                        'NCS':    '',
-                       'TWIN':   ''    }
+                       'TWIN':   '',
+                       'WATER':  ''     }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):

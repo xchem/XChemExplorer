@@ -1,3 +1,6 @@
+v1.6.27 (28/06/2020)
+- made water update optional when refining with with Buster
+
 v1.6.26 (24/06/2020)
 - added option for anisotropic B-factor refinement with Buster
 

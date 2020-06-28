@@ -170,7 +170,8 @@ class GUI(object):
                              'BREF': '    bref ISOT\n',
                              'TLS': '',
                              'NCS': '',
-                             'TWIN': ''}
+                             'TWIN': '',
+                             'WATER':   ''  }
 
     def StartGUI(self):
 
@@ -1458,6 +1459,7 @@ class GUI(object):
         print '\n==> XCE: changing refinement parameters'
         self.RefmacParams = XChemRefine.RefineParams(self.project_directory, self.xtalID, self.compoundID,
                                                      self.data_source).RefmacRefinementParams(self.RefmacParams)
+        print self.RefmacParams
 
     def covalentLinkDef(self, widget):
         coot.user_defined_click_py(2,self.show_potential_link)
