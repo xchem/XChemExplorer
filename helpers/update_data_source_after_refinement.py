@@ -231,9 +231,13 @@ if __name__=='__main__':
     xtal=sys.argv[2]
     inital_model_directory=sys.argv[3]
     refinement_directory=sys.argv[4]
+    refiner = sys.argv[5]
+    date = sys.argv[6]
 
     db=XChemDB.data_source(db_file)
     db_dict={}
+    db_dict['RefinementRefiner'] = refiner
+    db_dict['RefinementDate'] = date
 
     db_dict=parse_pdb(inital_model_directory,xtal,db_dict)
     db_dict=parse_mtz(inital_model_directory,xtal,db_dict)

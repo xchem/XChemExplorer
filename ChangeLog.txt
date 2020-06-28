@@ -1,3 +1,6 @@
+v1.6.28 (28/06/2020)
+- added capture of refiner and date of refinement in DB after refinement
+
 v1.6.27 (28/06/2020)
 - made water update optional when refining with with Buster
 
