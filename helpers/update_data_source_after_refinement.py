@@ -236,6 +236,8 @@ if __name__=='__main__':
 
     db=XChemDB.data_source(db_file)
     db_dict={}
+    db_dict['RefinementRefiner'] = refiner
+    db_dict['RefinementDate'] = date
 
     db_dict=parse_pdb(inital_model_directory,xtal,db_dict)
     db_dict=parse_mtz(inital_model_directory,xtal,db_dict)
