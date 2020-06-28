@@ -199,6 +199,8 @@ class data_source:
             ['RefinementRmsdAngles',                        'RefinementRmsdAngles',                         'TEXT',                 1],
             ['RefinementRmsdAnglesTL',                      'RefinementRmsdAnglesTL',                       'TEXT',                 0],
             ['RefinementOutcome',                           'Refinement\nOutcome',                          'TEXT',                 1],
+            ['RefinementOutcomePerson',                     'RefinementOutcomePerson',                      'TEXT',                 1],
+            ['RefinementOutcomeDate',                       'RefinementOutcomeDate',                        'TEXT',                 1],
 
             ['RefinementMTZfree',                           'RefinementMTZfree',                            'TEXT',                 1],
             ['RefinementTwinMTZfree',                       'RefinementTwinMTZfree',                        'TEXT',                 1],

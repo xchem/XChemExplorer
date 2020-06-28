@@ -6,6 +6,9 @@ import os
 import pickle
 import glob
 
+import getpass
+from datetime import datetime
+
 from matplotlib.figure import Figure
 
 # from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
@@ -983,6 +986,10 @@ class GUI(object):
 
     def experiment_stage_button_clicked(self, widget, data=None):
         self.db_dict_mainTable['RefinementOutcome'] = data
+        self.db_dict_mainTable['RefinementOutcomePerson'] = getpass.getuser()
+        self.db_dict_mainTable['RefinementOutcomeDate'] = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
+
+
         self.Logfile.insert('==> COOT: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
             data) + ' in mainTable of datasource')
 #        print '==> XCE: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
