@@ -985,7 +985,8 @@ class Refine(object):
                        'BREF':   '    bref ISOT\n',
                        'TLS':    '',
                        'NCS':    '',
-                       'TWIN':   ''    }
+                       'TWIN':   '',
+                       'WATER':  ''     }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
