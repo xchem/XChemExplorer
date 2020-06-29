@@ -77,7 +77,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         try:
             progress_step = float(1/len(modelsDict))
         except TypeError:
-            progress_step = 100
+            self.Logfile.error('DID NOT FIND ANY MODELS TO EXPORT')
+            pass
 
         for xtal in modelsDict:
             os.chdir(os.path.join(self.PanDDA_directory,'processed',xtal))
