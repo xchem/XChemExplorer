@@ -138,8 +138,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             else:
                 emtz = emap.replace('.ccp4','.mtz')
             self.Logfile.insert('trying to convert %s to SF' %emap)
+            self.Logfile.insert('>>> ' + emtz)
 #            XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
             if os.path.isfile(emtz):
+#                print('/bin/mv %s %s' %())
                 self.Logfile.insert('success; %s exists' %emtz)
             else:
                 self.Logfile.warning('something went wrong; %s could not be created...' %emtz)
