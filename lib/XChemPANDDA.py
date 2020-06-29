@@ -81,7 +81,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             return None
 
         for xtal in modelsDict:
-            os.chdir(os.path.join(self.PanDDA_directory,'processed',xtal))
+            os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
             pandda_model = os.path.join('modelled_structures',xtal + '-pandda-model.pdb')
             pdb = gemmi.read_structure(pandda_model)
 
