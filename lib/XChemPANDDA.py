@@ -71,7 +71,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         # find pandda_inspect_events.csv and read in as pandas dataframe
         inspect_csv = None
         if os.path.isfile(os.path.join(self.PanDDA_directory,'analyses','pandda_inspect_events.csv')):
-            inspect_csv = pandas.read_csv('pandda_inspect_events.csv')
+            inspect_csv = pandas.read_csv(os.path.join(self.PanDDA_directory,'analyses','pandda_inspect_events.csv'))
 
         progress = 0
         try:
