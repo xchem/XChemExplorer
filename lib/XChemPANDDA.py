@@ -87,6 +87,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # find out ligand event map relationship
             ligandDict = XChemUtils.pdbtools_gemmi(pandda_model).center_of_mass_ligand_dict('LIG')
+            self.show_ligands_in_model(xtal,ligandDict)
+            break
             emapLigandDict = self.find_ligands_matching_event_map(inspect_csv,xtal,ligandDict)
 
             # convert event map to SF
@@ -100,6 +102,11 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             # refine models
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+    def show_ligands_in_model(self,xtal,ligandDict):
+        self.Logfile.insert(xtal + ': found the following ligands...')
+        for lig in ligandDict:
+            self.Logfile.insert(lig + ' -> coordinates ' + str(ligandDict[lig]))
 
 
     def find_modeled_structures_and_timestamps(self):
