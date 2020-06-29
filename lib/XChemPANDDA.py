@@ -115,8 +115,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_new_models(self,modelsDict):
         for xtal in modelsDict:
             timestamp_file = modelsDict[xtal]
-            print "select DatePanDDAModelCreated from mainTable where CrystalName is "+xtal+" and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')"
-            db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is "+xtal+" and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')")
+            print "select DatePanDDAModelCreated from mainTable where CrystalName is '"+xtal+"' and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')"
+            db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is '"+xtal+"' and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')")
             timestamp_db=str(db_query[0][0])
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
