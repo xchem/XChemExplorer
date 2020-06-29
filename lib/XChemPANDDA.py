@@ -125,6 +125,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     samples_to_export[sample]=fileModelsDict[sample]
             except ValueError as e:
                 self.Logfile.error(str(e))
+            except IndexError as e:
+                self.Logfile.error(str(e))
 
     def event_map_to_sf(self,resolution,emapLigandDict):
         for emap in glob.glob('*-BDC_*.ccp4'):
