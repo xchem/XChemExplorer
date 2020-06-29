@@ -172,6 +172,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         for ligand in ligandDict:
             c = ligandDict[ligand]
             p_ligand = gemmi.Position(c[0], c[1], c[2])
+            self.Logfile.insert('lig:   ' + c[0]+' '+ c[1]+' '+c[2])
+            self.Logfile.insert('event: ' + x+' '+ y+' '+z)
             distance = p_event.dist(p_ligand)
             if distance < 5:
                 matching_ligand = ligand
