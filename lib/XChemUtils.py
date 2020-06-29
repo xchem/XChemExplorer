@@ -2785,11 +2785,11 @@ class maptools_gemmi:
 class pdbtools_gemmi:
 
     def __init__(self,pdb):
-        self.pdb = pdb
+        self.pdb = gemmi.read_structure(pdb)
 
     def center_of_mass_ligand_dict(self,ligandID):
         ligandDict = {}
-        for model in pdb:
+        for model in self.pdb:
             for chain in model:
                 for residue in chain:
                     if residue.name == ligandID:
