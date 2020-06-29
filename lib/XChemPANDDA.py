@@ -74,7 +74,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             inspect_csv = pandas.read_csv('pandda_inspect_events.csv')
 
         progress = 0
-        if len(modelsDict) != 0
+        if len(modelsDict) != 0:
             progress_step = float(1/len(modelsDict))
         else:
             progress_step = 100
