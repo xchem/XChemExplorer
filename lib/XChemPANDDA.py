@@ -145,9 +145,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 site = row['site_idx']
                 event = row['event_idx']
                 for emap in glob.glob('*-BDC_*.ccp4'):
+                    self.Logfile.insert(emap)
                     site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
                     event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
-                    if site == site_map and event == event_emap:
+                    if site == site_emap and event == event_emap:
                         x = row['x']
                         y = row['y']
                         z = row['z']
