@@ -3791,7 +3791,7 @@ class XChemExplorer(QtGui.QApplication):
     def run_refine_bound_state_with_buster_new(self,which_models):
         start_thread = True
         if start_thread:
-            self.work_thread = XChemPANDDA.refine_bound_state_with_buster(self.panddas_directory,
+            self.work_thread = XChemPANDDA.export_and_refine_ligand_bound_models(self.panddas_directory,
                                                              os.path.join(self.database_directory,
                                                                           self.data_source_file),
                                                              self.initial_model_directory, self.xce_logfile,
