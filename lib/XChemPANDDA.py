@@ -148,8 +148,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         emapLigandDict = {}
         for index, row in inspect_csv.iterrows():
             if row['dtag'] == xtal:
-                site = row['site_idx']
-                event = row['event_idx']
+                site = str(row['site_idx'])
+                event = str(row['event_idx'])
                 for emap in glob.glob('*-BDC_*.ccp4'):
                     site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
                     event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
