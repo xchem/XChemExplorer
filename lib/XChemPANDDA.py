@@ -66,7 +66,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
         # if only NEW models shall be exported, check timestamps
         if self.which_models != 'all':
-            modelsDict = find_new_models(self,modelsDict)
+            modelsDict = self.find_new_models(modelsDict)
 
         # find pandda_inspect_events.csv and read in as pandas dataframe
         inspect_csv = None
