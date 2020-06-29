@@ -123,8 +123,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 if difference.seconds != 0:
                     self.Logfile.insert('exporting '+sample+' -> was already refined, but newer PanDDA model available')
                     samples_to_export[sample]=fileModelsDict[sample]
-            except ValueError:
-                self.Logfile.error(XChemToolTips.pandda_export_timestamp_issue(xtal))
+            except ValueError as e:
+                self.Logfile.error(str(e))
 
     def event_map_to_sf(self,resolution,emapLigandDict):
         for emap in glob.glob('*-BDC_*.ccp4'):
