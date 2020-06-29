@@ -155,6 +155,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
                     event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
                     if site == site_emap and event == event_emap:
+                        self.Logfile.insert('found event map for site/event')
                         x = float(row['x'])
                         y = float(row['y'])
                         z = float(row['z'])
