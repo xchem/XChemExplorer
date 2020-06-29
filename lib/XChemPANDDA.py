@@ -88,7 +88,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             # find out ligand event map relationship
             ligandDict = XChemUtils.pdbtools_gemmi(pandda_model).center_of_mass_ligand_dict('LIG')
             self.show_ligands_in_model(xtal,ligandDict)
-            break
             emapLigandDict = self.find_ligands_matching_event_map(inspect_csv,xtal,ligandDict)
 
             # convert event map to SF
@@ -156,11 +155,12 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
                     event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
                     if site == site_emap and event == event_emap:
-                        x = row['x']
-                        y = row['y']
-                        z = row['z']
+                        x = float(row['x'])
+                        y = float(row['y'])
+                        z = float(row['z'])
                         matching_ligand = self.calculate_distance_to_ligands(ligandDict,x,y,z)
                         emapLigandDict[emap] = matching_ligand
+                        self.Logfile.insert('found matching ligand (%s) for %s' %(matching_ligand,emap))
                         break
         if emapLigandDict == {}:
             self.Logfile.error('could not find ligands within 5A of PanDDA events')
