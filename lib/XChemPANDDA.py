@@ -104,7 +104,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_modeled_structures_and_timestamps(self):
         self.Logfile.insert('finding out modelled structures in ' + self.PanDDA_directory)
         modelsDict={}
-        for model in glob.glob(os.path.join(self.panddas_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb')):
+        for model in glob.glob(os.path.join(self.PanDDA_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb')):
             sample=model[model.rfind('/')+1:].replace('-pandda-model.pdb','')
             timestamp=datetime.fromtimestamp(os.path.getmtime(model)).strftime('%Y-%m-%d %H:%M:%S')
             self.Logfile.insert(sample+'-pandda-model.pdb was created on '+str(timestamp))
