@@ -442,3 +442,14 @@ def notification_about_changes_to_apo_deposition():
         'everything else you think is relevant on ZENODO and ask the PDB annotator to include the respective DOI in the deposition\n'
     )
     return msg
+
+def pandda_export_ligand_bound_models_only_disclaimer():
+    msg = (
+        'You have chosen to export and refine the ligand-bound model only. '
+        'This is different to the original procedure described by Pearce et al. (doi 10.1107/S2059798317003412), '
+        'which is based on refinement of an ensemble model consisting of ligand-bound state and confounding ground-state.'
+        'Please note that working with the ligand-bound model only usually works well for reasonably well-defined '
+        'ligands and conformational changes, but it may not be ideal for weakly bound fragments and corresponding '
+        'conformational changes.'
+    )
+    return msg

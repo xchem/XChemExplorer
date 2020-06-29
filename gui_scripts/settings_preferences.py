@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.6.29'
+        xce_object.xce_version = 'v1.7.0'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -629,6 +629,7 @@ class setup():
                                          'check modelled ligands',
                                          'refine ALL bound-state models with BUSTER',
                                          'refine NEW bound-state models with BUSTER',
+                                         'refine NEW bound-state models with BUSTER - NEW',
                                          'pre-run for ground state model',
                                          'Build ground state model']
 

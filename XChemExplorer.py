@@ -3472,6 +3472,9 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'refine NEW bound-state models with BUSTER':
             self.run_refine_bound_state_with_buster('new')
 
+        elif instruction == 'refine NEW bound-state models with BUSTER - NEW':
+            self.run_refine_bound_state_with_buster_new('new')
+
         elif instruction == 'cluster datasets':
             self.cluster_datasets_for_pandda()
 
@@ -3775,6 +3778,17 @@ class XChemExplorer(QtGui.QApplication):
             self.work_thread.start()
 
     def run_refine_bound_state_with_buster(self,which_models):
+        start_thread = True
+        if start_thread:
+            self.work_thread = XChemPANDDA.refine_bound_state_with_buster(self.panddas_directory,
+                                                             os.path.join(self.database_directory,
+                                                                          self.data_source_file),
+                                                             self.initial_model_directory, self.xce_logfile,
+                                                             which_models)
+            self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
+            self.work_thread.start()
+
+    def run_refine_bound_state_with_buster_new(self,which_models):
         start_thread = True
         if start_thread:
             self.work_thread = XChemPANDDA.refine_bound_state_with_buster(self.panddas_directory,

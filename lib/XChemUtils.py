@@ -1,5 +1,3 @@
-# last edited: 07/07/2017, 17:00
-
 import sys
 import os
 import glob
@@ -11,6 +9,9 @@ import math
 import platform
 import tarfile
 import json
+
+from datetime import datetime
+import gemmi
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -2754,3 +2755,54 @@ class maptools(object):
                 space_group=str(spg)
         return space_group
 
+
+class maptools_gemmi:
+
+    def __init__(self,emap):
+        self.emap = emap
+        self.emtz = emap.replace('.ccp4','.mtz').replace('.map','.mtz')
+
+    def map_to_sf(self,resolution):
+        if os.path.isfile(self.emtz):
+            print('mtz file of event map exists; skipping...')
+            return
+        cmd = 'gemmi map2sf %s %s FWT PHWT --dmin=%s' %(self.emap,self.emtz,resolution)
+        print('converting map with command:\n' + cmd)
+        os.system(cmd)
+        if os.path.isfile(self.emtz):
+            print('event map to SF conversion successful')
+            mtz = gemmi.read_mtz_file(emtz)
+            mtz.history += ['date created: ' + time.ctime(os.path.getmtime(emap))]
+            mtz.history += ['folder: ' + os.getcwd()]
+            mtz.history += ['file name: ' + self.emap]
+            if 'BDC' in self.emap:
+                mtz.history += ['BDC value: ' + self.emap[self.emap.find('BDC')+4:self.emap.find('BDC')+4+self.emap[self.emap.find('BDC')+4:].find('_')]]
+            mtz.write_to_file(self.emtz)
+        else:
+            print('failed to convert event map to SF')
+
+
+class pdbtools_gemmi:
+
+    def __init__(self,pdb):
+        self.pdb = pdb
+
+    def center_of_mass_ligand_dict(self,ligandID):
+        ligandDict = {}
+        for model in pdb:
+            for chain in model:
+                for residue in chain:
+                    if residue.name == ligandID:
+                        if str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name) not in ligandDict:
+                            ligandDict[str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name)] = None
+                            m = gemmi.Model('1')
+                            m.add_chain(gemmi.Chain('X'))
+                            c = m['X'].get_polymer()
+                            c.add_residue(gemmi.Residue(), 0)
+                            c[0].name = residue.name
+                            for n,atom in enumerate(residue):
+                                print atom.pos
+                                c[0].add_atom(atom, n)
+                            pos = m.calculate_center_of_mass()
+                            ligandDict[str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name)] = [pos.x, pos.y, pos.z]
+        return ligandDict

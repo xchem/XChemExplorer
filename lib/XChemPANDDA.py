@@ -14,26 +14,171 @@ import csv
 
 try:
     import gemmi
+    import pandas
 except ImportError:
     pass
 
-def get_names_of_current_clusters(xce_logfile,panddas_directory):
-    Logfile=XChemLog.updateLog(xce_logfile)
-    Logfile.insert('parsing {0!s}/cluster_analysis'.format(panddas_directory))
-    os.chdir('{0!s}/cluster_analysis'.format(panddas_directory))
-    cluster_dict={}
-    for out_dir in sorted(glob.glob('*')):
-        if os.path.isdir(out_dir):
-            cluster_dict[out_dir]=[]
-            found_first_pdb=False
-            for folder in glob.glob(os.path.join(out_dir,'pdbs','*')):
-                xtal=folder[folder.rfind('/')+1:]
-                if not found_first_pdb:
-                    if os.path.isfile(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb') ):
-                        cluster_dict[out_dir].append(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb'))
-                        found_first_pdb=True
-                cluster_dict[out_dir].append(xtal)
-    return cluster_dict
+#def get_names_of_current_clusters(xce_logfile,panddas_directory):
+#    Logfile=XChemLog.updateLog(xce_logfile)
+#    Logfile.insert('parsing {0!s}/cluster_analysis'.format(panddas_directory))
+#    os.chdir('{0!s}/cluster_analysis'.format(panddas_directory))
+#    cluster_dict={}
+#    for out_dir in sorted(glob.glob('*')):
+#        if os.path.isdir(out_dir):
+#            cluster_dict[out_dir]=[]
+#            found_first_pdb=False
+#            for folder in glob.glob(os.path.join(out_dir,'pdbs','*')):
+#                xtal=folder[folder.rfind('/')+1:]
+#                if not found_first_pdb:
+#                    if os.path.isfile(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb') ):
+#                        cluster_dict[out_dir].append(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb'))
+#                        found_first_pdb=True
+#                cluster_dict[out_dir].append(xtal)
+#    return cluster_dict
+
+
+
+class export_and_refine_ligand_bound_models(QtCore.QThread):
+
+    def __init__(self,PanDDA_directory,datasource,project_directory,xce_logfile,which_models):
+        QtCore.QThread.__init__(self)
+        self.PanDDA_directory = PanDDA_directory
+        self.datasource = datasource
+        self.db = XChemDB.data_source(self.datasource)
+        self.Logfile = XChemLog.updateLog(xce_logfile)
+        self.project_directory = project_directory
+        self.which_models=which_models
+
+#        self.initial_model_directory=initial_model_directory
+#        self.db.create_missing_columns()
+#        self.db_list=self.db.get_empty_db_dict()
+#        self.external_software=XChemUtils.external_software(xce_logfile).check()
+#        self.xce_logfile=xce_logfile
+
+#        self.already_exported_models=[]
+
+    def run(self):
+
+        self.Logfile.warning(XChemToolTips.pandda_export_ligand_bound_models_only_disclaimer())
+
+        # find all folders with *-pandda-model.pdb
+        modelsDict = self.find_modeled_structures_and_timestamps()
+
+        # if only NEW models shall be exported, check timestamps
+        if self.which_models != 'all':
+            modelsDict = find_new_models(self,modelsDict)
+
+        # find pandda_inspect_events.csv and read in as pandas dataframe
+        inspect_csv = None
+        if os.path.isfile(os.path.join(self.PanDDA_directory,'analyses','pandda_inspect_events.csv')):
+            inspect_csv = pandas.read_csv('pandda_inspect_events.csv')
+
+        progress = 0
+        if len(modelsDict) != 0
+            progress_step = float(1/len(modelsDict))
+        else:
+            progress_step = 100
+
+        for xtal in modelsDict:
+            os.chdir(os.path.join(self.PanDDA_directory,'processed',xtal))
+            pandda_model = os.path.join('modelled_structures',xtal + '-pandda-model.pdb')
+            pdb = gemmi.read_structure(pandda_model)
+
+            # find out ligand event map relationship
+            ligandDict = XChemUtils.pdbtools_gemmi(pandda_model).center_of_mass_ligand_dict('LIG')
+            emapLigandDict = self.find_ligands_matching_event_map(inspect_csv,xtal,ligandDict)
+
+            # convert event map to SF
+            self.event_map_to_sf(pdb.resolution,emapLigandDict)
+
+
+
+            # move existing event maps in project directory to old folder
+            # update database
+            # copy files
+            # refine models
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+
+    def find_modeled_structures_and_timestamps(self):
+        self.Logfile.insert('finding out modelled structures in ' + self.PanDDA_directory)
+        modelsDict={}
+        for model in glob.glob(os.path.join(self.panddas_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb')):
+            sample=model[model.rfind('/')+1:].replace('-pandda-model.pdb','')
+            timestamp=datetime.fromtimestamp(os.path.getmtime(model)).strftime('%Y-%m-%d %H:%M:%S')
+            self.Logfile.insert(sample+'-pandda-model.pdb was created on '+str(timestamp))
+            modelsDict[sample]=timestamp
+        return modelsDict
+
+    def find_new_models(self,modelsDict):
+        for xtal in modelsDict:
+            timestamp_file = modelsDict[xtal]
+            db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is ("+xtal+") and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')")
+            timestamp_db=str(db_query[0][0])
+            try:
+                difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
+                if difference.seconds != 0:
+                    self.Logfile.insert('exporting '+sample+' -> was already refined, but newer PanDDA model available')
+                    samples_to_export[sample]=fileModelsDict[sample]
+            except ValueError:
+                self.Logfile.error(XChemToolTips.pandda_export_timestamp_issue(xtal))
+
+    def event_map_to_sf(self,resolution,emapLigandDict):
+        for emap in glob.glob('*-BDC_*.ccp4'):
+            if emap in emapLigandDict:
+                emtz = emap.replace('.ccp4','_' + emapLigandDict[emap] + '.mtz')
+            else:
+                emtz = emap.replace('.ccp4','.mtz')
+            self.Logfile.insert('trying to convert %s to SF' %emap)
+#            XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
+            if os.path.isfile(emtz):
+                self.Logfile.insert('success; %s exists' %emtz)
+            else:
+                self.Logfile.warning('something went wrong; %s could not be created...' %emtz)
+
+    def find_ligands_matching_event_map(self,inspect_csv,xtal,ligandDict):
+        emapLigandDict = {}
+        for index, row in inspect_csv.iterrows():
+            if row['dtag'] == xtal:
+                site = row['']
+                event = row['']
+                for emap in glob.glob('*-BDC_*.ccp4'):
+                    site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
+                    event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
+                    if site == site_map and event == event_emap:
+                        x = row['x']
+                        y = row['y']
+                        z = row['z']
+                        matching_ligand = self.calculate_distance_to_ligands(ligandDict,x,y,z)
+                        emapLigandDict[emap] = matching_ligand
+                        break
+        if emapLigandDict == {}:
+            self.Logfile.error('could not find ligands within 5A of PanDDA events')
+        return emapLigandDict
+
+    def calculate_distance_to_ligands(self,ligandDict,x,y,z):
+        matching_ligand = ''
+        p_event = gemmi.Position(x, y, z)
+        for ligand in ligandDict:
+            c = ligandDict[ligand]
+            p_ligand = gemmi.Position(c[0], c[1], c[2])
+            distance = p_event.dist(p_ligand)
+            if distance < 5:
+                matching_ligand = ligand
+                break
+        return matching_ligand
+
+# mArh-x0969-event_1_1-BDC_0.67_map.ccp4
+# site = x[x.find('event')+6:x.find('BDC')-1].split('_')[0]
+# event = x[x.find('event')+6:x.find('BDC')-1].split('_')[1]
+
+
+
+
+
+
+
 
 
 
