@@ -92,7 +92,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # convert event map to SF
             self.event_map_to_sf(pdb.resolution,emapLigandDict)
-            break
+
             # move existing event maps in project directory to old folder
 
             # update database
@@ -143,7 +143,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.Logfile.insert('>>> ' + emtz)
             XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
             if os.path.isfile(emtz):
-                print('/bin/mv %s %s' %(emtz,emtz_ligand))
+                os.system('/bin/mv %s %s' %(emtz,emtz_ligand))
                 self.Logfile.insert('success; %s exists' %emtz_ligand)
             else:
                 self.Logfile.warning('something went wrong; %s could not be created...' %emtz_ligand)
