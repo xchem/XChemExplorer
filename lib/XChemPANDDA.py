@@ -95,7 +95,11 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # move existing event maps in project directory to old folder
             self.move_old_event_to_backup_folder(xtal)
+
+            # copy event MTZ to project directory
+            self.copy_event_mtz_to_project_directory(xtal)
             break
+            
             # update database
 
             # copy files
@@ -105,6 +109,14 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
+    def copy_event_mtz_to_project_directory(self,xtal):
+        self.Logfile.insert('changing directory to ' + os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
+        os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
+        for emap in glob.glob('*-BDC_*.mtz'):
+            self.Logfile.insert('copying % to %s...' %(emap,os.path.join(self.project_directory,xtal)))
+            print('/bin/cp %s %s' %(emap,os.path.join(self.project_directory,xtal)))
+
+
     def move_old_event_to_backup_folder(self,xtal):
         self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
         os.chdir(os.path.join(self.project_directory,xtal))
@@ -112,8 +124,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             os.mkdir('event_map_backup')
         self.Logfile.insert('moving existing event maps to event_map_backup')
         for emap in glob.glob('*-BDC_*.ccp4'):
-            print('/bin/mv %s event_map_backup/%s' %(emap,emap+'.'+str(datetime.now()).replace(' ','_').replace(':','-')))
-
+            os.system('/bin/mv %s event_map_backup/%s' %(emap,emap+'.'+str(datetime.now()).replace(' ','_').replace(':','-')))
 
     def show_ligands_in_model(self,xtal,ligandDict):
         self.Logfile.insert(xtal + ': found the following ligands...')
