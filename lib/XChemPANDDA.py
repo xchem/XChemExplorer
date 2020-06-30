@@ -134,9 +134,9 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 self.Logfile.error(str(e))
 
     def event_map_to_sf(self,resolution,emapLigandDict):
-        emtz = emap.replace('.ccp4','.mtz')
-        emtz_ligand = emtz
         for emap in glob.glob('*-BDC_*.ccp4'):
+            emtz = emap.replace('.ccp4','.mtz')
+            emtz_ligand = emtz
             if emap in emapLigandDict:
                 emtz_ligand = emap.replace('.ccp4','_' + emapLigandDict[emap] + '.mtz')
             self.Logfile.insert('trying to convert %s to SF' %emap)
