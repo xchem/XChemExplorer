@@ -2771,8 +2771,8 @@ class maptools_gemmi:
         os.system(cmd)
         if os.path.isfile(self.emtz):
             print('event map to SF conversion successful')
-            mtz = gemmi.read_mtz_file(emtz)
-            mtz.history += ['date created: ' + time.ctime(os.path.getmtime(emap))]
+            mtz = gemmi.read_mtz_file(self.emtz)
+            mtz.history += ['date created: ' + time.ctime(os.path.getmtime(self.emap))]
             mtz.history += ['folder: ' + os.getcwd()]
             mtz.history += ['file name: ' + self.emap]
             if 'BDC' in self.emap:
