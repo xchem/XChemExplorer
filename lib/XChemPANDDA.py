@@ -135,10 +135,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 FWT, PHWT, DELFWT, PHDELWT = XChemUtils.mtztools_gemmi('refine.mtz').get_map_labels()
                 XChemUtils.maptools().calculate_map('refine.mtz',FWT,PHWT)
                 XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligID+'.pdb','7')
-                os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine.ccp4',xtal,ligID))
+                os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
                 XChemUtils.maptools().calculate_map('refine.mtz',DELFWT,PHDELWT)
                 XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligID+'.pdb','7')
-                os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine.ccp4',xtal,ligID))
+                os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
 
 
     def copy_pandda_model_to_project_directory(self,xtal):
