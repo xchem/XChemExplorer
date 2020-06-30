@@ -166,8 +166,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     x = float(row['x'])
                     y = float(row['y'])
                     z = float(row['z'])
+                    matching_ligand = self.calculate_distance_to_ligands(ligandDict,x,y,z)
                     if matching_ligand is not None:
-                        matching_ligand = self.calculate_distance_to_ligands(ligandDict,x,y,z)
                         emapLigandDict[emap] = matching_ligand
                         self.Logfile.insert('found matching ligand (%s) for %s' %(matching_ligand,emap))
                         break
