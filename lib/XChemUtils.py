@@ -2835,5 +2835,7 @@ class pdbtools_gemmi:
     def save_ligands_to_pdb(self,ligandID):
         ligandDict = self.get_ligand_models_as_dict(ligandID)
         for ligand in ligandDict:
-            ligandDict[ligand].write_pdb(ligand + '.pdb')
+            s = gemmi.Structure()
+            s.add_model(ligandDict[ligand])
+            s.write_pdb(ligand + '.pdb')
 

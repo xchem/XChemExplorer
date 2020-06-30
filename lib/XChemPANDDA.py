@@ -129,7 +129,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
     def copy_pandda_model_to_project_directory(self,xtal):
         os.chdir(os.path.join(self.project_directory,xtal))
-        for model in sorted(glob.glob(os.path.join(self.PanDDA_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb'))):
+        model = os.path.join(self.PanDDA_directory,'processed_datasets',xtal,'modelled_structures',xtal+'-pandda-model.pdb')
             self.Logfile.insert('copying %s to project directory' %model)
             os.system('/bin/cp %s .' %model)
 
