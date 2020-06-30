@@ -92,9 +92,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # convert event map to SF
             self.event_map_to_sf(pdb.resolution,emapLigandDict)
-            break
-            # move existing event maps in project directory to old folder
 
+            # move existing event maps in project directory to old folder
+            self.move_old_event_to_backup_folder(xtal)
+            break
             # update database
 
             # copy files
@@ -103,6 +104,16 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+    def move_old_event_to_backup_folder(self,xtal):
+        self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
+        os.chdir(os.path.join(self.project_directory,xtal))
+        if not os.path.isdir('event_map_backup'):
+            os.mkdir('event_map_backup')
+        self.Logfile.insert('moving existing event maps to event_map_backup')
+        for emap in glob.glob('*-BDC_*.ccp4'):
+            print('/bin/mv %s event_map_backup/%s' %(emap,emap+'.'+str(datetime.now()).replace(' ','_').replace(':','-')))
+
 
     def show_ligands_in_model(self,xtal,ligandDict):
         self.Logfile.insert(xtal + ': found the following ligands...')

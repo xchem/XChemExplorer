@@ -2779,7 +2779,6 @@ class maptools_gemmi:
             if 'BDC' in self.emap:
                 mtz.history += ['BDC value: ' + self.emap[self.emap.find('BDC')+4:self.emap.find('BDC')+4+self.emap[self.emap.find('BDC')+4:].find('_')]]
 #            mtz.write_to_file(self.emtz)
-            mtz.write_to_file('test.mtz')
         else:
             print('failed to convert event map to SF')
 
@@ -2789,7 +2788,7 @@ class pdbtools_gemmi:
     def __init__(self,pdb):
         self.pdb = gemmi.read_structure(pdb)
 
-    def center_of_mass_ligand_dict(self,ligandID):
+    def get_ligand_models_as_dict(self,ligandID):
         ligandDict = {}
         for model in self.pdb:
             for chain in model:
@@ -2803,8 +2802,20 @@ class pdbtools_gemmi:
                             c.add_residue(gemmi.Residue(), 0)
                             c[0].name = residue.name
                             for n,atom in enumerate(residue):
-                                print atom.pos
                                 c[0].add_atom(atom, n)
-                            pos = m.calculate_center_of_mass()
-                            ligandDict[str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name)] = [pos.x, pos.y, pos.z]
+                            ligandDict[str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name)] = m
         return ligandDict
+
+    def center_of_mass_ligand_dict(self,ligandID):
+        ligandDict = self.get_ligand_models_as_dict(ligandID)
+        ligandPositionDict = {}
+        for ligand in ligandDict:
+            pos = ligandDict[ligand].calculate_center_of_mass()
+            ligandPositionDict[ligand] = [pos.x, pos.y, pos.z]
+        return ligandPositionDict
+
+    def save_ligands_to_pdb(self,ligandID):
+        ligandDict = self.get_ligand_models_as_dict(ligandID)
+        for ligand in ligandDict:
+            ligandDict[ligand].write_pdb(ligand + '.pdb')
+
