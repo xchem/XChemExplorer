@@ -2779,6 +2779,7 @@ class maptools_gemmi:
             if 'BDC' in self.emap:
                 mtz.history += ['BDC value: ' + self.emap[self.emap.find('BDC')+4:self.emap.find('BDC')+4+self.emap[self.emap.find('BDC')+4:].find('_')]]
 #            mtz.write_to_file(self.emtz)
+            mtz.write_to_file('test.mtz')
         else:
             print('failed to convert event map to SF')
 
