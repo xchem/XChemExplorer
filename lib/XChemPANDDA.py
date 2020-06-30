@@ -99,7 +99,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             # copy event MTZ to project directory
             self.copy_event_mtz_to_project_directory(xtal)
             break
-            
+
             # update database
 
             # copy files
@@ -113,8 +113,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.Logfile.insert('changing directory to ' + os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
         os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
         for emap in glob.glob('*-BDC_*.mtz'):
-            self.Logfile.insert('copying % to %s...' %(emap,os.path.join(self.project_directory,xtal)))
-            print('/bin/cp %s %s' %(emap,os.path.join(self.project_directory,xtal)))
+            self.Logfile.insert('copying %s to %s...' %(emap,os.path.join(self.project_directory,xtal)))
+            os.system('/bin/cp %s %s' %(emap,os.path.join(self.project_directory,xtal)))
 
 
     def move_old_event_to_backup_folder(self,xtal):
