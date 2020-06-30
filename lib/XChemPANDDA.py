@@ -99,8 +99,11 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             # copy event MTZ to project directory
             self.copy_event_mtz_to_project_directory(xtal)
 
+            # copy pandda-model to project directory
+            self.copy_pandda_model_to_project_directory(xtal)
+
             # make map from MTZ and cut around ligand
-            self.make_and_cut_map(xtal)
+            self.make_and_cut_map(xtal,emapLigandDict)
 
             break
 
@@ -115,13 +118,20 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
-    def make_and_cut_map(self,xtal):
+    def make_and_cut_map(self,xtal,emapLigandDict):
         self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
         os.chdir(os.path.join(self.project_directory,xtal))
+        XChemUtils.pdbtools_gemmi(xtal + '-pandda-model.pdb').save_ligands_to_pdb('LIG')
         for emtz in glob.glob('*-BDC_*.mtz'):
             XChemUtils.maptools().calculate_map(emtz,'FWT','PHWT')
-            
+        for ligID in emapLigandDict:
+            XChemUtils.maptools().cut_map_around_ligand(emtz.replace('.mtz','.ccp4'),ligID+'.pdb','7')
 
+    def copy_pandda_model_to_project_directory(self,xtal):
+        os.chdir(os.path.join(self.project_directory,xtal))
+        for model in sorted(glob.glob(os.path.join(self.PanDDA_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb'))):
+            self.Logfile.insert('copying %s to project directory' %model)
+            os.system('/bin/cp %s .' %model)
 
     def copy_event_mtz_to_project_directory(self,xtal):
         self.Logfile.insert('changing directory to ' + os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
