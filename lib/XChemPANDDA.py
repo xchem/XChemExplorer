@@ -91,7 +91,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             emapLigandDict = self.find_ligands_matching_event_map(inspect_csv,xtal,ligandDict)
 
             # convert event map to SF
-            self.event_map_to_sf(pdb.resolution,emapLigandDict)
+#            self.event_map_to_sf(pdb.resolution,emapLigandDict)
             break
             # move existing event maps in project directory to old folder
 
