@@ -122,9 +122,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
         os.chdir(os.path.join(self.project_directory,xtal))
         XChemUtils.pdbtools_gemmi(xtal + '-pandda-model.pdb').save_ligands_to_pdb('LIG')
-        for emtz in glob.glob('*-BDC_*.mtz'):
+        for emap in emapLigandDict:
+            ligID = emapLigandDict[emap]
+            emtz = emap.replace('.ccp4','_' + ligID + '.mtz')
             XChemUtils.maptools().calculate_map(emtz,'FWT','PHWT')
-        for ligID in emapLigandDict:
             XChemUtils.maptools().cut_map_around_ligand(emtz.replace('.mtz','.ccp4'),ligID+'.pdb','7')
 
     def copy_pandda_model_to_project_directory(self,xtal):
