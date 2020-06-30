@@ -158,14 +158,15 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 site = str(row['Unnamed: 0'])
                 event = str(row['event_idx'])
                 for emap in glob.glob('*-BDC_*.ccp4'):
-                    site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
-                    event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
-                    self.Logfile.insert(emap+ ' site: '+site+' esite: '+site_emap+' event: '+event+' eevent: '+event_emap)
-                    if site == site_emap and event == event_emap:
-                        self.Logfile.insert('found event map for site/event')
-                        x = float(row['x'])
-                        y = float(row['y'])
-                        z = float(row['z'])
+#                    site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
+#                    event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
+#                    self.Logfile.insert(emap+ ' site: '+site+' esite: '+site_emap+' event: '+event+' eevent: '+event_emap)
+#                    if site == site_emap and event == event_emap:
+                    self.Logfile.insert('found event map for site/event')
+                    x = float(row['x'])
+                    y = float(row['y'])
+                    z = float(row['z'])
+                    if matching_ligand is not None:
                         matching_ligand = self.calculate_distance_to_ligands(ligandDict,x,y,z)
                         emapLigandDict[emap] = matching_ligand
                         self.Logfile.insert('found matching ligand (%s) for %s' %(matching_ligand,emap))
@@ -175,7 +176,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         return emapLigandDict
 
     def calculate_distance_to_ligands(self,ligandDict,x,y,z):
-        matching_ligand = ''
+        matching_ligand = None
         p_event = gemmi.Position(x, y, z)
         for ligand in ligandDict:
             c = ligandDict[ligand]
