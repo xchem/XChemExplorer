@@ -122,13 +122,13 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
         os.chdir(os.path.join(self.project_directory,xtal))
         XChemUtils.pdbtools_gemmi(xtal + '-pandda-model.pdb').save_ligands_to_pdb('LIG')
-        for emap in emapLigandDict:
-            ligID = emapLigandDict[emap]
-            emtz = emap.replace('.ccp4','_' + ligID + '.mtz')
+        for m in emapLigandDict:
+            ligID = emapLigandDict[m]
+            emtz = m.replace('.ccp4','_' + ligID + '.mtz')
+            emap = m.replace('.ccp4','_' + ligID + '.ccp4')
             XChemUtils.maptools().calculate_map(emtz,'FWT','PHWT')
-            XChemUtils.maptools().cut_map_around_ligand(emtz.replace('.mtz','.ccp4'),ligID+'.pdb','7')
+            XChemUtils.maptools().cut_map_around_ligand(emap,ligID+'.pdb','7')
             if os.path.isfile(emap.replace('.ccp4','_mapmask.ccp4')):
-                # Mpro-x0678_LIG-A-1001_event.ccp4
                 os.system('/bin/mv %s %s_%s_event.ccp4' %(emap.replace('.ccp4','_mapmask.ccp4'),xtal,ligID))
 
     def copy_pandda_model_to_project_directory(self,xtal):
