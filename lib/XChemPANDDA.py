@@ -130,8 +130,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def copy_pandda_model_to_project_directory(self,xtal):
         os.chdir(os.path.join(self.project_directory,xtal))
         model = os.path.join(self.PanDDA_directory,'processed_datasets',xtal,'modelled_structures',xtal+'-pandda-model.pdb')
-            self.Logfile.insert('copying %s to project directory' %model)
-            os.system('/bin/cp %s .' %model)
+        self.Logfile.insert('copying %s to project directory' %model)
+        os.system('/bin/cp %s .' %model)
 
     def copy_event_mtz_to_project_directory(self,xtal):
         self.Logfile.insert('changing directory to ' + os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
