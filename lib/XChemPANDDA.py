@@ -92,13 +92,15 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # convert event map to SF
             self.event_map_to_sf(pdb.resolution,emapLigandDict)
-
-
-
+            break
             # move existing event maps in project directory to old folder
+
             # update database
+
             # copy files
+
             # refine models
+
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
@@ -132,19 +134,19 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 self.Logfile.error(str(e))
 
     def event_map_to_sf(self,resolution,emapLigandDict):
+        emtz = emap.replace('.ccp4','.mtz')
+        emtz_ligand = emtz
         for emap in glob.glob('*-BDC_*.ccp4'):
             if emap in emapLigandDict:
-                emtz = emap.replace('.ccp4','_' + emapLigandDict[emap] + '.mtz')
-            else:
-                emtz = emap.replace('.ccp4','.mtz')
+                emtz_ligand = emap.replace('.ccp4','_' + emapLigandDict[emap] + '.mtz')
             self.Logfile.insert('trying to convert %s to SF' %emap)
             self.Logfile.insert('>>> ' + emtz)
-#            XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
+            XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
             if os.path.isfile(emtz):
-#                print('/bin/mv %s %s' %())
-                self.Logfile.insert('success; %s exists' %emtz)
+                print('/bin/mv %s %s' %(emtz,emtz_ligand))
+                self.Logfile.insert('success; %s exists' %emtz_ligand)
             else:
-                self.Logfile.warning('something went wrong; %s could not be created...' %emtz)
+                self.Logfile.warning('something went wrong; %s could not be created...' %emtz_ligand)
 
     def find_ligands_matching_event_map(self,inspect_csv,xtal,ligandDict):
         emapLigandDict = {}
