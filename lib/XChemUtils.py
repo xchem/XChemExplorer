@@ -2812,8 +2812,8 @@ class pdbtools_gemmi:
             for chain in model:
                 for residue in chain:
                     if residue.name == ligandID:
-                        if str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name) not in ligandDict:
-                            ligandDict[str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name)] = None
+                        if str(residue.name + '-' + chain.name + '-' + str(residue.seqid.num)) not in ligandDict:
+                            ligandDict[str(residue.name + '-' + chain.name + '-' + str(residue.seqid.num))] = None
                             m = gemmi.Model('1')
                             m.add_chain(gemmi.Chain('X'))
                             c = m['X'].get_polymer()
@@ -2821,7 +2821,7 @@ class pdbtools_gemmi:
                             c[0].name = residue.name
                             for n,atom in enumerate(residue):
                                 c[0].add_atom(atom, n)
-                            ligandDict[str(residue.name + '-' + str(residue.seqid.num) + '-' + chain.name)] = m
+                            ligandDict[str(residue.name + '-' + chain.name + '-' + str(residue.seqid.num))] = m
         return ligandDict
 
     def center_of_mass_ligand_dict(self,ligandID):
