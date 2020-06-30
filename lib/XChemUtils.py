@@ -9,6 +9,7 @@ import math
 import platform
 import tarfile
 import json
+import time
 
 from datetime import datetime
 import gemmi
