@@ -2703,59 +2703,77 @@ class smilestools(object):
         return ElementDict
 
 class maptools(object):
-    def __init__(self,map):
 
-        self.translate_spg_to_number_dict = {
-            'p1': 1, 'p2': 3, 'p121': 4, 'c2': 5, 'c121': 5, 'p222': 16,
-            'p2122': 17, 'p2212': 17, 'p2221': 17, 'p21212': 18, 'p21221': 18, 'p22121': 18,
-            'p212121': 19, 'c2221': 20, 'c222': 21, 'f222': 22, 'i222': 23, 'i212121': 24,
-            'p4': 75, 'p41': 76, 'p42': 77, 'p43': 78, 'i4': 79, 'i41': 80,
-            'p422': 89, 'p4212': 90, 'p4122': 91, 'p41212': 92, 'p4222': 93, 'p42212': 94,
-            'p4322': 95, 'p43212': 96, 'i422': 97, 'i4122': 98,
-            'p3': 143, 'p31': 144, 'p32': 145, 'p312': 149, 'p321': 150, 'p3112': 151, 'p3121': 152,
-            'p3212': 153, 'p3221': 154, 'p6': 168, 'p61': 169, 'p65': 170, 'p62': 171, 'p64': 172, 'p63': 173,
-            'p622': 177, 'p6122': 178, 'p6522': 179, 'p6222': 180, 'p6422': 181, 'p6322': 182,
-            'r3': 146, 'h3': 146, 'r32': 155, 'h32': 155,
-            'p23': 195, 'f23': 196, 'i23': 197, 'p213': 198, 'i213': 199,
-            'p432': 207, 'p4232': 208, 'f432': 209, 'f4132': 210, 'i432': 211, 'p4332': 212,
-            'p4132': 213, 'i4132': 214        }
+    def calculate_map(self,mtz,F,PH):
+        cmd = (
+            'fft hklin %s mapout %s << EOF\n' %(mtz,mtz.replace('.mtz','.ccp4')) +
+            'labin F1=%s PHI=%s\n' %(F,PH) +
+            'EOF\n'
+        )
+#        os.system(cmd)
+        print(cmd)
 
-        self.map=map
-        cmd = ( 'mapdump mapin {0!s} << eof\n'.format(self.map)+
-                'end\n'
-                'eof'   )
-        mapdump=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
-        self.grid_sampling=[0,0,0]
-        self.cell_dimensions=[]
-        self.space_group_number=0
-        for line in iter(mapdump.stdout.readline,''):
-            if 'Grid sampling on x, y, z' in line:
-                if len(line.split()) == 10:
-                    self.grid_sampling=[line.split()[7],line.split()[8],line.split()[9]]
-            if 'Cell dimensions' in line:
-                if len(line.split()) == 9:
-                    self.cell_dimensions=[line.split()[3],line.split()[4],line.split()[5],line.split()[6],line.split()[7],line.split()[8]]
-            if 'Space-group' in line:
-                if len(line.split()) == 3:
-                    self.space_group_number=line.split()[2]
+    def cut_map_around_ligand(self,map,ligPDB,border):
+        cmd = (
+            'mapmask mapin %s mapout %s xyzin %s << eof\n'  %(map,map.replace('.ccp4','_mapmask.ccp4'),ligPDB) +
+            ' border %s\n' %border +
+            ' end\n'
+            'eof'
+            )
+#        os.system(cmd)
+        print(cmd)
 
-    def grid_sampling(self):
-        return self.grid_sampling
-
-    def cell_dimensions(self):
-        return self.cell_dimensions
-
-    def space_group_number(self):
-        return self.space_group_number
-
-    def space_group(self):
-        space_group=''
-        space_group_number=self.space_group_number
-        for spg in self.translate_spg_to_number_dict:
-            if str(self.translate_spg_to_number_dict[spg]) == str(space_group_number):
-                space_group=str(spg)
-        return space_group
-
+#        self.translate_spg_to_number_dict = {
+#            'p1': 1, 'p2': 3, 'p121': 4, 'c2': 5, 'c121': 5, 'p222': 16,
+#            'p2122': 17, 'p2212': 17, 'p2221': 17, 'p21212': 18, 'p21221': 18, 'p22121': 18,
+#            'p212121': 19, 'c2221': 20, 'c222': 21, 'f222': 22, 'i222': 23, 'i212121': 24,
+#            'p4': 75, 'p41': 76, 'p42': 77, 'p43': 78, 'i4': 79, 'i41': 80,
+#            'p422': 89, 'p4212': 90, 'p4122': 91, 'p41212': 92, 'p4222': 93, 'p42212': 94,
+#            'p4322': 95, 'p43212': 96, 'i422': 97, 'i4122': 98,
+#            'p3': 143, 'p31': 144, 'p32': 145, 'p312': 149, 'p321': 150, 'p3112': 151, 'p3121': 152,
+#            'p3212': 153, 'p3221': 154, 'p6': 168, 'p61': 169, 'p65': 170, 'p62': 171, 'p64': 172, 'p63': 173,
+#            'p622': 177, 'p6122': 178, 'p6522': 179, 'p6222': 180, 'p6422': 181, 'p6322': 182,
+#            'r3': 146, 'h3': 146, 'r32': 155, 'h32': 155,
+#            'p23': 195, 'f23': 196, 'i23': 197, 'p213': 198, 'i213': 199,
+#            'p432': 207, 'p4232': 208, 'f432': 209, 'f4132': 210, 'i432': 211, 'p4332': 212,
+#            'p4132': 213, 'i4132': 214        }
+#
+#        self.map=map
+#        cmd = ( 'mapdump mapin {0!s} << eof\n'.format(self.map)+
+#                'end\n'
+#                'eof'   )
+#        mapdump=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+#        self.grid_sampling=[0,0,0]
+#        self.cell_dimensions=[]
+#        self.space_group_number=0
+#        for line in iter(mapdump.stdout.readline,''):
+#            if 'Grid sampling on x, y, z' in line:
+#                if len(line.split()) == 10:
+#                    self.grid_sampling=[line.split()[7],line.split()[8],line.split()[9]]
+#            if 'Cell dimensions' in line:
+#                if len(line.split()) == 9:
+#                    self.cell_dimensions=[line.split()[3],line.split()[4],line.split()[5],line.split()[6],line.split()[7],line.split()[8]]
+#            if 'Space-group' in line:
+#                if len(line.split()) == 3:
+#                    self.space_group_number=line.split()[2]
+#
+#    def grid_sampling(self):
+#        return self.grid_sampling
+#
+#    def cell_dimensions(self):
+#        return self.cell_dimensions
+#
+#    def space_group_number(self):
+#        return self.space_group_number
+#
+#    def space_group(self):
+#        space_group=''
+#        space_group_number=self.space_group_number
+#        for spg in self.translate_spg_to_number_dict:
+#            if str(self.translate_spg_to_number_dict[spg]) == str(space_group_number):
+#                space_group=str(spg)
+#        return space_group
+#
 
 class maptools_gemmi:
 

@@ -98,7 +98,13 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # copy event MTZ to project directory
             self.copy_event_mtz_to_project_directory(xtal)
+
+            # make map from MTZ and cut around ligand
+            self.make_and_cut_map(xtal)
+
             break
+
+
 
             # update database
 
@@ -108,6 +114,14 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+    def make_and_cut_map(self,xtal):
+        self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
+        os.chdir(os.path.join(self.project_directory,xtal))
+        for emtz in glob.glob('*-BDC_*.mtz'):
+            XChemUtils.maptools.calculate_map(emtz,'FWT','PHWT')
+            
+
 
     def copy_event_mtz_to_project_directory(self,xtal):
         self.Logfile.insert('changing directory to ' + os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
