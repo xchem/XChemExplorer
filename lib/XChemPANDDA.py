@@ -119,7 +119,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
         os.chdir(os.path.join(self.project_directory,xtal))
         for emtz in glob.glob('*-BDC_*.mtz'):
-            XChemUtils.maptools.calculate_map(emtz,'FWT','PHWT')
+            XChemUtils.maptools().calculate_map(emtz,'FWT','PHWT')
             
 
 
