@@ -2770,17 +2770,17 @@ class maptools_gemmi:
         cmd = 'gemmi map2sf %s %s FWT PHWT --dmin=%s' %(self.emap,self.emtz,resolution)
         print('converting map with command:\n' + cmd)
         os.system(cmd)
-        if os.path.isfile(self.emtz):
-            print('event map to SF conversion successful')
-            mtz = gemmi.read_mtz_file(self.emtz)
-            mtz.history += ['date created: ' + time.ctime(os.path.getmtime(self.emap))]
-            mtz.history += ['folder: ' + os.getcwd()]
-            mtz.history += ['file name: ' + self.emap]
-            if 'BDC' in self.emap:
-                mtz.history += ['BDC value: ' + self.emap[self.emap.find('BDC')+4:self.emap.find('BDC')+4+self.emap[self.emap.find('BDC')+4:].find('_')]]
-            mtz.write_to_file(self.emtz)
-        else:
-            print('failed to convert event map to SF')
+#        if os.path.isfile(self.emtz):
+#            print('event map to SF conversion successful')
+#            mtz = gemmi.read_mtz_file(self.emtz)
+#            mtz.history += ['date created: ' + time.ctime(os.path.getmtime(self.emap))]
+#            mtz.history += ['folder: ' + os.getcwd()]
+#            mtz.history += ['file name: ' + self.emap]
+#            if 'BDC' in self.emap:
+#                mtz.history += ['BDC value: ' + self.emap[self.emap.find('BDC')+4:self.emap.find('BDC')+4+self.emap[self.emap.find('BDC')+4:].find('_')]]
+#            mtz.write_to_file(self.emtz)
+#        else:
+#            print('failed to convert event map to SF')
 
 
 class pdbtools_gemmi:
