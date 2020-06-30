@@ -92,7 +92,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # convert event map to SF
             self.event_map_to_sf(pdb.resolution,emapLigandDict)
-
+            break
             # move existing event maps in project directory to old folder
 
             # update database
