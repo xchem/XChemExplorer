@@ -151,18 +151,18 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_ligands_matching_event_map(self,inspect_csv,xtal,ligandDict):
         emapLigandDict = {}
         for index, row in inspect_csv.iterrows():
-            self.Logfile.insert(row['dtag']+' '+str(row['Unnamed: 0'])+' '+str(row['event_idx']))
+#            self.Logfile.insert(row['dtag']+' '+str(row['Unnamed: 0'])+' '+str(row['event_idx']))
             if row['dtag'] == xtal:
-                self.Logfile.insert('>>>>>>>> found')
+#                self.Logfile.insert('>>>>>>>> found')
 #                site = str(row['site_idx'])
-                site = str(row['Unnamed: 0'])
-                event = str(row['event_idx'])
+#                site = str(row['Unnamed: 0'])
+#                event = str(row['event_idx'])
                 for emap in glob.glob('*-BDC_*.ccp4'):
 #                    site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
 #                    event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
 #                    self.Logfile.insert(emap+ ' site: '+site+' esite: '+site_emap+' event: '+event+' eevent: '+event_emap)
 #                    if site == site_emap and event == event_emap:
-                    self.Logfile.insert('found event map for site/event')
+                    self.Logfile.insert('checking if event and ligand are within 5A of each other')
                     x = float(row['x'])
                     y = float(row['y'])
                     z = float(row['z'])
@@ -171,6 +171,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                         emapLigandDict[emap] = matching_ligand
                         self.Logfile.insert('found matching ligand (%s) for %s' %(matching_ligand,emap))
                         break
+                    else:
+                        self.Logfile.warning('current ligand not close to event...')
         if emapLigandDict == {}:
             self.Logfile.error('could not find ligands within 5A of PanDDA events')
         return emapLigandDict
@@ -181,9 +183,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         for ligand in ligandDict:
             c = ligandDict[ligand]
             p_ligand = gemmi.Position(c[0], c[1], c[2])
-            self.Logfile.insert('lig:   ' + str(c[0])+' '+ str(c[1])+' '+str(c[2]))
-            self.Logfile.insert('event: ' + str(x)+' '+ str(y)+' '+str(z))
+            self.Logfile.insert('coordinates ligand: ' + str(c[0])+' '+ str(c[1])+' '+str(c[2]))
+            self.Logfile.insert('coordinates event:  ' + str(x)+' '+ str(y)+' '+str(z))
             distance = p_event.dist(p_ligand)
+            self.Logfile.insert('distance between ligand and event: %s A' %str(distance))
             if distance < 5:
                 matching_ligand = ligand
                 break
