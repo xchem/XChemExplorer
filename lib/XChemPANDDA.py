@@ -80,7 +80,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.Logfile.error('DID NOT FIND ANY MODELS TO EXPORT')
             return None
 
-        for xtal in modelsDict:
+        for xtal in sorted(modelsDict):
             os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
             pandda_model = os.path.join('modelled_structures',xtal + '-pandda-model.pdb')
             pdb = gemmi.read_structure(pandda_model)
@@ -113,7 +113,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_modeled_structures_and_timestamps(self):
         self.Logfile.insert('finding out modelled structures in ' + self.PanDDA_directory)
         modelsDict={}
-        for model in glob.glob(os.path.join(self.PanDDA_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb')):
+        for model in sorted(glob.glob(os.path.join(self.PanDDA_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb'))):
             sample=model[model.rfind('/')+1:].replace('-pandda-model.pdb','')
             timestamp=datetime.fromtimestamp(os.path.getmtime(model)).strftime('%Y-%m-%d %H:%M:%S')
             self.Logfile.insert(sample+'-pandda-model.pdb was created on '+str(timestamp))
@@ -151,7 +151,9 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_ligands_matching_event_map(self,inspect_csv,xtal,ligandDict):
         emapLigandDict = {}
         for index, row in inspect_csv.iterrows():
+            self.Logfile.insert(row['dtag']+' '+str(row['Unnamed: 0'])+' '+str(row['event_idx']))
             if row['dtag'] == xtal:
+                self.Logfile.insert('>>>>>>>> found')
 #                site = str(row['site_idx'])
                 site = str(row['Unnamed: 0'])
                 event = str(row['event_idx'])
