@@ -2775,6 +2775,41 @@ class maptools(object):
 #        return space_group
 #
 
+
+class mtztools_gemmi:
+
+    def __init__(self,mtz):
+        self.mtz = gemmi.read_mtz_file(mtz)
+
+    def get_map_labels(self):
+        labelList = []
+        for l in self.mtz.columns:
+            labelList.append(l.label)
+        FWT = None
+        PHWT = None
+        DELFWT = None
+        PHDELWT = None
+
+        if 'FWT' in labelList and 'PHWT' in labelList:
+            FWT = 'FWT'
+            PHWT = 'PHWT'
+
+        if 'DELFWT' in labelList and 'PHDELWT' in labelList:
+            DELFWT = 'DELFWT'
+            PHDELWT = 'PHDELWT'
+
+        if '2FOFCWT' in labelList and 'PH2FOFCWT' in labelList:
+            FWT = '2FOFCWT'
+            PHWT = 'PH2FOFCWT'
+
+        if 'FOFCWT' in labelList and 'PHFOFCWT' in labelList:
+            DELFWT = 'FOFCWT'
+            PHDELWT = 'PHFOFCWT'
+
+        return FWT, PHWT, DELFWT, PHDELWT
+
+
+
 class maptools_gemmi:
 
     def __init__(self,emap):
