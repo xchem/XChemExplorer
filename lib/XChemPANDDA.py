@@ -100,12 +100,12 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.copy_event_mtz_to_project_directory(xtal)
 
             # copy pandda-model to project directory
-            self.copy_pandda_model_to_project_directory(xtal)
+#            self.copy_pandda_model_to_project_directory(xtal)
 
             # make map from MTZ and cut around ligand
             self.make_and_cut_map(xtal,emapLigandDict)
 
-            break
+#            break
 
 
 
