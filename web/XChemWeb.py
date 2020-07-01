@@ -10,7 +10,7 @@ import XChemMain
 
 from XChemUtils import pdbtools
 from XChemUtils import mtztools
-
+import XChemUtils
 
 class export_to_html:
 
