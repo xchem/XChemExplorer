@@ -232,15 +232,16 @@ class export_to_html:
 
     def copy_electron_density(self,xtal,ligand,eventMap):
         os.chdir(os.path.join(self.htmlDir, 'files'))
-        if os.path.isfile(os.path.join(self.projectDir,xtal,xtal+'-'+ligand+'_2fofc.ccp4')):
-            emap = xtal+'-'+ligand+'_2fofc.ccp4'
+
+        emap = xtal+'-'+ligand+'_2fofc.ccp4'
+        if os.path.isfile(os.path.join(self.projectDir,xtal,emap)):
             self.Logfile.insert('%s: copying %s to html directory' %(xtal,emap))
             os.system('/bin/cp %s/%s %s' %(os.path.join(self.projectDir,xtal),emap,emap))
         else:
             self.Logfile.error('%s: cannot find %s' %(xtal,emap))
 
-        if os.path.isfile(os.path.join(self.projectDir,xtal,xtal+'-'+ligand+'_fofc.ccp4')):
-            emap = xtal+'-'+ligand+'_fofc.ccp4'
+        emap = xtal+'-'+ligand+'_fofc.ccp4'
+        if os.path.isfile(os.path.join(self.projectDir,xtal,emap)):
             self.Logfile.insert('%s: copying %s to html directory' %(xtal,emap))
             os.system('/bin/cp %s/%s %s' %(os.path.join(self.projectDir,xtal),emap,emap))
         else:
