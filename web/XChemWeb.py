@@ -93,11 +93,11 @@ class export_to_html:
                     FWT, PHWT, DELFWT, PHDELWT = XChemUtils.mtztools_gemmi('refine.mtz').get_map_labels()
                     XChemUtils.maptools().calculate_map('refine.mtz',FWT,PHWT)
                     XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
-                    os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
+                    os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
                     FWTmap = xtal + '-' + ligand + '_2fofc.ccp4'
                     XChemUtils.maptools().calculate_map('refine.mtz',DELFWT,PHDELWT)
                     XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
-                    os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
+                    os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
                     DELFWTmap = xtal + '-' + ligand + '_fofc.ccp4'
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
