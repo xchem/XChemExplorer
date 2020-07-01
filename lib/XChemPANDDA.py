@@ -101,7 +101,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.copy_event_mtz_to_project_directory(xtal)
 
             # copy pandda-model to project directory
-            self.copy_pandda_model_to_project_directory(xtal)
+#            self.copy_pandda_model_to_project_directory(xtal)
 
             # make map from MTZ and cut around ligand
             self.make_and_cut_map(xtal,emapLigandDict)
@@ -214,7 +214,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 #                    event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
 #                    self.Logfile.insert(emap+ ' site: '+site+' esite: '+site_emap+' event: '+event+' eevent: '+event_emap)
 #                    if site == site_emap and event == event_emap:
-                    self.Logfile.insert('checking if event and ligand are within 5A of each other')
+                    self.Logfile.insert('checking if event and ligand are within 7A of each other')
                     x = float(row['x'])
                     y = float(row['y'])
                     z = float(row['z'])
@@ -226,7 +226,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     else:
                         self.Logfile.warning('current ligand not close to event...')
         if emapLigandDict == {}:
-            self.Logfile.error('could not find ligands within 5A of PanDDA events')
+            self.Logfile.error('could not find ligands within 7A of PanDDA events')
         return emapLigandDict
 
     def calculate_distance_to_ligands(self,ligandDict,x,y,z):
@@ -239,7 +239,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.Logfile.insert('coordinates event:  ' + str(x)+' '+ str(y)+' '+str(z))
             distance = p_event.dist(p_ligand)
             self.Logfile.insert('distance between ligand and event: %s A' %str(distance))
-            if distance < 5:
+            if distance < 7:
                 matching_ligand = ligand
                 break
         return matching_ligand
