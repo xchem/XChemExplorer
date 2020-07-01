@@ -99,6 +99,7 @@ class export_to_html:
                     XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
                     os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
                     DELFWTmap = xtal + '-' + ligand + '_fofc.ccp4'
+                    self.copy_electron_density(xtal,ligand,eventMap)
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
                     self.Logfile.warning('%s: ligand confidence of %s-%s-%s is %s; ignoring...' %(xtal,ligChain,ligNumber,ligName,ligConfidence))
@@ -229,20 +230,27 @@ class export_to_html:
         else:
             self.Logfile.error('%s: cannot find %s.free.mtz' %(xtal,xtal))
 
-    def copy_electron_density(self,xtal):
+    def copy_electron_density(self,xtal,ligand,eventMap):
         os.chdir(os.path.join(self.htmlDir, 'files'))
-
-        if os.path.isfile(os.path.join(self.projectDir,xtal,'2fofc.map')):
-            self.Logfile.insert('%s: copying 2fofc.map to html directory' %xtal)
-            os.system('/bin/cp %s/2fofc.map %s_2fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
+        if os.path.isfile(os.path.join(self.projectDir,xtal,xtal+'-'+ligand+'_2fofc.ccp4')):
+            emap = xtal+'-'+ligand+'_2fofc.ccp4'
+            self.Logfile.insert('%s: copying %s to html directory' %(xtal,emap))
+            os.system('/bin/cp %s/%s %s' %(os.path.join(self.projectDir,xtal),emap,emap))
         else:
-            self.Logfile.error('%s: cannot find 2fofc.map' %xtal)
+            self.Logfile.error('%s: cannot find %s' %(xtal,emap))
 
-        if os.path.isfile(os.path.join(self.projectDir,xtal,'fofc.map')):
-            self.Logfile.insert('%s: copying fofc.map to html directory' %xtal)
-            os.system('/bin/cp %s/fofc.map %s_fofc.ccp4' %(os.path.join(self.projectDir,xtal),xtal))
+        if os.path.isfile(os.path.join(self.projectDir,xtal,xtal+'-'+ligand+'_fofc.ccp4')):
+            emap = xtal+'-'+ligand+'_fofc.ccp4'
+            self.Logfile.insert('%s: copying %s to html directory' %(xtal,emap))
+            os.system('/bin/cp %s/%s %s' %(os.path.join(self.projectDir,xtal),emap,emap))
         else:
-            self.Logfile.error('%s: cannot find fofc.map' %xtal)
+            self.Logfile.error('%s: cannot find %s' %(xtal,emap))
+
+        if os.path.isfile(os.path.join(self.projectDir,xtal,eventMap)):
+            self.Logfile.insert('%s: copying %s to html directory' %(xtal,eventMap))
+            os.system('/bin/cp %s/%s %s' %(os.path.join(self.projectDir,xtal),eventMap,eventMap))
+        else:
+            self.Logfile.error('%s: cannot find %s' %(xtal,eventMap))
 
     def copy_ligand_files(self,xtal):
         os.chdir(os.path.join(self.htmlDir,'files'))
