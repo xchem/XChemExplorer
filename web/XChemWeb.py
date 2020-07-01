@@ -47,8 +47,8 @@ class export_to_html:
             self.copy_mtz(xtal)
 #            self.copy_electron_density(xtal)
             self.copy_ligand_files(xtal)
-
-            ligandDict = XChemUtils.pdbtools_gemmi(pandda_model).center_of_mass_ligand_dict('LIG')
+            os.chdir(os.path.join(self.projectDir,xtal))
+            ligandDict = XChemUtils.pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
             for ligand in ligandDict:
 #            for ligand in self.ligands_in_pdbFile(xtal):
                 ligName = ligand.split('-')[0]
