@@ -130,15 +130,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             XChemUtils.maptools().cut_map_around_ligand(emap,ligID+'.pdb','7')
             if os.path.isfile(emap.replace('.ccp4','_mapmask.ccp4')):
                 os.system('/bin/mv %s %s_%s_event.ccp4' %(emap.replace('.ccp4','_mapmask.ccp4'),xtal,ligID))
-            if os.path.isfile('refine.mtz'):
-                self.Logfile.insert('%s: found refine.mtz' %xtal)
-                FWT, PHWT, DELFWT, PHDELWT = XChemUtils.mtztools_gemmi('refine.mtz').get_map_labels()
-                XChemUtils.maptools().calculate_map('refine.mtz',FWT,PHWT)
-                XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligID+'.pdb','7')
-                os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
-                XChemUtils.maptools().calculate_map('refine.mtz',DELFWT,PHDELWT)
-                XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligID+'.pdb','7')
-                os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
 
 
     def copy_pandda_model_to_project_directory(self,xtal):

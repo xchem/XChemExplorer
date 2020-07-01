@@ -47,18 +47,27 @@ class export_to_html:
             self.copy_mtz(xtal)
 #            self.copy_electron_density(xtal)
             self.copy_ligand_files(xtal)
-            for ligand in self.ligands_in_pdbFile(xtal):
+
+            ligandDict = XChemUtils.pdbtools_gemmi(pandda_model).center_of_mass_ligand_dict('LIG')
+            for ligand in ligandDict:
+#            for ligand in self.ligands_in_pdbFile(xtal):
                 ligName = ligand.split('-')[0]
                 ligChain = ligand.split('-')[1]
                 ligNumber = ligand.split('-')[2]
-                eventMap = self.find_matching_event_map_from_database(xtal, ligand)
-                if eventMap:
-                    self.Logfile.insert('%s: using the following event map -> %s' %(xtal,eventMap))
-                    self.cut_and_copy_map(xtal, ligand+'.pdb', eventMap, xtal + '_' + ligand + '_event.ccp4','F','PHIF')
+#                eventMap = self.find_matching_event_map_from_database(xtal, ligand)
+#                if eventMap:
+#                    self.Logfile.insert('%s: using the following event map -> %s' %(xtal,eventMap))
+#                    self.cut_and_copy_map(xtal, ligand+'.pdb', eventMap, xtal + '_' + ligand + '_event.ccp4','F','PHIF')
+#                    eventMap = xtal + '_' + ligand + '_event.ccp4'
+#                else:
+#                    self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
+                eventMap = ''
+                if os.path.isfile(xtal + '_' + ligand + '_event.ccp4'):
                     eventMap = xtal + '_' + ligand + '_event.ccp4'
-                else:
-                    self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
-                x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
+#                x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
+                x = ligandDict[ligand][0]
+                y = ligandDict[ligand][1]
+                z = ligandDict[ligand][2]
                 self.copy_spider_plot(xtal,ligand)
                 pdbID = self.db_dict['Deposition_PDB_ID']
                 compoundImage = xtal + '_' + self.db_dict['CompoundCode'] + '.png'
@@ -75,10 +84,21 @@ class export_to_html:
                     t += str(round(float(ax),1)) + ' '
                 unitCell = t[:-1]
                 os.chdir(os.path.join(self.projectDir,xtal))
-                FWT = xtal + '-' + ligand + '_2fofc.ccp4'
-                self.cut_and_copy_map(xtal, ligand + '.pdb', '2fofc.map', FWT,'FWT','PHWT')
-                DELFWT = xtal + '-' + ligand + '_fofc.ccp4'
-                self.cut_and_copy_map(xtal, ligand + '.pdb', 'fofc.map', DELFWT,'DELFWT','PHDELWT')
+#                FWT = xtal + '-' + ligand + '_2fofc.ccp4'
+#                self.cut_and_copy_map(xtal, ligand + '.pdb', '2fofc.map', FWT,'FWT','PHWT')
+#                DELFWT = xtal + '-' + ligand + '_fofc.ccp4'
+#                self.cut_and_copy_map(xtal, ligand + '.pdb', 'fofc.map', DELFWT,'DELFWT','PHDELWT')
+                if os.path.isfile('refine.mtz'):
+                    self.Logfile.insert('%s: found refine.mtz' %xtal)
+                    FWT, PHWT, DELFWT, PHDELWT = XChemUtils.mtztools_gemmi('refine.mtz').get_map_labels()
+                    XChemUtils.maptools().calculate_map('refine.mtz',FWT,PHWT)
+                    XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligID+'.pdb','7')
+                    os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
+                    FWTmap = xtal + '-' + ligand + '_2fofc.ccp4'
+                    XChemUtils.maptools().calculate_map('refine.mtz',DELFWT,PHDELWT)
+                    XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligID+'.pdb','7')
+                    os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligID))
+                    DELFWTmap = xtal + '-' + ligand + '_fofc.ccp4'
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
                     self.Logfile.warning('%s: ligand confidence of %s-%s-%s is %s; ignoring...' %(xtal,ligChain,ligNumber,ligName,ligConfidence))
@@ -87,14 +107,14 @@ class export_to_html:
                     ligConfidence = 'not assigned'
                 modelStatus = self.db_dict['RefinementOutcome']
                 if firstFile:
-                    html += XChemMain.html_ngl(pdb,eventMap.replace(self.projectDir,''),FWT,DELFWT,ligand)
+                    html += XChemMain.html_ngl(pdb,eventMap.replace(self.projectDir,''),FWTmap,DELFWTmap,ligand)
                     html += XChemMain.html_download(self.protein_name)
                     html += XChemMain.html_guide()
                     html += XChemMain.html_table_header()
                     firstFile = False
 
                 html += XChemMain.html_table_row(xtal,pdbID,ligand,compoundImage,residuePlot,pdb,event,
-                                                 thumbNail,resoHigh,spg,unitCell,FWT,DELFWT,ligConfidence,modelStatus)
+                                                 thumbNail,resoHigh,spg,unitCell,FWTmap,DELFWTmap,ligConfidence,modelStatus)
                 self.make_thumbnail(xtal,x,y,z,ligand,eventMap)
                 self.prepare_for_download(xtal, pdb, event, compoundCIF, ligand)
         self.prepare_zip_archives()
@@ -262,89 +282,89 @@ class export_to_html:
             self.Logfile.error('%s: cannot find refine.pdb, i.e. cannot start looking for spider plots...' %xtal)
 
 
-    def ligands_in_pdbFile(self,xtal):
-        os.chdir(os.path.join(self.projectDir,xtal))
-        ligPDB = []
-        ligList = []
-        self.Logfile.insert('%s: reading ligands to type LIG in refine.split.bound-state.pdb' %xtal)
-        if os.path.isfile('refine.split.bound-state.pdb'):
-            ligPDB = self.pdb.save_residues_with_resname(os.path.join(self.projectDir, xtal), 'LIG')
-        else:
-            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb' %xtal)
-        if not ligPDB:
-            self.Logfile.error('%s; cannot find any ligands of type LIG in refine.split.bound-state.pdb' %xtal)
-        else:
-            for lig in sorted(ligPDB):
-                ligList.append(lig.replace('.pdb', ''))
-        return ligList
+#    def ligands_in_pdbFile(self,xtal):
+#        os.chdir(os.path.join(self.projectDir,xtal))
+#        ligPDB = []
+#        ligList = []
+#        self.Logfile.insert('%s: reading ligands to type LIG in refine.split.bound-state.pdb' %xtal)
+#        if os.path.isfile('refine.split.bound-state.pdb'):
+#            ligPDB = self.pdb.save_residues_with_resname(os.path.join(self.projectDir, xtal), 'LIG')
+#        else:
+#            self.Logfile.error('%s: cannot find refine.split.bound-state.pdb' %xtal)
+#        if not ligPDB:
+#            self.Logfile.error('%s; cannot find any ligands of type LIG in refine.split.bound-state.pdb' %xtal)
+#        else:
+#            for lig in sorted(ligPDB):
+#                ligList.append(lig.replace('.pdb', ''))
+#        return ligList
 
 
-    def find_matching_event_map_from_database(self,xtal,ligID):
-        ligName = ligID.split('-')[0]
-        ligChain = ligID.split('-')[1]
-        ligNumber = ligID.split('-')[2]
-        eventMAP = self.db.get_event_map_for_ligand(xtal, ligChain, ligNumber, ligName)
-        self.Logfile.insert('%s: the database thinks the following event map belongs to %s: %s' %(xtal,ligID,eventMAP))
-#        print 'event map', eventMAP
-        if eventMAP == '' or 'none' in str(eventMAP).lower():
-            self.Logfile.warning('%s: the respective field in the DB is apparently emtpy' %xtal)
-            self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
-            eventMAP = self.find_matching_event_map(xtal,ligID)
-        elif not os.path.isfile(eventMAP):
-            self.Logfile.warning('%s: event map file does not exist!' %xtal)
-            self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
-            eventMAP = self.find_matching_event_map(xtal,ligID)
-        else:
-            self.Logfile.insert('%s: found matching event map!' %xtal)
-        return eventMAP
+#    def find_matching_event_map_from_database(self,xtal,ligID):
+#        ligName = ligID.split('-')[0]
+#        ligChain = ligID.split('-')[1]
+#        ligNumber = ligID.split('-')[2]
+#        eventMAP = self.db.get_event_map_for_ligand(xtal, ligChain, ligNumber, ligName)
+#        self.Logfile.insert('%s: the database thinks the following event map belongs to %s: %s' %(xtal,ligID,eventMAP))
+##        print 'event map', eventMAP
+#        if eventMAP == '' or 'none' in str(eventMAP).lower():
+#            self.Logfile.warning('%s: the respective field in the DB is apparently emtpy' %xtal)
+#            self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
+#            eventMAP = self.find_matching_event_map(xtal,ligID)
+#        elif not os.path.isfile(eventMAP):
+#            self.Logfile.warning('%s: event map file does not exist!' %xtal)
+#            self.Logfile.warning('%s: will try to determine ligand - event map relationship by checking CC...' %xtal)
+#            eventMAP = self.find_matching_event_map(xtal,ligID)
+#        else:
+#            self.Logfile.insert('%s: found matching event map!' %xtal)
+#        return eventMAP
 
-    def find_matching_event_map(self,xtal,ligID):
-        os.chdir(os.path.join(self.projectDir, xtal))
-        eventMAP = []
-        self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
-        if os.path.isfile('no_pandda_analysis_performed'):
-            self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
-            return
-        ligCC = []
-        for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
-            self.get_lig_cc(xtal, mtz, ligID+'.pdb')
-            cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
-            self.Logfile.insert('%s: %s -> CC = %s for %s' %(xtal,ligID,cc,mtz))
-            try:
-                ligCC.append([mtz,float(cc)])
-            except ValueError:
-                ligCC.append([mtz, 0.00])
-        try:
-            highestCC = max(ligCC, key=lambda x: x[0])[1]
-        except ValueError:
-            self.Logfile.error('%s: event maps are not yet converted to mtz files...' %xtal)
-            return
-        if highestCC == 0.00 or ligCC is []:
-            self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,ligID))
-        else:
-            self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,ligID,highestCC,mtz[mtz.rfind('/')+1:]))
-            eventMAP = mtz[mtz.rfind('/')+1:].replace('.P1.mtz','.ccp4')
+#    def find_matching_event_map(self,xtal,ligID):
+#        os.chdir(os.path.join(self.projectDir, xtal))
+#        eventMAP = []
+#        self.Logfile.insert('%s: trying to find fitting event maps for modelled ligands' %xtal)
+#        if os.path.isfile('no_pandda_analysis_performed'):
+#            self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
+#            return
+#        ligCC = []
+#        for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
+#            self.get_lig_cc(xtal, mtz, ligID+'.pdb')
+#            cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
+#            self.Logfile.insert('%s: %s -> CC = %s for %s' %(xtal,ligID,cc,mtz))
+#            try:
+#                ligCC.append([mtz,float(cc)])
+#            except ValueError:
+#                ligCC.append([mtz, 0.00])
+#        try:
+#            highestCC = max(ligCC, key=lambda x: x[0])[1]
+#        except ValueError:
+#            self.Logfile.error('%s: event maps are not yet converted to mtz files...' %xtal)
+#            return
+#        if highestCC == 0.00 or ligCC is []:
+#            self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,ligID))
+#        else:
+#            self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,ligID,highestCC,mtz[mtz.rfind('/')+1:]))
+#            eventMAP = mtz[mtz.rfind('/')+1:].replace('.P1.mtz','.ccp4')
 #            if not os.path.isfile(eventMAP):
 #                eventMAP = []
 #            else:
 #                self.cut_eventMAP(xtal,ligID,eventMAP)
-        return eventMAP
+#        return eventMAP
 
-    def cut_and_copy_map(self,xtal,pdbCentre,mapin,mapout,F,PHI):
-        os.chdir(os.path.join(self.projectDir, xtal))
-        self.Logfile.insert('%s: cutting density of %s around %s' %(xtal,mapin.replace('.ccp4','.P1.ccp4'),pdbCentre))
-        if os.path.isfile(mapout):
-            self.Logfile.warning('%s: removing map -> %s' %(xtal,mapout))
-            os.system('/bin/rm '+mapout)
-#        else:
-
-        if mapin.endswith('.map') or mapin.endswith('.ccp4'):
-            cmd = (
-                'mapmask mapin %s mapout %s xyzin %s << eof\n'  %(mapin.replace('.ccp4','.P1.ccp4'),mapout,pdbCentre) +
-                ' border 12\n'
-                ' end\n'
-                'eof'
-            )
+#    def cut_and_copy_map(self,xtal,pdbCentre,mapin,mapout,F,PHI):
+#        os.chdir(os.path.join(self.projectDir, xtal))
+#        self.Logfile.insert('%s: cutting density of %s around %s' %(xtal,mapin.replace('.ccp4','.P1.ccp4'),pdbCentre))
+#        if os.path.isfile(mapout):
+#            self.Logfile.warning('%s: removing map -> %s' %(xtal,mapout))
+#            os.system('/bin/rm '+mapout)
+##        else:
+#
+#        if mapin.endswith('.map') or mapin.endswith('.ccp4'):
+#            cmd = (
+#                'mapmask mapin %s mapout %s xyzin %s << eof\n'  %(mapin.replace('.ccp4','.P1.ccp4'),mapout,pdbCentre) +
+#                ' border 12\n'
+#                ' end\n'
+#                'eof'
+#            )
 
 #            cmd = (
 #                'cmapcut -mapin %s -pdbin %s -mapout %s' %(mtzin,pdbCentre,mapout)
@@ -353,14 +373,14 @@ class export_to_html:
 #            cmd = (
 #                "phenix.cut_out_density %s %s map_coeff_labels='%s,%s' cutout_model_radius=6 cutout_map_file_name=%s cutout_as_map=True" %(pdbCentre,mtzin,F,PHI,mapout)
 #            )
-            self.Logfile.insert(xtal+': running command:\n'+cmd)
-            os.system(cmd)
-            if os.path.isfile(mapout):
-                self.Logfile.insert(xtal+': reduced event map successfully created')
-                self.Logfile.insert('%s: copying %s to %s/files' % (xtal, mapout, self.htmlDir))
-                os.system('/bin/cp %s %s/files' % (mapout, self.htmlDir))
-            else:
-                self.Logfile.error(xtal+': creation of event map failed')
+#            self.Logfile.insert(xtal+': running command:\n'+cmd)
+#            os.system(cmd)
+#            if os.path.isfile(mapout):
+#                self.Logfile.insert(xtal+': reduced event map successfully created')
+#                self.Logfile.insert('%s: copying %s to %s/files' % (xtal, mapout, self.htmlDir))
+#                os.system('/bin/cp %s %s/files' % (mapout, self.htmlDir))
+#            else:
+#                self.Logfile.error(xtal+': creation of event map failed')
 
 
 
@@ -382,29 +402,29 @@ class export_to_html:
 #        self.Logfile.insert('%s: copying event map for %s' %(xtal,ligID))
 #        os.system('/bin/mv %s/%s_%s.ccp4 .' %(os.path.join(self.projectDir,xtal),xtal,ligID))
 
-    def get_lig_cc(self, xtal, mtz, lig):
-        ligID = lig.replace('.pdb','')
-        ccLog = mtz.replace('.mtz', '_CC'+ligID+'.log')
-        self.Logfile.insert('%s: calculating CC for %s in %s' %(xtal,lig,mtz))
-#        if os.path.isfile(mtz.replace('.mtz', '_CC'+ligID+'.log')):
-        if os.path.isfile(ccLog) and os.path.getsize(ccLog) != 0:
-            self.Logfile.warning('logfile of CC analysis exists; skipping...')
-            return
-#        cmd = ( 'module load phenix\n'
-#                'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC'+ligID+'.log')) )
-        os.system('/bin/rm %s' %mtz.replace('.mtz', '_CC'+ligID+'.log') )
-        cmd = ( 'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC'+ligID+'.log')) )
-        os.system(cmd)
+#    def get_lig_cc(self, xtal, mtz, lig):
+#        ligID = lig.replace('.pdb','')
+#        ccLog = mtz.replace('.mtz', '_CC'+ligID+'.log')
+#        self.Logfile.insert('%s: calculating CC for %s in %s' %(xtal,lig,mtz))
+##        if os.path.isfile(mtz.replace('.mtz', '_CC'+ligID+'.log')):
+#        if os.path.isfile(ccLog) and os.path.getsize(ccLog) != 0:
+#            self.Logfile.warning('logfile of CC analysis exists; skipping...')
+#            return
+##        cmd = ( 'module load phenix\n'
+##                'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC'+ligID+'.log')) )
+#        os.system('/bin/rm %s' %mtz.replace('.mtz', '_CC'+ligID+'.log') )
+#        cmd = ( 'phenix.get_cc_mtz_pdb %s %s > %s' % (mtz, lig, mtz.replace('.mtz', '_CC'+ligID+'.log')) )
+#        os.system(cmd)
 
-    def check_lig_cc(self,log):
-        cc = 'n/a'
-        if os.path.isfile(log):
-            for line in open(log):
-                if line.startswith('local'):
-                    cc = line.split()[len(line.split()) - 1]
-        else:
-            self.Logfile.error('logfile does not exist: %s' %log)
-        return cc
+#    def check_lig_cc(self,log):
+#        cc = 'n/a'
+#        if os.path.isfile(log):
+#            for line in open(log):
+#                if line.startswith('local'):
+#                    cc = line.split()[len(line.split()) - 1]
+#        else:
+#            self.Logfile.error('logfile does not exist: %s' %log)
+#        return cc
 
     def write_html_file(self,html):
         os.chdir(self.htmlDir)
