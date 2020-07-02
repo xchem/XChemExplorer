@@ -183,8 +183,9 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             try:
                 timestamp_db=str(db_query[0][0])
             except IndexError:
-                self.Logfile.error('%s: database query gave no results for DatePanDDAModelCreated; skipping...' %xtal)
-                continue
+                self.Logfile.warning('%s: database query gave no results for DatePanDDAModelCreated; skipping...' %xtal)
+                self.Logfile.warning('%s: this might be a brand new model; will continue with export!' %xtal)
+#                samples_to_export[xtal]=fileModelsDict[xtal]
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
                 if difference.seconds != 0:
