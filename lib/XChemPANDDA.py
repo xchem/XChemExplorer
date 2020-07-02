@@ -111,6 +111,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.refine_exported_model(xtal)
 
             # update database
+            # DatePanDDAModelCreated
 
             # copy files
 
@@ -183,8 +184,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
                 if difference.seconds != 0:
-                    self.Logfile.insert('exporting '+sample+' -> was already refined, but newer PanDDA model available')
-                    samples_to_export[sample]=fileModelsDict[sample]
+                    self.Logfile.insert('exporting '+xtal+' -> was already refined, but newer PanDDA model available')
+                    samples_to_export[xtal]=fileModelsDict[xtal]
+                else:
+                    self.Logfile.insert('%s: model has not changes since it was created on %s' %(xtal,timestamp_db))
             except (ValueError, IndexError), e:
                 self.Logfile.error(str(e))
 
