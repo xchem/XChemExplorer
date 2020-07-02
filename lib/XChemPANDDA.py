@@ -176,11 +176,15 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_new_models(self,modelsDict):
         self.Logfile.hint('XCE will never export/ refine models that are "5-deposition ready" or "6-deposited"')
         self.Logfile.hint('Please change the RefinementOutcome flag in the Refinement table if you wish to re-export them')
+        self.Logfile.insert('checking timestamps of models in database...')
         for xtal in modelsDict:
             timestamp_file = modelsDict[xtal]
             db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is '"+xtal+"' and (RefinementOutcome like '3%' or RefinementOutcome like '4%')")
-            print str(db_query)
-            timestamp_db=str(db_query[0][0])
+            try:
+                timestamp_db=str(db_query[0][0])
+            except IndexError:
+                self.Logfile.error('%s: database query gave no results for DatePanDDAModelCreated; skipping...')
+                continue
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
                 if difference.seconds != 0:
