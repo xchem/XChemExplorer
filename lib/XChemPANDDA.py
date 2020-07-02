@@ -183,7 +183,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             try:
                 timestamp_db=str(db_query[0][0])
             except IndexError:
-                self.Logfile.error('%s: database query gave no results for DatePanDDAModelCreated; skipping...')
+                self.Logfile.error('%s: database query gave no results for DatePanDDAModelCreated; skipping...' %xtal)
                 continue
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
