@@ -178,6 +178,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         for xtal in modelsDict:
             timestamp_file = modelsDict[xtal]
             db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is '"+xtal+"' and (RefinementOutcome like '3%' or RefinementOutcome like '4%')")
+            print str(db_query)
             timestamp_db=str(db_query[0][0])
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
