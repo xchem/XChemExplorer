@@ -65,8 +65,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         modelsDict = self.find_modeled_structures_and_timestamps()
 
         # if only NEW models shall be exported, check timestamps
-#        if self.which_models != 'all':
-#            modelsDict = self.find_new_models(modelsDict)
+        if self.which_models != 'all':
+            modelsDict = self.find_new_models(modelsDict)
 
         # find pandda_inspect_events.csv and read in as pandas dataframe
         inspect_csv = None
@@ -108,7 +108,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
 #            break
 
-
+            self.refine_exported_model(xtal)
 
             # update database
 
@@ -173,9 +173,11 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         return modelsDict
 
     def find_new_models(self,modelsDict):
+        self.Logfile.hint('XCE will never export/ refine models that are "5-deposition ready" or "6-deposited"')
+        self.Logfile.hint('Please change the RefinementOutcome flag in the Refinement table if you wish to re-export them')
         for xtal in modelsDict:
             timestamp_file = modelsDict[xtal]
-            db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is '"+xtal+"' and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')")
+            db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is '"+xtal+"' and (RefinementOutcome like '3%' or RefinementOutcome like '4%')")
             timestamp_db=str(db_query[0][0])
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
@@ -203,17 +205,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_ligands_matching_event_map(self,inspect_csv,xtal,ligandDict):
         emapLigandDict = {}
         for index, row in inspect_csv.iterrows():
-#            self.Logfile.insert(row['dtag']+' '+str(row['Unnamed: 0'])+' '+str(row['event_idx']))
             if row['dtag'] == xtal:
-#                self.Logfile.insert('>>>>>>>> found')
-#                site = str(row['site_idx'])
-#                site = str(row['Unnamed: 0'])
-#                event = str(row['event_idx'])
                 for emap in glob.glob('*-BDC_*.ccp4'):
-#                    site_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[0]
-#                    event_emap = emap[emap.find('event')+6:emap.find('BDC')-1].split('_')[1]
-#                    self.Logfile.insert(emap+ ' site: '+site+' esite: '+site_emap+' event: '+event+' eevent: '+event_emap)
-#                    if site == site_emap and event == event_emap:
                     self.Logfile.insert('checking if event and ligand are within 7A of each other')
                     x = float(row['x'])
                     y = float(row['y'])
@@ -244,9 +237,40 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 break
         return matching_ligand
 
-# mArh-x0969-event_1_1-BDC_0.67_map.ccp4
-# site = x[x.find('event')+6:x.find('BDC')-1].split('_')[0]
-# event = x[x.find('event')+6:x.find('BDC')-1].split('_')[1]
+
+
+
+    def refine_exported_model(self,xtal):
+        self.Logfile.insert('trying to refine ' + xtal + '...')
+        self.Logfile.insert('%s: getting compound code from database' %xtal)
+        query=self.db.execute_statement("select CompoundCode from mainTable where CrystalName='%s';" %xtal)
+        compoundID=str(query[0][0])
+        self.Logfile.insert('%s: compounds code = %s' %(xtal,compoundID))
+        if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'.free.mtz')):
+            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'-pandda-model.pdb')):
+                self.Logfile.insert('running inital refinement on PANDDA model of '+xtal)
+                Serial=XChemRefine.GetSerial(self.initial_model_directory,xtal)
+                if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'cootOut')):
+                    os.mkdir(os.path.join(self.initial_model_directory,xtal,'cootOut'))
+                # create folder for new refinement cycle
+                if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial))):
+                    os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                else:
+                    os.mkdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                    os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                os.system('/bin/cp %s in.pdb' %os.path.join(self.initial_model_directory,xtal,xtal+'-pandda-model.pdb'))
+                Refine=XChemRefine.Refine(self.initial_model_directory,xtal,compoundID,self.datasource)
+                Refine.RunBuster(str(Serial),self.external_software,self.xce_logfile,None)
+            else:
+                self.Logfile.error('%s: cannot find %s-pandda-model.pdb; cannot start refinement...' %(xtal,xtal))
+
+        else:
+            self.Logfile.error('%s: cannot start refinement because %s.free.mtz is missing in %s' % (
+            xtal, xtal, os.path.join(self.initial_model_directory, xtal)))
+
+
+
+
 
 
 
