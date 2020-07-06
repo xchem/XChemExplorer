@@ -50,6 +50,7 @@ class export_to_html:
             os.chdir(os.path.join(self.projectDir,xtal))
             ligandDict = XChemUtils.pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
             for ligand in ligandDict:
+                self.Logfile.insert(xtal + ': ' + ligand)
                 os.chdir(os.path.join(self.projectDir,xtal))
 #            for ligand in self.ligands_in_pdbFile(xtal):
                 ligName = ligand.split('-')[0]
@@ -105,6 +106,8 @@ class export_to_html:
                     os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
                     DELFWTmap = xtal + '_' + ligand + '_fofc.ccp4'
                     self.copy_electron_density(xtal,ligand,eventMap)
+                    if xtal == 'mArh-x0128':
+                        quit()
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
                     self.Logfile.warning('%s: ligand confidence of %s-%s-%s is %s; ignoring...' %(xtal,ligChain,ligNumber,ligName,ligConfidence))

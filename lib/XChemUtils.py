@@ -2711,7 +2711,7 @@ class maptools(object):
             'EOF\n'
         )
         os.system(cmd)
-#        print(cmd)
+        print(cmd)
 
     def cut_map_around_ligand(self,map,ligPDB,border):
         cmd = (
@@ -2721,7 +2721,7 @@ class maptools(object):
             'eof'
             )
         os.system(cmd)
-#        print(cmd)
+        print(cmd)
 
 #        self.translate_spg_to_number_dict = {
 #            'p1': 1, 'p2': 3, 'p121': 4, 'c2': 5, 'c121': 5, 'p222': 16,
