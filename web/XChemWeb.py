@@ -63,12 +63,12 @@ class export_to_html:
 #                else:
 #                    self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
                 eventMap = ''
-                self.Logfile.insert(xtal + ': looking for' + xtal + '_' + ligand + '_event.ccp4')
+#                self.Logfile.insert(xtal + ': looking for' + xtal + '_' + ligand + '_event.ccp4')
                 if os.path.isfile(xtal + '_' + ligand + '_event.ccp4'):
                     eventMap = xtal + '_' + ligand + '_event.ccp4'
-                    self.Logfile.insert(xtal + ': found ' + eventMap)
-                else:
-                    self.Logfile.error(xtal + ': cannot find' + xtal + '_' + ligand + '_event.ccp4')
+#                    self.Logfile.insert(xtal + ': found ' + eventMap)
+#                else:
+#                    self.Logfile.error(xtal + ': cannot find' + xtal + '_' + ligand + '_event.ccp4')
 #                x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
                 x = ligandDict[ligand][0]
                 y = ligandDict[ligand][1]
