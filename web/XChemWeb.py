@@ -106,7 +106,7 @@ class export_to_html:
                     os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
                     DELFWTmap = xtal + '_' + ligand + '_fofc.ccp4'
                     self.copy_electron_density(xtal,ligand,eventMap)
-                    if xtal == 'mArh-x0128':
+                    if xtal == 'mArh-x0228':
                         quit()
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
