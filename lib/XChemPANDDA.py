@@ -126,8 +126,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
         os.chdir(os.path.join(self.project_directory,xtal))
         XChemUtils.pdbtools_gemmi(xtal + '-pandda-model.pdb').save_ligands_to_pdb('LIG')
-        for m in emapLigandDict:
-            ligID = emapLigandDict[m]
+        for ligID in emapLigandDict:
             emtz = m.replace('.ccp4','_' + ligID + '.mtz')
             emap = m.replace('.ccp4','_' + ligID + '.ccp4')
             XChemUtils.maptools().calculate_map(emtz,'FWT','PHWT')
@@ -205,8 +204,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         for emap in glob.glob('*-BDC_*.ccp4'):
             emtz = emap.replace('.ccp4','.mtz')
             emtz_ligand = emtz
-            if emap in emapLigandDict:
-                emtz_ligand = emap.replace('.ccp4','_' + emapLigandDict[emap] + '.mtz')
+            for lig in emapLigandDict:
+                if emapLigandDict[lig] == emap:
+                    emtz_ligand = emap.replace('.ccp4','_' + lig + '.mtz')
+                    break
             self.Logfile.insert('trying to convert %s to SF' %emap)
             self.Logfile.insert('>>> ' + emtz)
             XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
@@ -227,7 +228,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     z = float(row['z'])
                     matching_ligand = self.calculate_distance_to_ligands(ligandDict,x,y,z)
                     if matching_ligand is not None:
-                        emapLigandDict[emap] = matching_ligand
+                        emapLigandDict[matching_ligand] = emap
                         self.Logfile.insert('found matching ligand (%s) for %s' %(matching_ligand,emap))
                         #break
                     else:
