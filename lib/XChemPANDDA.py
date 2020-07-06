@@ -176,6 +176,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         return modelsDict
 
     def find_new_models(self,modelsDict):
+        samples_to_export = {}
         self.Logfile.hint('XCE will never export/ refine models that are "5-deposition ready" or "6-deposited"')
         self.Logfile.hint('Please change the RefinementOutcome flag in the Refinement table if you wish to re-export them')
         self.Logfile.insert('checking timestamps of models in database...')
@@ -187,17 +188,18 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             except IndexError:
                 self.Logfile.warning('%s: database query gave no results for DatePanDDAModelCreated; skipping...' %xtal)
                 self.Logfile.warning('%s: this might be a brand new model; will continue with export!' %xtal)
-#                samples_to_export[xtal]=fileModelsDict[xtal]
+                samples_to_export[xtal]=timestamp_file
                 timestamp_db = "2100-01-01 00:00:00"    # some time in the future...
             try:
                 difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
                 if difference.seconds != 0:
                     self.Logfile.insert('exporting '+xtal+' -> was already refined, but newer PanDDA model available')
-                    samples_to_export[xtal]=fileModelsDict[xtal]
+                    samples_to_export[xtal]=timestamp_file
                 else:
-                    self.Logfile.insert('%s: model has not changes since it was created on %s' %(xtal,timestamp_db))
+                    self.Logfile.insert('%s: model has not changed since it was created on %s' %(xtal,timestamp_db))
             except (ValueError, IndexError), e:
                 self.Logfile.error(str(e))
+        return  samples_to_export
 
     def event_map_to_sf(self,resolution,emapLigandDict):
         for emap in glob.glob('*-BDC_*.ccp4'):
