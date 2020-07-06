@@ -50,6 +50,7 @@ class export_to_html:
             os.chdir(os.path.join(self.projectDir,xtal))
             ligandDict = XChemUtils.pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
             for ligand in ligandDict:
+                os.chdir(os.path.join(self.projectDir,xtal))
 #            for ligand in self.ligands_in_pdbFile(xtal):
                 ligName = ligand.split('-')[0]
                 ligChain = ligand.split('-')[1]
@@ -62,8 +63,12 @@ class export_to_html:
 #                else:
 #                    self.Logfile.error('%s: value of event map -> %s' %(xtal,eventMap))
                 eventMap = ''
+                self.Logfile.insert(xtal + ': looking for' + xtal + '_' + ligand + '_event.ccp4')
                 if os.path.isfile(xtal + '_' + ligand + '_event.ccp4'):
                     eventMap = xtal + '_' + ligand + '_event.ccp4'
+                    self.Logfile.insert(xtal + ': found ' + eventMap)
+                else:
+                    self.Logfile.error(xtal + ': cannot find' + xtal + '_' + ligand + '_event.ccp4')
 #                x,y,z = self.pdb.get_centre_of_gravity_of_residue(ligand)
                 x = ligandDict[ligand][0]
                 y = ligandDict[ligand][1]
@@ -247,7 +252,7 @@ class export_to_html:
         else:
             self.Logfile.error('%s: cannot find %s' %(xtal,emap))
 
-        self.Logfile.insert('%s: looking for %s...' %(xtal,os.path.join(self.projectDir,xtal,eventMap)))
+        self.Logfile.insert('%s: looking for %s' %(xtal,os.path.join(self.projectDir,xtal,eventMap)))
         if os.path.isfile(os.path.join(self.projectDir,xtal,eventMap)):
             self.Logfile.insert('%s: copying %s to html directory' %(xtal,eventMap))
             os.system('/bin/cp %s/%s %s' %(os.path.join(self.projectDir,xtal),eventMap,eventMap))
