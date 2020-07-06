@@ -127,6 +127,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         os.chdir(os.path.join(self.project_directory,xtal))
         XChemUtils.pdbtools_gemmi(xtal + '-pandda-model.pdb').save_ligands_to_pdb('LIG')
         for ligID in emapLigandDict:
+            m = emapLigandDict[ligID]
             emtz = m.replace('.ccp4','_' + ligID + '.mtz')
             emap = m.replace('.ccp4','_' + ligID + '.ccp4')
             XChemUtils.maptools().calculate_map(emtz,'FWT','PHWT')
