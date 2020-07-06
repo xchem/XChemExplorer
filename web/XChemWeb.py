@@ -247,6 +247,7 @@ class export_to_html:
         else:
             self.Logfile.error('%s: cannot find %s' %(xtal,emap))
 
+        self.Logfile.insert('%s: looking for %s...' %(xtal,os.path.join(self.projectDir,xtal,eventMap)))
         if os.path.isfile(os.path.join(self.projectDir,xtal,eventMap)):
             self.Logfile.insert('%s: copying %s to html directory' %(xtal,eventMap))
             os.system('/bin/cp %s/%s %s' %(os.path.join(self.projectDir,xtal),eventMap,eventMap))
