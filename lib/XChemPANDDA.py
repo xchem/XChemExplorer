@@ -229,7 +229,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     if matching_ligand is not None:
                         emapLigandDict[emap] = matching_ligand
                         self.Logfile.insert('found matching ligand (%s) for %s' %(matching_ligand,emap))
-                        break
+                        #break
                     else:
                         self.Logfile.warning('current ligand not close to event...')
         if emapLigandDict == {}:
