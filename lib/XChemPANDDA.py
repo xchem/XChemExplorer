@@ -91,24 +91,26 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.show_ligands_in_model(xtal,ligandDict)
             emapLigandDict = self.find_ligands_matching_event_map(inspect_csv,xtal,ligandDict)
 
+            self.Logfile.warning('emapLigandDict' + str(emapLigandDict))
+
             # convert event map to SF
-            self.event_map_to_sf(pdb.resolution,emapLigandDict)
+#            self.event_map_to_sf(pdb.resolution,emapLigandDict)
 
             # move existing event maps in project directory to old folder
-            self.move_old_event_to_backup_folder(xtal)
+#            self.move_old_event_to_backup_folder(xtal)
 
             # copy event MTZ to project directory
-            self.copy_event_mtz_to_project_directory(xtal)
+#            self.copy_event_mtz_to_project_directory(xtal)
 
             # copy pandda-model to project directory
 #            self.copy_pandda_model_to_project_directory(xtal)
 
             # make map from MTZ and cut around ligand
-            self.make_and_cut_map(xtal,emapLigandDict)
+#            self.make_and_cut_map(xtal,emapLigandDict)
 
 #            break
 
-            self.refine_exported_model(xtal)
+#            self.refine_exported_model(xtal)
 
             # update database
             # DatePanDDAModelCreated
