@@ -49,6 +49,8 @@ class export_to_html:
             self.copy_ligand_files(xtal)
             os.chdir(os.path.join(self.projectDir,xtal))
             ligandDict = XChemUtils.pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
+            self.Logfile.insert(xtal + ': saving ligand(s) of type LIG in refine.pdb as PDB files...')
+            XChemUtils.pdbtools_gemmi('refine.pdb').save_ligands_to_pdb('LIG')
             for ligand in ligandDict:
                 self.Logfile.insert(xtal + ': current ligand -> ' + ligand)
                 os.chdir(os.path.join(self.projectDir,xtal))
