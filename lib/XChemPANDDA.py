@@ -205,14 +205,11 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         return  samples_to_export
 
     def event_map_to_sf(self,resolution,emapLigandDict):
-        for emap in glob.glob('*-BDC_*.ccp4'):
+        for lig in emapLigandDict:
+            emap = emapLigandDict[lig]
             emtz = emap.replace('.ccp4','.mtz')
-            emtz_ligand = emtz
-            for lig in emapLigandDict:
-                if emapLigandDict[lig] == emap:
-                    emtz_ligand = emap.replace('.ccp4','_' + lig + '.mtz')
-                    break
-            self.Logfile.insert('trying to convert %s to SF' %emap)
+            emtz_ligand = emap.replace('.ccp4','_' + lig + '.mtz')
+            self.Logfile.insert('trying to convert %s to SF -> %s' %(emap,emtz_ligand))
             self.Logfile.insert('>>> ' + emtz)
             XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
             if os.path.isfile(emtz):
