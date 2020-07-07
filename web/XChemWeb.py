@@ -50,7 +50,7 @@ class export_to_html:
             os.chdir(os.path.join(self.projectDir,xtal))
             ligandDict = XChemUtils.pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
             for ligand in ligandDict:
-                self.Logfile.insert(xtal + ': ' + ligand)
+                self.Logfile.insert(xtal + ': current ligand -> ' + ligand)
                 os.chdir(os.path.join(self.projectDir,xtal))
 #            for ligand in self.ligands_in_pdbFile(xtal):
                 ligName = ligand.split('-')[0]
@@ -96,20 +96,7 @@ class export_to_html:
 #                self.cut_and_copy_map(xtal, ligand + '.pdb', 'fofc.map', DELFWT,'DELFWT','PHDELWT')
                 if os.path.isfile('refine.mtz'):
                     self.Logfile.insert('%s: found refine.mtz' %xtal)
-                    FWT, PHWT, DELFWT, PHDELWT = XChemUtils.mtztools_gemmi('refine.mtz').get_map_labels()
-                    self.Logfile.insert(xtal + ': calculating 2fofc map...')
-                    XChemUtils.maptools().calculate_map('refine.mtz',FWT,PHWT)
-                    if os.path.isfile('refine.ccp4'):
-                        self.Logfile.insert(xtal + ': 2fofc map successfully calculated')
-                    else:
-                        self.Logfile.error(xtal + ': 2fofc map could not be calculated')
-                    XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
-                    os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
-                    FWTmap = xtal + '_' + ligand + '_2fofc.ccp4'
-                    XChemUtils.maptools().calculate_map('refine.mtz',DELFWT,PHDELWT)
-                    XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
-                    os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
-                    DELFWTmap = xtal + '_' + ligand + '_fofc.ccp4'
+                    FWTmap, DELFWTmap = self.prepare_e_density_maps(xtal,ligand)
                     self.copy_electron_density(xtal,ligand,eventMap)
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
@@ -133,6 +120,30 @@ class export_to_html:
 #        html = XChemMain.html_download_all_section(html,self.protein_name)
         self.write_html_file(html)
         self.Logfile.insert('======== finished preparing HTML summary ========')
+
+
+    def prepare_e_density_maps(self,xtal,ligand):
+        FWT, PHWT, DELFWT, PHDELWT = XChemUtils.mtztools_gemmi('refine.mtz').get_map_labels()
+        self.Logfile.insert(xtal + ': calculating 2fofc map...')
+        XChemUtils.maptools().calculate_map('refine.mtz',FWT,PHWT)
+        if os.path.isfile('refine.ccp4'):
+            self.Logfile.insert(xtal + ': 2fofc map successfully calculated')
+        else:
+            self.Logfile.error(xtal + ': 2fofc map could not be calculated')
+        self.Logfile.insert(xtal + ': cutting 2fofc map 7A around ' + ligand)
+        XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
+        if os.path.isfile('refine_mapmask.ccp4'):
+            self.Logfile.insert(xtal + ': 2fofc map around ' + ligand + ' successfully created')
+        else:
+            self.Logfile.error(xtal + ': 2fofc map around ' + ligand + ' could not be created')
+        os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
+        FWTmap = xtal + '_' + ligand + '_2fofc.ccp4'
+        self.Logfile.insert(xtal + ': current 2fofc map -> ' + xtal + '_' + ligand + '_2fofc.ccp4')
+        XChemUtils.maptools().calculate_map('refine.mtz',DELFWT,PHDELWT)
+        XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
+        os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
+        DELFWTmap = xtal + '_' + ligand + '_fofc.ccp4'
+        return FWTmap, DELFWTmap
 
 
     def prepare_zip_archives(self):
