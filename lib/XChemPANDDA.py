@@ -82,9 +82,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
         for xtal in sorted(modelsDict):
 
-            if xtal != 'mArh-x0962':
-                continue
-
             os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
             pandda_model = os.path.join('modelled_structures',xtal + '-pandda-model.pdb')
             pdb = gemmi.read_structure(pandda_model)
@@ -97,19 +94,19 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             self.Logfile.warning('emapLigandDict' + str(emapLigandDict))
 
             # convert event map to SF
-            self.event_map_to_sf(pdb.resolution,emapLigandDict)
+#            self.event_map_to_sf(pdb.resolution,emapLigandDict)
 
             # move existing event maps in project directory to old folder
-            self.move_old_event_to_backup_folder(xtal)
+#            self.move_old_event_to_backup_folder(xtal)
 
             # copy event MTZ to project directory
-            self.copy_event_mtz_to_project_directory(xtal)
+#            self.copy_event_mtz_to_project_directory(xtal)
 
             # copy pandda-model to project directory
 #            self.copy_pandda_model_to_project_directory(xtal)
 
             # make map from MTZ and cut around ligand
-            self.make_and_cut_map(xtal,emapLigandDict)
+#            self.make_and_cut_map(xtal,emapLigandDict)
 
 #            break
 
