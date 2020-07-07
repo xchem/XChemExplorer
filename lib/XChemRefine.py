@@ -499,6 +499,8 @@ class Refine(object):
             DELFWT = 'FOFCWT'
             PHDELWT = 'PHFOFCWT'
         cmd += (
+            'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
+            '\n'
             'fft hklin refine.mtz mapout 2fofc_asu.map << EOF\n'
             'labin F1=%s PHI=%s\n' %(FWT,PHWT) +
             'EOF\n'
@@ -602,9 +604,9 @@ class Refine(object):
 
         cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water)
 
-        cmd = self.run_giant_score_model(cmd,Serial)
-
         cmd = self.add_validation(cmd,Serial,'buster')
+
+        cmd = self.run_giant_score_model(cmd,Serial)
 
         cmd = self.calculate_maps(cmd,'buster')
 
