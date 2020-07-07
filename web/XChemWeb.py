@@ -97,7 +97,12 @@ class export_to_html:
                 if os.path.isfile('refine.mtz'):
                     self.Logfile.insert('%s: found refine.mtz' %xtal)
                     FWT, PHWT, DELFWT, PHDELWT = XChemUtils.mtztools_gemmi('refine.mtz').get_map_labels()
+                    self.Logfile.insert(xtal + ': calculating 2fofc map...')
                     XChemUtils.maptools().calculate_map('refine.mtz',FWT,PHWT)
+                    if os.path.isfile('refine.ccp4'):
+                        self.Logfile.insert(xtal + ': 2fofc map successfully calculated')
+                    else:
+                        self.Logfile.error(xtal + ': 2fofc map could not be calculated')
                     XChemUtils.maptools().cut_map_around_ligand('refine.ccp4',ligand+'.pdb','7')
                     os.system('/bin/mv %s %s_%s_2fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
                     FWTmap = xtal + '_' + ligand + '_2fofc.ccp4'
@@ -106,8 +111,6 @@ class export_to_html:
                     os.system('/bin/mv %s %s_%s_fofc.ccp4' %('refine_mapmask.ccp4',xtal,ligand))
                     DELFWTmap = xtal + '_' + ligand + '_fofc.ccp4'
                     self.copy_electron_density(xtal,ligand,eventMap)
-                    if xtal == 'mArh-x0228':
-                        quit()
                 ligConfidence = self.db.get_ligand_confidence_for_ligand(xtal, ligChain, ligNumber, ligName)
                 if ligConfidence.startswith('0'):
                     self.Logfile.warning('%s: ligand confidence of %s-%s-%s is %s; ignoring...' %(xtal,ligChain,ligNumber,ligName,ligConfidence))
