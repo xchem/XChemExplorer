@@ -82,7 +82,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
         for xtal in sorted(modelsDict):
 
-            if xtal != 'mArh-x0933':
+            if xtal != 'mArh-x0962':
                 continue
 
             os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
