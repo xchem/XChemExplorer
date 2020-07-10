@@ -280,7 +280,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     os.chdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
                 os.system('/bin/cp %s in.pdb' %os.path.join(self.project_directory,xtal,xtal+'-pandda-model.pdb'))
                 Refine=XChemRefine.Refine(self.project_directory,xtal,compoundID,self.datasource)
-                Refine.RunBuster(str(Serial),self.external_software,self.xce_logfile,None)
+                Refine.RunBuster(str(Serial),None,self.external_software,self.xce_logfile,None)
             else:
                 self.Logfile.error('%s: cannot find %s-pandda-model.pdb; cannot start refinement...' %(xtal,xtal))
 

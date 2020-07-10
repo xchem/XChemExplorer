@@ -560,15 +560,19 @@ class Refine(object):
 
     def RunBuster(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
-        if 'ANIS' in RefmacParams['BREF']:
+        if RefmacParams == None:
             anisotropic_Bfactor = ' -M ADP '
-        else:
-            anisotropic_Bfactor = ' -M TLSbasic '
-
-        if 'WATER' in RefmacParams['WATER']:
-            update_water = ' -WAT '
-        else:
             update_water = ''
+        else:
+            if 'ANIS' in RefmacParams['BREF']:
+                anisotropic_Bfactor = ' -M ADP '
+            else:
+                anisotropic_Bfactor = ' -M TLSbasic '
+
+            if 'WATER' in RefmacParams['WATER']:
+                update_water = ' -WAT '
+            else:
+                update_water = ''
 
         self.error = False
 
