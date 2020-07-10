@@ -108,19 +108,22 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             # make map from MTZ and cut around ligand
 #            self.make_and_cut_map(xtal,emapLigandDict)
 
-#            break
-
-#            self.refine_exported_model(xtal)
-
             # update database
-            # DatePanDDAModelCreated
-
-            # copy files
+#            self.update_database(xtal,modelsDict)
 
             # refine models
+#            self.refine_exported_model(xtal)
 
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+    def update_database(self,xtal,modelsDict):
+        timestamp_file = modelsDict[xtal]
+        db_dict= {'DatePanDDAModelCreated': timestamp_file}
+        self.Logfile.insert('updating database for '+xtal+' setting time model was created to '+db_dict['DatePanDDAModelCreated'])
+        self.db.update_data_source(sample,db_dict)
+
+
 
     def make_and_cut_map(self,xtal,emapLigandDict):
         self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
