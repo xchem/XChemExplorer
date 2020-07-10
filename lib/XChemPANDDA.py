@@ -125,7 +125,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         db_dict['DatePanDDAModelCreated'] = timestamp_file
         db_dict['RefinementOutcome'] = '4 - CompChem ready'
         self.Logfile.insert('updating database for '+xtal+' setting time model was created to '+db_dict['DatePanDDAModelCreated'])
-        self.db.update_data_source(sample,db_dict)
+        self.db.update_data_source(xtal,db_dict)
 
 
 
