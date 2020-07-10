@@ -46,6 +46,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.datasource = datasource
         self.db = XChemDB.data_source(self.datasource)
         self.Logfile = XChemLog.updateLog(xce_logfile)
+        self.xce_logfile = xce_logfile
         self.project_directory = project_directory
         self.which_models=which_models
         self.external_software=XChemUtils.external_software(xce_logfile).check()
