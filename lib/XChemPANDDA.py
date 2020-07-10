@@ -266,27 +266,27 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         query=self.db.execute_statement("select CompoundCode from mainTable where CrystalName='%s';" %xtal)
         compoundID=str(query[0][0])
         self.Logfile.insert('%s: compounds code = %s' %(xtal,compoundID))
-        if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'.free.mtz')):
-            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,xtal+'-pandda-model.pdb')):
+        if os.path.isfile(os.path.join(self.project_directory,xtal,xtal+'.free.mtz')):
+            if os.path.isfile(os.path.join(self.project_directory,xtal,xtal+'-pandda-model.pdb')):
                 self.Logfile.insert('running inital refinement on PANDDA model of '+xtal)
-                Serial=XChemRefine.GetSerial(self.initial_model_directory,xtal)
-                if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'cootOut')):
-                    os.mkdir(os.path.join(self.initial_model_directory,xtal,'cootOut'))
+                Serial=XChemRefine.GetSerial(self.project_directory,xtal)
+                if not os.path.isdir(os.path.join(self.project_directory,xtal,'cootOut')):
+                    os.mkdir(os.path.join(self.project_directory,xtal,'cootOut'))
                 # create folder for new refinement cycle
-                if os.path.isdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial))):
-                    os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                if os.path.isdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial))):
+                    os.chdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
                 else:
-                    os.mkdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
-                    os.chdir(os.path.join(self.initial_model_directory,xtal,'cootOut','Refine_'+str(Serial)))
-                os.system('/bin/cp %s in.pdb' %os.path.join(self.initial_model_directory,xtal,xtal+'-pandda-model.pdb'))
-                Refine=XChemRefine.Refine(self.initial_model_directory,xtal,compoundID,self.datasource)
+                    os.mkdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                    os.chdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                os.system('/bin/cp %s in.pdb' %os.path.join(self.project_directory,xtal,xtal+'-pandda-model.pdb'))
+                Refine=XChemRefine.Refine(self.project_directory,xtal,compoundID,self.datasource)
                 Refine.RunBuster(str(Serial),self.external_software,self.xce_logfile,None)
             else:
                 self.Logfile.error('%s: cannot find %s-pandda-model.pdb; cannot start refinement...' %(xtal,xtal))
 
         else:
             self.Logfile.error('%s: cannot start refinement because %s.free.mtz is missing in %s' % (
-            xtal, xtal, os.path.join(self.initial_model_directory, xtal)))
+            xtal, xtal, os.path.join(self.project_directory, xtal)))
 
 
 
