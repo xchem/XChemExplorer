@@ -48,6 +48,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.project_directory = project_directory
         self.which_models=which_models
+        self.external_software=XChemUtils.external_software(xce_logfile).check()
 
 #        self.initial_model_directory=initial_model_directory
 #        self.db.create_missing_columns()
