@@ -528,7 +528,12 @@ class Refine(object):
     def update_database(self,cmd,Serial):
         date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
         user = getpass.getuser()
-        cmd += ( '$CCP4/bin/ccp4-python '
+        ccp4_module = ''    # need to source again, because giant.score_model still needs outdated version which does not have gemmi
+        if self.ProjectPath.startswith('/dls'):
+            ccp4_module = 'module load ccp4'
+        cmd += ('\n'
+                + ccp4_module +
+                '$CCP4/bin/ccp4-python '
                  +os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_after_refinement.py')+
                 ' %s %s %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial),user,date)    )
         cmd += '/bin/rm %s/%s/REFINEMENT_IN_PROGRESS\n' %(self.ProjectPath,self.xtalID)
