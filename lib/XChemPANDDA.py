@@ -146,6 +146,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             XChemUtils.maptools().cut_map_around_ligand(emap,ligID+'.pdb','7')
             if os.path.isfile(emap.replace('.ccp4','_mapmask.ccp4')):
                 os.system('/bin/mv %s %s_%s_event.ccp4' %(emap.replace('.ccp4','_mapmask.ccp4'),xtal,ligID))
+                os.system('ln -s %s_%s_event.ccp4 %s_%s_event_cut.ccp4' %(xtal,ligID,xtal,ligID))
 
 
     def copy_pandda_model_to_project_directory(self,xtal):
