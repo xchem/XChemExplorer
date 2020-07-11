@@ -227,7 +227,7 @@ class data_source:
             ['RefinementRamachandranFavoredTL',             'RefinementRamachandranFavoredTL',              'TEXT',                 0],
             ['RefinementProgram',                           'RefinementProgram',                            'TEXT',                 1],
             ['RefinementStatus',                            'Refinement\nStatus',                           'TEXT',                 1],
-            ['RefinementBusterReportHTML',                  'RefinementBusterReportHTML',                   'TEXT',                 1],
+            ['RefinementBusterReportHTML',                  'buster-reports',                               'TEXT',                 1],
             ['RefinementRefiner',                           'RefinementRefiner',                            'TEXT',                 1],
             ['RefinementDate',                              'RefinementDate',                               'TEXT',                 1],
 

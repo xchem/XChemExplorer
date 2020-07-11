@@ -3472,8 +3472,8 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'refine NEW bound-state models with BUSTER':
             self.run_refine_bound_state_with_buster('new')
 
-        elif instruction == 'refine NEW bound-state models with BUSTER - NEW':
-            self.run_refine_bound_state_with_buster_new('new')
+#        elif instruction == 'refine NEW bound-state models with BUSTER - NEW':
+#            self.run_refine_bound_state_with_buster_new('new')
 
         elif instruction == 'cluster datasets':
             self.cluster_datasets_for_pandda()
@@ -3777,18 +3777,18 @@ class XChemExplorer(QtGui.QApplication):
             self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
             self.work_thread.start()
 
-    def run_refine_bound_state_with_buster(self,which_models):
-        start_thread = True
-        if start_thread:
-            self.work_thread = XChemPANDDA.refine_bound_state_with_buster(self.panddas_directory,
-                                                             os.path.join(self.database_directory,
-                                                                          self.data_source_file),
-                                                             self.initial_model_directory, self.xce_logfile,
-                                                             which_models)
-            self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
-            self.work_thread.start()
+#    def run_refine_bound_state_with_buster(self,which_models):
+#        start_thread = True
+#        if start_thread:
+#            self.work_thread = XChemPANDDA.refine_bound_state_with_buster(self.panddas_directory,
+#                                                             os.path.join(self.database_directory,
+#                                                                          self.data_source_file),
+#                                                             self.initial_model_directory, self.xce_logfile,
+#                                                             which_models)
+#            self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
+#            self.work_thread.start()
 
-    def run_refine_bound_state_with_buster_new(self,which_models):
+    def run_refine_bound_state_with_buster(self,which_models):
         start_thread = True
         if start_thread:
             self.work_thread = XChemPANDDA.export_and_refine_ligand_bound_models(self.panddas_directory,
@@ -5154,14 +5154,14 @@ class XChemExplorer(QtGui.QApplication):
 
     def populate_and_update_refinement_table(self):
 
-        panddaList = self.db.execute_statement(
-            "select CrystalName,PANDDA_site_index,PANDDA_site_name,RefinementOutcome "
-            "from panddaTable where CrystalName is not '' and PANDDA_site_ligand_placed is 'True';")
-        panddaDict = {}
-        for item in panddaList:
-            if str(item[0]) not in panddaDict:
-                panddaDict[str(item[0])] = []
-            panddaDict[str(item[0])].append([str(item[1]), str(item[2]), str(item[3])])
+#        panddaList = self.db.execute_statement(
+#            "select CrystalName,PANDDA_site_index,PANDDA_site_name,RefinementOutcome "
+#            "from panddaTable where CrystalName is not '' and PANDDA_site_ligand_placed is 'True';")
+#        panddaDict = {}
+#        for item in panddaList:
+#            if str(item[0]) not in panddaDict:
+#                panddaDict[str(item[0])] = []
+#            panddaDict[str(item[0])].append([str(item[1]), str(item[2]), str(item[3])])
 
         column_name = self.db.translate_xce_column_list_to_sqlite(self.refinement_table_columns)
         for xtal in sorted(self.xtal_db_dict):
@@ -5205,27 +5205,40 @@ class XChemExplorer(QtGui.QApplication):
                         refinement_outcome_combobox.currentIndexChanged.connect(
                             self.refinement_outcome_combobox_changed)
 
-                    elif header[0] == 'PanDDA site details':
-                        try:
-                            panddaDict[xtal].insert(0, ['Index', 'Name', 'Status'])
-                            outerFrame = QtGui.QFrame()
-                            outerFrame.setFrameShape(QtGui.QFrame.Box)
-                            grid = QtGui.QGridLayout()
-                            for y, entry in enumerate(panddaDict[xtal]):
-                                for x, info in enumerate(entry):
-                                    frame = QtGui.QFrame()
-                                    frame.setFrameShape(QtGui.QFrame.Box)
-                                    vbox = QtGui.QVBoxLayout()
-                                    vbox.addWidget(QtGui.QLabel(str(entry[x])))
-                                    frame.setLayout(vbox)
-                                    grid.addWidget(frame, y, x)
-                            outerFrame.setLayout(grid)
-                            self.refinement_table.setCellWidget(current_row, column, outerFrame)
-                        except KeyError:
-                            cell_text = QtGui.QTableWidgetItem()
-                            cell_text.setText('*** N/A ***')
-                            cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
-                            self.refinement_table.setItem(current_row, column, cell_text)
+                    elif header[0] == 'buster-reports':
+                        #"<a href=\"{0!s}">'NAME'</a>".format(db_dict['RefinementBusterReportHTML'])
+ #                       db_dict['RefinementBusterReportHTML'] = 'www.google.com'
+                        buster_report = db_dict['RefinementBusterReportHTML']
+                        ref_name = buster_report.split('/')[len(buster_report.split('/'))-2]
+                        buster_report_link = QtGui.QLabel("<a href=\"{0!s}\">{1!s}</a>".format(buster_report,ref_name))
+                        buster_report_link.setOpenExternalLinks(True)
+#                        buster_report_link.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
+#                        buster_report_link.setTextFormat(QtCore.Qt.RichText)
+#                        self.refinement_table.setItem(current_row, column, buster_report_link)
+                        self.refinement_table.setCellWidget(current_row, column, buster_report_link)
+
+
+#                    elif header[0] == 'PanDDA site details':
+#                        try:
+#                            panddaDict[xtal].insert(0, ['Index', 'Name', 'Status'])
+#                            outerFrame = QtGui.QFrame()
+#                            outerFrame.setFrameShape(QtGui.QFrame.Box)
+#                            grid = QtGui.QGridLayout()
+#                            for y, entry in enumerate(panddaDict[xtal]):
+#                                for x, info in enumerate(entry):
+#                                    frame = QtGui.QFrame()
+#                                    frame.setFrameShape(QtGui.QFrame.Box)
+#                                    vbox = QtGui.QVBoxLayout()
+#                                    vbox.addWidget(QtGui.QLabel(str(entry[x])))
+#                                    frame.setLayout(vbox)
+#                                    grid.addWidget(frame, y, x)
+#                            outerFrame.setLayout(grid)
+#                            self.refinement_table.setCellWidget(current_row, column, outerFrame)
+#                        except KeyError:
+#                            cell_text = QtGui.QTableWidgetItem()
+#                            cell_text.setText('*** N/A ***')
+#                            cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
+#                            self.refinement_table.setItem(current_row, column, cell_text)
                     else:
                         cell_text = QtGui.QTableWidgetItem()
                         cell_text.setText(str(db_dict[header[1]]))

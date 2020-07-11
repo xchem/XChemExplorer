@@ -406,7 +406,7 @@ class setup():
                                                'Refinement\nRcryst',
                                                'Refinement\nRfree',
                                                'Refinement\nOutcome',
-                                               'PanDDA site details',
+                                               'buster-reports',
                                                'Refinement\nStatus']
 
     def top_menu_dict(self, xce_object):
@@ -629,7 +629,7 @@ class setup():
                                          'check modelled ligands',
                                          'refine ALL bound-state models with BUSTER',
                                          'refine NEW bound-state models with BUSTER',
-                                         'refine NEW bound-state models with BUSTER - NEW',
+#                                         'refine NEW bound-state models with BUSTER - NEW',
                                          'pre-run for ground state model',
                                          'Build ground state model']
 
