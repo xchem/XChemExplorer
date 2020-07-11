@@ -235,7 +235,7 @@ def generate_cut_maps_around_ligand(xtal):
             maptools().cut_map_around_ligand('2fofc.map',ligand+'.pdb','7')
             os.system('/bin/mv 2fofc_mapmask.map %s_%s_2fofc_cut.ccp4' %(xtal,ligand))
             maptools().cut_map_around_ligand('fofc.map',ligand+'.pdb','7')
-            os.system('/bin/mv 2fofc_mapmask.map %s_%s_fofc_cut.ccp4' %(xtal,ligand))
+            os.system('/bin/mv fofc_mapmask.map %s_%s_fofc_cut.ccp4' %(xtal,ligand))
 
 
 if __name__=='__main__':
