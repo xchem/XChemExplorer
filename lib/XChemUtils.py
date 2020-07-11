@@ -2714,8 +2714,15 @@ class maptools(object):
 #        print(cmd)
 
     def cut_map_around_ligand(self,map,ligPDB,border):
+        if map.endswith('.map'):
+            map_extension = '.map'
+        elif map.endswith('.ccp4'):
+            map_extension = '.ccp4'
+        else:
+            map_extension = ''
+
         cmd = (
-            'mapmask mapin %s mapout %s xyzin %s << eof\n'  %(map,map.replace('.ccp4','_mapmask.ccp4'),ligPDB) +
+            'mapmask mapin %s mapout %s xyzin %s << eof\n'  %(map,map.replace(map_extension,'_mapmask'+map_extension),ligPDB) +
             ' border %s\n' %border +
             ' end\n'
             'eof'

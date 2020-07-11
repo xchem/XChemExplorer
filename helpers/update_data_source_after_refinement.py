@@ -223,9 +223,19 @@ def update_mmcif_file_location(refinement_directory,db_dict):
         db_dict['RefinementMMCIFreflections_latest'] = os.path.join(refinement_directory,'BUSTER_refln.cif')
     return db_dict
 
-if __name__=='__main__':
+def generate_cut_maps_around_ligand(xtal):
+    if os.path.isfile(os.path.join(inital_model_directory, xtal, 'refine.pdb')) and \
+       os.path.isfile(os.path.join(inital_model_directory, xtal, '2fofc.map')) and \
+       os.path.isfile(os.path.join(inital_model_directory, xtal, 'fofc.map'))::
+        XChemUtils.pdbtools_gemmi('refine.pdb').save_ligands_to_pdb('LIG')
+        for ligand in ligandDict:
+            XChemUtils.maptools().cut_map_around_ligand('2fofc.map',ligand+'.pdb','7')
+            os.system('/bin/mv 2fofc_mapmask.map %s_%s_2fofc_cut.ccp4' %(xtal,ligand))
+            XChemUtils.maptools().cut_map_around_ligand('fofc.map',ligand+'.pdb','7')
+            os.system('/bin/mv 2fofc_mapmask.map %s_%s_fofc_cut.ccp4' %(xtal,ligand))
 
-    print 'hallo'
+
+if __name__=='__main__':
 
     db_file=sys.argv[1]
     xtal=sys.argv[2]
@@ -251,3 +261,5 @@ if __name__=='__main__':
     parse_ligand_validation(inital_model_directory,refinement_directory,xtal)
 
     update_data_source(db_dict)
+
+    generate_cut_maps_around_ligand(xtal)
