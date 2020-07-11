@@ -228,6 +228,7 @@ def generate_cut_maps_around_ligand(xtal):
     if os.path.isfile(os.path.join(inital_model_directory, xtal, 'refine.pdb')) and \
        os.path.isfile(os.path.join(inital_model_directory, xtal, '2fofc.map')) and \
        os.path.isfile(os.path.join(inital_model_directory, xtal, 'fofc.map')):
+        ligandDict = pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
         pdbtools_gemmi('refine.pdb').save_ligands_to_pdb('LIG')
         for ligand in ligandDict:
             XChemUtils.maptools().cut_map_around_ligand('2fofc.map',ligand+'.pdb','7')
