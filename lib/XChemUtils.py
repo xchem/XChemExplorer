@@ -2861,7 +2861,7 @@ class pdbtools_gemmi:
 
     def center_of_mass_ligand_dict(self,ligandID):
         ligandDict = self.get_ligand_models_as_dict(ligandID)
-        ligandPositionDict = None
+        ligandPositionDict = {}
         for ligand in ligandDict:
             pos = ligandDict[ligand].calculate_center_of_mass()
             ligandPositionDict[ligand] = [pos.x, pos.y, pos.z]

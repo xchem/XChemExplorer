@@ -90,7 +90,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
             # find out ligand event map relationship
             ligandDict = XChemUtils.pdbtools_gemmi(pandda_model).center_of_mass_ligand_dict('LIG')
-            if ligandDict == None:
+            if ligandDict == {}:
                 self.Logfile.error(xtal + ': cannot find ligand of type LIG; skipping...')
                 continue
             self.show_ligands_in_model(xtal,ligandDict)
