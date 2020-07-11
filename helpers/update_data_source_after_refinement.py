@@ -7,6 +7,7 @@ sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'),'lib'))
 from XChemUtils import parse
 from XChemUtils import pdbtools
 from XChemUtils import misc
+from XChemUtils import pdbtools_gemmi
 import XChemDB
 import csv
 
@@ -227,7 +228,7 @@ def generate_cut_maps_around_ligand(xtal):
     if os.path.isfile(os.path.join(inital_model_directory, xtal, 'refine.pdb')) and \
        os.path.isfile(os.path.join(inital_model_directory, xtal, '2fofc.map')) and \
        os.path.isfile(os.path.join(inital_model_directory, xtal, 'fofc.map')):
-        XChemUtils.pdbtools_gemmi('refine.pdb').save_ligands_to_pdb('LIG')
+        pdbtools_gemmi('refine.pdb').save_ligands_to_pdb('LIG')
         for ligand in ligandDict:
             XChemUtils.maptools().cut_map_around_ligand('2fofc.map',ligand+'.pdb','7')
             os.system('/bin/mv 2fofc_mapmask.map %s_%s_2fofc_cut.ccp4' %(xtal,ligand))
