@@ -533,6 +533,7 @@ class Refine(object):
             ccp4_module = 'module load ccp4'
         cmd += ('\n'
                 + ccp4_module +
+                '\n'
                 '$CCP4/bin/ccp4-python '
                  +os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_after_refinement.py')+
                 ' %s %s %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial),user,date)    )
