@@ -8,6 +8,7 @@ from XChemUtils import parse
 from XChemUtils import pdbtools
 from XChemUtils import misc
 from XChemUtils import pdbtools_gemmi
+from XChemUtils import maptools
 import XChemDB
 import csv
 
@@ -231,9 +232,9 @@ def generate_cut_maps_around_ligand(xtal):
         ligandDict = pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
         pdbtools_gemmi('refine.pdb').save_ligands_to_pdb('LIG')
         for ligand in ligandDict:
-            XChemUtils.maptools().cut_map_around_ligand('2fofc.map',ligand+'.pdb','7')
+            maptools().cut_map_around_ligand('2fofc.map',ligand+'.pdb','7')
             os.system('/bin/mv 2fofc_mapmask.map %s_%s_2fofc_cut.ccp4' %(xtal,ligand))
-            XChemUtils.maptools().cut_map_around_ligand('fofc.map',ligand+'.pdb','7')
+            maptools().cut_map_around_ligand('fofc.map',ligand+'.pdb','7')
             os.system('/bin/mv 2fofc_mapmask.map %s_%s_fofc_cut.ccp4' %(xtal,ligand))
 
 
