@@ -2815,6 +2815,10 @@ class mtztools_gemmi:
 
         return FWT, PHWT, DELFWT, PHDELWT
 
+    def get_high_low_resolution_limits(self):
+        resl = self.mtz.resolution_low()
+        resh = self.mtz.resolution_high()
+        return resh, resl
 
 
 class maptools_gemmi:
