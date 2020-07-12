@@ -119,6 +119,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             # refine models
             self.refine_exported_model(xtal)
 
+            break
+
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 

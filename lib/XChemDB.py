@@ -193,7 +193,7 @@ class data_source:
             ['RefinementRfree',                             'Refinement\nRfree',                            'TEXT',                 1],
             ['RefinementRfreeTraficLight',                  'RefinementRfreeTraficLight',                   'TEXT',                 0],
             ['RefinementSpaceGroup',                        'Refinement\nSpace Group',                      'TEXT',                 1],
-            ['RefinementLigandCC',                          'RefinementLigandCC',                           'TEXT',                 0],
+            ['RefinementLigandCC',                          'Ligand CC',                                    'TEXT',                 0],
             ['RefinementRmsdBonds',                         'RefinementRmsdBonds',                          'TEXT',                 1],
             ['RefinementRmsdBondsTL',                       'RefinementRmsdBondsTL',                        'TEXT',                 0],
             ['RefinementRmsdAngles',                        'RefinementRmsdAngles',                         'TEXT',                 1],

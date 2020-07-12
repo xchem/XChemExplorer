@@ -524,6 +524,14 @@ class Refine(object):
         )
         return cmd
 
+    def run_edstats(self,cmd):
+        cmd += (
+            '\n'
+            'edstats XYZIN refine.pdb MAPIN1 2fofc.map MAPIN2 fofc.map OUT refine.edstats\n'
+            '\n'
+        )
+        return cmd
+
 
     def update_database(self,cmd,Serial):
         date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
@@ -619,6 +627,8 @@ class Refine(object):
         cmd = self.run_giant_score_model(cmd,Serial)
 
         cmd = self.calculate_maps(cmd,'buster')
+
+        cmd = self.run_edstats(cmd)
 
         cmd = self.update_database(cmd,Serial)
 

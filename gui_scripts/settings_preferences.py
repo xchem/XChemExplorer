@@ -407,6 +407,7 @@ class setup():
                                                'Refinement\nRfree',
                                                'Refinement\nOutcome',
                                                'buster-reports',
+                                               'Ligand CC',
                                                'Refinement\nStatus']
 
     def top_menu_dict(self, xce_object):

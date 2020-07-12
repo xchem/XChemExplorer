@@ -237,6 +237,24 @@ def generate_cut_maps_around_ligand(xtal):
             maptools().cut_map_around_ligand('fofc.map',ligand+'.pdb','7')
             os.system('/bin/mv fofc_mapmask.map %s_%s_fofc_cut.ccp4' %(xtal,ligand))
 
+def read_ligand_cc_from_edstats(xtal,db_dict):
+    ligCC = ''
+    if os.path.isfile(os.path.join(inital_model_directory, xtal, 'refine.edstats')):
+        ligandDict = pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
+        for ligand in ligandDict:
+            lig = ligand.split('-')[0]
+            chain = ligand.split('-')[1]
+            resn = ligand.split('-')[2]
+            for line in open('{0!s}.edstats'.format(pdb)):
+                if line.startswith(lig) and line.split()[1] == chain and line.split()[2] == str(resn):
+                    try:
+                        cc = line.split()[8]
+                        ligCC += ligand + ': ' + cc + '\n'
+                    except IndexError:
+                        continue
+                    break
+    db_dict['RefinementLigandCC'] = ligCC.rstrip()
+    return db_dict
 
 if __name__=='__main__':
 
@@ -259,6 +277,7 @@ if __name__=='__main__':
     db_dict=check_refmac_logfile(refinement_directory,db_dict)
     db_dict=update_buster_report_index_html(refinement_directory,db_dict)
     db_dict=update_mmcif_file_location(refinement_directory,db_dict)
+    db_dict=read_ligand_cc_from_edstats(db_dict)
     update_ligand_information_in_panddaTable(inital_model_directory,xtal)
 
     parse_ligand_validation(inital_model_directory,refinement_directory,xtal)
