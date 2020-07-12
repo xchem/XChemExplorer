@@ -245,7 +245,7 @@ def read_ligand_cc_from_edstats(xtal,db_dict):
             lig = ligand.split('-')[0]
             chain = ligand.split('-')[1]
             resn = ligand.split('-')[2]
-            for line in open('{0!s}.edstats'.format(pdb)):
+            for line in open('refine.edstats'):
                 if line.startswith(lig) and line.split()[1] == chain and line.split()[2] == str(resn):
                     try:
                         cc = line.split()[8]
