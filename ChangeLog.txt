@@ -1,3 +1,11 @@
+v1.7.0 (29/06/2020)
+- implemented new pandda export routine which takes advantage of gemmi
+- updated html export accordingly
+- bug fix: order of commands changed in buster.sh to enable buster-report run on DLS cluster
+- added links to buster-reports in refinement table
+- calculate (2)fofc maps around ligand with ending _cut.ccp4
+- calculate ligand CC with EDSTATS and display in refinement table
+
 v1.6.29 (28/06/2020)
 - added capture of person (and date) changing RefinementOutcome field in DB
 

@@ -193,7 +193,7 @@ class data_source:
             ['RefinementRfree',                             'Refinement\nRfree',                            'TEXT',                 1],
             ['RefinementRfreeTraficLight',                  'RefinementRfreeTraficLight',                   'TEXT',                 0],
             ['RefinementSpaceGroup',                        'Refinement\nSpace Group',                      'TEXT',                 1],
-            ['RefinementLigandCC',                          'RefinementLigandCC',                           'TEXT',                 0],
+            ['RefinementLigandCC',                          'Ligand CC',                                    'TEXT',                 0],
             ['RefinementRmsdBonds',                         'RefinementRmsdBonds',                          'TEXT',                 1],
             ['RefinementRmsdBondsTL',                       'RefinementRmsdBondsTL',                        'TEXT',                 0],
             ['RefinementRmsdAngles',                        'RefinementRmsdAngles',                         'TEXT',                 1],
@@ -227,7 +227,7 @@ class data_source:
             ['RefinementRamachandranFavoredTL',             'RefinementRamachandranFavoredTL',              'TEXT',                 0],
             ['RefinementProgram',                           'RefinementProgram',                            'TEXT',                 1],
             ['RefinementStatus',                            'Refinement\nStatus',                           'TEXT',                 1],
-            ['RefinementBusterReportHTML',                  'RefinementBusterReportHTML',                   'TEXT',                 1],
+            ['RefinementBusterReportHTML',                  'buster-reports',                               'TEXT',                 1],
             ['RefinementRefiner',                           'RefinementRefiner',                            'TEXT',                 1],
             ['RefinementDate',                              'RefinementDate',                               'TEXT',                 1],
 

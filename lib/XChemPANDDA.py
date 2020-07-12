@@ -14,26 +14,294 @@ import csv
 
 try:
     import gemmi
+    import pandas
 except ImportError:
     pass
 
-def get_names_of_current_clusters(xce_logfile,panddas_directory):
-    Logfile=XChemLog.updateLog(xce_logfile)
-    Logfile.insert('parsing {0!s}/cluster_analysis'.format(panddas_directory))
-    os.chdir('{0!s}/cluster_analysis'.format(panddas_directory))
-    cluster_dict={}
-    for out_dir in sorted(glob.glob('*')):
-        if os.path.isdir(out_dir):
-            cluster_dict[out_dir]=[]
-            found_first_pdb=False
-            for folder in glob.glob(os.path.join(out_dir,'pdbs','*')):
-                xtal=folder[folder.rfind('/')+1:]
-                if not found_first_pdb:
-                    if os.path.isfile(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb') ):
-                        cluster_dict[out_dir].append(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb'))
-                        found_first_pdb=True
-                cluster_dict[out_dir].append(xtal)
-    return cluster_dict
+#def get_names_of_current_clusters(xce_logfile,panddas_directory):
+#    Logfile=XChemLog.updateLog(xce_logfile)
+#    Logfile.insert('parsing {0!s}/cluster_analysis'.format(panddas_directory))
+#    os.chdir('{0!s}/cluster_analysis'.format(panddas_directory))
+#    cluster_dict={}
+#    for out_dir in sorted(glob.glob('*')):
+#        if os.path.isdir(out_dir):
+#            cluster_dict[out_dir]=[]
+#            found_first_pdb=False
+#            for folder in glob.glob(os.path.join(out_dir,'pdbs','*')):
+#                xtal=folder[folder.rfind('/')+1:]
+#                if not found_first_pdb:
+#                    if os.path.isfile(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb') ):
+#                        cluster_dict[out_dir].append(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb'))
+#                        found_first_pdb=True
+#                cluster_dict[out_dir].append(xtal)
+#    return cluster_dict
+
+
+
+class export_and_refine_ligand_bound_models(QtCore.QThread):
+
+    def __init__(self,PanDDA_directory,datasource,project_directory,xce_logfile,which_models):
+        QtCore.QThread.__init__(self)
+        self.PanDDA_directory = PanDDA_directory
+        self.datasource = datasource
+        self.db = XChemDB.data_source(self.datasource)
+        self.Logfile = XChemLog.updateLog(xce_logfile)
+        self.xce_logfile = xce_logfile
+        self.project_directory = project_directory
+        self.which_models=which_models
+        self.external_software=XChemUtils.external_software(xce_logfile).check()
+
+#        self.initial_model_directory=initial_model_directory
+#        self.db.create_missing_columns()
+#        self.db_list=self.db.get_empty_db_dict()
+#        self.external_software=XChemUtils.external_software(xce_logfile).check()
+#        self.xce_logfile=xce_logfile
+
+#        self.already_exported_models=[]
+
+    def run(self):
+
+        self.Logfile.warning(XChemToolTips.pandda_export_ligand_bound_models_only_disclaimer())
+
+        # find all folders with *-pandda-model.pdb
+        modelsDict = self.find_modeled_structures_and_timestamps()
+
+        # if only NEW models shall be exported, check timestamps
+        if self.which_models != 'all':
+            modelsDict = self.find_new_models(modelsDict)
+
+        # find pandda_inspect_events.csv and read in as pandas dataframe
+        inspect_csv = None
+        if os.path.isfile(os.path.join(self.PanDDA_directory,'analyses','pandda_inspect_events.csv')):
+            inspect_csv = pandas.read_csv(os.path.join(self.PanDDA_directory,'analyses','pandda_inspect_events.csv'))
+
+        progress = 0
+        try:
+            progress_step = float(1/len(modelsDict))
+        except TypeError:
+            self.Logfile.error('DID NOT FIND ANY MODELS TO EXPORT')
+            return None
+
+        for xtal in sorted(modelsDict):
+
+            os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
+            pandda_model = os.path.join('modelled_structures',xtal + '-pandda-model.pdb')
+            pdb = gemmi.read_structure(pandda_model)
+
+            # find out ligand event map relationship
+            ligandDict = XChemUtils.pdbtools_gemmi(pandda_model).center_of_mass_ligand_dict('LIG')
+            if ligandDict == {}:
+                self.Logfile.error(xtal + ': cannot find ligand of type LIG; skipping...')
+                continue
+            self.show_ligands_in_model(xtal,ligandDict)
+            emapLigandDict = self.find_ligands_matching_event_map(inspect_csv,xtal,ligandDict)
+
+            self.Logfile.warning('emapLigandDict' + str(emapLigandDict))
+
+            # convert event map to SF
+            self.event_map_to_sf(pdb.resolution,emapLigandDict)
+
+            # move existing event maps in project directory to old folder
+            self.move_old_event_to_backup_folder(xtal)
+
+            # copy event MTZ to project directory
+            self.copy_event_mtz_to_project_directory(xtal)
+
+            # copy pandda-model to project directory
+            self.copy_pandda_model_to_project_directory(xtal)
+
+            # make map from MTZ and cut around ligand
+            self.make_and_cut_map(xtal,emapLigandDict)
+
+            # update database
+            self.update_database(xtal,modelsDict)
+
+            # refine models
+            self.refine_exported_model(xtal)
+
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+    def update_database(self,xtal,modelsDict):
+        db_dict = {}
+        timestamp_file = modelsDict[xtal]
+        db_dict['DatePanDDAModelCreated'] = timestamp_file
+        db_dict['RefinementOutcome'] = '3 - In Refinement'
+        self.Logfile.insert('updating database for '+xtal+' setting time model was created to '+db_dict['DatePanDDAModelCreated'])
+        self.db.update_data_source(xtal,db_dict)
+
+
+
+    def make_and_cut_map(self,xtal,emapLigandDict):
+        self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
+        os.chdir(os.path.join(self.project_directory,xtal))
+        XChemUtils.pdbtools_gemmi(xtal + '-pandda-model.pdb').save_ligands_to_pdb('LIG')
+        for ligID in emapLigandDict:
+            m = emapLigandDict[ligID]
+            emtz = m.replace('.ccp4','_' + ligID + '.mtz')
+            emap = m.replace('.ccp4','_' + ligID + '.ccp4')
+            XChemUtils.maptools().calculate_map(emtz,'FWT','PHWT')
+            XChemUtils.maptools().cut_map_around_ligand(emap,ligID+'.pdb','7')
+            if os.path.isfile(emap.replace('.ccp4','_mapmask.ccp4')):
+                os.system('/bin/mv %s %s_%s_event.ccp4' %(emap.replace('.ccp4','_mapmask.ccp4'),xtal,ligID))
+                os.system('ln -s %s_%s_event.ccp4 %s_%s_event_cut.ccp4' %(xtal,ligID,xtal,ligID))
+
+
+    def copy_pandda_model_to_project_directory(self,xtal):
+        os.chdir(os.path.join(self.project_directory,xtal))
+        model = os.path.join(self.PanDDA_directory,'processed_datasets',xtal,'modelled_structures',xtal+'-pandda-model.pdb')
+        self.Logfile.insert('copying %s to project directory' %model)
+        os.system('/bin/cp %s .' %model)
+
+    def copy_event_mtz_to_project_directory(self,xtal):
+        self.Logfile.insert('changing directory to ' + os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
+        os.chdir(os.path.join(self.PanDDA_directory,'processed_datasets',xtal))
+        for emap in glob.glob('*-BDC_*.mtz'):
+            self.Logfile.insert('copying %s to %s...' %(emap,os.path.join(self.project_directory,xtal)))
+            os.system('/bin/cp %s %s' %(emap,os.path.join(self.project_directory,xtal)))
+
+
+    def move_old_event_to_backup_folder(self,xtal):
+        self.Logfile.insert('changing directory to ' + os.path.join(self.project_directory,xtal))
+        os.chdir(os.path.join(self.project_directory,xtal))
+        if not os.path.isdir('event_map_backup'):
+            os.mkdir('event_map_backup')
+        self.Logfile.insert('moving existing event maps to event_map_backup')
+        for emap in glob.glob('*-BDC_*.ccp4'):
+            os.system('/bin/mv %s event_map_backup/%s' %(emap,emap+'.'+str(datetime.now()).replace(' ','_').replace(':','-')))
+
+    def show_ligands_in_model(self,xtal,ligandDict):
+        self.Logfile.insert(xtal + ': found the following ligands...')
+        for lig in ligandDict:
+            self.Logfile.insert(lig + ' -> coordinates ' + str(ligandDict[lig]))
+
+
+    def find_modeled_structures_and_timestamps(self):
+        self.Logfile.insert('finding out modelled structures in ' + self.PanDDA_directory)
+        modelsDict={}
+        for model in sorted(glob.glob(os.path.join(self.PanDDA_directory,'processed_datasets','*','modelled_structures','*-pandda-model.pdb'))):
+            sample=model[model.rfind('/')+1:].replace('-pandda-model.pdb','')
+            timestamp=datetime.fromtimestamp(os.path.getmtime(model)).strftime('%Y-%m-%d %H:%M:%S')
+            self.Logfile.insert(sample+'-pandda-model.pdb was created on '+str(timestamp))
+            modelsDict[sample]=timestamp
+        return modelsDict
+
+    def find_new_models(self,modelsDict):
+        samples_to_export = {}
+        self.Logfile.hint('XCE will never export/ refine models that are "5-deposition ready" or "6-deposited"')
+        self.Logfile.hint('Please change the RefinementOutcome flag in the Refinement table if you wish to re-export them')
+        self.Logfile.insert('checking timestamps of models in database...')
+        for xtal in modelsDict:
+            timestamp_file = modelsDict[xtal]
+            db_query=self.db.execute_statement("select DatePanDDAModelCreated from mainTable where CrystalName is '"+xtal+"' and (RefinementOutcome like '3%' or RefinementOutcome like '4%')")
+            try:
+                timestamp_db=str(db_query[0][0])
+            except IndexError:
+                self.Logfile.warning('%s: database query gave no results for DatePanDDAModelCreated; skipping...' %xtal)
+                self.Logfile.warning('%s: this might be a brand new model; will continue with export!' %xtal)
+                samples_to_export[xtal]=timestamp_file
+                timestamp_db = "2100-01-01 00:00:00"    # some time in the future...
+            try:
+                difference=(datetime.strptime(timestamp_file,'%Y-%m-%d %H:%M:%S') - datetime.strptime(timestamp_db,'%Y-%m-%d %H:%M:%S')  )
+                if difference.seconds != 0:
+                    self.Logfile.insert('exporting '+xtal+' -> was already refined, but newer PanDDA model available')
+                    samples_to_export[xtal]=timestamp_file
+                else:
+                    self.Logfile.insert('%s: model has not changed since it was created on %s' %(xtal,timestamp_db))
+            except (ValueError, IndexError), e:
+                self.Logfile.error(str(e))
+        return  samples_to_export
+
+    def event_map_to_sf(self,resolution,emapLigandDict):
+        for lig in emapLigandDict:
+            emap = emapLigandDict[lig]
+            emtz = emap.replace('.ccp4','.mtz')
+            emtz_ligand = emap.replace('.ccp4','_' + lig + '.mtz')
+            self.Logfile.insert('trying to convert %s to SF -> %s' %(emap,emtz_ligand))
+            self.Logfile.insert('>>> ' + emtz)
+            XChemUtils.maptools_gemmi(emap).map_to_sf(resolution)
+            if os.path.isfile(emtz):
+                os.system('/bin/mv %s %s' %(emtz,emtz_ligand))
+                self.Logfile.insert('success; %s exists' %emtz_ligand)
+            else:
+                self.Logfile.warning('something went wrong; %s could not be created...' %emtz_ligand)
+
+    def find_ligands_matching_event_map(self,inspect_csv,xtal,ligandDict):
+        emapLigandDict = {}
+        for index, row in inspect_csv.iterrows():
+            if row['dtag'] == xtal:
+                for emap in glob.glob('*-BDC_*.ccp4'):
+                    self.Logfile.insert('checking if event and ligand are within 7A of each other')
+                    x = float(row['x'])
+                    y = float(row['y'])
+                    z = float(row['z'])
+                    matching_ligand = self.calculate_distance_to_ligands(ligandDict,x,y,z)
+                    if matching_ligand is not None:
+                        emapLigandDict[matching_ligand] = emap
+                        self.Logfile.insert('found matching ligand (%s) for %s' %(matching_ligand,emap))
+                        break
+                    else:
+                        self.Logfile.warning('current ligand not close to event...')
+        if emapLigandDict == {}:
+            self.Logfile.error('could not find ligands within 7A of PanDDA events')
+        return emapLigandDict
+
+    def calculate_distance_to_ligands(self,ligandDict,x,y,z):
+        matching_ligand = None
+        p_event = gemmi.Position(x, y, z)
+        for ligand in ligandDict:
+            c = ligandDict[ligand]
+            p_ligand = gemmi.Position(c[0], c[1], c[2])
+            self.Logfile.insert('coordinates ligand: ' + str(c[0])+' '+ str(c[1])+' '+str(c[2]))
+            self.Logfile.insert('coordinates event:  ' + str(x)+' '+ str(y)+' '+str(z))
+            distance = p_event.dist(p_ligand)
+            self.Logfile.insert('distance between ligand and event: %s A' %str(distance))
+            if distance < 7:
+                matching_ligand = ligand
+                break
+        return matching_ligand
+
+
+
+
+    def refine_exported_model(self,xtal):
+        self.Logfile.insert('trying to refine ' + xtal + '...')
+        self.Logfile.insert('%s: getting compound code from database' %xtal)
+        query=self.db.execute_statement("select CompoundCode from mainTable where CrystalName='%s';" %xtal)
+        compoundID=str(query[0][0])
+        self.Logfile.insert('%s: compounds code = %s' %(xtal,compoundID))
+        if os.path.isfile(os.path.join(self.project_directory,xtal,xtal+'.free.mtz')):
+            if os.path.isfile(os.path.join(self.project_directory,xtal,xtal+'-pandda-model.pdb')):
+                self.Logfile.insert('running inital refinement on PANDDA model of '+xtal)
+                Serial=XChemRefine.GetSerial(self.project_directory,xtal)
+                if not os.path.isdir(os.path.join(self.project_directory,xtal,'cootOut')):
+                    os.mkdir(os.path.join(self.project_directory,xtal,'cootOut'))
+                # create folder for new refinement cycle
+                if os.path.isdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial))):
+                    os.chdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                else:
+                    os.mkdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                    os.chdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
+                os.system('/bin/cp %s in.pdb' %os.path.join(self.project_directory,xtal,xtal+'-pandda-model.pdb'))
+                Refine=XChemRefine.Refine(self.project_directory,xtal,compoundID,self.datasource)
+                Refine.RunBuster(str(Serial),None,self.external_software,self.xce_logfile,None)
+            else:
+                self.Logfile.error('%s: cannot find %s-pandda-model.pdb; cannot start refinement...' %(xtal,xtal))
+
+        else:
+            self.Logfile.error('%s: cannot start refinement because %s.free.mtz is missing in %s' % (
+            xtal, xtal, os.path.join(self.project_directory, xtal)))
+
+
+
+
+
+
+
+
+
+
+
 
 
 

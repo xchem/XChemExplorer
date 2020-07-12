@@ -20,7 +20,7 @@ from datetime import datetime
 sys.path.append(os.getenv('XChemExplorer_DIR')+'/lib')
 import XChemLog
 from XChemUtils import pdbtools
-
+from XChemUtils import mtztools_gemmi
 
 def GetSerial(ProjectPath,xtalID):
     # check if there were already previous refinements
@@ -499,25 +499,40 @@ class Refine(object):
             DELFWT = 'FOFCWT'
             PHDELWT = 'PHFOFCWT'
         cmd += (
-            'fft hklin refine.mtz mapout 2fofc_asu.map << EOF\n'
-            'labin F1=%s PHI=%s\n' %(FWT,PHWT) +
+            'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
+            '\n'
+            'fft hklin refine.mtz mapout 2fofc.map << EOF\n'
+            ' labin F1=%s PHI=%s\n' %(FWT,PHWT) +
+            ' grid samp 4.5\n'
             'EOF\n'
             '\n'
-            'mapmask mapin 2fofc_asu.map xyzin refine.pdb mapout 2fofc.map << EOF\n'
-            ' border 5\n'
+#            'mapmask mapin 2fofc_asu.map xyzin refine.pdb mapout 2fofc.map << EOF\n'
+#            ' border 5\n'
+#            'EOF\n'
+#            '\n'
+#            '/bin/rm 2fofc_asu.map\n'
+#            '\n'
+            'fft hklin refine.mtz mapout fofc.map << EOF\n'
+            ' labin F1=%s PHI=%s\n' %(DELFWT,PHDELWT) +
+            ' grid samp 4.5\n'
             'EOF\n'
             '\n'
-            '/bin/rm 2fofc_asu.map\n'
+#            'mapmask mapin fofc_asu.map xyzin refine.pdb mapout fofc.map << EOF\n'
+#            ' border 5\n'
+#            'EOF\n'
+#            '\n'
+#            '/bin/rm fofc_asu.map\n'
             '\n'
-            'fft hklin refine.mtz mapout fofc_asu.map << EOF\n'
-            'labin F1=%s PHI=%s\n' %(DELFWT,PHDELWT) +
-            'EOF\n'
+        )
+        return cmd
+
+    def run_edstats(self,cmd,resh,resl):
+        cmd += (
             '\n'
-            'mapmask mapin fofc_asu.map xyzin refine.pdb mapout fofc.map << EOF\n'
-            ' border 5\n'
-            'EOF\n'
-            '\n'
-            '/bin/rm fofc_asu.map\n'
+            'edstats XYZIN refine.pdb MAPIN1 2fofc.map MAPIN2 fofc.map OUT refine.edstats << eof\n'
+            ' resl={0!s}\n'.format(resl) +
+            ' resh={0!s}\n'.format(resh) +
+            'eof\n'
             '\n'
         )
         return cmd
@@ -526,7 +541,13 @@ class Refine(object):
     def update_database(self,cmd,Serial):
         date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
         user = getpass.getuser()
-        cmd += ( '$CCP4/bin/ccp4-python '
+        ccp4_module = ''    # need to source again, because giant.score_model still needs outdated version which does not have gemmi
+        if self.ProjectPath.startswith('/dls'):
+            ccp4_module = 'module load ccp4'
+        cmd += ('\n'
+                + ccp4_module +
+                '\n'
+                '$CCP4/bin/ccp4-python '
                  +os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_after_refinement.py')+
                 ' %s %s %s %s %s %s\n' %(self.datasource,self.xtalID,self.ProjectPath,os.path.join(self.ProjectPath,self.xtalID,'Refine_'+Serial),user,date)    )
         cmd += '/bin/rm %s/%s/REFINEMENT_IN_PROGRESS\n' %(self.ProjectPath,self.xtalID)
@@ -558,15 +579,19 @@ class Refine(object):
 
     def RunBuster(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
-        if 'ANIS' in RefmacParams['BREF']:
+        if RefmacParams == None:
             anisotropic_Bfactor = ' -M ADP '
-        else:
-            anisotropic_Bfactor = ' -M TLSbasic '
-
-        if 'WATER' in RefmacParams['WATER']:
-            update_water = ' -WAT '
-        else:
             update_water = ''
+        else:
+            if 'ANIS' in RefmacParams['BREF']:
+                anisotropic_Bfactor = ' -M ADP '
+            else:
+                anisotropic_Bfactor = ' -M TLSbasic '
+
+            if 'WATER' in RefmacParams['WATER']:
+                update_water = ' -WAT '
+            else:
+                update_water = ''
 
         self.error = False
 
@@ -583,6 +608,8 @@ class Refine(object):
             return None
 
         hklin, hklout = self.get_hklin_hklout(Serial)
+
+        resh, resl = mtztools_gemmi(hklin).get_high_low_resolution_limits()
 
         xyzin, xyzout = self.get_xyzin_xyzout(Serial)
 
@@ -602,11 +629,13 @@ class Refine(object):
 
         cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water)
 
-        cmd = self.run_giant_score_model(cmd,Serial)
-
         cmd = self.add_validation(cmd,Serial,'buster')
 
+        cmd = self.run_giant_score_model(cmd,Serial)
+
         cmd = self.calculate_maps(cmd,'buster')
+
+        cmd = self.run_edstats(cmd,resh,resl)
 
         cmd = self.update_database(cmd,Serial)
 

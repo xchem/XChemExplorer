@@ -7,6 +7,8 @@ sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'),'lib'))
 from XChemUtils import parse
 from XChemUtils import pdbtools
 from XChemUtils import misc
+from XChemUtils import pdbtools_gemmi
+from XChemUtils import maptools
 import XChemDB
 import csv
 
@@ -223,9 +225,38 @@ def update_mmcif_file_location(refinement_directory,db_dict):
         db_dict['RefinementMMCIFreflections_latest'] = os.path.join(refinement_directory,'BUSTER_refln.cif')
     return db_dict
 
-if __name__=='__main__':
+def generate_cut_maps_around_ligand(xtal):
+    if os.path.isfile(os.path.join(inital_model_directory, xtal, 'refine.pdb')) and \
+       os.path.isfile(os.path.join(inital_model_directory, xtal, '2fofc.map')) and \
+       os.path.isfile(os.path.join(inital_model_directory, xtal, 'fofc.map')):
+        ligandDict = pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
+        pdbtools_gemmi('refine.pdb').save_ligands_to_pdb('LIG')
+        for ligand in ligandDict:
+            maptools().cut_map_around_ligand('2fofc.map',ligand+'.pdb','7')
+            os.system('/bin/mv 2fofc_mapmask.map %s_%s_2fofc_cut.ccp4' %(xtal,ligand))
+            maptools().cut_map_around_ligand('fofc.map',ligand+'.pdb','7')
+            os.system('/bin/mv fofc_mapmask.map %s_%s_fofc_cut.ccp4' %(xtal,ligand))
 
-    print 'hallo'
+def read_ligand_cc_from_edstats(xtal,db_dict):
+    ligCC = ''
+    if os.path.isfile(os.path.join(inital_model_directory, xtal, 'refine.edstats')):
+        ligandDict = pdbtools_gemmi('refine.pdb').center_of_mass_ligand_dict('LIG')
+        for ligand in ligandDict:
+            lig = ligand.split('-')[0]
+            chain = ligand.split('-')[1]
+            resn = ligand.split('-')[2]
+            for line in open('refine.edstats'):
+                if line.startswith(lig) and line.split()[1] == chain and line.split()[2] == str(resn):
+                    try:
+                        cc = line.split()[8]
+                        ligCC += ligand + ': ' + cc + '\n'
+                    except IndexError:
+                        continue
+                    break
+    db_dict['RefinementLigandCC'] = ligCC.rstrip()
+    return db_dict
+
+if __name__=='__main__':
 
     db_file=sys.argv[1]
     xtal=sys.argv[2]
@@ -246,8 +277,11 @@ if __name__=='__main__':
     db_dict=check_refmac_logfile(refinement_directory,db_dict)
     db_dict=update_buster_report_index_html(refinement_directory,db_dict)
     db_dict=update_mmcif_file_location(refinement_directory,db_dict)
+    db_dict=read_ligand_cc_from_edstats(xtal,db_dict)
     update_ligand_information_in_panddaTable(inital_model_directory,xtal)
 
     parse_ligand_validation(inital_model_directory,refinement_directory,xtal)
 
     update_data_source(db_dict)
+
+    generate_cut_maps_around_ligand(xtal)

@@ -1,5 +1,3 @@
-# last edited: 07/07/2017, 17:00
-
 import sys
 import os
 import glob
@@ -11,6 +9,10 @@ import math
 import platform
 import tarfile
 import json
+import time
+
+from datetime import datetime
+import gemmi
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -2701,56 +2703,185 @@ class smilestools(object):
         return ElementDict
 
 class maptools(object):
-    def __init__(self,map):
 
-        self.translate_spg_to_number_dict = {
-            'p1': 1, 'p2': 3, 'p121': 4, 'c2': 5, 'c121': 5, 'p222': 16,
-            'p2122': 17, 'p2212': 17, 'p2221': 17, 'p21212': 18, 'p21221': 18, 'p22121': 18,
-            'p212121': 19, 'c2221': 20, 'c222': 21, 'f222': 22, 'i222': 23, 'i212121': 24,
-            'p4': 75, 'p41': 76, 'p42': 77, 'p43': 78, 'i4': 79, 'i41': 80,
-            'p422': 89, 'p4212': 90, 'p4122': 91, 'p41212': 92, 'p4222': 93, 'p42212': 94,
-            'p4322': 95, 'p43212': 96, 'i422': 97, 'i4122': 98,
-            'p3': 143, 'p31': 144, 'p32': 145, 'p312': 149, 'p321': 150, 'p3112': 151, 'p3121': 152,
-            'p3212': 153, 'p3221': 154, 'p6': 168, 'p61': 169, 'p65': 170, 'p62': 171, 'p64': 172, 'p63': 173,
-            'p622': 177, 'p6122': 178, 'p6522': 179, 'p6222': 180, 'p6422': 181, 'p6322': 182,
-            'r3': 146, 'h3': 146, 'r32': 155, 'h32': 155,
-            'p23': 195, 'f23': 196, 'i23': 197, 'p213': 198, 'i213': 199,
-            'p432': 207, 'p4232': 208, 'f432': 209, 'f4132': 210, 'i432': 211, 'p4332': 212,
-            'p4132': 213, 'i4132': 214        }
+    def calculate_map(self,mtz,F,PH):
+        cmd = (
+            'fft hklin %s mapout %s << EOF\n' %(mtz,mtz.replace('.mtz','.ccp4')) +
+            'labin F1=%s PHI=%s\n' %(F,PH) +
+            'EOF\n'
+        )
+        os.system(cmd)
+#        print(cmd)
 
-        self.map=map
-        cmd = ( 'mapdump mapin {0!s} << eof\n'.format(self.map)+
-                'end\n'
-                'eof'   )
-        mapdump=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
-        self.grid_sampling=[0,0,0]
-        self.cell_dimensions=[]
-        self.space_group_number=0
-        for line in iter(mapdump.stdout.readline,''):
-            if 'Grid sampling on x, y, z' in line:
-                if len(line.split()) == 10:
-                    self.grid_sampling=[line.split()[7],line.split()[8],line.split()[9]]
-            if 'Cell dimensions' in line:
-                if len(line.split()) == 9:
-                    self.cell_dimensions=[line.split()[3],line.split()[4],line.split()[5],line.split()[6],line.split()[7],line.split()[8]]
-            if 'Space-group' in line:
-                if len(line.split()) == 3:
-                    self.space_group_number=line.split()[2]
+    def cut_map_around_ligand(self,map,ligPDB,border):
+        if map.endswith('.map'):
+            map_extension = '.map'
+        elif map.endswith('.ccp4'):
+            map_extension = '.ccp4'
+        else:
+            map_extension = ''
 
-    def grid_sampling(self):
-        return self.grid_sampling
+        cmd = (
+            'mapmask mapin %s mapout %s xyzin %s << eof\n'  %(map,map.replace(map_extension,'_mapmask'+map_extension),ligPDB) +
+            ' border %s\n' %border +
+            ' end\n'
+            'eof'
+            )
+        os.system(cmd)
+#        print(cmd)
 
-    def cell_dimensions(self):
-        return self.cell_dimensions
+#        self.translate_spg_to_number_dict = {
+#            'p1': 1, 'p2': 3, 'p121': 4, 'c2': 5, 'c121': 5, 'p222': 16,
+#            'p2122': 17, 'p2212': 17, 'p2221': 17, 'p21212': 18, 'p21221': 18, 'p22121': 18,
+#            'p212121': 19, 'c2221': 20, 'c222': 21, 'f222': 22, 'i222': 23, 'i212121': 24,
+#            'p4': 75, 'p41': 76, 'p42': 77, 'p43': 78, 'i4': 79, 'i41': 80,
+#            'p422': 89, 'p4212': 90, 'p4122': 91, 'p41212': 92, 'p4222': 93, 'p42212': 94,
+#            'p4322': 95, 'p43212': 96, 'i422': 97, 'i4122': 98,
+#            'p3': 143, 'p31': 144, 'p32': 145, 'p312': 149, 'p321': 150, 'p3112': 151, 'p3121': 152,
+#            'p3212': 153, 'p3221': 154, 'p6': 168, 'p61': 169, 'p65': 170, 'p62': 171, 'p64': 172, 'p63': 173,
+#            'p622': 177, 'p6122': 178, 'p6522': 179, 'p6222': 180, 'p6422': 181, 'p6322': 182,
+#            'r3': 146, 'h3': 146, 'r32': 155, 'h32': 155,
+#            'p23': 195, 'f23': 196, 'i23': 197, 'p213': 198, 'i213': 199,
+#            'p432': 207, 'p4232': 208, 'f432': 209, 'f4132': 210, 'i432': 211, 'p4332': 212,
+#            'p4132': 213, 'i4132': 214        }
+#
+#        self.map=map
+#        cmd = ( 'mapdump mapin {0!s} << eof\n'.format(self.map)+
+#                'end\n'
+#                'eof'   )
+#        mapdump=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
+#        self.grid_sampling=[0,0,0]
+#        self.cell_dimensions=[]
+#        self.space_group_number=0
+#        for line in iter(mapdump.stdout.readline,''):
+#            if 'Grid sampling on x, y, z' in line:
+#                if len(line.split()) == 10:
+#                    self.grid_sampling=[line.split()[7],line.split()[8],line.split()[9]]
+#            if 'Cell dimensions' in line:
+#                if len(line.split()) == 9:
+#                    self.cell_dimensions=[line.split()[3],line.split()[4],line.split()[5],line.split()[6],line.split()[7],line.split()[8]]
+#            if 'Space-group' in line:
+#                if len(line.split()) == 3:
+#                    self.space_group_number=line.split()[2]
+#
+#    def grid_sampling(self):
+#        return self.grid_sampling
+#
+#    def cell_dimensions(self):
+#        return self.cell_dimensions
+#
+#    def space_group_number(self):
+#        return self.space_group_number
+#
+#    def space_group(self):
+#        space_group=''
+#        space_group_number=self.space_group_number
+#        for spg in self.translate_spg_to_number_dict:
+#            if str(self.translate_spg_to_number_dict[spg]) == str(space_group_number):
+#                space_group=str(spg)
+#        return space_group
+#
 
-    def space_group_number(self):
-        return self.space_group_number
 
-    def space_group(self):
-        space_group=''
-        space_group_number=self.space_group_number
-        for spg in self.translate_spg_to_number_dict:
-            if str(self.translate_spg_to_number_dict[spg]) == str(space_group_number):
-                space_group=str(spg)
-        return space_group
+class mtztools_gemmi:
+
+    def __init__(self,mtz):
+        self.mtz = gemmi.read_mtz_file(mtz)
+
+    def get_map_labels(self):
+        labelList = []
+        for l in self.mtz.columns:
+            labelList.append(l.label)
+        FWT = None
+        PHWT = None
+        DELFWT = None
+        PHDELWT = None
+
+        if 'FWT' in labelList and 'PHWT' in labelList:
+            FWT = 'FWT'
+            PHWT = 'PHWT'
+
+        if 'DELFWT' in labelList and 'PHDELWT' in labelList:
+            DELFWT = 'DELFWT'
+            PHDELWT = 'PHDELWT'
+
+        if '2FOFCWT' in labelList and 'PH2FOFCWT' in labelList:
+            FWT = '2FOFCWT'
+            PHWT = 'PH2FOFCWT'
+
+        if 'FOFCWT' in labelList and 'PHFOFCWT' in labelList:
+            DELFWT = 'FOFCWT'
+            PHDELWT = 'PHFOFCWT'
+
+        return FWT, PHWT, DELFWT, PHDELWT
+
+    def get_high_low_resolution_limits(self):
+        resl = self.mtz.resolution_low()
+        resh = self.mtz.resolution_high()
+        return resh, resl
+
+
+class maptools_gemmi:
+
+    def __init__(self,emap):
+        self.emap = emap
+        self.emtz = emap.replace('.ccp4','.mtz').replace('.map','.mtz')
+
+    def map_to_sf(self,resolution):
+        if os.path.isfile(self.emtz):
+            print('mtz file of event map exists; skipping...')
+            return
+        cmd = 'gemmi map2sf %s %s FWT PHWT --dmin=%s' %(self.emap,self.emtz,resolution)
+        print('converting map with command:\n' + cmd)
+        os.system(cmd)
+        if os.path.isfile(self.emtz):
+            print('event map to SF conversion successful')
+            mtz = gemmi.read_mtz_file(self.emtz)
+            mtz.history += ['date created: ' + time.ctime(os.path.getmtime(self.emap))]
+            mtz.history += ['folder: ' + os.getcwd()]
+            mtz.history += ['file name: ' + self.emap]
+            if 'BDC' in self.emap:
+                mtz.history += ['BDC value: ' + self.emap[self.emap.find('BDC')+4:self.emap.find('BDC')+4+self.emap[self.emap.find('BDC')+4:].find('_')]]
+#            mtz.write_to_file(self.emtz)
+        else:
+            print('failed to convert event map to SF')
+
+
+class pdbtools_gemmi:
+
+    def __init__(self,pdb):
+        self.pdb = gemmi.read_structure(pdb)
+
+    def get_ligand_models_as_dict(self,ligandID):
+        ligandDict = {}
+        for model in self.pdb:
+            for chain in model:
+                for residue in chain:
+                    if residue.name == ligandID:
+                        if str(residue.name + '-' + chain.name + '-' + str(residue.seqid.num)) not in ligandDict:
+                            ligandDict[str(residue.name + '-' + chain.name + '-' + str(residue.seqid.num))] = None
+                            m = gemmi.Model('1')
+                            m.add_chain(gemmi.Chain('X'))
+                            c = m['X'].get_polymer()
+                            c.add_residue(gemmi.Residue(), 0)
+                            c[0].name = residue.name
+                            for n,atom in enumerate(residue):
+                                c[0].add_atom(atom, n)
+                            ligandDict[str(residue.name + '-' + chain.name + '-' + str(residue.seqid.num))] = m
+        return ligandDict
+
+    def center_of_mass_ligand_dict(self,ligandID):
+        ligandDict = self.get_ligand_models_as_dict(ligandID)
+        ligandPositionDict = {}
+        for ligand in ligandDict:
+            pos = ligandDict[ligand].calculate_center_of_mass()
+            ligandPositionDict[ligand] = [pos.x, pos.y, pos.z]
+        return ligandPositionDict
+
+    def save_ligands_to_pdb(self,ligandID):
+        ligandDict = self.get_ligand_models_as_dict(ligandID)
+        for ligand in ligandDict:
+            s = gemmi.Structure()
+            s.add_model(ligandDict[ligand])
+            s.write_pdb(ligand + '.pdb')
 
