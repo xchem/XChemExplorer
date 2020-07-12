@@ -277,7 +277,7 @@ if __name__=='__main__':
     db_dict=check_refmac_logfile(refinement_directory,db_dict)
     db_dict=update_buster_report_index_html(refinement_directory,db_dict)
     db_dict=update_mmcif_file_location(refinement_directory,db_dict)
-    db_dict=read_ligand_cc_from_edstats(db_dict)
+    db_dict=read_ligand_cc_from_edstats(xtal,db_dict)
     update_ligand_information_in_panddaTable(inital_model_directory,xtal)
 
     parse_ligand_validation(inital_model_directory,refinement_directory,xtal)
