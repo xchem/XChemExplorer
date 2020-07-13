@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.7.0'
+        xce_object.xce_version = 'v1.7.1'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -606,15 +606,28 @@ class setup():
                                     'Run xia2 on selected datasets',
                                     'Run xia2 on selected datasets - overwrite']
 
-        xce_object.map_cif_file_tasks = ['Run initial refinement on selected MTZ files',
-                                         'Remove selected initial refinement files',
-                                         'Set only results from selected pipeline',
+        xce_object.map_cif_file_tasks = [
+#                                         'Run initial refinement on selected MTZ files',
+#                                         'Remove selected initial refinement files',
+                                         'Run DIMPLE on selected MTZ files',
+                                         'Remove selected DIMPLE files',
+                                         'Set DIMPLE output',
+#                                          'Set only results from selected pipeline',
 #                                         'Create CIF/PDB/PNG file of ALL compounds',
 #                                         'Create CIF/PDB/PNG file of NEW compounds',
+                                         '------------------------------------------',
                                          'Create CIF/PDB/PNG file of SELECTED compounds',
                                          'Merge ligand CIF file with selected compounds',
                                          'Restore original CIF file of selected compounds',
-                                         'Fit ligands into maps after initial refinement'
+                                         'Fit ligands into maps after initial refinement',
+                                         '------------------------------------------',
+                                         'Run PIPEDREAM on selected MTZ files',
+                                         'Remove selected PIPEDREAM files',
+                                         'Set PIPEDREAM output',
+                                         '------------------------------------------',
+                                         'Run PHENIX.LIGAND_PIPELINE on selected MTZ files',
+                                         'Remove selected PHENIX.LIGAND_PIPELINE files',
+                                         'Set PHENIX.LIGAND_PIPELINE output'
                                          ]
 
         xce_object.panddas_file_tasks = ['pandda.analyse',

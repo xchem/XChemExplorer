@@ -818,17 +818,17 @@ class XChemExplorer(QtGui.QApplication):
         vbox_select.addWidget(self.preferences_selection_mechanism_combobox)
         vbox.addLayout(vbox_select)
 
-        vbox_inital_refinement = QtGui.QVBoxLayout()
-        vbox_inital_refinement.addWidget(QtGui.QLabel('Initial Refinement Pipeline:'))
-        self.preferences_initial_refinement_combobox = QtGui.QComboBox()
-        for item in self.preferences_initial_refinement_pipeline:
-            self.preferences_initial_refinement_combobox.addItem(item)
-        self.preferences_initial_refinement_combobox.currentIndexChanged.connect(
-            self.preferences_initial_refinement_combobox_changed)
-        index = self.preferences_initial_refinement_combobox.findText(self.preferences['initial_refinement_pipeline'], QtCore.Qt.MatchFixedString)
-        self.preferences_initial_refinement_combobox.setCurrentIndex(index)
-        vbox_inital_refinement.addWidget(self.preferences_initial_refinement_combobox)
-        vbox.addLayout(vbox_inital_refinement)
+#        vbox_inital_refinement = QtGui.QVBoxLayout()
+#        vbox_inital_refinement.addWidget(QtGui.QLabel('Initial Refinement Pipeline:'))
+#        self.preferences_initial_refinement_combobox = QtGui.QComboBox()
+#        for item in self.preferences_initial_refinement_pipeline:
+#            self.preferences_initial_refinement_combobox.addItem(item)
+#        self.preferences_initial_refinement_combobox.currentIndexChanged.connect(
+#            self.preferences_initial_refinement_combobox_changed)
+#        index = self.preferences_initial_refinement_combobox.findText(self.preferences['initial_refinement_pipeline'], QtCore.Qt.MatchFixedString)
+#        self.preferences_initial_refinement_combobox.setCurrentIndex(index)
+#        vbox_inital_refinement.addWidget(self.preferences_initial_refinement_combobox)
+#        vbox.addLayout(vbox_inital_refinement)
 
         vbox_restraints = QtGui.QVBoxLayout()
         vbox_restraints.addWidget(QtGui.QLabel('Restraints generation program:'))
@@ -2867,7 +2867,7 @@ class XChemExplorer(QtGui.QApplication):
             self.update_log.insert('trying to run DIMPLE on ALL auto-processing files')
             self.check_before_running_dimple(job_list)
 
-    def run_dimple_on_selected_autoprocessing_file(self):
+    def run_dimple_on_selected_autoprocessing_file(self, instruction):
         job_list = []
         for xtal in sorted(self.initial_model_dimple_dict):
             # print(xtal)
@@ -2939,9 +2939,16 @@ class XChemExplorer(QtGui.QApplication):
 
         if job_list:
             self.update_log.insert('trying to run DIMPLE on SELECTED auto-processing files')
-            self.check_before_running_dimple(job_list)
+            self.check_before_running_dimple(job_list,instruction)
 
-    def remove_selected_dimple_files(self):
+    def remove_selected_dimple_files(self,instruction):
+        if 'dimple' in instruction.lower():
+            pipeline = 'dimple'
+        elif 'pipedream' in instruction.lower():
+            pipeline = 'pipedream'
+        elif 'phenix' in instruction.lower():
+            pipeline = 'phenix.ligand_pipeline'
+
         job_list = []
         for xtal in sorted(self.initial_model_dimple_dict):
             if self.initial_model_dimple_dict[xtal][0].isChecked():
@@ -2955,14 +2962,14 @@ class XChemExplorer(QtGui.QApplication):
             reply = msgBox.exec_();
 
             if reply == 0:
-                self.status_bar.showMessage('preparing to remove DIMPLE files')
-                self.update_log.insert('preparing to remove DIMPLE files')
+                self.status_bar.showMessage('preparing to remove {0!s} files'.format(pipeline))
+                self.update_log.insert('preparing to remove {0!s} files'.format(pipeline))
                 self.work_thread = XChemThread.remove_selected_dimple_files(job_list,
                                                                             self.initial_model_directory,
                                                                             self.xce_logfile,
                                                                             self.database_directory,
                                                                             self.data_source_file,
-                                                                            self.preferences['initial_refinement_pipeline'])
+                                                                            pipeline)
                 self.explorer_active = 1
                 self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
                 self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
@@ -2972,8 +2979,15 @@ class XChemExplorer(QtGui.QApplication):
                              self.datasource_menu_reload_samples)
                 self.work_thread.start()
 
-    def set_results_from_selected_pipeline(self):
-        self.update_log.warning('selecting initial refinement results from '+self.preferences['initial_refinement_pipeline'])
+    def set_results_from_selected_pipeline(self,instruction):
+        if 'dimple' in instruction.lower():
+            pipeline = 'dimple'
+        elif 'pipedream' in instruction.lower():
+            pipeline = 'pipedream'
+        elif 'phenix' in instruction.lower():
+            pipeline = 'phenix.ligand_pipeline'
+
+        self.update_log.warning('selecting initial refinement results from '+pipeline)
 
         job_list = []
         for xtal in sorted(self.initial_model_dimple_dict):
@@ -2985,7 +2999,7 @@ class XChemExplorer(QtGui.QApplication):
                                                                     self.xce_logfile,
                                                                     self.database_directory,
                                                                     self.data_source_file,
-                                                                    self.preferences['initial_refinement_pipeline'])
+                                                                    pipeline)
         self.explorer_active = 1
         self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
         self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
@@ -3122,7 +3136,7 @@ class XChemExplorer(QtGui.QApplication):
         self.status_bar.showMessage('idle')
         return job_list
 
-    def check_before_running_dimple(self, job_list):
+    def check_before_running_dimple(self, job_list,instruction):
 
         msgBox = QtGui.QMessageBox()
         msgBox.setText(
@@ -3133,6 +3147,13 @@ class XChemExplorer(QtGui.QApplication):
         reply = msgBox.exec_();
 
         if reply == 0:
+            if 'dimple' in instruction.lower():
+                pipeline = 'dimple'
+            elif 'pipedream' in instruction.lower():
+                pipeline = 'pipedream'
+            elif 'phenix' in instruction.lower():
+                pipeline = 'phenix.ligand_pipeline'
+
             self.status_bar.showMessage('preparing {0!s} DIMPLE jobs'.format(len(job_list)))
             self.update_log.insert('preparing to run {0!s} DIMPLE jobs'.format(len(job_list)))
             if self.external_software['qsub_array']:
@@ -3154,7 +3175,7 @@ class XChemExplorer(QtGui.QApplication):
                                                                                   self.using_remote_qsub_submission,
                                                                                   self.remote_qsub_submission,
                                                                                   self.preferences['dimple_twin_mode'],
-                                                                                  self.preferences['initial_refinement_pipeline'])
+                                                                                  pipeline )
             self.explorer_active = 1
             self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
             self.connect(self.work_thread, QtCore.SIGNAL("update_progress_bar"), self.update_progress_bar)
@@ -3417,14 +3438,43 @@ class XChemExplorer(QtGui.QApplication):
 #        elif instruction == 'Run DIMPLE on All Autoprocessing MTZ files':
 #            self.rerun_dimple_on_all_autoprocessing_files()
 
-        elif instruction == 'Run initial refinement on selected MTZ files':
-            self.run_dimple_on_selected_autoprocessing_file()
+#        elif instruction == 'Run initial refinement on selected MTZ files':
+#            self.run_dimple_on_selected_autoprocessing_file()
 
-        elif instruction == 'Remove selected initial refinement files':
-            self.remove_selected_dimple_files()
+        elif instruction == 'Run DIMPLE on selected MTZ files':
+            self.run_dimple_on_selected_autoprocessing_file(instruction)
 
-        elif instruction == 'Set only results from selected pipeline':
-            self.set_results_from_selected_pipeline()
+        elif instruction == 'Run PIPEDREAM on selected MTZ files':
+            self.run_dimple_on_selected_autoprocessing_file(instruction)
+
+        elif instruction == 'Run PHENIX.LIGAND_PIPELINE on selected MTZ files':
+            self.run_dimple_on_selected_autoprocessing_file(instruction)
+
+
+#        elif instruction == 'Remove selected initial refinement files':
+#            self.remove_selected_dimple_files()
+
+        elif instruction == 'Remove selected DIMPLE files':
+            self.remove_selected_dimple_files(instruction)
+
+        elif instruction == 'Remove selected PIPEDREAM files':
+            self.remove_selected_dimple_files(instruction)
+
+        elif instruction == 'Remove selected PHENIX.LIGAND_PIPELINE files':
+            self.remove_selected_dimple_files(instruction)
+
+#        elif instruction == 'Set only results from selected pipeline':
+#            self.set_results_from_selected_pipeline()
+
+        elif instruction == 'Set DIMPLE output':
+            self.set_results_from_selected_pipeline(instruction)
+
+        elif instruction == 'Set PIPEDREAM output':
+            self.set_results_from_selected_pipeline(instruction)
+
+        elif instruction == 'Set PHENIX.LIGAND_PIPELINE output':
+            self.set_results_from_selected_pipeline(instruction)
+
 
 #        elif instruction == 'Create CIF/PDB/PNG file of ALL compounds':
 #            self.create_cif_pdb_png_files('ALL')
