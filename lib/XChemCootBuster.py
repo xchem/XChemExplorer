@@ -1625,7 +1625,7 @@ class GUI(object):
 #                                         'molprobity_coot.py')):
 #            print '==> XCE: running MolProbity Summary for', self.xtalID
 #            coot.run_script(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
-                                         'molprobity_coot.py'))
+#                                         'molprobity_coot.py'))
         else:
             print '==> XCE: cannot find ' + os.path.join(self.project_directory, self.xtalID,
                                                          'Refine_' + str(self.Serial - 1), 'molprobity_coot.py')
