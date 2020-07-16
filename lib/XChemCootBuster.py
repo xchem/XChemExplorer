@@ -1613,18 +1613,19 @@ class GUI(object):
     def show_molprobity_to_do(self, widget):
         print self.panddaSerial
         AdjPanddaSerial = (4 - len(str(self.Serial))) * '0' + str(int(self.panddaSerial) - 1)
-        print os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.panddaSerial),
-                           'molprobity_coot.py')
-        if os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial - 1),
-                                       'molprobity_coot.py')):
+
+        print '==> XCE COOT: trying to find ' + os.path.join(self.project_directory, self.xtalID,
+                                                             'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py')
+        if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
+                                                             'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py')):
             print '==> XCE: running MolProbity Summary for', self.xtalID
-            coot.run_script(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial - 1),
-                                         'molprobity_coot.py'))
-        elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
-                                         'molprobity_coot.py')):
-            print '==> XCE: running MolProbity Summary for', self.xtalID
-            coot.run_script(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
-                                         'molprobity_coot.py'))
+            coot.run_script(os.path.join(self.project_directory, self.xtalID,
+                                                             'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py'))
+#        elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
+#                                         'molprobity_coot.py')):
+#            print '==> XCE: running MolProbity Summary for', self.xtalID
+#            coot.run_script(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
+#                                         'molprobity_coot.py'))
         else:
             print '==> XCE: cannot find ' + os.path.join(self.project_directory, self.xtalID,
                                                          'Refine_' + str(self.Serial - 1), 'molprobity_coot.py')
