@@ -2714,7 +2714,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
     def alreadyParsed(self,xtal,current_run,autoproc,proc_code):
         parsed=False
         if xtal in self.exisitingSamples:
-            print '--> current xtal: ' + xtal + ' => ' + self.visit + '-' + current_run + autoproc + '-' + proc_code
+            print '--> current xtal: '
+            print xtal + ' => ' + self.visit + '-' + current_run + autoproc + '-' + proc_code
+            print current_run
+            print autoproc
+            print proc_code
+            print '---'
             for x in self.exisitingSamples[xtal]:
                 print x
             if self.visit + '-' + current_run + autoproc + '-' + proc_code in self.exisitingSamples[xtal]:
