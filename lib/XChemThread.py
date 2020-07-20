@@ -2459,10 +2459,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.db = XChemDB.data_source(os.path.join(database))
         self.exisitingSamples = self.getExistingSamples()
 
-        for xtal in self.exisitingSamples:
-            print self.exisitingSamples[xtal]
-            break
-        quit()
+#        for xtal in self.exisitingSamples:
+#            print self.exisitingSamples[xtal]
+#            break
+#        quit()
 
 
         self.toParse = [
@@ -2714,11 +2714,14 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
     def alreadyParsed(self,xtal,current_run,autoproc):
         parsed=False
         if xtal in self.exisitingSamples:
+            print '--> current xtal: ' + xtal + ' => ' + self.visit + '-' + current_run + autoproc
+            print '--> existing:     ' + str(self.exisitingSamples[xtal])
             if self.visit + '-' + current_run + autoproc in self.exisitingSamples[xtal]:
                 self.Logfile.insert(
                     '%s: results from %s already parsed; skipping...' % (
                         xtal, self.visit + '-' + current_run + autoproc))
                 parsed=True
+        quit()
         return parsed
 
     def empty_folder(self,xtal,folder):
