@@ -2727,11 +2727,11 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 print x
             # visit-runautoproc-subdir
             if self.visit + '-' + current_run + autoproc + '-' + proc_code in self.exisitingSamples[xtal]:
-                self.Logfile.insert(
+                self.Logfile.warning(
                     '%s: results from %s already parsed; skipping...' % (
                         xtal, self.visit + '-' + current_run + autoproc))
                 parsed=True
-#        quit()
+        quit()
         return parsed
 
     def empty_folder(self,xtal,folder):
@@ -2811,6 +2811,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 #                    else:
 #                    proc_code = code[code.rfind('/')+1:]
                     proc_code = code.split('/')[len(code.split('/'))-2]
+                    self.Logfile.insert(xtal + ': processed directory -> ' + proc_code)
                     if current_run+proc_code in runList:
                         continue
                     self.Logfile.insert('%s -> run: %s -> current run: %s -> %s' %(xtal,run,current_run,proc_code))
