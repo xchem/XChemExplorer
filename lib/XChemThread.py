@@ -2459,6 +2459,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.db = XChemDB.data_source(os.path.join(database))
         self.exisitingSamples = self.getExistingSamples()
 
+        for xtal in self.exisitingSamples:
+            print self.exisitingSamples[xtal]
+            break
+        quit()
+
+
         self.toParse = [
                 [   os.path.join('*'),
                     os.path.join('LogFiles', '*aimless.log'),
