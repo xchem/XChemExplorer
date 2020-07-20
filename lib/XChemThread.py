@@ -2810,7 +2810,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                         continue
 #                    else:
 #                    proc_code = code[code.rfind('/')+1:]
-                    proc_code = code.split('/')[len(code.split('/'))-2]
+                    proc_code = code.split('/')[len(code.split('/'))-1]
                     self.Logfile.insert(xtal + ': processed directory -> ' + proc_code)
                     if current_run+proc_code in runList:
                         continue
