@@ -2731,7 +2731,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     '%s: results from %s already parsed; skipping...' % (
                         xtal, self.visit + '-' + current_run + autoproc))
                 parsed=True
-        quit()
         return parsed
 
     def empty_folder(self,xtal,folder):
