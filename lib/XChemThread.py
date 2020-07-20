@@ -2716,15 +2716,14 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def alreadyParsed(self,xtal,current_run,proc_code,autoproc):
         parsed=False
+        self.Logfile.insert('checking if this processed directory was already parsed')
         if xtal in self.exisitingSamples:
-            print '--> current xtal: '
-            print xtal + ' => ' + self.visit + '-' + current_run + autoproc + '-' + proc_code
-            print current_run
-            print autoproc
-            print proc_code
-            print '---'
+            self.Logfile.insert(xtal + ' exists in collectionTable')
+            self.Logfile.insert('current identifier:')
+            self.Logfile.insert(self.visit + '-' + current_run + autoproc + '-' + proc_code)
+            self.Logfile.insert('indentifier in collectionTable')
             for x in self.exisitingSamples[xtal]:
-                print x
+                self.Logfile.insert(x)
             # visit-runautoproc-subdir
             if self.visit + '-' + current_run + autoproc + '-' + proc_code in self.exisitingSamples[xtal]:
                 self.Logfile.warning(
