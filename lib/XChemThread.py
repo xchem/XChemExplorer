@@ -2546,12 +2546,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
     def getExistingSamples(self):
         existingSamples={}
         self.Logfile.insert('reading existing samples from collectionTable')
-        allEntries = self.db.execute_statement('select CrystalName,DataCollectionVisit,DataCollectionRun,DataProcessingProgram from collectionTable where DataCollectionOutcome = "success"')
+        allEntries = self.db.execute_statement('select CrystalName,DataCollectionVisit,DataCollectionRun,DataProcessingProgram, DataCollectionSubdir from collectionTable where DataCollectionOutcome = "success"')
         for item in allEntries:
             if str(item[0]) not in existingSamples:
                 existingSamples[str(item[0])]=[]
             self.Logfile.insert('%s: adding %s' %(str(item[0]),str(item[1])))
-            existingSamples[str(item[0])].append(str(item[1])+ '-' + str(item[2])+str(item[3]))
+            existingSamples[str(item[0])].append(str(item[1])+ '-' + str(item[2])+str(item[3])+'-'+str(item[4]))
         return existingSamples
 
     def createSampleDir(self,xtal):
@@ -2711,12 +2711,13 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             'DataProcessingProgram':    autoproc    }
         self.db.update_insert_any_table('collectionTable', db_dict, condition_dict)
 
-    def alreadyParsed(self,xtal,current_run,autoproc):
+    def alreadyParsed(self,xtal,current_run,autoproc,proc_code):
         parsed=False
         if xtal in self.exisitingSamples:
-            print '--> current xtal: ' + xtal + ' => ' + self.visit + '-' + current_run + autoproc
-            print '--> existing:     ' + str(self.exisitingSamples[xtal])
-            if self.visit + '-' + current_run + autoproc in self.exisitingSamples[xtal]:
+            print '--> current xtal: ' + xtal + ' => ' + self.visit + '-' + current_run + autoproc + '-' + proc_code
+            for x in self.exisitingSamples[xtal]:
+                print i
+            if self.visit + '-' + current_run + autoproc + '-' + proc_code in self.exisitingSamples[xtal]:
                 self.Logfile.insert(
                     '%s: results from %s already parsed; skipping...' % (
                         xtal, self.visit + '-' + current_run + autoproc))
@@ -2824,7 +2825,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
                                 staraniso = '_staraniso'
                             autoproc = self.getAutoProc(folder,staraniso)
-                            if self.alreadyParsed(xtal,current_run+proc_code,autoproc):
+                            if self.alreadyParsed(xtal,current_run+proc_code,autoproc,proc_code):
                                 continue
                             self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc,proc_code)
                     runList.append(current_run+proc_code)
