@@ -2550,7 +2550,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         for item in allEntries:
             if str(item[0]) not in existingSamples:
                 existingSamples[str(item[0])]=[]
-            self.Logfile.insert('%s: adding %s' %(str(item[0]),str(item[1])))
+                self.Logfile.insert('%s: adding %s' %(str(item[0]),str(item[1])))
             existingSamples[str(item[0])].append(str(item[1])+ '-' + str(item[2])+str(item[3])+'-'+str(item[4]))
         return existingSamples
 
@@ -2727,7 +2727,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     '%s: results from %s already parsed; skipping...' % (
                         xtal, self.visit + '-' + current_run + autoproc))
                 parsed=True
-        quit()
+#        quit()
         return parsed
 
     def empty_folder(self,xtal,folder):
@@ -2802,6 +2802,13 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             for run in sorted(glob.glob(runDir)):
                 current_run=run[run.rfind('/')+1:]
                 for code in glob.glob(os.path.join(run,'*')):
+                    if os.path.islink(code):
+                        continue
+#                    else:
+
+
+
+
                     proc_code = code[code.rfind('/')+1:]
                     if current_run+proc_code in runList:
                         continue
@@ -2835,6 +2842,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc,proc_code)
                     runList.append(current_run+proc_code)
 
+            quit()
             progress += progress_step
             self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+xtal)
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
