@@ -2551,6 +2551,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             if str(item[0]) not in existingSamples:
                 existingSamples[str(item[0])]=[]
                 self.Logfile.insert('%s: adding %s' %(str(item[0]),str(item[1])))
+                # visit-runautoproc-subdir
             existingSamples[str(item[0])].append(str(item[1])+ '-' + str(item[2])+str(item[3])+'-'+str(item[4]))
         return existingSamples
 
@@ -2713,7 +2714,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             'DataProcessingProgram':    autoproc    }
         self.db.update_insert_any_table('collectionTable', db_dict, condition_dict)
 
-    def alreadyParsed(self,xtal,current_run,autoproc,proc_code):
+    def alreadyParsed(self,xtal,current_run,proc_code,autoproc):
         parsed=False
         if xtal in self.exisitingSamples:
             print '--> current xtal: '
@@ -2724,6 +2725,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             print '---'
             for x in self.exisitingSamples[xtal]:
                 print x
+            # visit-runautoproc-subdir
             if self.visit + '-' + current_run + autoproc + '-' + proc_code in self.exisitingSamples[xtal]:
                 self.Logfile.insert(
                     '%s: results from %s already parsed; skipping...' % (
@@ -2807,11 +2809,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     if os.path.islink(code):
                         continue
 #                    else:
-
-
-
-
-                    proc_code = code[code.rfind('/')+1:]
+#                    proc_code = code[code.rfind('/')+1:]
+                    proc_code = code.split('/')[len(code.split('/'))-2]
                     if current_run+proc_code in runList:
                         continue
                     self.Logfile.insert('%s -> run: %s -> current run: %s -> %s' %(xtal,run,current_run,proc_code))
@@ -2839,7 +2838,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                             if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
                                 staraniso = '_staraniso'
                             autoproc = self.getAutoProc(folder,staraniso)
-                            if self.alreadyParsed(xtal,current_run+proc_code,autoproc,proc_code):
+                            if self.alreadyParsed(xtal,current_run,proc_code,autoproc):
                                 continue
                             self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc,proc_code)
                     runList.append(current_run+proc_code)
