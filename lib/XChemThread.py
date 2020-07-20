@@ -2684,8 +2684,10 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 self.update_data_collection_table(xtal,current_run,autoproc,db_dict,proc_code)
 #        return db_dict
 
-    def getAutoProc(self,folder,staraniso):
+    def getAutoProc(self,folder_rel,staraniso):
         self.Logfile.insert('checking name of auto-processing pipeline...')
+        folder = os.path.realpath(folder_rel)
+        self.Logfile.insert('folder: ' + folder)
         autoproc='unknown'
         if 'ap-run' in folder:
             autoproc = 'autoPROC'
