@@ -2716,7 +2716,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         if xtal in self.exisitingSamples:
             print '--> current xtal: ' + xtal + ' => ' + self.visit + '-' + current_run + autoproc + '-' + proc_code
             for x in self.exisitingSamples[xtal]:
-                print i
+                print x
             if self.visit + '-' + current_run + autoproc + '-' + proc_code in self.exisitingSamples[xtal]:
                 self.Logfile.insert(
                     '%s: results from %s already parsed; skipping...' % (
