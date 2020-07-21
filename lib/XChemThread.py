@@ -2275,7 +2275,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
             # 0.) first check for which results files actually exist
             #
-            dbList = self.checkExistingFiles(dbList)
+            dbList = self.checkExistingFiles(dbList,sample)
 
             # 1.) if posssible, only carry forward samples with similar UCvolume and same point group
             dbList = self.selectResultsSimilarToReference(dbList)
@@ -2325,7 +2325,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                                                                      resultDict['DataProcessingScore']))
         return dbListOut
 
-    def checkExistingFiles(self,dbList):
+    def checkExistingFiles(self,dbList,xtal):
         self.Logfile.insert('checking if MTZ & LOG files exisit')
         dbListOut = []
         for resultDict in dbList:
