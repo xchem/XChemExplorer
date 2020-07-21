@@ -2303,7 +2303,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
             self.updateDB(sample,dbDict)
 
             progress += progress_step
-            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'scoring auto-processing results for '+xtal)
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'scoring auto-processing results for '+sample)
             self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         self.Logfile.insert('====== finished scoring data processing results ======')
