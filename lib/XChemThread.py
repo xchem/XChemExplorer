@@ -2210,11 +2210,18 @@ class read_pinIDs_from_gda_logs(QtCore.QThread):
 
     def update_database(self,pinDict):
         self.Logfile.insert('updating database with pinDIs from GDA logfiles')
+
+        progress = 0
+        progress_step = XChemMain.getProgressSteps(len(pinDict))
+
         for sample in pinDict:
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'updating pinID in DB for ' + sample)
             dbDict = {}
             dbDict['DataCollectionPinBarcode'] = pinDict[sample]
 #            self.db.update_data_source(sample,dbDict)
             self.db.update_specified_table(sample,dbDict,'collectionTable')
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
 
 class choose_autoprocessing_outcome(QtCore.QThread):
