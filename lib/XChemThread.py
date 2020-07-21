@@ -2254,6 +2254,10 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
 
     def run(self):
+
+        progress = 0
+        progress_step = XChemMain.getProgressSteps(len(self.allSamples))
+
         for sample in sorted(self.allSamples):
             if self.db.autoprocessing_result_user_assigned(sample) and not self.rescore:
                 if os.path.isfile(os.path.join(self.projectDir,sample,sample+'.mtz')):
@@ -2297,6 +2301,11 @@ class choose_autoprocessing_outcome(QtCore.QThread):
             dbDict['DataProcessingAutoAssigned'] = 'True'
             self.updateDB(sample,dbDict)
 
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'scoring auto-processing results for '+xtal)
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+        self.Logfile.insert('====== finished scoring data processing results ======')
         self.emit(QtCore.SIGNAL('populate_datasets_summary_table_NEW'))
         self.emit(QtCore.SIGNAL("finished()"))
 
