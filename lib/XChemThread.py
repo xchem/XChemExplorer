@@ -2275,6 +2275,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
             # 0.) first check for which results files actually exist
             #
+            dbList = self.checkExistingFiles(dbList)
 
             # 1.) if posssible, only carry forward samples with similar UCvolume and same point group
             dbList = self.selectResultsSimilarToReference(dbList)
