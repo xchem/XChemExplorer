@@ -2210,11 +2210,18 @@ class read_pinIDs_from_gda_logs(QtCore.QThread):
 
     def update_database(self,pinDict):
         self.Logfile.insert('updating database with pinDIs from GDA logfiles')
+
+        progress = 0
+        progress_step = XChemMain.getProgressSteps(len(pinDict))
+
         for sample in pinDict:
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'updating pinID in DB for ' + sample)
             dbDict = {}
             dbDict['DataCollectionPinBarcode'] = pinDict[sample]
 #            self.db.update_data_source(sample,dbDict)
             self.db.update_specified_table(sample,dbDict,'collectionTable')
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
 
 class choose_autoprocessing_outcome(QtCore.QThread):
@@ -2254,6 +2261,10 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
 
     def run(self):
+
+        progress = 0
+        progress_step = XChemMain.getProgressSteps(len(self.allSamples))
+
         for sample in sorted(self.allSamples):
             if self.db.autoprocessing_result_user_assigned(sample) and not self.rescore:
                 if os.path.isfile(os.path.join(self.projectDir,sample,sample+'.mtz')):
@@ -2268,6 +2279,13 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                 self.Logfile.insert('%s: selecting autoprocessing result' % sample)
             dbList = self.db.all_autoprocessing_results_for_xtal_as_dict(sample)
             self.Logfile.insert('%s: found %s different autoprocessing results' %(sample,str(len(dbList))))
+
+            # 0.) first check for which results files actually exist
+            #
+            dbList = self.checkExistingFiles(dbList,sample)
+            if not dbList:
+                self.Logfile.error(sample + ': cannot find any MTZ & LOG files; skipping...')
+                continue
 
             # 1.) if posssible, only carry forward samples with similar UCvolume and same point group
             dbList = self.selectResultsSimilarToReference(dbList)
@@ -2294,6 +2312,11 @@ class choose_autoprocessing_outcome(QtCore.QThread):
             dbDict['DataProcessingAutoAssigned'] = 'True'
             self.updateDB(sample,dbDict)
 
+            progress += progress_step
+            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'scoring auto-processing results for '+sample)
+            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
+
+        self.Logfile.insert('====== finished scoring data processing results ======')
         self.emit(QtCore.SIGNAL('populate_datasets_summary_table_NEW'))
         self.emit(QtCore.SIGNAL("finished()"))
 
@@ -2311,6 +2334,46 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                                                                      resultDict['DataProcessingPointGroup'],
                                                                      resultDict['DataProcessingScore']))
         return dbListOut
+
+    def checkExistingFiles(self,dbList,xtal):
+        self.Logfile.insert('checking if MTZ & LOG files exisit')
+        os.chdir(os.path.join(self.projectDir,xtal))
+        self.Logfile.insert(xtal + ': changing directory ' + os.path.join(self.projectDir,xtal))
+        dbListOut = []
+        for resultDict in dbList:
+            try:
+                run =      resultDict['DataCollectionRun']
+                subDir =   resultDict['DataCollectionSubdir']
+                if subDir != '':
+                    procCode = '_' + subDir
+                else:
+                    procCode = ''
+                visit =    resultDict['DataCollectionVisit']
+                autoproc = resultDict['DataProcessingProgram']
+                mtzFileAbs = resultDict['DataProcessingPathToMTZfile']
+                mtzfileName = mtzFileAbs[mtzFileAbs.rfind('/')+1:]
+                logFileAbs = resultDict['DataProcessingPathToLogfile']
+                logfileName = logFileAbs[logFileAbs.rfind('/')+1:]
+
+                mtzfile = os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, mtzfileName)
+                logfile = os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, logfileName)
+
+
+                if os.path.isfile(mtzfile):
+                    self.Logfile.insert(xtal + ': found ' + mtzfile)
+                    if os.path.isfile(logfile):
+                        self.Logfile.insert(xtal + ': found ' + logfile)
+                        dbListOut.append(resultDict)
+                    else:
+                        self.Logfile.error(xtal + ': cannot find ' + logfile + ' ; skipping...')
+                else:
+                    self.Logfile.error(xtal + ': cannot find ' + mtzfile + ' ; skipping...')
+
+            except ValueError:
+                pass
+        return dbListOut
+
+
 
     def selectResultsSimilarToReference(self,dbList):
         self.Logfile.insert('checking if MTZ files are similar to supplied reference files')
