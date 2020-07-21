@@ -2337,6 +2337,8 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
     def checkExistingFiles(self,dbList,xtal):
         self.Logfile.insert('checking if MTZ & LOG files exisit')
+        os.chdir(os.path.join(self.projectDir,xtal))
+        self.Logfile.insert(xtal + ': changing directory ' + os.path.join(self.projectDir,xtal))
         dbListOut = []
         for resultDict in dbList:
             try:
