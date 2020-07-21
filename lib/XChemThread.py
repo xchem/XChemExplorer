@@ -2269,6 +2269,9 @@ class choose_autoprocessing_outcome(QtCore.QThread):
             dbList = self.db.all_autoprocessing_results_for_xtal_as_dict(sample)
             self.Logfile.insert('%s: found %s different autoprocessing results' %(sample,str(len(dbList))))
 
+            # 0.) first check for which results files actually exist
+            #
+
             # 1.) if posssible, only carry forward samples with similar UCvolume and same point group
             dbList = self.selectResultsSimilarToReference(dbList)
 
@@ -2311,6 +2314,45 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                                                                      resultDict['DataProcessingPointGroup'],
                                                                      resultDict['DataProcessingScore']))
         return dbListOut
+
+    def checkExistingFiles(self,dbList):
+        self.Logfile.insert('checking if MTZ & LOG files exisit')
+        dbListOut = []
+        for resultDict in dbList:
+            try:
+                run =      resultDict['DataCollectionRun']
+                subDir =   resultDict['DataCollectionSubdir']
+                if subDir != '':
+                    procCode = '_' + subDir
+                else:
+                    procCode = ''
+                visit =    resultDict['DataCollectionVisit']
+                autoproc = resultDict['DataProcessingProgram']
+                mtzFileAbs = resultDict['DataProcessingPathToMTZfile']
+                mtzfileName = mtzFileAbs[mtzFileAbs.rfind('/')+1:]
+                logFileAbs = resultDict['DataProcessingPathToLogfile']
+                logfileName = logFileAbs[logFileAbs.rfind('/')+1:]
+
+                mtzfile = os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, mtzfileName)
+                logfile = os.path.join('autoprocessing', visit + '-' + run + autoproc + procCode, logfileName)
+
+
+                if os.path.isfile(mtzfile):
+                    self.Logfile.insert(xtal + ': found ' + mtzfile)
+                    if os.path.isfile(logfile):
+                        self.Logfile.insert(xtal + ': found ' + logfile)
+                        dbListOut.append(resultDict)
+                    else:
+                        self.Logfile.error(xtal + ': cannot find ' + logfile + ' ; skipping...')
+                else:
+                    self.Logfile.error(xtal + ': cannot find ' + mtzfile + ' ; skipping...')
+
+            except ValueError:
+                pass
+        dbListOut = self.report_forward_carried_pipelines(dbListOut,dbList)
+        return dbListOut
+
+
 
     def selectResultsSimilarToReference(self,dbList):
         self.Logfile.insert('checking if MTZ files are similar to supplied reference files')
