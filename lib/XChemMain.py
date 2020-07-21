@@ -457,6 +457,9 @@ def get_gda_barcodes(sampleList,gzipped_logs_parsed,gda_log_start_line,beamline,
     pinDict = {}
     found_barcode_entry=False
     for gdaLogFile in glob.glob(os.path.join('/dls_sw',beamline,'logs','gda-server*log*')):
+        if gdaLogFile.endswith('tmp'):
+            Logfile.warning('ignoring temporary file ' + gdaLogFile)
+            continue
         Logfile.insert('parsing {0!s}'.format(gdaLogFile))
         if gzipped_logs_parsed and gdaLogFile.endswith('.gz'):
             Logfile.insert('{0!s} was already parsed during this visit'.format(gdaLogFile))

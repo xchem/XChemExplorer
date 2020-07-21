@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.7.2'
+        xce_object.xce_version = 'v1.7.3'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -468,11 +468,11 @@ class setup():
                                                       ['Update DB with PDB codes', '', xce_object.enter_pdb_codes],
                                                       ['Check SMILES', '', xce_object.check_smiles_in_db_and_pdb]
                                                   ]],
-                                'E: proasis': ["Proasis",
-                                               [
-                                                   ['Launch Proasis in browser', '', partial(webbrowser.open,
-                                                                                             url='http://cs04r-sc-vserv-137.diamond.ac.uk/Proasis4_2017/')]
-                                               ]],
+#                                'E: proasis': ["Proasis",
+#                                               [
+#                                                   ['Launch Proasis in browser', '', partial(webbrowser.open,
+#                                                                                             url='http://cs04r-sc-vserv-137.diamond.ac.uk/Proasis4_2017/')]
+#                                               ]],
                                 'F: help': ["&Help",
                                             [
                                                 ['Open XCE manual', '',
