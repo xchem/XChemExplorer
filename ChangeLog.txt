@@ -1,3 +1,6 @@
+v1.7.6 (22/07/2020)
+- bug fix: added 'module load ccp4/phenix' to restraints script in case not part of user bashrc file
+
 v1.7.5 (21/07/2020)
 - bug fix: remove obsolete 'module load mx' statement from xce_<restraints_prg> script which currently loads a gemmi incompatible ccp4 version
 
