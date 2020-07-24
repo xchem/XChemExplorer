@@ -1,5 +1,6 @@
 v1.7.7 (22/07/2020)
 - bug fix: logical error in creation of restraints script when adding 'module load ccp4/phenix' command
+- removed phenix.reduce step from restraints generation
 
 v1.7.6 (22/07/2020)
 - bug fix: added 'module load ccp4/phenix' to restraints script in case not part of user bashrc file

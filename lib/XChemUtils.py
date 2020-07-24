@@ -274,10 +274,10 @@ class helpers:
 
         check_stereochemistry = ''
 
-        copy_with_hydrogens = 'cp {0!s}.pdb {0!s}_with_H.pdb'.format(compoundID.replace(' ', ''))
-
-        strip_hydrogens = 'phenix.reduce {0!s}.pdb -trim > {0!s}_tmp.pdb'.format(compoundID.replace(' ', ''))
-
+#        copy_with_hydrogens = 'cp {0!s}.pdb {0!s}_with_H.pdb'.format(compoundID.replace(' ', ''))
+#
+#        strip_hydrogens = 'phenix.reduce {0!s}.pdb -trim > {0!s}_tmp.pdb'.format(compoundID.replace(' ', ''))
+#
 #        module = ''
 #        if os.path.isdir('/dls'):
 #            module = 'module load mx\n'
@@ -306,14 +306,14 @@ class helpers:
 #            '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/assign_stereochemistry.py {0!s} {1!s} {2!s}'
 #            .format(compoundID.replace(' ',''),os.path.join(initial_model_directory,sample), os.path.join(database_directory,data_source_file)) +
 #            '\n'
-            + copy_with_hydrogens +
-            '\n'
-            + strip_hydrogens +
-            '\n'
-            'mv {0!s}_tmp.pdb {0!s}.pdb'.format(compoundID.replace(' ', '')) +
-            '\n'
-            'rm -f {0!s}_tmp.pdb'.format(compoundID.replace(' ', '')) +
-            '\n'
+#            + copy_with_hydrogens +
+#            '\n'
+#            + strip_hydrogens +
+#            '\n'
+#            'mv {0!s}_tmp.pdb {0!s}.pdb'.format(compoundID.replace(' ', '')) +
+#            '\n'
+#            'rm -f {0!s}_tmp.pdb'.format(compoundID.replace(' ', '')) +
+#            '\n'
             'cd ' + os.path.join(initial_model_directory, sample) +
             '\n'
             'ln -s compound/%s.cif .\n' % compoundID.replace(' ', '') +
