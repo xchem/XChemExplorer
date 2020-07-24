@@ -242,16 +242,16 @@ class helpers:
             if os.getcwd().startswith('/dls'):
                 software += 'module load ccp4\n'
             if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
+                software+='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
             else:
-                software='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
+                software+='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
         elif restraints_program=='phenix.elbow':
             if os.getcwd().startswith('/dls'):
                 software += 'module load phenix\n'
             if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
+                software+='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
             else:
-                software='phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'\
+                software+='phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'\
                     .format(productSmiles, compoundID.replace(' ',''))
         elif restraints_program=='grade':
             if os.getcwd().startswith('/dls'):
