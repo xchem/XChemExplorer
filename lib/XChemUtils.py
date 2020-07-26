@@ -242,16 +242,16 @@ class helpers:
             if os.getcwd().startswith('/dls'):
                 software += 'module load ccp4\n'
             if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
+                software+='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
             else:
-                software='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
+                software+='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
         elif restraints_program=='phenix.elbow':
             if os.getcwd().startswith('/dls'):
                 software += 'module load phenix\n'
             if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
+                software+='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
             else:
-                software='phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'\
+                software+='phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'\
                     .format(productSmiles, compoundID.replace(' ',''))
         elif restraints_program=='grade':
             if os.getcwd().startswith('/dls'):
@@ -274,10 +274,10 @@ class helpers:
 
         check_stereochemistry = ''
 
-        copy_with_hydrogens = 'cp {0!s}.pdb {0!s}_with_H.pdb'.format(compoundID.replace(' ', ''))
-
-        strip_hydrogens = 'phenix.reduce {0!s}.pdb -trim > {0!s}_tmp.pdb'.format(compoundID.replace(' ', ''))
-
+#        copy_with_hydrogens = 'cp {0!s}.pdb {0!s}_with_H.pdb'.format(compoundID.replace(' ', ''))
+#
+#        strip_hydrogens = 'phenix.reduce {0!s}.pdb -trim > {0!s}_tmp.pdb'.format(compoundID.replace(' ', ''))
+#
 #        module = ''
 #        if os.path.isdir('/dls'):
 #            module = 'module load mx\n'
@@ -306,14 +306,14 @@ class helpers:
 #            '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/assign_stereochemistry.py {0!s} {1!s} {2!s}'
 #            .format(compoundID.replace(' ',''),os.path.join(initial_model_directory,sample), os.path.join(database_directory,data_source_file)) +
 #            '\n'
-            + copy_with_hydrogens +
-            '\n'
-            + strip_hydrogens +
-            '\n'
-            'mv {0!s}_tmp.pdb {0!s}.pdb'.format(compoundID.replace(' ', '')) +
-            '\n'
-            'rm -f {0!s}_tmp.pdb'.format(compoundID.replace(' ', '')) +
-            '\n'
+#            + copy_with_hydrogens +
+#            '\n'
+#            + strip_hydrogens +
+#            '\n'
+#            'mv {0!s}_tmp.pdb {0!s}.pdb'.format(compoundID.replace(' ', '')) +
+#            '\n'
+#            'rm -f {0!s}_tmp.pdb'.format(compoundID.replace(' ', '')) +
+#            '\n'
             'cd ' + os.path.join(initial_model_directory, sample) +
             '\n'
             'ln -s compound/%s.cif .\n' % compoundID.replace(' ', '') +
