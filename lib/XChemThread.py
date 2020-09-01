@@ -937,6 +937,7 @@ class fit_ligands(QtCore.QThread):
         module = ''
         if os.path.isdir('/dls'):
             module = 'module load mx\n'
+            module += 'module load buster\n'
 
         cmd = (
             '{0!s}\n'.format(top_line)+
