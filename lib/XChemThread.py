@@ -890,7 +890,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                     self.Logfile.insert('qsub -q medium.q -N {0!s} xce_{1!s}_{2!s}.sh'.format(self.restraints_program,self.restraints_program,(str(i+1))))
                     os.system('qsub -N {0!s} xce_{1!s}_{2!s}.sh'.format(self.restraints_program,self.restraints_program,(str(i+1))))
             else:
-                self.Logfile.insert('running %s consecutive %s jobs on your local machine' %self.restraints_program)
+                self.Logfile.insert('running %s consecutive %s jobs on your local machine' %(str(counter),self.restraints_program))
                 for i in range(counter):
                     self.Logfile.insert('starting xce_{0!s}_{1!s}.sh'.format(self.restraints_program,(str(i+1))))
                     os.system('./xce_{0!s}_{1!s}.sh'.format(self.restraints_program,(str(i+1))))
@@ -918,7 +918,7 @@ class fit_ligands(QtCore.QThread):
 
     def prepareInput(self,cmd,ligList):
         for cif in ligList:
-            cmd += 'rhofit -m ../init.mtz -p ../init.pdb -l ../compound/%s.cif -d %s_rhofit\n' %(cif,cif)
+            cmd += 'rhofit -m ../init.mtz -p ../init.pdb -l ../compound/%s.cif -scanchirals -d %s_rhofit\n' %(cif,cif)
             cmd += 'phenix.ligandfit data=../init.mtz model=../init.pdb ligand=../compound/%s.cif clean_up=True\n' %cif
             cmd += '/bin/mv LigandFit_run_1_ %s_phenix\n' %cif
             cmd += '/bin/rm -fr PDS\n\n'
