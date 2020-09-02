@@ -12,7 +12,11 @@ import json
 import time
 
 from datetime import datetime
-import gemmi
+
+try:
+    import gemmi
+except ImportError:
+    print 'ERROR: cannot find gemmi! Make sure you use CCP4 v7.1 or higher!'
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
