@@ -2096,6 +2096,9 @@ class start_COOT(QtCore.QThread):
             cmd += 'module load ccp4/7.0.078\n'
 #        os.system('cd {0!s}\ncoot --no-guano --no-state-script --script {1!s}'.format(os.getenv('HOME'), os.path.join(os.getenv('XChemExplorer_DIR'),'lib',self.pylib)))
         cmd += 'cd {0!s}\ncoot --no-guano --no-state-script --script {1!s}'.format(os.getenv('HOME'), os.path.join(os.getenv('XChemExplorer_DIR'),'lib',self.pylib))
+        print '>>>>>>>>>>>>>>>>'
+        print cmd
+        print '<<<<<<<<<<<<<<<<'
         os.system(cmd)
 
 class start_ICM(QtCore.QThread):
