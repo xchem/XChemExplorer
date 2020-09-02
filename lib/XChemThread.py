@@ -2091,15 +2091,7 @@ class start_COOT(QtCore.QThread):
         cwd=os.getcwd()
         # coot at Diamond always or sometimes at least open in home directory, so then it won't find the .pkl file
         pickle.dump(self.settings,open(os.path.join(os.getenv('HOME'),'.xce_settings.pkl'),'wb'))
-        cmd = ''
-        if os.getcwd().startswith('/dls'):
-            cmd = 'module load ccp4/7.0.078\n'
-#        os.system('cd {0!s}\ncoot --no-guano --no-state-script --script {1!s}'.format(os.getenv('HOME'), os.path.join(os.getenv('XChemExplorer_DIR'),'lib',self.pylib)))
-        cmd += 'cd {0!s}\ncoot --no-guano --no-state-script --script {1!s}'.format(os.getenv('HOME'), os.path.join(os.getenv('XChemExplorer_DIR'),'lib',self.pylib))
-        print '>>>>>>>>>>>>>>>>'
-        print cmd
-        print '<<<<<<<<<<<<<<<<'
-        os.system(cmd)
+        os.system('cd {0!s}\ncoot --no-guano --no-state-script --script {1!s}'.format(os.getenv('HOME'), os.path.join(os.getenv('XChemExplorer_DIR'),'lib',self.pylib)))
 
 class start_ICM(QtCore.QThread):
 
