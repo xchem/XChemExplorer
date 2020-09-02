@@ -15,6 +15,8 @@ from matplotlib.figure import Figure
 
 # XCE libraries
 sys.path.append(os.getenv('XChemExplorer_DIR') + '/lib')
+if os.getcwd().startswith('/dls'):
+    sys.path.append('/dls_sw/apps/ccp4/7.1.000/ccp4-7.1/lib/python2.7/site-packages')
 import XChemDB
 import XChemRefine
 import XChemUtils
