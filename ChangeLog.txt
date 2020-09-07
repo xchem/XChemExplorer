@@ -1,3 +1,6 @@
+v1.7.9 (03/09/2020)
+- change 'Open COOT' to 'Open COOT - REFMAC refinement -' in Refinement action box
+
 v1.7.8 (01/09/2020)
 - bug fix: string formatting error during restraints generation on local machine
 - added scanchirals option to rhofit command in fit_ligands function

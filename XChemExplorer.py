@@ -3550,6 +3550,8 @@ class XChemExplorer(QtGui.QApplication):
                 self.update_log.insert('starting coot...')
                 if instruction == "Open COOT":
                     interface = 'new'
+                elif instruction == "Open COOT - REFMAC refinement -":
+                    interface = 'new'
                 elif instruction == "Open COOT - test -":
                     interface = 'test'
                 elif instruction == "Open COOT for old PanDDA":
