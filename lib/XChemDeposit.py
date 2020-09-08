@@ -700,6 +700,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.Logfile.warning('%s: found empty file named "no_pandda_analysis_performed" which suggests we will ignore event maps for this sample' %xtal)
             foundMatchingMap = True
             ligList = []
+
         for lig in sorted(ligList):
             ligID = lig.replace('.pdb','')
 #            if os.path.isfile('no_pandda_analysis_performed'):
@@ -707,6 +708,18 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #                foundMatchingMap = True
 #                break
             ligCC = []
+
+            # for newer BUSTER export
+            print '>>>> %s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb',''))
+            for mtz in glob.glob(('%s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb','')))):
+                self.Logfile.insert(xtal + ': found ' + mtz)
+                foundMatchingMap = True
+                self.eventList.append(mtz)
+                break
+
+            if foundMatchingMap:
+                continue
+
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
                 self.get_lig_cc(xtal, mtz, lig)
                 cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
