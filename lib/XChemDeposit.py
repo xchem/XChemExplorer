@@ -707,6 +707,14 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #                foundMatchingMap = True
 #                break
             ligCC = []
+
+            # for newer BUSTER export
+            for mtz in glob.glob(('%s-event_*.native_%s.mtz' %(xtal,lig))):
+                self.Logfile.insert(xtal + ': found ' + mtz)
+                foundMatchingMap = True
+                self.eventList.append(mtz)
+                continue
+
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
                 self.get_lig_cc(xtal, mtz, lig)
                 cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
