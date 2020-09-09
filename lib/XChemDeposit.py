@@ -659,7 +659,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     break
                 if not fileStatus:
                     self.Logfile.warning('%s: this does not seem to be an AIMLESS logfile' %xtal)
-                    APpath = os.path.relpath('%s.log' %xtal)[os.path.relpath('%s.log' %xtal).rfind('/')+1:]
+                    APpath = os.path.relpath('%s.log' %xtal)[:os.path.relpath('%s.log' %xtal).rfind('/')]
                     self.Logfile.insert('%s: relative path to logfile %s' %(xtal,APpath))
                     os.chdir(APpath)
                     foundUnmerged = False
@@ -675,7 +675,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         else:
             self.Logfile.error('%s: cannot find %s.log; moving to next dataset...' %(xtal,xtal))
             self.add_to_errorList(xtal)
-        return  fileStatus
+        return fileStatus
 
 
     def mtzFree_exists(self,xtal):
