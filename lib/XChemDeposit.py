@@ -633,12 +633,44 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.add_to_errorList(xtal)
         return  fileStatus
 
+    def run_aimless_merge_only(self,xtal,unmerged,APpath):
+        cmd = (
+            'aimless hklin %s hklout mergeonly.mtz << eof > %s\n' %(unmerged, unmerged.replace('.mtz','.log')) +
+            ' onlymerge\n'
+            'eof'
+        )
+        self.Logfile.insert('%s: running AIMLESS in onlymerge mode...' %xtal)
+        os.system(cmd)
+        os.chdir(os.path.join(self.projectDir, xtal))
+        os.system('/bin/rm %s.log' %xtal)
+        os.system('ln -s %s/%s %s.log' %(APpath,unmerged.replace('.mtz','.log'),xtal))
+
+
+
     def aimless_logfile_exists(self,xtal):
         self.Logfile.insert('%s: checking if aimless logfile, i.e. %s.log, exists' %(xtal,xtal))
         fileStatus = False
         if os.path.isfile('%s.log' %xtal):
             self.Logfile.insert('%s: found %s.log' %(xtal,xtal))
-            fileStatus = True
+            for line in open('%s.log' %xtal):
+                if 'AIMLESS' in line:
+                    fileStatus = True
+                    break
+                if not fileStatus:
+                    self.Logfile.warning('%s: this does not seem to be an AIMLESS logfile' %xtal)
+                    APpath = os.path.relpath('%s.log' %xtal)[os.path.relpath('%s.log' %xtal).rfind('/')+1:]
+                    self.Logfile.insert('%s: relative path to logfile %s' %(xtal,APpath))
+                    os.chdir(APpath)
+                    foundUnmerged = False
+                    for unmerged in glob.glob('*_scaled_unmerged.mtz'):
+                        self.Logfile.insert('%s: found %s in %s' %(xtal,unmerged,APpath))
+                        self.run_aimless_merge_only(xtal,unmerged,APpath)
+                        foundUnmerged = True
+                        break
+                    if not foundUnmerged:
+                        self.Logfile.error('%s: cannot find a suitable AIMLESS logfile' %xtal)
+                        self.add_to_errorList(xtal)
+#            fileStatus = True
         else:
             self.Logfile.error('%s: cannot find %s.log; moving to next dataset...' %(xtal,xtal))
             self.add_to_errorList(xtal)
