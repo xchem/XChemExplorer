@@ -513,6 +513,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
                 self.make_table_one(xtal)
 
+                break
 
         self.print_errorlist()
         self.Logfile.insert('======= finished preparing mmcif files for wwPDB deposition =======')
