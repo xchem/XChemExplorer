@@ -1,3 +1,6 @@
+v1.7.11 (09/09/2020)
+- bug fix: preparation of mmcif files: run aimless in onlymerge mode if only json file available
+
 v1.7.10 (08/09/2020)
 - bug fix - preparation of mmcif files for deposition: enable usage of event mtz files which were generated during 'BUSTER' export routine
 
