@@ -652,17 +652,23 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         fileStatus = False
         if os.path.isfile('%s.log' %xtal):
             self.Logfile.insert('%s: found %s.log' %(xtal,xtal))
-            for line in open('%s.log' %xtal):
+            for n,line in enumerate(open('%s.log' %xtal)):
                 if 'AIMLESS' in line:
                     fileStatus = True
                     break
+                if n < 10:
+                    print line
                 if not fileStatus:
                     self.Logfile.warning('%s: this does not seem to be an AIMLESS logfile' %xtal)
                     Filepath = os.path.relpath(os.path.realpath('%s.log' %xtal))
                     APpath = Filepath[:Filepath.rfind('/')]
                     self.Logfile.insert('%s: relative path to logfile %s' %(xtal,APpath))
                     self.Logfile.insert('%s: file path to logfile %s' %(xtal,Filepath))
-                    os.chdir(APpath)
+                    if os.path.isdir(APpath):
+                        os.chdir(APpath)
+                    else:
+                        self.Logfile.error('%s: %s is not a directory' %(xtal,APpath))
+                        self.add_to_errorList(xtal)
                     foundUnmerged = False
                     for unmerged in glob.glob('*_scaled_unmerged.mtz'):
                         self.Logfile.insert('%s: found %s in %s' %(xtal,unmerged,APpath))

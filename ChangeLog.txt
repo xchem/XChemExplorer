@@ -1,3 +1,6 @@
+v1.7.12 (14/09/2020)
+- bug fix: problem with recognizing AIMLESS logfiles during preparation of MMCIF files
+
 v1.7.11 (09/09/2020)
 - bug fix: preparation of mmcif files: run aimless in onlymerge mode if only json file available
 
