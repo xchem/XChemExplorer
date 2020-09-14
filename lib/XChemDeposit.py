@@ -644,6 +644,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         os.chdir(os.path.join(self.projectDir, xtal))
         os.system('/bin/rm %s.log' %xtal)
         os.system('ln -s %s/%s %s.log' %(APpath,unmerged.replace('.mtz','.log'),xtal))
+        self.Logfile.insert('%s: finished running AIMLESS' %xtal)
+        if os.path.isfile(xtal+'.log'):
+            self.Logfile.insert('%s: AIMLESS logfile successfully created' %xtal)
+        else:
+            self.Logfile.error('%s: cannot find AIMLESS logfile...' %xtal)
 
 
 
