@@ -656,8 +656,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if 'AIMLESS' in line:
                     fileStatus = True
                     break
-                if n < 10:
-                    print line
+#                if n < 10:
+#                    print line
             if not fileStatus:
                 self.Logfile.warning('%s: this does not seem to be an AIMLESS logfile' %xtal)
                 Filepath = os.path.relpath(os.path.realpath('%s.log' %xtal))
