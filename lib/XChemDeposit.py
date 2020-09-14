@@ -825,6 +825,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: preparing data_template.cif file' %xtal)
         if self.overwrite_existing_mmcif:
             self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
+            if str(self.data_template_dict['radiation_wavelengths']).startswith('0.0'):
+                self.Logfile.error('%s: this does not seem to be the true experimental wavelength: %s' %(xtal,str(self.data_template_dict['radiation_wavelengths'])))
+                self.Logfile.insert('%s: trying to find it from %s.free.mtz...' %(xtal,xtal))
+                if os.path.isfile('%s.free.mtz' %xtal):
+                    self.data_template_dict['radiation_wavelengths'] = mtztools(xtal+'.free.mtz').get_wavelength()
+                    self.Logfile.warning('%s: found the following wavelength -> %s' %(xtal,str(self.data_template_dict['radiation_wavelengths'])))
             self.Logfile.insert('%s: experimental wavelength according to %s is %s' %(xtal,self.mtz,self.data_template_dict['radiation_wavelengths']))
             if self.ground_state:
                 os.chdir(self.projectDir)

@@ -1,5 +1,6 @@
 v1.7.12 (14/09/2020)
 - bug fix: problem with recognizing AIMLESS logfiles during preparation of MMCIF files
+- bug fix: try finding experimental wavelength from .free.mtz file if it is 0.0 in refine.mtz during MMCIF file preparation
 
 v1.7.11 (09/09/2020)
 - bug fix: preparation of mmcif files: run aimless in onlymerge mode if only json file available
