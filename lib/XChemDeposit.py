@@ -726,7 +726,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.Logfile.warning('%s: user selected to not include event map in SF mmcif file' %xtal)
             eventMTZexists = True
         else:
-            for mtz in glob.glob('*event*.native*P1.mtz'):
+            for mtz in glob.glob('*event*.native*.mtz'):
                 eventMTZlist.append(mtz[mtz.rfind('/')+1:])
             if eventMTZlist is []:
                 self.Logfile.error('%s: MTZ files of event maps do not exists! Go to PANDDA tab and run "Event Map -> SF"' %xtal)
@@ -747,6 +747,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             foundMatchingMap = True
             ligList = []
 
+        self.Logfile.insert('%s: looking for event maps for the following ligands -> %s' %(xtal,str(ligList)))
         for lig in sorted(ligList):
             ligID = lig.replace('.pdb','')
 #            if os.path.isfile('no_pandda_analysis_performed'):
