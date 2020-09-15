@@ -756,7 +756,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             ligCC = []
 
             # for newer BUSTER export
-            print '>>>> %s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb',''))
+#            print '>>>> %s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb',''))
             for mtz in glob.glob(('%s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb','')))):
                 self.Logfile.insert(xtal + ': found ' + mtz)
                 foundMatchingMap = True
@@ -774,7 +774,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     ligCC.append([mtz,float(cc)])
                 except ValueError:
                     ligCC.append([mtz, 0.00])
-            highestCC = max(ligCC, key=lambda x: x[0])[1]
+            try:
+                highestCC = max(ligCC, key=lambda x: x[0])[1]
+            except ValueError:
+                highestCC = 0.00
             if highestCC == 0.00 or ligCC is []:
                 self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
                 self.add_to_errorList(xtal)
