@@ -644,6 +644,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         os.chdir(os.path.join(self.projectDir, xtal))
         os.system('/bin/rm %s.log' %xtal)
         os.system('ln -s %s/%s %s.log' %(APpath,unmerged.replace('.mtz','.log'),xtal))
+        self.Logfile.insert('%s: finished running AIMLESS' %xtal)
+        if os.path.isfile(xtal+'.log'):
+            self.Logfile.insert('%s: AIMLESS logfile successfully created' %xtal)
+        else:
+            self.Logfile.error('%s: cannot find AIMLESS logfile...' %xtal)
 
 
 
@@ -652,16 +657,19 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         fileStatus = False
         if os.path.isfile('%s.log' %xtal):
             self.Logfile.insert('%s: found %s.log' %(xtal,xtal))
-            for line in open('%s.log' %xtal):
+            for n,line in enumerate(open('%s.log' %xtal)):
                 if 'AIMLESS' in line:
                     fileStatus = True
                     break
-                if not fileStatus:
-                    self.Logfile.warning('%s: this does not seem to be an AIMLESS logfile' %xtal)
-                    Filepath = os.path.relpath(os.path.realpath('%s.log' %xtal))
-                    APpath = Filepath[:Filepath.rfind('/')]
-                    self.Logfile.insert('%s: relative path to logfile %s' %(xtal,APpath))
-                    self.Logfile.insert('%s: file path to logfile %s' %(xtal,Filepath))
+#                if n < 10:
+#                    print line
+            if not fileStatus:
+                self.Logfile.warning('%s: this does not seem to be an AIMLESS logfile' %xtal)
+                Filepath = os.path.relpath(os.path.realpath('%s.log' %xtal))
+                APpath = Filepath[:Filepath.rfind('/')]
+                self.Logfile.insert('%s: relative path to logfile %s' %(xtal,APpath))
+                self.Logfile.insert('%s: file path to logfile %s' %(xtal,Filepath))
+                if os.path.isdir(APpath):
                     os.chdir(APpath)
                     foundUnmerged = False
                     for unmerged in glob.glob('*_scaled_unmerged.mtz'):
@@ -672,6 +680,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     if not foundUnmerged:
                         self.Logfile.error('%s: cannot find a suitable AIMLESS logfile' %xtal)
                         self.add_to_errorList(xtal)
+                else:
+                    self.Logfile.error('%s: %s is not a directory' %(xtal,APpath))
+                    self.add_to_errorList(xtal)
+
 #            fileStatus = True
         else:
             self.Logfile.error('%s: cannot find %s.log; moving to next dataset...' %(xtal,xtal))
@@ -714,7 +726,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.Logfile.warning('%s: user selected to not include event map in SF mmcif file' %xtal)
             eventMTZexists = True
         else:
-            for mtz in glob.glob('*event*.native*P1.mtz'):
+            for mtz in glob.glob('*event*.native*.mtz'):
                 eventMTZlist.append(mtz[mtz.rfind('/')+1:])
             if eventMTZlist is []:
                 self.Logfile.error('%s: MTZ files of event maps do not exists! Go to PANDDA tab and run "Event Map -> SF"' %xtal)
@@ -735,6 +747,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             foundMatchingMap = True
             ligList = []
 
+        self.Logfile.insert('%s: looking for event maps for the following ligands -> %s' %(xtal,str(ligList)))
         for lig in sorted(ligList):
             ligID = lig.replace('.pdb','')
 #            if os.path.isfile('no_pandda_analysis_performed'):
@@ -744,7 +757,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             ligCC = []
 
             # for newer BUSTER export
-            print '>>>> %s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb',''))
+#            print '>>>> %s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb',''))
             for mtz in glob.glob(('%s-event_*.native_%s.mtz' %(xtal,lig.replace('.pdb','')))):
                 self.Logfile.insert(xtal + ': found ' + mtz)
                 foundMatchingMap = True
@@ -762,7 +775,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     ligCC.append([mtz,float(cc)])
                 except ValueError:
                     ligCC.append([mtz, 0.00])
-            highestCC = max(ligCC, key=lambda x: x[0])[1]
+            try:
+                highestCC = max(ligCC, key=lambda x: x[0])[1]
+            except ValueError:
+                highestCC = 0.00
             if highestCC == 0.00 or ligCC is []:
                 self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
                 self.add_to_errorList(xtal)
@@ -818,6 +834,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: preparing data_template.cif file' %xtal)
         if self.overwrite_existing_mmcif:
             self.data_template_dict['radiation_wavelengths'] = self.mtz.get_wavelength()
+            if str(self.data_template_dict['radiation_wavelengths']).startswith('0.0'):
+                self.Logfile.error('%s: this does not seem to be the true experimental wavelength: %s' %(xtal,str(self.data_template_dict['radiation_wavelengths'])))
+                self.Logfile.insert('%s: trying to find it from %s.free.mtz...' %(xtal,xtal))
+                if os.path.isfile('%s.free.mtz' %xtal):
+                    self.data_template_dict['radiation_wavelengths'] = mtztools(xtal+'.free.mtz').get_wavelength()
+                    self.Logfile.warning('%s: found the following wavelength -> %s' %(xtal,str(self.data_template_dict['radiation_wavelengths'])))
             self.Logfile.insert('%s: experimental wavelength according to %s is %s' %(xtal,self.mtz,self.data_template_dict['radiation_wavelengths']))
             if self.ground_state:
                 os.chdir(self.projectDir)
