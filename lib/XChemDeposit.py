@@ -1302,7 +1302,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         block = -1
 
-        self.Logfile.insert('%s: reading wavelength from mtz file; lambda = %s' %(xtal,self.mtz.get_wavelength()))
+        self.Logfile.insert('%s: reading wavelength from mtz file; lambda = %s' %(xtal,str(self.data_template_dict['radiation_wavelengths'])))
 
         if os.path.isfile('no_pandda_analysis_performed'):
             self.Logfile.warning('%s: apparently not a pandda deposition; will skip this step...' %xtal)
@@ -1324,7 +1324,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                             '_diffrn.details             "%s"\n' % bound[n]).replace('$',str(block-1))
                 sys.stdout.write(newLines)
             elif line.startswith('_diffrn_radiation_wavelength.wavelength'):
-                sys.stdout.write('_diffrn_radiation_wavelength.wavelength   {0!s}\n'.format(self.mtz.get_wavelength()))
+                sys.stdout.write('_diffrn_radiation_wavelength.wavelength   {0!s}\n'.format(str(self.data_template_dict['radiation_wavelengths'])))
             else:
                 sys.stdout.write(line)
 
