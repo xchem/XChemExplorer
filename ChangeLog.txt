@@ -1,3 +1,6 @@
+v1.7.13 (23/09/2020)
+- bug fix: use wavelength read from (.free).mtz during model MMCIF preparation when updating SF MMCIF
+
 v1.7.12 (14/09/2020)
 - bug fix: problem with recognizing AIMLESS logfiles during preparation of MMCIF files
 - bug fix: try finding experimental wavelength from .free.mtz file if it is 0.0 in refine.mtz during MMCIF file preparation
