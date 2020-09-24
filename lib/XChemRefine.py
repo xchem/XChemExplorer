@@ -1065,7 +1065,8 @@ class Refine(object):
                        'TLS':    '',
                        'NCS':    '',
                        'TWIN':   '',
-                       'WATER':  ''     }
+                       'WATER':  '',
+                       'LIGOCC':    ''  }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
