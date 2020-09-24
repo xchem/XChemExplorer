@@ -629,6 +629,7 @@ class Refine(object):
         if RefmacParams != None:
             if 'LIGOCC' in RefmacParams['LIGOCC']:
                 print 'JJJJJJJJ'
+                print hklin
                 ligand_info = pdbtools(hklin).get_residues_with_resname('LIG')
                 print 'GGGGGGGG'
                 if self.prepare_gelly_dat(ligand_info):
