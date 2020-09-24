@@ -1,3 +1,6 @@
+v1.7.14 (24/09/2020)
+- added option for ligand occupancy refinement in BUSTER
+
 v1.7.13 (23/09/2020)
 - bug fix: use wavelength read from (.free).mtz during model MMCIF preparation when updating SF MMCIF
 

@@ -174,7 +174,8 @@ class GUI(object):
                              'TLS': '',
                              'NCS': '',
                              'TWIN': '',
-                             'WATER':   ''  }
+                             'WATER':   '',
+                             'LIGOCC':  ''  }
 
     def StartGUI(self):
 
