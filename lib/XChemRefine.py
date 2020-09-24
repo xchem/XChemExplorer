@@ -625,21 +625,16 @@ class Refine(object):
 
         hklin, hklout = self.get_hklin_hklout(Serial)
 
-        refine_ligand_occupancy = ''
-        if RefmacParams != None:
-            if 'LIGOCC' in RefmacParams['LIGOCC']:
-                print 'JJJJJJJJ'
-                print hklin
-                ligand_info = pdbtools(hklin).get_residues_with_resname('LIG')
-                print 'GGGGGGGG'
-                if self.prepare_gelly_dat(ligand_info):
-                    refine_ligand_occupancy = ' -B user gelly.dat '
-
-
-
         resh, resl = mtztools_gemmi(hklin).get_high_low_resolution_limits()
 
         xyzin, xyzout = self.get_xyzin_xyzout(Serial)
+
+        refine_ligand_occupancy = ''
+        if RefmacParams != None:
+            if 'LIGOCC' in RefmacParams['LIGOCC']:
+                ligand_info = pdbtools(xyzin).get_residues_with_resname('LIG')
+                if self.prepare_gelly_dat(ligand_info):
+                    refine_ligand_occupancy = ' -B user gelly.dat '
 
         libin, libout = self.get_libin_libout(Serial)
 
