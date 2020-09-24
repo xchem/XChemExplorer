@@ -592,6 +592,8 @@ class Refine(object):
 
     def RunBuster(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
+        print '>>>>>>>'
+
         if RefmacParams == None:
             anisotropic_Bfactor = ' -M ADP '
             update_water = ''
