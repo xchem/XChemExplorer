@@ -671,7 +671,7 @@ class Refine(object):
     def prepare_gelly_dat(self,ligand_info):
         found_ligand = False
         gelly = 'NOTE BUSTER_SET Ligand = '
-        for n,lig in enumarate(ligand_info):
+        for n,lig in enumerate(ligand_info):
             resseq = lig[1]
             chain = lig[2]
             if n == 0:
