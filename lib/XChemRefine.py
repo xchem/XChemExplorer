@@ -116,6 +116,11 @@ class RefineParams(object):
         if self.RefmacParams['WATER']=='WATER\n': self.WATER.set_active(True)
         self.vbox.pack_start(self.WATER,False)
 
+        self.LIGOCC = gtk.CheckButton('Refine ligand occupancy (BUSTER)')
+        self.LIGOCC.connect("toggled", self.LIGOCCCallback)
+        if self.RefmacParams['LIGOCC']=='LIGOCC\n': self.LIGOCC.set_active(True)
+        self.vbox.pack_start(self.LIGOCC,False)
+
         self.OKbutton = gtk.Button(label="OK")
         self.OKbutton.connect("clicked",self.OK)
         self.vbox.add(self.OKbutton)
@@ -175,6 +180,13 @@ class RefineParams(object):
             self.RefmacParams['WATER']=''
         return self.RefmacParams
 
+    def LIGOCCCallback(self, widget):
+        if widget.get_active():
+            self.RefmacParams['LIGOCC']='LIGOCC\n'
+        else:
+            self.RefmacParams['LIGOCC']=''
+        return self.RefmacParams
+
     def OK(self,widget):
         self.window.destroy()
 
@@ -192,7 +204,8 @@ class RefineParams(object):
                        'TLS':    '',
                        'NCS':    '',
                        'TWIN':   '',
-                       'WATER':  '' }
+                       'WATER':  '',
+                       'LIGOCC': '' }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
@@ -426,14 +439,14 @@ class Refine(object):
                  + self.datasource + ' ' + self.xtalID + ' RefinementStatus running\n')
         return cmd
 
-    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water):
+    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water,refine_ligand_occupancy):
         cmd += (
             'refine '
             ' -p %s' %xyzin +
             ' -m %s' %hklin +
             ' -l %s' %libin +
             ' -autoncs'
-            + anisotropic_Bfactor + update_water +
+            + anisotropic_Bfactor + update_water + refine_ligand_occupancy +
             ' -d Refine_%s\n' %str(Serial)
         )
         return cmd
@@ -593,6 +606,7 @@ class Refine(object):
             else:
                 update_water = ''
 
+
         self.error = False
 
         if os.path.isfile(xce_logfile):
@@ -613,6 +627,13 @@ class Refine(object):
 
         xyzin, xyzout = self.get_xyzin_xyzout(Serial)
 
+        refine_ligand_occupancy = ''
+        if RefmacParams != None:
+            if 'LIGOCC' in RefmacParams['LIGOCC']:
+                ligand_info = pdbtools(xyzin).get_residues_with_resname('LIG')
+                if self.prepare_gelly_dat(ligand_info):
+                    refine_ligand_occupancy = ' -B user -Gelly gelly.dat '
+
         libin, libout = self.get_libin_libout(Serial)
 
         self.clean_up_before_refinement()
@@ -627,7 +648,7 @@ class Refine(object):
 
         cmd = self.set_refinement_status(cmd)
 
-        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water)
+        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water,refine_ligand_occupancy)
 
         cmd = self.add_validation(cmd,Serial,'buster')
 
@@ -646,6 +667,32 @@ class Refine(object):
             self.write_refinement_script(cmd,'buster')
             self.Logfile.insert('%s: starting refinement...' %self.xtalID)
             self.run_script('buster',external_software)
+
+    def prepare_gelly_dat(self,ligand_info):
+        found_ligand = False
+        gelly = 'NOTE BUSTER_SET Ligand = '
+        for n,lig in enumerate(ligand_info):
+            resseq = lig[1]
+            chain = lig[2]
+            if n == 0:
+                gelly += '{ %s|%s }' %(chain.replace(' ',''),resseq.replace(' ',''))
+            else:
+                gelly += ' + { %s|%s }' %(chain.replace(' ',''),resseq.replace(' ',''))
+            found_ligand = True
+        if '{' in gelly:
+            gelly += '\n'
+            gelly += (
+                'NOTE BUSTER_SET NotLigand = \ Ligand\n'
+                'NOTE BUSTER_CONSTANT OCC NotLigand \n'
+                'NOTE BUSTER_COMBINE OCC Ligand \n'
+                'NOTE BUSTER_COMBINE B Ligand      \n'
+                )
+            os.chdir(os.path.join(self.ProjectPath,self.xtalID))
+            f = open('gelly.dat','w')
+            f.write(gelly)
+            f.close()
+        return found_ligand
+
 
     def RunRefmac(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
@@ -1020,7 +1067,8 @@ class Refine(object):
                        'TLS':    '',
                        'NCS':    '',
                        'TWIN':   '',
-                       'WATER':  ''     }
+                       'WATER':  '',
+                       'LIGOCC':    ''  }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
