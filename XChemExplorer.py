@@ -5195,6 +5195,11 @@ class XChemExplorer(QtGui.QApplication):
                         deselect_button.stateChanged.connect(self.kill_other_pandda_options)
                         self.pandda_analyse_data_table.setCellWidget(current_row, column, deselect_button)
 
+                    elif header[0]=='Export':
+                        deselect_button = QtGui.QCheckBox()
+                        deselect_button.stateChanged.connect(self.kill_other_pandda_options)
+                        self.pandda_analyse_data_table.setCellWidget(current_row, column, deselect_button)
+
                     elif header[0] == 'Sample ID':
                         cell_text = QtGui.QTableWidgetItem()
                         cell_text.setText(str(xtal))
