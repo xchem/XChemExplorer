@@ -670,19 +670,23 @@ class Refine(object):
 
     def prepare_gelly_dat(self,ligand_info):
         found_ligand = False
-        gelly = ''
-        for lig in ligand_info:
+        gelly = 'NOTE BUSTER_SET Ligand = '
+        for n,lig in enumarate(ligand_info):
             resseq = lig[1]
             chain = lig[2]
+            if n == 0:
+                gelly += '{ %s|%s }' %(chain.replace(' ',''),resseq.replace(' ',''))
+            else:
+                gelly += ' + { %s|%s }' %(chain.replace(' ',''),resseq.replace(' ',''))
+            found_ligand = True
+        if '{' in gelly:
+            gelly += '\n'
             gelly += (
-                'NOTE BUSTER_SET Ligand = { %s|%s }\n' %(chain.replace(' ',''),resseq.replace(' ','')) +
                 'NOTE BUSTER_SET NotLigand = \ Ligand\n'
                 'NOTE BUSTER_CONSTANT OCC NotLigand \n'
                 'NOTE BUSTER_COMBINE OCC Ligand \n'
                 'NOTE BUSTER_COMBINE B Ligand      \n'
                 )
-            found_ligand = True
-        if gelly != '':
             os.chdir(os.path.join(self.ProjectPath,self.xtalID))
             f = open('gelly.dat','w')
             f.write(gelly)
