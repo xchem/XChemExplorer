@@ -685,7 +685,7 @@ class Refine(object):
                 )
             found_ligand = True
         if gelly != '':
-            os.chdir(self.ProjectPath,self.xtalID)
+            os.chdir(os.path.join(self.ProjectPath,self.xtalID))
             f = open('gelly.dat','w')
             f.write(gelly)
             f.close()
