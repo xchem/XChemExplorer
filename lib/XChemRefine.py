@@ -592,8 +592,6 @@ class Refine(object):
 
     def RunBuster(self,Serial,RefmacParams,external_software,xce_logfile,covLinkAtomSpec):
 
-        print '>>>>>>>'
-
         if RefmacParams == None:
             anisotropic_Bfactor = ' -M ADP '
             update_water = ''
@@ -634,7 +632,7 @@ class Refine(object):
             if 'LIGOCC' in RefmacParams['LIGOCC']:
                 ligand_info = pdbtools(xyzin).get_residues_with_resname('LIG')
                 if self.prepare_gelly_dat(ligand_info):
-                    refine_ligand_occupancy = ' -B user gelly.dat '
+                    refine_ligand_occupancy = ' -B user -Gelly gelly.dat '
 
         libin, libout = self.get_libin_libout(Serial)
 
