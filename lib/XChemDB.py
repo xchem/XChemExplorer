@@ -1441,7 +1441,7 @@ class data_source:
 #                continue
             if item.startswith('Export'):
 #                out_list.append('Export')
-                out_list.append([item,item])
+                out_list.append(['Export',item])
                 continue
             if item.startswith('Show'):
                 out_list.append([item,item])
