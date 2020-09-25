@@ -487,7 +487,7 @@ class refine_bound_state_with_buster(QtCore.QThread):
 
 class run_pandda_export(QtCore.QThread):
 
-    def __init__(self,panddas_directory,datasource,initial_model_directory,xce_logfile,update_datasource_only,which_models):
+    def __init__(self,panddas_directory,datasource,initial_model_directory,xce_logfile,update_datasource_only,which_models,pandda_params):
         QtCore.QThread.__init__(self)
         self.panddas_directory=panddas_directory
         self.datasource=datasource
@@ -501,6 +501,7 @@ class run_pandda_export(QtCore.QThread):
         self.update_datasource_only=update_datasource_only
         self.which_models=which_models
         self.already_exported_models=[]
+        self.pandda_analyse_data_table = pandda_params['pandda_table']
 
         self.RefmacParams={ 'HKLIN':            '',                 'HKLOUT': '',
                             'XYZIN':            '',                 'XYZOUT': '',

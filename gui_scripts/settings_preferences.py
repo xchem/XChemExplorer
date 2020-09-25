@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.7.15'
+        xce_object.xce_version = 'v1.7.16'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -386,6 +386,7 @@ class setup():
 
         xce_object.pandda_table_columns = [
                                            'Sample ID',
+                                           'Export\nSelected',
                                            'Refinement\nSpace Group',
                                            'Resolution\n[Mn<I/sig(I)> = 1.5]',
                                            'Dimple\nRcryst',
@@ -633,8 +634,11 @@ class setup():
         xce_object.panddas_file_tasks = ['pandda.analyse',
                                          'pandda.inspect',
                                          'run pandda.inspect at home',
+                                         '------------------------------------------',
                                          'Export NEW PANDDA models',
                                          'Export ALL PANDDA models',
+                                         'Export SELECTED PANDDA models',
+                                         '------------------------------------------',
                                          'Show HTML summary',
 #                                         'Update datasource with results from pandda.inspect',
                                          'cluster datasets',

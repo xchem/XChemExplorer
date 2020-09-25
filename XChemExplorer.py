@@ -3516,6 +3516,11 @@ class XChemExplorer(QtGui.QApplication):
             which_models = 'all'
             self.run_pandda_export(update_datasource_only, which_models)
 
+        elif instruction == 'Export SELECTED PANDDA models':
+            update_datasource_only = False
+            which_models = 'selected'
+            self.run_pandda_export(update_datasource_only, which_models)
+
         elif instruction == 'refine ALL bound-state models with BUSTER':
             self.run_refine_bound_state_with_buster('all')
 
@@ -3799,6 +3804,31 @@ class XChemExplorer(QtGui.QApplication):
         self.work_thread.start()
 
     def run_pandda_export(self, update_datasource_only, which_models):
+
+        pandda_params = {
+            'data_dir': str(self.pandda_input_data_dir_entry.text()),
+            'out_dir': str(self.pandda_output_data_dir_entry.text()),
+            'submit_mode': str(self.pandda_submission_mode_selection_combobox.currentText()),
+            'nproc': str(self.pandda_nproc_entry.text()),
+            'min_build_datasets': str(self.pandda_min_build_dataset_entry.text()),
+            'pdb_style': str(self.pandda_pdb_style_entry.text()),
+            'mtz_style': str(self.pandda_mtz_style_entry.text()),
+            'sort_event': str(self.pandda_sort_event_combobox.currentText()),
+            'average_map': str(self.pandda_calc_map_combobox.currentText()),
+            'max_new_datasets': str(self.pandda_max_new_datasets_entry.text()),
+            'grid_spacing': str(self.pandda_grid_spacing_entry.text()),
+            'pandda_dir_structure': str(self.pandda_input_data_dir_entry.text()),
+            'perform_diffraction_data_scaling': str(self.wilson_checkbox.isChecked()),
+            'filter_pdb': str(self.pandda_reference_file_selection_combobox.currentText()),
+            'reference_dir': self.reference_directory,
+            'appendix': '',
+            'N_datasets': len(glob.glob(os.path.join(self.initial_model_directory, '*', 'dimple.pdb'))),
+            'write_mean_map': 'interesting',
+            'pandda_table': self.pandda_analyse_data_table,
+            'use_remote': self.using_remote_qsub_submission,
+            'remote_string': self.remote_qsub_submission
+        }
+
         self.settings['panddas_directory'] = str(self.pandda_output_data_dir_entry.text())
         if update_datasource_only:
             self.update_log.insert('updating data source with results from pandda.inspect')
@@ -3831,7 +3861,7 @@ class XChemExplorer(QtGui.QApplication):
                                                              os.path.join(self.database_directory,
                                                                           self.data_source_file),
                                                              self.initial_model_directory, self.xce_logfile,
-                                                             update_datasource_only, which_models)
+                                                             update_datasource_only, which_models, pandda_params)
             self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
             self.work_thread.start()
 
@@ -5124,9 +5154,10 @@ class XChemExplorer(QtGui.QApplication):
 
     def kill_other_pandda_options(self):
         for i in range(0, self.pandda_analyse_data_table.rowCount()):
-            checkbox1 = self.pandda_analyse_data_table.cellWidget(i,6)
-            checkbox2 = self.pandda_analyse_data_table.cellWidget(i,7)
-            checkbox3 = self.pandda_analyse_data_table.cellWidget(i,8)
+            checkbox0 = self.pandda_analyse_data_table.cellWidget(i,1)
+            checkbox1 = self.pandda_analyse_data_table.cellWidget(i,7)
+            checkbox2 = self.pandda_analyse_data_table.cellWidget(i,8)
+            checkbox3 = self.pandda_analyse_data_table.cellWidget(i,9)
             if checkbox1.isChecked():
                 checkbox2.setChecked(False)
                 checkbox3.setChecked(False)

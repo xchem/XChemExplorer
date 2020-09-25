@@ -1,3 +1,6 @@
+v1.7.16 (25/09/2020)
+- enable export of selected datasets with pandda.export
+
 v1.7.15 (25/09/2020)
 - added option to ignore GELLY sanity check in BUSTER
 - added option to ignore GELLY sanity check during pandda export with BUSTER
