@@ -121,6 +121,11 @@ class RefineParams(object):
         if self.RefmacParams['LIGOCC']=='LIGOCC\n': self.LIGOCC.set_active(True)
         self.vbox.pack_start(self.LIGOCC,False)
 
+        self.SANITY = gtk.CheckButton('Ignore sanity checks (BUSTER)')
+        self.SANITY.connect("toggled", self.SANITYCallback)
+        if self.RefmacParams['SANITY']=='off\n': self.SANITY.set_active(True)
+        self.vbox.pack_start(self.SANITY,False)
+
         self.OKbutton = gtk.Button(label="OK")
         self.OKbutton.connect("clicked",self.OK)
         self.vbox.add(self.OKbutton)
@@ -187,6 +192,13 @@ class RefineParams(object):
             self.RefmacParams['LIGOCC']=''
         return self.RefmacParams
 
+    def SANITYCallback(self, widget):
+        if widget.get_active():
+            self.RefmacParams['SANITY']='off\n'
+        else:
+            self.RefmacParams['SANITY']=''
+        return self.RefmacParams
+
     def OK(self,widget):
         self.window.destroy()
 
@@ -205,7 +217,8 @@ class RefineParams(object):
                        'NCS':    '',
                        'TWIN':   '',
                        'WATER':  '',
-                       'LIGOCC': '' }
+                       'LIGOCC': '',
+                       'SANITY': '' }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
@@ -439,14 +452,14 @@ class Refine(object):
                  + self.datasource + ' ' + self.xtalID + ' RefinementStatus running\n')
         return cmd
 
-    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water,refine_ligand_occupancy):
+    def add_buster_command(self,cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water,refine_ligand_occupancy,ignore_sanity_check):
         cmd += (
             'refine '
             ' -p %s' %xyzin +
             ' -m %s' %hklin +
             ' -l %s' %libin +
             ' -autoncs'
-            + anisotropic_Bfactor + update_water + refine_ligand_occupancy +
+            + anisotropic_Bfactor + update_water + refine_ligand_occupancy + ignore_sanity_check +
             ' -d Refine_%s\n' %str(Serial)
         )
         return cmd
@@ -606,6 +619,11 @@ class Refine(object):
             else:
                 update_water = ''
 
+            if 'off' in RefmacParams['SANITY']:
+                ignore_sanity_check = ' StopOnGellySanityCheckError="no" '
+            else:
+                ignore_sanity_check = ''
+
 
         self.error = False
 
@@ -648,7 +666,7 @@ class Refine(object):
 
         cmd = self.set_refinement_status(cmd)
 
-        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water,refine_ligand_occupancy)
+        cmd = self.add_buster_command(cmd,xyzin,hklin,libin,Serial,anisotropic_Bfactor,update_water,refine_ligand_occupancy,ignore_sanity_check)
 
         cmd = self.add_validation(cmd,Serial,'buster')
 
@@ -1068,7 +1086,8 @@ class Refine(object):
                        'NCS':    '',
                        'TWIN':   '',
                        'WATER':  '',
-                       'LIGOCC':    ''  }
+                       'LIGOCC':    '',
+                       'SANITY':    ''  }
 
         if os.path.isfile(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
             for line in open(self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'/refmac.csh'):
