@@ -67,7 +67,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         modelsDict = self.find_modeled_structures_and_timestamps()
 
         # if only NEW models shall be exported, check timestamps
-        if self.which_models != 'all':
+        if not self.which_models.startswith('all'):
             modelsDict = self.find_new_models(modelsDict)
 
         # find pandda_inspect_events.csv and read in as pandas dataframe
@@ -265,6 +265,25 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
 
 
     def refine_exported_model(self,xtal):
+
+        RefmacParams={ 'HKLIN': '', 'HKLOUT': '',
+                       'XYZIN': '', 'XYZOUT': '',
+                       'LIBIN': '', 'LIBOUT': '',
+                       'TLSIN': '', 'TLSOUT': '',
+                       'TLSADD': '',
+                       'NCYCLES': '10',
+                       'MATRIX_WEIGHT': 'AUTO',
+                       'BREF':   '    bref ISOT\n',
+                       'TLS':    '',
+                       'NCS':    '',
+                       'TWIN':   '',
+                       'WATER':  '',
+                       'LIGOCC':    '',
+                       'SANITY':    ''  }
+
+        if 'nocheck' in self.which_models:
+            RefmacParams['SANITY'] = 'off'
+
         self.Logfile.insert('trying to refine ' + xtal + '...')
         self.Logfile.insert('%s: getting compound code from database' %xtal)
         query=self.db.execute_statement("select CompoundCode from mainTable where CrystalName='%s';" %xtal)
@@ -284,7 +303,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     os.chdir(os.path.join(self.project_directory,xtal,'cootOut','Refine_'+str(Serial)))
                 os.system('/bin/cp %s in.pdb' %os.path.join(self.project_directory,xtal,xtal+'-pandda-model.pdb'))
                 Refine=XChemRefine.Refine(self.project_directory,xtal,compoundID,self.datasource)
-                Refine.RunBuster(str(Serial),None,self.external_software,self.xce_logfile,None)
+                Refine.RunBuster(str(Serial),RefmacParams,self.external_software,self.xce_logfile,None)
             else:
                 self.Logfile.error('%s: cannot find %s-pandda-model.pdb; cannot start refinement...' %(xtal,xtal))
 

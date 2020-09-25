@@ -3522,6 +3522,12 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'refine NEW bound-state models with BUSTER':
             self.run_refine_bound_state_with_buster('new')
 
+        elif instruction == 'refine ALL bound-state models with BUSTER (no sanity check)':
+            self.run_refine_bound_state_with_buster('allnocheck')
+
+        elif instruction == 'refine NEW bound-state models with BUSTER (no sanity check)':
+            self.run_refine_bound_state_with_buster('newnocheck')
+
 #        elif instruction == 'refine NEW bound-state models with BUSTER - NEW':
 #            self.run_refine_bound_state_with_buster_new('new')
 
