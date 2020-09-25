@@ -675,7 +675,7 @@ class Refine(object):
             resseq = lig[1]
             chain = lig[2]
             gelly += (
-                'NOTE BUSTER_SET Ligand = { %s|%s }\n' %(chain,resseq) +
+                'NOTE BUSTER_SET Ligand = { %s|%s }\n' %(chain.replace(' ',''),resseq.replace(' ','')) +
                 'NOTE BUSTER_SET NotLigand = \ Ligand\n'
                 'NOTE BUSTER_CONSTANT OCC NotLigand \n'
                 'NOTE BUSTER_COMBINE OCC Ligand \n'
