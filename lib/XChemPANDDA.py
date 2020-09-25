@@ -747,6 +747,13 @@ class run_pandda_export(QtCore.QThread):
             if self.which_models=='all':
                 self.Logfile.insert('exporting '+sample)
                 samples_to_export[sample]=fileModelsDict[sample]
+            elif self.which_models == 'selected':
+                for i in range(0, self.pandda_analyse_data_table.rowCount()):
+                    if str(self.pandda_analyse_data_table.item(i, 0).text()) == sample:
+                        if self.pandda_analyse_data_table.cellWidget(i, 1).isChecked():
+                            self.Logfile.insert('Dataset selected by user -> exporting '+sample)
+                            samples_to_export[sample]=fileModelsDict[sample]
+                            break
             else:
                 if sample in dbModelsDict:
                     try:
