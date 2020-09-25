@@ -620,7 +620,7 @@ class Refine(object):
                 update_water = ''
 
             if 'off' in RefmacParams['SANITY']:
-                ignore_sanity_check = ' StopOnGellySanityCheckError="no" '
+                ignore_sanity_check = ' StopOnGellySanityCheckError=no '
             else:
                 ignore_sanity_check = ''
 
