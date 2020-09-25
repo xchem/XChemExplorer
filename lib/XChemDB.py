@@ -1440,7 +1440,8 @@ class data_source:
 #                out_list.append([item,item])
 #                continue
             if item.startswith('Export'):
-                out_list.append('Export')
+#                out_list.append('Export')
+                out_list.append([item,item])
                 continue
             if item.startswith('Show'):
                 out_list.append([item,item])
