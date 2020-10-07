@@ -1,5 +1,6 @@
 v1.7.16 (25/09/2020)
 - enable export of selected datasets with pandda.export
+- glitch fix: remove hydrogens before saving model for buster refinement (causes problems during ligand occupancy refinement)
 
 v1.7.15 (25/09/2020)
 - added option to ignore GELLY sanity check in BUSTER

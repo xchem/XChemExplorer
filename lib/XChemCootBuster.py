@@ -1456,6 +1456,7 @@ class GUI(object):
                 foundPDB = True
                 break
         if foundPDB:
+            coot.delete_hydrogens(item)
             coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
                                                            'Refine_' + str(self.Serial), 'in.pdb'))
 
