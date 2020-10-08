@@ -487,7 +487,7 @@ class refine_bound_state_with_buster(QtCore.QThread):
 
 class run_pandda_export(QtCore.QThread):
 
-    def __init__(self,panddas_directory,datasource,initial_model_directory,xce_logfile,update_datasource_only,which_models):
+    def __init__(self,panddas_directory,datasource,initial_model_directory,xce_logfile,update_datasource_only,which_models,pandda_params):
         QtCore.QThread.__init__(self)
         self.panddas_directory=panddas_directory
         self.datasource=datasource
@@ -501,6 +501,7 @@ class run_pandda_export(QtCore.QThread):
         self.update_datasource_only=update_datasource_only
         self.which_models=which_models
         self.already_exported_models=[]
+        self.pandda_analyse_data_table = pandda_params['pandda_table']
 
         self.RefmacParams={ 'HKLIN':            '',                 'HKLOUT': '',
                             'XYZIN':            '',                 'XYZOUT': '',
@@ -746,6 +747,13 @@ class run_pandda_export(QtCore.QThread):
             if self.which_models=='all':
                 self.Logfile.insert('exporting '+sample)
                 samples_to_export[sample]=fileModelsDict[sample]
+            elif self.which_models == 'selected':
+                for i in range(0, self.pandda_analyse_data_table.rowCount()):
+                    if str(self.pandda_analyse_data_table.item(i, 0).text()) == sample:
+                        if self.pandda_analyse_data_table.cellWidget(i, 1).isChecked():
+                            self.Logfile.insert('Dataset selected by user -> exporting '+sample)
+                            samples_to_export[sample]=fileModelsDict[sample]
+                            break
             else:
                 if sample in dbModelsDict:
                     try:
@@ -899,7 +907,9 @@ class run_pandda_analyse(QtCore.QThread):
 #            else:
 #                source_file=''
             # v1.2.1 - pandda.setup files should be obsolete now that pandda is part of ccp4
-            source_file='source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
+            # 08/10/2020 - pandda v0.2.12 installation at DLS is obsolete
+#            source_file='source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
+            source_file = ''
             source_file += 'export XChemExplorer_DIR="' + os.getenv('XChemExplorer_DIR') + '"\n'
 
             if os.path.isfile(self.filter_pdb + '.pdb'):

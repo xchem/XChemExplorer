@@ -1259,7 +1259,9 @@ class GUI(object):
         # read fofc maps
         # - read ccp4 map: 0 - 2fofc map, 1 - fofc.map
         # read 2fofc map last so that one can change its contour level
-        if os.path.isfile(os.path.join(self.project_directory, self.xtalID, '2fofc.map')):
+        # coot 0.9 does not handle P1 maps well, so now looking for non-existent map in order to trigger
+        # map calculation from mtz file
+        if os.path.isfile(os.path.join(self.project_directory, self.xtalID, '2fofc_??????.map')):
             coot.set_colour_map_rotation_on_read_pdb(0)
             coot.set_default_initial_contour_level_for_difference_map(3)
             coot.handle_read_ccp4_map(os.path.join(self.project_directory, self.xtalID, 'fofc.map'), 1)
@@ -1373,6 +1375,14 @@ class GUI(object):
         #
 
         #######################################################
+
+#        #######################################################
+#        # create folder for new refinement cycle and check if free.mtz exists
+#        if not os.path.isdir(os.path.join(self.project_directory, self.xtalID)):
+#            os.mkdir(os.path.join(self.project_directory, self.xtalID))
+#        if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial))):
+#            os.mkdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial)))
+
         if self.refinementProtocol.startswith('pandda'):
 
             #######################################################

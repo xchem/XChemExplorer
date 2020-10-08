@@ -588,9 +588,12 @@ class Refine(object):
 
     def run_script(self,program,external_software):
         os.chdir(os.path.join(self.ProjectPath,self.xtalID))
-        if external_software['qsub'] and not os.uname()[1] == 'hestia':
+        if external_software['qsub'] and os.path.isdir('/dls'):
             self.Logfile.insert('starting refinement with command: qsub -P labxchem -q medium.q %s.sh' %program)
             os.system("qsub -P labxchem -q medium.q %s.sh" %program)
+        elif external_software['qsub'] and not os.path.isdir('/dls'):
+            self.Logfile.insert('starting refinement with command: qsub %s.sh' %program)
+            os.system("qsub %s.sh" %program)
         elif external_software['qsub_remote'] != '':
             Logfile.insert('starting refinement on remote cluster')
             remote_command=external_software['qsub_remote'].replace('qsub','cd %s; qsub' %os.path.join(self.ProjectPath,self.xtalID,'cootOut','Refine_'+str(Serial)))
@@ -950,10 +953,12 @@ class Refine(object):
             os.system("%s -P labxchem -q medium.q refmac.csh'" %remote_command)
             print '%s -P labxchem -q medium.q refmac.csh' %remote_command
 
-        elif external_software['qsub'] and not os.uname()[1] == 'hestia':
-            Logfile.insert('starting refinement on cluster')
+        elif external_software['qsub'] and os.path.isdir('/dls'):
+            Logfile.insert('starting refinement on cluster with command "qsub -P labxchem -q medium.q refmac.csh"')
             os.system("qsub -P labxchem -q medium.q refmac.csh")
-
+        elif external_software['qsub'] and not os.path.isdir('/dls'):
+            Logfile.insert('starting refinement on cluster with command "qsub refmac.csh"')
+            os.system("qsub refmac.csh")
         else:
             os.system('chmod +x refmac.csh')
             if os.path.isfile(xce_logfile): Logfile.insert('starting refinement on local machine')
@@ -1495,7 +1500,7 @@ class panddaRefine(object):
             + module_load +
             '\n'
             +source+
-            'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
+            'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+Serial+'\n'
             '\n'
             '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(self.datasource,self.xtalID,'RefinementStatus','running') +
             '\n'
@@ -1510,7 +1515,7 @@ class panddaRefine(object):
             " split_conformations='False'"
             '\n'
             'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'\n'
-            
+            '\n'
             'ln -s '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'_001.pdb '
             +self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'.pdb' +'\n'
              
