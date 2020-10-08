@@ -658,7 +658,10 @@ class setup():
 
         xce_object.refine_file_tasks = ['Open COOT - BUSTER refinement -',
                                         'Open COOT - REFMAC refinement -',
-                                        'Open COOT - dimple_twin -' ]
+                                        'Open COOT - dimple_twin -',
+#                                        '-------------------------------',
+#                                        'Reset to last successful refinement (BUSTER or REFMAC)',
+                                        '']
 
 #        xce_object.refine_file_tasks = ['Open COOT',
 #                                        'Open COOT for old PanDDA',

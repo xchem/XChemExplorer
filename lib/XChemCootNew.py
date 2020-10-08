@@ -1373,6 +1373,14 @@ class GUI(object):
         #
 
         #######################################################
+
+#        #######################################################
+#        # create folder for new refinement cycle and check if free.mtz exists
+#        if not os.path.isdir(os.path.join(self.project_directory, self.xtalID)):
+#            os.mkdir(os.path.join(self.project_directory, self.xtalID))
+#        if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial))):
+#            os.mkdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial)))
+
         if self.refinementProtocol.startswith('pandda'):
 
             #######################################################
