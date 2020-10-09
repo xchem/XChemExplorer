@@ -1,3 +1,6 @@
+v1.7.17 (09/10/2020)
+- bug fix: corrected positions of ignore checkboxes in pandda.analyse
+
 v1.7.16 (08/10/2020)
 - enable export of selected datasets with pandda.export
 - glitch fix: remove hydrogens before saving model for buster refinement (causes problems during ligand occupancy refinement)
