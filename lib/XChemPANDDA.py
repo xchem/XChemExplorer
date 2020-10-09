@@ -954,9 +954,9 @@ class run_pandda_analyse(QtCore.QThread):
             zmap = []
 
             for i in range(0, self.pandda_analyse_data_table.rowCount()):
-                ignore_all_checkbox = self.pandda_analyse_data_table.cellWidget(i, 6)
-                ignore_characterisation_checkbox = self.pandda_analyse_data_table.cellWidget(i, 7)
-                ignore_zmap_checkbox = self.pandda_analyse_data_table.cellWidget(i, 8)
+                ignore_all_checkbox = self.pandda_analyse_data_table.cellWidget(i, 7)
+                ignore_characterisation_checkbox = self.pandda_analyse_data_table.cellWidget(i, 8)
+                ignore_zmap_checkbox = self.pandda_analyse_data_table.cellWidget(i, 9)
 
                 if ignore_all_checkbox.isChecked():
                     ignore.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
