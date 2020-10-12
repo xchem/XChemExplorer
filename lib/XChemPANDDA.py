@@ -861,7 +861,9 @@ class run_pandda_analyse(QtCore.QThread):
             if os.path.isdir(self.panddas_directory):
                 os.system('/bin/rm -fr %s' %self.panddas_directory)
             os.mkdir(self.panddas_directory)
-            self.select_ground_state_model='$CCP4/bin/ccp4-python %s %s\n' %(os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','select_ground_state_dataset.py'),self.panddas_directory)
+            if self.data_directory.startswith('/dls'):
+                self.select_ground_state_model = 'module load ccp4\n'
+            self.select_ground_state_model +='$CCP4/bin/ccp4-python %s %s\n' %(os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','select_ground_state_dataset.py'),self.panddas_directory)
             self.make_ligand_links=''
 
     def run(self):
@@ -941,7 +943,7 @@ class run_pandda_analyse(QtCore.QThread):
                     '\n'
                     'module load pymol/1.8.2.0\n'
                     '\n'
-                    'module load ccp4\n'
+                    'module load ccp4/7.0.072\n'
                     '\n'
                 )
 
