@@ -1,3 +1,6 @@
+v1.7.18 (12/10/2020)
+- bug fix: added missing 'module load ccp4' statement when generating pandda.analyse shell script at DLS
+
 v1.7.17 (09/10/2020)
 - bug fix: corrected positions of ignore checkboxes in pandda.analyse
 
