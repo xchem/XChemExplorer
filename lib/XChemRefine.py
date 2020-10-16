@@ -1500,7 +1500,7 @@ class panddaRefine(object):
             + module_load +
             '\n'
             +source+
-            'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+Serial+'\n'
+            'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
             '\n'
             '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(self.datasource,self.xtalID,'RefinementStatus','running') +
             '\n'
@@ -1515,10 +1515,10 @@ class panddaRefine(object):
             " split_conformations='False'"
             '\n'
             'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'\n'
-            '\n'
+
             'ln -s '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'_001.pdb '
             +self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'.pdb' +'\n'
-             
+
             'ln -s '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'_001.mtz '
             +self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'.mtz' +'\n'
 
