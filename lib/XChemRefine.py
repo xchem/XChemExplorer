@@ -1493,6 +1493,14 @@ class panddaRefine(object):
         date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
         user = getpass.getuser()
 
+        print ('>>>>>>>')
+        print self.ProjectPath
+        print self.xtalID
+        print Serial
+        print panddaSerial
+        print refinementProgram
+        print ('<<<<<<<')
+
         refmacCmds = (
             '#!'+os.getenv('SHELL')+'\n'
             +pbs_line+
