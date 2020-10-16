@@ -1,3 +1,6 @@
+v1.7.20 (16/10/2020)
+- bug fix: remove undocumented and faulty changes to RunQuickRefine
+
 v1.7.19 (12/10/2020)
 - bug fix: use 'module load ccp4/7.0.072' for pandda.analyse, but 'module load ccp4' (i.e. v7.1) for pre-run ground-state selection at DLS
 

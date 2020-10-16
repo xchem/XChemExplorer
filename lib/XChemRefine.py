@@ -1493,14 +1493,6 @@ class panddaRefine(object):
         date = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
         user = getpass.getuser()
 
-        print ('>>>>>>>')
-        print self.ProjectPath
-        print self.xtalID
-        print Serial
-        print panddaSerial
-        print refinementProgram
-        print ('<<<<<<<')
-
         refmacCmds = (
             '#!'+os.getenv('SHELL')+'\n'
             +pbs_line+
@@ -1523,10 +1515,10 @@ class panddaRefine(object):
             " split_conformations='False'"
             '\n'
             'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'\n'
-            '\n'
+
             'ln -s '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'_001.pdb '
             +self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'.pdb' +'\n'
-             
+
             'ln -s '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'_001.mtz '
             +self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(panddaSerial)+'/refine_'+str(Serial)+'.mtz' +'\n'
 
@@ -1542,14 +1534,14 @@ class panddaRefine(object):
             '\n'
             +spider_plot+
             '\n'
-            'phenix.molprobity refine_%s.pdb refine_%s.mtz\n' %(str(Serial),str(Serial))+
+            'phenix.molprobity refine_%s.pdb refine_%s.mtz\n' %(Serial,Serial)+
             '/bin/mv molprobity.out refine_molprobity.log\n'
             'module load phenix\n'
-            'mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG > validate_ligands.txt\n' %(str(Serial),str(Serial))+
+            'mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG > validate_ligands.txt\n' %(Serial,Serial)+
             'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
             '\n'
-            'ln -s Refine_%s/validate_ligands.txt .\n' %str(panddaSerial)+
-            'ln -s Refine_%s/refine_molprobity.log .\n' %str(panddaSerial)+
+            'ln -s Refine_%s/validate_ligands.txt .\n' %panddaSerial+
+            'ln -s Refine_%s/refine_molprobity.log .\n' %panddaSerial+
             '\n'
             + add_links_line +
             '\n'
