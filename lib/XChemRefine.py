@@ -1508,7 +1508,7 @@ class panddaRefine(object):
             + module_load +
             '\n'
             +source+
-            'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+Serial+'\n'
+            'cd '+self.ProjectPath+'/'+self.xtalID+'/Refine_'+str(Serial)+'\n'
             '\n'
             '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(self.datasource,self.xtalID,'RefinementStatus','running') +
             '\n'
@@ -1542,14 +1542,14 @@ class panddaRefine(object):
             '\n'
             +spider_plot+
             '\n'
-            'phenix.molprobity refine_%s.pdb refine_%s.mtz\n' %(Serial,Serial)+
+            'phenix.molprobity refine_%s.pdb refine_%s.mtz\n' %(str(Serial),str(Serial))+
             '/bin/mv molprobity.out refine_molprobity.log\n'
             'module load phenix\n'
-            'mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG > validate_ligands.txt\n' %(Serial,Serial)+
+            'mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG > validate_ligands.txt\n' %(str(Serial),str(Serial))+
             'cd '+self.ProjectPath+'/'+self.xtalID+'\n'
             '\n'
-            'ln -s Refine_%s/validate_ligands.txt .\n' %panddaSerial+
-            'ln -s Refine_%s/refine_molprobity.log .\n' %panddaSerial+
+            'ln -s Refine_%s/validate_ligands.txt .\n' %str(panddaSerial)+
+            'ln -s Refine_%s/refine_molprobity.log .\n' %str(panddaSerial)+
             '\n'
             + add_links_line +
             '\n'
