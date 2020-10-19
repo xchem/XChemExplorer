@@ -1,3 +1,6 @@
+v1.7.21 (19/10/2020)
+- bug fix: use default CCP4 for giant.merge_conformations
+
 v1.7.20 (16/10/2020)
 - bug fix: remove undocumented and faulty changes to RunQuickRefine
 
