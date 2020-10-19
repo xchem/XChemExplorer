@@ -1295,7 +1295,8 @@ class panddaRefine(object):
                 if os.getcwd().startswith('/dls'):
                     cmd = (
                     'export XChemExplorer_DIR="%s"\n' %os.getenv('XChemExplorer_DIR')+
-                    'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n') +
+#                    'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n') +
+                    'module load ccp4\n'
                     'giant.merge_conformations major=%s minor=%s reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0' %(ground_state,bound_state)
                     )
                 else:
