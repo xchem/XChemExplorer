@@ -789,21 +789,24 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 for cm in ligCC:
                     self.Logfile.insert('%s: cc = %s - %s' %(xtal,cm[1],cm[0]))
                 print ligCC
-                highestCC = max(ligCC, key=lambda x: x[0])[1]
+#                highestCC = max(ligCC, key=lambda x: x[0])[1]
+                highestCCeventmap = max(ligCC, key=lambda x: float(x[1]))[0]
             except ValueError:
                 highestCC = 0.00
+                highestCCeventmap = None
 
-            if highestCC == 0.00 or ligCC is []:
+#            if highestCC == 0.00 or ligCC is []:
+            if highestCCeventmap is None or ligCC is []:
                 self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
                 self.add_to_errorList(xtal)
                 foundMatchingMap = False
             else:
-                self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
-                print 'ln -s %s %s' %(mtz,mtz.replace('.mtz','_'+ligID+'.mtz'))
+                self.Logfile.insert('%s: selected event map for ligand %s is %s' %(xtal,lig,highestCCeventmap))
+                print 'ln -s %s %s' %(highestCCeventmap,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz'))
                 quit()
 #                os.system('ln -s %s %s' %(mtz,mtz.replace('.mtz','_'+ligID+'.mtz')))
                 if mtz not in self.eventList:
-                    self.eventList.append(mtz)
+                    self.eventList.append(highestCCeventmap)
                 if foundMatchingMap is None:
                     foundMatchingMap = True
         return foundMatchingMap
