@@ -803,12 +803,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             else:
                 self.Logfile.insert('%s: selected event map for ligand %s is %s' %(xtal,lig,highestCCeventmap))
                 print 'ln -s %s %s' %(highestCCeventmap,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz'))
-                quit()
-#                os.system('ln -s %s %s' %(mtz,mtz.replace('.mtz','_'+ligID+'.mtz')))
-                if mtz not in self.eventList:
+                os.system('ln -s %s %s' %(highestCCeventmap,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
+                if highestCCeventmap not in self.eventList:
                     self.eventList.append(highestCCeventmap)
                 if foundMatchingMap is None:
                     foundMatchingMap = True
+        quit()
         return foundMatchingMap
 
 
