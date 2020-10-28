@@ -767,6 +767,16 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             if foundMatchingMap:
                 continue
 
+            for mtz in sorted(glob.glob('*event*.native.mtz')):
+                self.get_lig_cc(xtal, mtz, lig)
+                cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
+                self.Logfile.insert('%s: %s -> CC = %s for %s' %(xtal,ligID,cc,mtz))
+                try:
+                    ligCC.append([mtz,float(cc)])
+                except ValueError:
+                    ligCC.append([mtz, 0.00])
+
+
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
                 self.get_lig_cc(xtal, mtz, lig)
                 cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
@@ -779,12 +789,16 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 highestCC = max(ligCC, key=lambda x: x[0])[1]
             except ValueError:
                 highestCC = 0.00
+
             if highestCC == 0.00 or ligCC is []:
                 self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
                 self.add_to_errorList(xtal)
                 foundMatchingMap = False
             else:
                 self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
+                print 'ln -s %s %s' %(mtz,mtz.replace('.mtz','_'+ligID+'.mtz'))
+                quit()
+#                os.system('ln -s %s %s' %(mtz,mtz.replace('.mtz','_'+ligID+'.mtz')))
                 if mtz not in self.eventList:
                     self.eventList.append(mtz)
                 if foundMatchingMap is None:
