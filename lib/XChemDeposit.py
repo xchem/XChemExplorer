@@ -767,6 +767,16 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             if foundMatchingMap:
                 continue
 
+            for mtz in sorted(glob.glob('*event*.native.mtz')):
+                self.get_lig_cc(xtal, mtz, lig)
+                cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
+                self.Logfile.insert('%s: %s -> CC = %s for %s' %(xtal,ligID,cc,mtz))
+                try:
+                    ligCC.append([mtz,float(cc)])
+                except ValueError:
+                    ligCC.append([mtz, 0.00])
+
+
             for mtz in sorted(glob.glob('*event*.native*P1.mtz')):
                 self.get_lig_cc(xtal, mtz, lig)
                 cc = self.check_lig_cc(mtz.replace('.mtz', '_CC'+ligID+'.log'))
@@ -776,17 +786,28 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 except ValueError:
                     ligCC.append([mtz, 0.00])
             try:
-                highestCC = max(ligCC, key=lambda x: x[0])[1]
+                for cm in ligCC:
+                    self.Logfile.insert('%s: cc = %s - %s' %(xtal,cm[1],cm[0]))
+#                highestCC = max(ligCC, key=lambda x: x[0])[1]
+                highestCCeventmap = max(ligCC, key=lambda x: float(x[1]))[0]
             except ValueError:
                 highestCC = 0.00
-            if highestCC == 0.00 or ligCC is []:
+                highestCCeventmap = None
+
+#            if highestCC == 0.00 or ligCC is []:
+            if highestCCeventmap is None or ligCC is []:
                 self.Logfile.error('%s: best CC of ligand %s for any event map is 0!' %(xtal,lig))
                 self.add_to_errorList(xtal)
                 foundMatchingMap = False
             else:
-                self.Logfile.insert('%s: selected event map -> CC(%s) = %s for %s' %(xtal,lig,highestCC,mtz[mtz.rfind('/')+1:]))
-                if mtz not in self.eventList:
-                    self.eventList.append(mtz)
+                self.Logfile.insert('%s: selected event map for ligand %s is %s' %(xtal,lig,highestCCeventmap))
+                if os.path.isfile(highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')):
+                    self.Logfile.warning('%s: symlink exists %s' %(xtal,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
+                else:
+                    self.Logfile.insert('%s: making symlink %s' %(xtal,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
+                    os.system('ln -s %s %s' %(highestCCeventmap,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
+                if highestCCeventmap not in self.eventList:
+                    self.eventList.append(highestCCeventmap)
                 if foundMatchingMap is None:
                     foundMatchingMap = True
         return foundMatchingMap

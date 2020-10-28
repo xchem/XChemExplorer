@@ -1,3 +1,8 @@
+v1.7.22 (28/10/2020)
+- cosmetic changes to deposition interface
+- bug fix: make event map assignment during MMCIF preparation backward compatible
+- bug fix: finding of event map with highest CC for given ligand
+
 v1.7.21 (19/10/2020)
 - bug fix: use default CCP4 for giant.merge_conformations
 
