@@ -677,6 +677,7 @@ def phasing_software():
 def pdbx_keywords():
 
     keywords = [
+        '',
         'ALLERGEN',
         'ANTIBIOTIC',
         'ANTIFREEZE PROTEIN',
