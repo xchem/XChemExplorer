@@ -810,7 +810,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     self.eventList.append(highestCCeventmap)
                 if foundMatchingMap is None:
                     foundMatchingMap = True
-        quit()
         return foundMatchingMap
 
 
