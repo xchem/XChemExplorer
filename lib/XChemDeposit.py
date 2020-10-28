@@ -786,6 +786,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 except ValueError:
                     ligCC.append([mtz, 0.00])
             try:
+                for cm in ligCC:
+                    self.Logfile.insert('%s: cc = %s - %s' %(xtal,cm[1],cm[0]))
                 highestCC = max(ligCC, key=lambda x: x[0])[1]
             except ValueError:
                 highestCC = 0.00
