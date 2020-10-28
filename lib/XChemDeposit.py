@@ -788,7 +788,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             try:
                 for cm in ligCC:
                     self.Logfile.insert('%s: cc = %s - %s' %(xtal,cm[1],cm[0]))
-                print ligCC
 #                highestCC = max(ligCC, key=lambda x: x[0])[1]
                 highestCCeventmap = max(ligCC, key=lambda x: float(x[1]))[0]
             except ValueError:
@@ -802,8 +801,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 foundMatchingMap = False
             else:
                 self.Logfile.insert('%s: selected event map for ligand %s is %s' %(xtal,lig,highestCCeventmap))
-                print 'ln -s %s %s' %(highestCCeventmap,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz'))
-                os.system('ln -s %s %s' %(highestCCeventmap,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
+                if os.path.isfile(highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')):
+                    self.Logfile.warning('%s: symlink exists %s' %(xtal,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
+                else:
+                    self.Logfile.insert('%s: making symlink %s' %(xtal,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
+                    os.system('ln -s %s %s' %(highestCCeventmap,highestCCeventmap.replace('.mtz','_'+ligID+'.mtz')))
                 if highestCCeventmap not in self.eventList:
                     self.eventList.append(highestCCeventmap)
                 if foundMatchingMap is None:
