@@ -1435,24 +1435,26 @@ class panddaRefine(object):
                 spider_plot+='giant.score_model pdb1=%s mtz1=%s pdb2=%s mtz2=%s res_names=LIG,UNL,DRG,FRG\n' %(pdb_one,mtz_one,pdb_two,mtz_two)
 
         #######################################################
-        # PHENIX stuff (if working at DLS)
+        # CCP4 & PHENIX stuff (if working at DLS)
         module_load=''
         if os.getcwd().startswith('/dls'):
-            module_load='module load phenix\n'
+            module_load = 'module load ccp4\n'
+            module_load += 'module load phenix\n'
 
         # 2017-07-20: for the time being this will explicitly source pandda since version 0.2 really only works at DLS
+        # 2020-11-02: will start using default ccp4 installation at DLS otherwise gemmi does not work
         source =''
         if 'bash' in os.getenv('SHELL'):
             source = (
                 'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
                 '\n'
-                'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n')
+#                'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n')
             )
         elif 'csh' in os.getenv('SHELL'):
             source = (
                 'setenv XChemExplorer_DIR '+os.getenv('XChemExplorer_DIR')+'\n'
                 '\n'
-                'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-csh\n')
+#                'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-csh\n')
             )
 
 

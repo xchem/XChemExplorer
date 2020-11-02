@@ -1,3 +1,6 @@
+v1.7.23 (02/11/2020)
+- pandda refinement: stopped sourcing obsolete pandda v0.2.12 at DLS (otherwise refinement update script fails due to missing gemmi library)
+
 v1.7.22 (28/10/2020)
 - cosmetic changes to deposition interface
 - bug fix: make event map assignment during MMCIF preparation backward compatible
