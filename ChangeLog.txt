@@ -1,3 +1,6 @@
+v1.7.24 (02/11/2020)
+- capitalized organism names in NCBI_taxonomy_ID dictionary
+
 v1.7.23 (02/11/2020)
 - pandda refinement: stopped sourcing obsolete pandda v0.2.12 at DLS (otherwise refinement update script fails due to missing gemmi library)
 
