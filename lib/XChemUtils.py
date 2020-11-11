@@ -809,8 +809,8 @@ class parse:
         self.aimless['DataProcessingCChalfHigh'] = str(round(obj['cc_one_half'][len(obj['cc_one_half'])-1],2))
 #        self.aimless['DataProcessingResolutionHigh15sigma'] =
 
-        self.aimless['DataProcessingUniqueReflectionsLow'] = str(round(obj['n_uniq'][0],2))
-        self.aimless['DataProcessingUniqueReflectionsLow'] = str(round(obj['n_uniq'][len(obj['n_uniq'])-1],2))
+        self.aimless['DataProcessingUniqueReflectionsLow'] = str(obj['n_uniq'][0])
+        self.aimless['DataProcessingUniqueReflectionsLow'] = str(obj['n_uniq'][len(obj['n_uniq'])-1])
 
         self.aimless['DataProcessingUniqueReflectionsOverall'] = str(obj['overall']['n_obs'])
 #        self.aimless['DataProcessingPointGroup'] =
