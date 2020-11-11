@@ -17,7 +17,7 @@ import XChemMain
 from XChemUtils import pdbtools
 from XChemUtils import mtztools
 from XChemUtils import smilestools
-
+from XChemUtils import parse
 
 def create_SF_mmcif(outDir,mtzList):
     print 'hallo'
@@ -650,7 +650,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         else:
             self.Logfile.error('%s: cannot find AIMLESS logfile...' %xtal)
 
-
+    def prepare_aimless_log(self,xtal):
+        parse.make_pseudo_aimless_log_from_json(xtal + '.log')
 
     def aimless_logfile_exists(self,xtal):
         self.Logfile.insert('%s: checking if aimless logfile, i.e. %s.log, exists' %(xtal,xtal))
@@ -671,13 +672,19 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 self.Logfile.insert('%s: file path to logfile %s' %(xtal,Filepath))
                 if os.path.isdir(APpath):
                     os.chdir(APpath)
-                    foundUnmerged = False
+                    foundAlternative = False
                     for unmerged in glob.glob('*_scaled_unmerged.mtz'):
                         self.Logfile.insert('%s: found %s in %s' %(xtal,unmerged,APpath))
                         self.run_aimless_merge_only(xtal,unmerged,APpath)
-                        foundUnmerged = True
+                        foundAlternative = True
                         break
-                    if not foundUnmerged:
+                    if not foundAlternative:
+                        self.Logfile.insert('%s: trying to prepare a pseudo-aimless file from json file...' %xtal)
+                        self.prepare_aimless_log(xtal)
+                        if os.path.isfile('aimless_dials.log'):
+                            self.Logfile.insert('%s: found aimless_dials.log' %xtal)
+                            foundAlternative = True
+                    if not foundAlternative:
                         self.Logfile.error('%s: cannot find a suitable AIMLESS logfile' %xtal)
                         self.add_to_errorList(xtal)
                 else:
@@ -951,6 +958,15 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             pdb_extract_init += +os.path.join(os.getenv('XChemExplorer_DIR'),
                                                   'pdb_extract/pdb-extract-prod/bin/pdb_extract')
 
+        aimless = None
+        for n,line in enumerate(open('%s.log' %xtal)):
+            if 'AIMLESS' in line:
+                aimless = '%s.log' %xtal
+                break
+        if not aimless:
+            if os.path.isfile('aimless_dials.log'):
+                aimless = 'aimless_dials.log'
+
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
             aimless = os.path.join(self.logDir,refXtal,refXtal+'.log')
@@ -980,7 +996,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                        ' -iPDB {0!s}'.format('refine.split.bound-state.pdb') +
                        ' -e MR'
                        ' -s AIMLESS'
-                       ' -iLOG {0!s}.log'.format(xtal) +
+                       ' -iLOG {0!s}'.format(aimless) +
                        ' -iENT data_template.cif'
                        ' -o {0!s}.mmcif > {1!s}.mmcif.log'.format(xtal, xtal))
 

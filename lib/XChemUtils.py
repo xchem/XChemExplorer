@@ -438,7 +438,9 @@ class parse:
                             'DataProcessingCChalfOverall':                  'n/a',
                             'DataProcessingCChalfLow':                      'n/a',
                             'DataProcessingCChalfHigh':                     'n/a',
-                            'DataProcessingResolutionHigh15sigma':         'n/a',
+                            'DataProcessingResolutionHigh15sigma':          'n/a',
+                            'DataProcessingUniqueReflectionsLow':           'n/a',
+                            'DataProcessingUniqueReflectionsHigh':          'n/a',
                             'DataProcessingUniqueReflectionsOverall':       'n/a',
                             'DataProcessingLattice':                        'n/a',
                             'DataProcessingPointGroup':                     'n/a',
@@ -806,6 +808,10 @@ class parse:
         self.aimless['DataProcessingCChalfLow'] = str(round(obj['cc_one_half'][0],2))
         self.aimless['DataProcessingCChalfHigh'] = str(round(obj['cc_one_half'][len(obj['cc_one_half'])-1],2))
 #        self.aimless['DataProcessingResolutionHigh15sigma'] =
+
+        self.aimless['DataProcessingUniqueReflectionsLow'] = str(round(obj['n_uniq'][0],2))
+        self.aimless['DataProcessingUniqueReflectionsLow'] = str(round(obj['n_uniq'][len(obj['n_uniq'])-1],2))
+
         self.aimless['DataProcessingUniqueReflectionsOverall'] = str(obj['overall']['n_obs'])
 #        self.aimless['DataProcessingPointGroup'] =
 #        self.aimless['DataProcessingUnitCellVolume'] =
@@ -815,6 +821,36 @@ class parse:
         mmcif_file = logfile.replace('LogFiles','DataFiles').replace(json_name,'xia2.mmcif')
         if os.path.isfile(mmcif_file):
             self.read_mmcif(mmcif_file)
+
+    def make_pseudo_aimless_log_from_json(self,logfile):
+        self.json_logfile(logfile)
+        template = (
+            '==============================================================\n'
+            '\n'
+            '<!--SUMMARY_BEGIN--> $TEXT:Result: $$ $$\n'
+            'Summary data for        Project: nt11175v63 Crystal: xPHIPAx17245 Dataset: SAD\n'
+            '\n'
+            '                                           Overall  InnerShell  OuterShell\n'
+            'Low resolution limit                       {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingResolutionLow'],self.aimless['DataProcessingResolutionLow'],self.aimless['DataProcessingResolutionHighOuterShell'])+
+            'High resolution limit                      {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingResolutionHigh'],self.aimless['DataProcessingResolutionLowInnerShell'],self.aimless['DataProcessingResolutionHigh'])+
+            '\n'
+            'Rmerge  (within I+/I-)                     {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingRmergeOverall'],self.aimless['DataProcessingRmergeLow'],self.aimless['DataProcessingRmergeHigh']) +
+            'Rmerge  (all I+ and I-)                    {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingRmergeOverall'],self.aimless['DataProcessingRmergeLow'],self.aimless['DataProcessingRmergeHigh']) +
+            'Rmeas (within I+/I-)                          -         -         - \n'
+            'Rmeas (all I+ & I-)                           -         -         - \n'
+            'Rpim (within I+/I-)                           -         -         - \n'
+            'Rpim (all I+ & I-)                            -         -         - \n'
+            'Rmerge in top intensity bin                   -         -         - \n'
+            'Total number of observations                  -         -         - \n'
+            'Total number unique                        {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingUniqueReflectionsOverall'],self.aimless['DataProcessingUniqueReflectionsLow'],self.aimless['DataProcessingUniqueReflectionsHigh']) +
+            'Mean((I)/sd(I))                            {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingIsigOverall'],self.aimless['DataProcessingIsigLow'],self.aimless['DataProcessingIsigHigh']) +
+            'Mn(I) half-set correlation CC(1/2)         {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingCChalfOverall'],self.aimless['DataProcessingCChalfLow'],self.aimless['DataProcessingCChalfHigh']) +
+            'Completeness                               {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingCompletenessOverall'],self.aimless['DataProcessingCompletenessLow'],self.aimless['DataProcessingCompletenessHigh']) +
+            'Multiplicity                               {0!s}     {1!s}     {2!s}\n'.format(self.aimless['DataProcessingMultiplicityOverall'],self.aimless['DataProcessingMultiplicityLow'],self.aimless['DataProcessingMultiplicityHigh'])
+        )
+        f = open('aimless_dials.log','w')
+        f.write(template)
+        f.close()
 
 
     def read_mmcif(self,mmcif):
