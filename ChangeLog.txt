@@ -1,3 +1,6 @@
+v1.7.25 (11/11/2020)
+- convert json logfile from dials into pseudo aimless file for mmcif file preparation (required for pdb-extract)
+
 v1.7.24 (02/11/2020)
 - capitalized organism names in NCBI_taxonomy_ID dictionary
 
