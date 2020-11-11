@@ -672,19 +672,18 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 self.Logfile.insert('%s: file path to logfile %s' %(xtal,Filepath))
                 if os.path.isdir(APpath):
                     os.chdir(APpath)
-                    foundAlternative = False
                     for unmerged in glob.glob('*_scaled_unmerged.mtz'):
                         self.Logfile.insert('%s: found %s in %s' %(xtal,unmerged,APpath))
                         self.run_aimless_merge_only(xtal,unmerged,APpath)
-                        foundAlternative = True
+                        fileStatus = True
                         break
-                    if not foundAlternative:
+                    if not fileStatus:
                         self.Logfile.insert('%s: trying to prepare a pseudo-aimless file from json file...' %xtal)
                         self.prepare_aimless_log(xtal)
                         if os.path.isfile('aimless_dials.log'):
                             self.Logfile.insert('%s: found aimless_dials.log' %xtal)
-                            foundAlternative = True
-                    if not foundAlternative:
+                            fileStatus = True
+                    if not fileStatus:
                         self.Logfile.error('%s: cannot find a suitable AIMLESS logfile' %xtal)
                         self.add_to_errorList(xtal)
                 else:
