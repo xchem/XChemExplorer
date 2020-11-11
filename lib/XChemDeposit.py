@@ -678,6 +678,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                         fileStatus = True
                         break
                     if not fileStatus:
+                        os.chdir(os.path.join(self.projectDir,xtal))
                         self.Logfile.insert('%s: trying to prepare a pseudo-aimless file from json file...' %xtal)
                         self.prepare_aimless_log(xtal)
                         if os.path.isfile('aimless_dials.log'):
