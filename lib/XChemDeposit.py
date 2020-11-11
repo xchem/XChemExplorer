@@ -651,7 +651,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.Logfile.error('%s: cannot find AIMLESS logfile...' %xtal)
 
     def prepare_aimless_log(self,xtal):
-        parse.make_pseudo_aimless_log_from_json(xtal + '.log')
+        parse().make_pseudo_aimless_log_from_json(xtal + '.log')
 
     def aimless_logfile_exists(self,xtal):
         self.Logfile.insert('%s: checking if aimless logfile, i.e. %s.log, exists' %(xtal,xtal))
