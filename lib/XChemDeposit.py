@@ -1250,7 +1250,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                         newLine = line
                         newLine += '#\n'
                         newLine += '_diffrn.id                  1\n'
-                        newLine += '_diffrn.details             "diffraction data from crystal %s; soaked compound: %s"\n' %(str(counter),smiles)
+                        newLine += '_diffrn.details             "diffraction data from crystal %s; soaked compound: %s"\n' %(str(counter),smiles.replace('\n','').replace('\r',''))
                         f.write(newLine)
                         counter += 1
                     else:
