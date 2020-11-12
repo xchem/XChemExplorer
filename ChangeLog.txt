@@ -1,3 +1,6 @@
+v1.7.26 (12/11/2020)
+- XChemDeposit: remove \n and \r from smiles string in _diffrn.details
+
 v1.7.25 (11/11/2020)
 - convert json logfile from dials into pseudo aimless file for mmcif file preparation (required for pdb-extract)
 

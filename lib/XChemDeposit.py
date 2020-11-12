@@ -958,18 +958,36 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             pdb_extract_init += +os.path.join(os.getenv('XChemExplorer_DIR'),
                                                   'pdb_extract/pdb-extract-prod/bin/pdb_extract')
 
-        aimless = None
-        for n,line in enumerate(open('%s.log' %xtal)):
-            if 'AIMLESS' in line:
-                aimless = '%s.log' %xtal
-                break
-        if not aimless:
-            if os.path.isfile('aimless_dials.log'):
-                aimless = 'aimless_dials.log'
-
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
             aimless = os.path.join(self.logDir,refXtal,refXtal+'.log')
+        else:
+            aimless = '%s.log' %xtal
+
+        isAimlessFile = False
+        for n,line in enumerate(open(aimless)):
+            if 'AIMLESS' in line:
+                isAimlessFile = True
+                break
+        if not isAimlessFile:
+            if os.path.isfile('aimless_dials.log'):
+                aimless = 'aimless_dials.log'
+            else:
+                parse().make_pseudo_aimless_log_from_json(aimless)
+                aimless = 'aimless_dials.log'
+
+#        aimless = None
+#        for n,line in enumerate(open('%s.log' %xtal)):
+#            if 'AIMLESS' in line:
+#                aimless = '%s.log' %xtal
+#                break
+#        if not aimless:
+#            if os.path.isfile('aimless_dials.log'):
+#                aimless = 'aimless_dials.log'
+
+        if self.ground_state:
+#            refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
+#            aimless = os.path.join(self.logDir,refXtal,refXtal+'.log')
             self.Logfile.insert('aimless.log file: ' + aimless)
             Cmd = (pdb_extract_init +
                    ' -r {0!s}'.format(refSoft) +
@@ -1250,7 +1268,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                         newLine = line
                         newLine += '#\n'
                         newLine += '_diffrn.id                  1\n'
-                        newLine += '_diffrn.details             "diffraction data from crystal %s; soaked compound: %s"\n' %(str(counter),smiles)
+                        newLine += '_diffrn.details             "diffraction data from crystal %s; soaked compound: %s"\n' %(str(counter),smiles.replace('\n','').replace('\r',''))
                         f.write(newLine)
                         counter += 1
                     else:
