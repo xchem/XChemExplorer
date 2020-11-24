@@ -143,13 +143,15 @@ class data_source:
             ['DataProcessingLOGfileName',                   'DataProcessingLOGfileName',                    'TEXT',                 0],
             ['DataProcessingMTZfileName',                   'DataProcessingMTZfileName',                    'TEXT',                 0],
             ['DataProcessingDirectoryOriginal',             'DataProcessingDirectoryOriginal',              'TEXT',                 0],
-
             ['DataProcessingUniqueReflectionsOverall',      'Unique Reflections\nOverall',                  'TEXT',                 1],
+            ['DataProcessingUniqueReflectionsLow',          'Unique Reflections\nlow',                      'TEXT',                 1],
+            ['DataProcessingUniqueReflectionsHigh',         'Unique Reflections\nhigh',                     'TEXT',                 1],
             ['DataProcessingLattice',                       'DataProcessing\nLattice',                      'TEXT',                 0],
             ['DataProcessingPointGroup',                    'DataProcessing\nPointGroup',                   'TEXT',                 0],
             ['DataProcessingUnitCellVolume',                'DataProcessing\nUnit Cell Volume',             'TEXT',                 0],
             ['DataProcessingAlert',                         'DataProcessing\nAlert',                        'TEXT',                 0],
             ['DataProcessingScore',                         'DataProcessing\nScore',                        'TEXT',                 1],
+
 
             ['DataProcessingStatus',                        'DataProcessing\nStatus',                       'TEXT',                 1],
 

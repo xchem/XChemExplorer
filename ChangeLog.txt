@@ -1,3 +1,6 @@
+v1.7.27 (24/11/2020)
+- bug fix: add missing DataProcessingUniqueReflectionsLow/High column to db
+
 v1.7.26 (12/11/2020)
 - XChemDeposit: remove \n and \r from smiles string in _diffrn.details
 
