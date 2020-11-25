@@ -482,18 +482,22 @@ def get_gda_barcodes(sampleList,gzipped_logs_parsed,gda_log_start_line,beamline,
             except IOError:
                 Logfile.warning('cannot open file %s' %gdaLogFile)
         else:
-            for n,line in enumerate(open(gdaLogFile).readlines()[gda_log_start_line:]):
-                if 'BART SampleChanger - getBarcode() returning' in line:
-                    barcode = line.split()[len(line.split()) - 1]
-                    found_barcode_entry = True
-                if found_barcode_entry:
-                    if 'Snapshots will be saved' in line:
-                        sampleID = line.split()[len(line.split()) - 1].split('/')[-1]
-                        if sampleID in sampleList:
-                            pinDict[sampleID] = barcode
-                            Logfile.insert(
-                            'found: sample={0!s}, barcode={1!s}, file={2!s}'.format(sampleID, barcode, gdaLogFile))
-                        found_barcode_entry = False
+            try:
+                for n,line in enumerate(open(gdaLogFile).readlines()[gda_log_start_line:]):
+                    if 'BART SampleChanger - getBarcode() returning' in line:
+                        barcode = line.split()[len(line.split()) - 1]
+                        found_barcode_entry = True
+                    if found_barcode_entry:
+                        if 'Snapshots will be saved' in line:
+                            sampleID = line.split()[len(line.split()) - 1].split('/')[-1]
+                            if sampleID in sampleList:
+                                pinDict[sampleID] = barcode
+                                Logfile.insert(
+                                'found: sample={0!s}, barcode={1!s}, file={2!s}'.format(sampleID, barcode, gdaLogFile))
+                            found_barcode_entry = False
+            except IOError:
+                Logfile.error('IOError -> ' + gdaLogFile)
+
             try:
                 gda_log_start_line = gda_log_start_line + n -1
             except UnboundLocalError:

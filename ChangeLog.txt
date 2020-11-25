@@ -1,3 +1,6 @@
+v1.7.28 (25/11/2020)
+- added exception to catch 'Cannot allocate memory' error in XChemMain.get_gda_barcodes
+
 v1.7.27 (24/11/2020)
 - bug fix: add missing DataProcessingUniqueReflectionsLow/High column to db
 
