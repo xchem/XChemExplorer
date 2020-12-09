@@ -955,7 +955,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         else:
             pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
                                                         'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
-            pdb_extract_init += +os.path.join(os.getenv('XChemExplorer_DIR'),
+            pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),
                                                   'pdb_extract/pdb-extract-prod/bin/pdb_extract')
 
         if self.ground_state:
@@ -1150,7 +1150,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             else:
                 extract_table_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
                                                                 'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
-                extract_table_init += +os.path.join(os.getenv('XChemExplorer_DIR'),
+                extract_table_init += os.path.join(os.getenv('XChemExplorer_DIR'),
                                                       'pdb_extract/pdb-extract-prod/bin/extract_table')
 
             Cmd = extract_table_init + ' ' + xtal + '.mmcif'
@@ -1189,7 +1189,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         else:
             pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
                                                             'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
-            pdb_extract_init += +os.path.join(os.getenv('XChemExplorer_DIR'),
+            pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),
                                                   'pdb_extract/pdb-extract-prod/bin/sf_convert')
 
         Cmd = (pdb_extract_init +
