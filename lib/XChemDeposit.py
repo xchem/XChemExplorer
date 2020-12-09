@@ -953,10 +953,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n'
             pdb_extract_init += '/dls/science/groups/i04-1/software/pdb-extract-prod/bin/pdb_extract'
         else:
-            pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
-                                                        'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
-            pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),
-                                                  'pdb_extract/pdb-extract-prod/bin/pdb_extract')
+            if os.path.isfile(os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/bin/pdb_extract')):
+                pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
+                pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/bin/pdb_extract')
+            else:
+                pdb_extract_init += 'pdb_extract'
 
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
@@ -1189,8 +1190,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         else:
             pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
                                                             'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
-            pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),
-                                                  'pdb_extract/pdb-extract-prod/bin/sf_convert')
+            if os.path.isfile(os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/bin/sf_convert')):
+                pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/bin/sf_convert')
+            else:
+                pdb_extract_init += 'sf_convert'
 
         Cmd = (pdb_extract_init +
                    ' -o mmcif'
