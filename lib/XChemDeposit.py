@@ -726,7 +726,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.Logfile.insert('%s: checking if mtz of event maps exists' %xtal)
         eventMTZlist = []
         eventMTZexists = False
-        if os.path.isfile('no_pandda_analysis_performed'):
+        if os.path.isfile('no_pandda_analysis_performed') or self.ignore_event_map:
             self.Logfile.warning('%s: found empty file named "no_pandda_analysis_performed" which suggests we will ignore event maps for this sample' %xtal)
             eventMTZexists = True
         elif self.ignore_event_map:
@@ -957,7 +957,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
                 pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/bin/pdb_extract')
             else:
-                pdb_extract_init += 'pdb_extract'
+                pdb_extract_init = 'pdb_extract'
 
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
@@ -1174,7 +1174,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         else:
             os.chdir(os.path.join(self.projectDir, xtal))
 
-        if os.path.isfile('no_pandda_analysis_performed'):
+        if os.path.isfile('no_pandda_analysis_performed') or self.ignore_event_map:
             mtzin = 'refine.mtz '
         else:
             mtzin = 'refine.mtz ' + xtal + '.free.mtz '
@@ -1188,12 +1188,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             pdb_extract_init = 'source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n'
             pdb_extract_init += '/dls/science/groups/i04-1/software/pdb-extract-prod/bin/sf_convert'
         else:
-            pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
-                                                            'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
             if os.path.isfile(os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/bin/sf_convert')):
+                pdb_extract_init = 'source ' + os.path.join(os.getenv('XChemExplorer_DIR'),
+                                                            'pdb_extract/pdb-extract-prod/setup.sh') + '\n'
                 pdb_extract_init += os.path.join(os.getenv('XChemExplorer_DIR'),'pdb_extract/pdb-extract-prod/bin/sf_convert')
             else:
-                pdb_extract_init += 'sf_convert'
+                pdb_extract_init = 'sf_convert'
 
         Cmd = (pdb_extract_init +
                    ' -o mmcif'
@@ -1331,7 +1331,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
     def event_maps_exist_in_sf_mmcif(self,xtal):
         fileOK = False
         n_eventMTZ_found = -2  # set to -2 since first two data blocks are initial/final.mtz and data.mtz
-        if os.path.isfile('no_pandda_analysis_performed'):
+        if os.path.isfile('no_pandda_analysis_performed') or self.ignore_event_map:
             self.Logfile.warning('%s: no pandda analysis performed; skipping this step...' %xtal)
             fileOK = True
         else:
@@ -1362,7 +1362,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         self.Logfile.insert('%s: reading wavelength from mtz file; lambda = %s' %(xtal,str(self.data_template_dict['radiation_wavelengths'])))
 
-        if os.path.isfile('no_pandda_analysis_performed'):
+        if os.path.isfile('no_pandda_analysis_performed') or self.ignore_event_map:
             self.Logfile.warning('%s: apparently not a pandda deposition; will skip this step...' %xtal)
             return None
 
