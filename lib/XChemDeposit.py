@@ -975,6 +975,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 isAimlessFile = True
                 break
         if not isAimlessFile:
+            if os.path.realpath('%s.log' %xtal).endswith('.table1'):
+                self.Logfile.warning('{0!s}: {1!s}.log seems to be a staraniso .table1 file'.format(xtal,xtal))
+                fileStatus = True
+        if not isAimlessFile:
             if os.path.isfile('aimless_dials.log'):
                 aimless = 'aimless_dials.log'
             else:
