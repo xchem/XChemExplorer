@@ -665,6 +665,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #                if n < 10:
 #                    print line
             if not fileStatus:
+                if os.path.realpath('%s.log' %xtal).endswith('.table1'):
+                    self.Logfile.warning('{0!s}: {1!s}.log seems to be a staraniso .table1 file'.format(xtal,xtal))
+                    fileStatus = True
+            if not fileStatus:
                 self.Logfile.warning('%s: this does not seem to be an AIMLESS logfile' %xtal)
                 Filepath = os.path.relpath(os.path.realpath('%s.log' %xtal))
                 APpath = Filepath[:Filepath.rfind('/')]
