@@ -681,18 +681,18 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                         self.run_aimless_merge_only(xtal,unmerged,APpath)
                         fileStatus = True
                         break
-                    if not fileStatus:
-                        os.chdir(os.path.join(self.projectDir,xtal))
-                        self.Logfile.insert('%s: trying to prepare a pseudo-aimless file from json file...' %xtal)
-                        self.prepare_aimless_log(xtal)
-                        if os.path.isfile('aimless_dials.log'):
-                            self.Logfile.insert('%s: found aimless_dials.log' %xtal)
-                            fileStatus = True
-                    if not fileStatus:
-                        self.Logfile.error('%s: cannot find a suitable AIMLESS logfile' %xtal)
-                        self.add_to_errorList(xtal)
                 else:
                     self.Logfile.error('%s: %s is not a directory' %(xtal,APpath))
+                    self.add_to_errorList(xtal)
+                if not fileStatus:
+                    os.chdir(os.path.join(self.projectDir,xtal))
+                    self.Logfile.insert('%s: trying to prepare a pseudo-aimless file from json file...' %xtal)
+                    self.prepare_aimless_log(xtal)
+                    if os.path.isfile('aimless_dials.log'):
+                        self.Logfile.insert('%s: found aimless_dials.log' %xtal)
+                        fileStatus = True
+                if not fileStatus:
+                    self.Logfile.error('%s: cannot find a suitable AIMLESS logfile' %xtal)
                     self.add_to_errorList(xtal)
 
 #            fileStatus = True
