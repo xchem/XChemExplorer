@@ -173,7 +173,10 @@ class GUI(object):
                              'BREF': '    bref ISOT\n',
                              'TLS': '',
                              'NCS': '',
-                             'TWIN': ''}
+                             'TWIN': '',
+                             'WATER':   '',
+                             'LIGOCC':  '',
+                             'SANITY':  ''  }
 
     def StartGUI(self):
 
