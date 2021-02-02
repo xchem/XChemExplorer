@@ -175,7 +175,8 @@ class GUI(object):
                              'NCS': '',
                              'TWIN': '',
                              'WATER':   '',
-                             'LIGOCC':  ''  }
+                             'LIGOCC':  '',
+                             'SANITY':  ''  }
 
     def StartGUI(self):
 
