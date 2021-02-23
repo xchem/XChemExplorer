@@ -11,6 +11,9 @@ import tarfile
 import json
 import time
 
+import gzip
+import bz2
+
 from datetime import datetime
 import gemmi
 
@@ -27,6 +30,16 @@ sys.path.append(os.getenv('XChemExplorer_DIR')+'/lib')
 import XChemDB
 import XChemLog
 
+def open_decompress_file(filename, mode="rb"):
+    """Open file for reading, decompressing silently if necessary."""
+
+    if filename.endswith(".bz2"):
+        return bz2.BZ2File(filename, mode=mode)
+
+    elif filename.endswith(".gz"):
+        return gzip.GzipFile(filename, mode=mode)
+
+    return open(filename, mode=mode)
 
 class process:
 
@@ -821,6 +834,8 @@ class parse:
         mmcif_file = logfile.replace('LogFiles','DataFiles').replace(json_name,'xia2.mmcif')
         if os.path.isfile(mmcif_file):
             self.read_mmcif(mmcif_file)
+        elif os.path.isfile("%s.bz2" % mmcif_file):
+            self.read_mmcif("%s.bz2" % mmcif_file)
 
     def make_pseudo_aimless_log_from_json(self,logfile):
         self.json_logfile(logfile)
@@ -854,7 +869,7 @@ class parse:
 
 
     def read_mmcif(self,mmcif):
-        for line in open(mmcif):
+        for line in open_decompress_file(mmcif):
             if line.startswith('_cell.angle_alpha '):
                 self.aimless['DataProcessingAlpha'] = line.split()[1]
             elif line.startswith('_cell.angle_beta '):
