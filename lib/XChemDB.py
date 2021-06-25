@@ -426,6 +426,21 @@ class data_source:
             ['data_integration_software',                   'data_integration_software',                'TEXT'],
             ['phasing_software',                            'phasing_software',                         'TEXT'],
 
+            ['pdbx_funding_ordinal_one',                    'pdbx_funding_ordinal_one',                 'TEXT'],
+            ['pdbx_funding_organization_one',               'pdbx_funding_organization_one',            'TEXT'],
+            ['pdbx_grant_number_one',                       'pdbx_grant_number_one',                    'TEXT'],
+            ['pdbx_grant_country_one',                      'pdbx_grant_country_one',                   'TEXT'],
+
+            ['pdbx_funding_ordinal_two',                    'pdbx_funding_ordinal_two',                 'TEXT'],
+            ['pdbx_funding_organization_two',               'pdbx_funding_organization_two',            'TEXT'],
+            ['pdbx_grant_number_two',                       'pdbx_grant_number_two',                    'TEXT'],
+            ['pdbx_grant_country_two',                      'pdbx_grant_country_two',                   'TEXT'],
+
+            ['pdbx_funding_ordinal_three',                  'pdbx_funding_ordinal_three',               'TEXT'],
+            ['pdbx_funding_organization_three',             'pdbx_funding_organization_three',          'TEXT'],
+            ['pdbx_grant_number_three',                     'pdbx_grant_number_three',                  'TEXT'],
+            ['pdbx_grant_country_three',                    'pdbx_grant_country_three',                 'TEXT'],
+
             ['LastUpdated',                                 'LastUpdated',                              'TEXT'],
             ['LastUpdated_by',                              'LastUpdated_by',                           'TEXT']
             ]

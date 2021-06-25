@@ -26,10 +26,10 @@ class startLog:
             '     #                                                                     #\n'
             '     # Version: %s                                       #\n' %pasteVersion+
             '     #                                                                     #\n'
-            '     # Date: 02/02/2021                                                    #\n'
+            '     # Date: 25/06/2021                                                    #\n'
             '     #                                                                     #\n'
-            '     # Authors: Tobias Krojer, Structural Genomics Consortium, Oxford, UK  #\n'
-            '     #          tobias.krojer@sgc.ox.ac.uk                                 #\n'
+            '     # Authors: Tobias Krojer, MAXIV Laboratory, SE  #\n'
+            '     #          tobias.krojer@maxiv.lu.se                                  #\n'
             '     #                                                                     #\n'
             '     #          Rachael Skyner, Diamond Light Source, UK                   #\n'
             '     #          rachael.skyner@diamond.ac.uk                               #\n'

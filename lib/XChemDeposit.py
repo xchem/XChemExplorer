@@ -309,7 +309,15 @@ class templates:
             '_pdbx_struct_assembly_depositor_info.id                   1\n'
             "_pdbx_struct_assembly_depositor_info.method_details       PISA\n"
             '_pdbx_struct_assembly_depositor_info.oligomeric_count     %s\n'        %depositDict['biological_assembly_chain_number']+
-            '#\n'
+            '#\n'            
+            'loop\n'
+            '_pdbx_audit_support.ordinal                   \n'
+            '_pdbx_audit_support.funding_organization      \n'
+            '_pdbx_audit_support.grant_number              \n'
+            '_pdbx_audit_support.country                   \n'
+            '%s %s %s %s\n' %(depositDict['pdbx_funding_ordinal_one'],depositDict['pdbx_funding_organization_one'],depositDict['pdbx_grant_number_one'],depositDict['pdbx_grant_country_one']) +
+            '%s %s %s %s\n' %(depositDict['pdbx_funding_ordinal_two'],depositDict['pdbx_funding_organization_two'],depositDict['pdbx_grant_number_two'],depositDict['pdbx_grant_country_two']) +
+            '%s %s %s %s\n' %(depositDict['pdbx_funding_ordinal_three'],depositDict['pdbx_funding_organization_three'],depositDict['pdbx_grant_number_three'],depositDict['pdbx_grant_country_three']) +
             '#\n'
             )
 
