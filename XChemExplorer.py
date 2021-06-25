@@ -2408,13 +2408,13 @@ class XChemExplorer(QtGui.QApplication):
 
     def update_deposit_dict(self):
         pdbx_funding_ordinal_one = ''
-        if str(self.pdbx_funding_organization_one.currentText()).replace(' ','') != '':
+        if str(self.pdbx_funding_organization_one.text()).replace(' ','') != '':
             pdbx_funding_ordinal_one = '1'
         pdbx_funding_ordinal_two = ''
-        if str(self.pdbx_funding_organization_two.currentText()).replace(' ','') != '':
+        if str(self.pdbx_funding_organization_two.text()).replace(' ','') != '':
             pdbx_funding_ordinal_two = '2'
         pdbx_funding_ordinal_three = ''
-        if str(self.pdbx_funding_organization_three.currentText()).replace(' ','') != '':
+        if str(self.pdbx_funding_organization_three.text()).replace(' ','') != '':
             pdbx_funding_ordinal_three = '3'
 
         self.deposit_dict = {
@@ -2523,17 +2523,17 @@ class XChemExplorer(QtGui.QApplication):
             'phasing_software': str(self.phasing_software.currentText()),
 
             'pdbx_funding_ordinal_one': pdbx_funding_ordinal_one,
-            'pdbx_funding_organization_one': str(self.pdbx_funding_organization_one.currentText()),
-            'pdbx_grant_number_one': str(self.pdbx_grant_number_one.currentText()),
-            'pdbx_grant_country_one': str(self.pdbx_grant_country_one.currentText()),
+            'pdbx_funding_organization_one': str(self.pdbx_funding_organization_one.text()),
+            'pdbx_grant_number_one': str(self.pdbx_grant_number_one.text()),
+            'pdbx_grant_country_one': str(self.pdbx_grant_country_one.text()),
             'pdbx_funding_ordinal_two': pdbx_funding_ordinal_two,
-            'pdbx_funding_organization_two': str(self.pdbx_funding_organization_two.currentText()),
-            'pdbx_grant_number_two': str(self.pdbx_grant_number_two.currentText()),
-            'pdbx_grant_country_two': str(self.pdbx_grant_country_two.currentText()),
+            'pdbx_funding_organization_two': str(self.pdbx_funding_organization_two.text()),
+            'pdbx_grant_number_two': str(self.pdbx_grant_number_two.text()),
+            'pdbx_grant_country_two': str(self.pdbx_grant_country_two.text()),
             'pdbx_funding_ordinal_three': pdbx_funding_ordinal_three,
-            'pdbx_funding_organization_three': str(self.pdbx_funding_organization_three.currentText()),
-            'pdbx_grant_number_three': str(self.pdbx_grant_number_three.currentText()),
-            'pdbx_grant_country_three': str(self.pdbx_grant_country_three.currentText())
+            'pdbx_funding_organization_three': str(self.pdbx_funding_organization_three.text()),
+            'pdbx_grant_number_three': str(self.pdbx_grant_number_three.text()),
+            'pdbx_grant_country_three': str(self.pdbx_grant_country_three.text())
 
         }
 
