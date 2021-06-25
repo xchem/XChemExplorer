@@ -1,3 +1,6 @@
+v1.7.35 (25/06/2021)
+- changed pandda.analyse script to make symlinks to compound pdb/ cif files instead of copying them
+
 v1.7.34 (25/06/2021)
 - added pdbx_audit_support category for funding agency now required for PDB deposition
 

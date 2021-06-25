@@ -1023,22 +1023,35 @@ class run_pandda_analyse(QtCore.QThread):
 
             data_dir_string = self.data_directory.replace('/*', '')
 
+#            Cmds += str(
+#                        'find ' + data_dir_string +
+#                        '/*/compound -name "*.cif" | while read line; do  echo ${line//"' +
+#                        data_dir_string + '"/"' + self.panddas_directory +
+#                        '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+#                        'done; done;')
+
             Cmds += str(
                         'find ' + data_dir_string +
                         '/*/compound -name "*.cif" | while read line; do  echo ${line//"' +
                         data_dir_string + '"/"' + self.panddas_directory +
-                        '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+                        '/processed_datasets/"}| while read line2; do ln -s $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
                         'done; done;')
 
             Cmds += '\n'
 
+#            Cmds += str(
+#                        'find ' + data_dir_string +
+#                        '/*/compound -name "*.pdb" | while read line; do  echo ${line//"' +
+#                        data_dir_string + '"/"' + self.panddas_directory +
+#                        '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+#                        'done; done;')
 
 
             Cmds += str(
                         'find ' + data_dir_string +
                         '/*/compound -name "*.pdb" | while read line; do  echo ${line//"' +
                         data_dir_string + '"/"' + self.panddas_directory +
-                        '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+                        '/processed_datasets/"}| while read line2; do ln -s $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
                         'done; done;')
 
             self.Logfile.insert('running pandda.analyse with the following command:\n'+Cmds)
