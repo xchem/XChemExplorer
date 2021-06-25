@@ -28,7 +28,7 @@ class startLog:
             '     #                                                                     #\n'
             '     # Date: 25/06/2021                                                    #\n'
             '     #                                                                     #\n'
-            '     # Authors: Tobias Krojer, MAXIV Laboratory, SE  #\n'
+            '     # Authors: Tobias Krojer, MAXIV Laboratory, SE                        #\n'
             '     #          tobias.krojer@maxiv.lu.se                                  #\n'
             '     #                                                                     #\n'
             '     #          Rachael Skyner, Diamond Light Source, UK                   #\n'
