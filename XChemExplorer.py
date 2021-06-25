@@ -2651,15 +2651,15 @@ class XChemExplorer(QtGui.QApplication):
             'structure_author_name': None,
             'primary_citation_author_name': None,
 
-            'pdbx_funding_organization_one': None,
-            'pdbx_grant_number_one': None,
-            'pdbx_grant_country_one': None,
-            'pdbx_funding_organization_two': None,
-            'pdbx_grant_number_two': None,
-            'pdbx_grant_country_two': None,
-            'pdbx_funding_organization_three': None,
-            'pdbx_grant_number_three': None,
-            'pdbx_grant_country_three': None
+            'pdbx_funding_organization_one': '',
+            'pdbx_grant_number_one': '',
+            'pdbx_grant_country_one': '',
+            'pdbx_funding_organization_two': '',
+            'pdbx_grant_number_two': '',
+            'pdbx_grant_country_two': '',
+            'pdbx_funding_organization_three': '',
+            'pdbx_grant_number_three': '',
+            'pdbx_grant_country_three': ''
 
         }
 
