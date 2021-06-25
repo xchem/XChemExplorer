@@ -1172,7 +1172,8 @@ class XChemExplorer(QtGui.QApplication):
                             'Molecule',
                             'Misc',
                             'Methods',
-                            'Software']
+                            'Software',
+                            'Funding' ]
 
         deposit_tab_dict = {}
         for page in deposit_tab_list:
@@ -2043,6 +2044,96 @@ class XChemExplorer(QtGui.QApplication):
 
         deposit_tab_dict['Software'][1].addLayout(vb)
 
+        ## Funding
+
+        vb = QtGui.QVBoxLayout()
+
+        frame = QtGui.QFrame()
+        frame.setFrameShape(QtGui.QFrame.StyledPanel)
+
+        grid = QtGui.QGridLayout()
+
+        grid.addWidget(QtGui.QLabel('Funding Organization'), 1, 0)
+        self.pdbx_funding_organization_one = QtGui.QLineEdit()
+        self.pdbx_funding_organization_one.setText('')
+        self.pdbx_funding_organization_one.setFixedWidth(700)
+        grid.addWidget(self.pdbx_funding_organization_one, 1, 1)
+
+        grid.addWidget(QtGui.QLabel('Grant Number'), 2, 0)
+        self.pdbx_grant_number_one = QtGui.QLineEdit()
+        self.pdbx_grant_number_one.setText('')
+        self.pdbx_grant_number_one.setFixedWidth(700)
+        grid.addWidget(self.pdbx_grant_number_one, 2, 1)
+
+        grid.addWidget(QtGui.QLabel('Country'), 3, 0)
+        self.pdbx_grant_country_one = QtGui.QComboBox()
+        for item in XChemMain.pdbx_country(): self.pdbx_grant_country_one.addItem(item)
+        grid.addWidget(self.pdbx_grant_country_one, 3, 1)
+
+        frame.setLayout(grid)
+        vb.addWidget(frame)
+
+        frame = QtGui.QFrame()
+        frame.setFrameShape(QtGui.QFrame.StyledPanel)
+
+        grid = QtGui.QGridLayout()
+
+        grid.addWidget(QtGui.QLabel('Funding Organization'), 1, 0)
+        self.pdbx_funding_organization_two = QtGui.QLineEdit()
+        self.pdbx_funding_organization_two.setText('')
+        self.pdbx_funding_organization_two.setFixedWidth(700)
+        grid.addWidget(self.pdbx_funding_organization_two, 1, 1)
+
+        grid.addWidget(QtGui.QLabel('Grant Number'), 2, 0)
+        self.pdbx_grant_number_two = QtGui.QLineEdit()
+        self.pdbx_grant_number_two.setText('')
+        self.pdbx_grant_number_two.setFixedWidth(700)
+        grid.addWidget(self.pdbx_grant_number_two, 2, 1)
+
+        grid.addWidget(QtGui.QLabel('Country'), 3, 0)
+        self.pdbx_grant_country_two = QtGui.QComboBox()
+        for item in XChemMain.pdbx_country(): self.pdbx_grant_country_two.addItem(item)
+        grid.addWidget(self.pdbx_grant_country_two, 3, 1)
+
+        frame.setLayout(grid)
+        vb.addWidget(frame)
+
+        frame = QtGui.QFrame()
+        frame.setFrameShape(QtGui.QFrame.StyledPanel)
+
+        grid = QtGui.QGridLayout()
+
+        grid.addWidget(QtGui.QLabel('Funding Organization'), 1, 0)
+        self.pdbx_funding_organization_three = QtGui.QLineEdit()
+        self.pdbx_funding_organization_three.setText('')
+        self.pdbx_funding_organization_three.setFixedWidth(700)
+        grid.addWidget(self.pdbx_funding_organization_three, 1, 1)
+
+        grid.addWidget(QtGui.QLabel('Grant Number'), 2, 0)
+        self.pdbx_grant_number_three = QtGui.QLineEdit()
+        self.pdbx_grant_number_three.setText('')
+        self.pdbx_grant_number_three.setFixedWidth(700)
+        grid.addWidget(self.pdbx_grant_number_three, 2, 1)
+
+        grid.addWidget(QtGui.QLabel('Country'), 3, 0)
+        self.pdbx_grant_country_three = QtGui.QComboBox()
+        for item in XChemMain.pdbx_country(): self.pdbx_grant_country_three.addItem(item)
+        grid.addWidget(self.pdbx_grant_country_three, 3, 1)
+
+        frame.setLayout(grid)
+        vb.addWidget(frame)
+
+
+        vb.addStretch(1)
+
+        deposit_tab_dict['Funding'][1].addLayout(vb)
+
+
+
+
+
+
+
         vbox.addWidget(deposit_tab_widget)
 
         hbox = QtGui.QHBoxLayout()
@@ -2297,11 +2388,59 @@ class XChemExplorer(QtGui.QApplication):
             index = self.phasing_software.findText(self.deposit_dict['phasing_software'], QtCore.Qt.MatchFixedString)
             self.phasing_software.setCurrentIndex(index)
 
+            self.pdbx_funding_organization_one.setText(self.deposit_dict['pdbx_funding_organization_one'])
+            self.pdbx_grant_number_one.setText(self.deposit_dict['pdbx_grant_number_one'])
+            index = self.pdbx_grant_country_one.findText(
+                self.deposit_dict['pdbx_grant_country_one'], QtCore.Qt.MatchFixedString)
+            self.pdbx_grant_country_one.setCurrentIndex(index)
+
+            self.pdbx_funding_organization_two.setText(self.deposit_dict['pdbx_funding_organization_two'])
+            self.pdbx_grant_number_two.setText(self.deposit_dict['pdbx_grant_number_two'])
+            index = self.pdbx_grant_country_two.findText(
+                self.deposit_dict['pdbx_grant_country_two'], QtCore.Qt.MatchFixedString)
+            self.pdbx_grant_country_two.setCurrentIndex(index)
+
+            self.pdbx_funding_organization_three.setText(self.deposit_dict['pdbx_funding_organization_three'])
+            self.pdbx_grant_number_three.setText(self.deposit_dict['pdbx_grant_number_three'])
+            index = self.pdbx_grant_country_three.findText(
+                self.deposit_dict['pdbx_grant_country_three'], QtCore.Qt.MatchFixedString)
+            self.pdbx_grant_country_three.setCurrentIndex(index)
+
         except ValueError, e:
 #            self.update_status_bar('Sorry, this is not a XChemExplorer deposit file!')
             self.update_log.error('file is not a valid .deposit file: ' + str(e))
 
     def update_deposit_dict(self):
+        pdbx_funding_ordinal_one = ''
+        pdbx_funding_organization_one = ''
+        pdbx_grant_number_one = ''
+        pdbx_grant_country_one = ''
+        if str(self.pdbx_funding_organization_one.text()).replace(' ','') != '':
+            pdbx_funding_ordinal_one = '1'
+            pdbx_funding_organization_one = str(self.pdbx_funding_organization_one.text())
+            pdbx_grant_number_one = str(self.pdbx_grant_number_one.text())
+            pdbx_grant_country_one = str(self.pdbx_grant_country_one.currentText())
+
+        pdbx_funding_ordinal_two = ''
+        pdbx_funding_organization_two = ''
+        pdbx_grant_number_two = ''
+        pdbx_grant_country_two = ''
+        if str(self.pdbx_funding_organization_two.text()).replace(' ','') != '':
+            pdbx_funding_ordinal_two = '2'
+            pdbx_funding_organization_two = str(self.pdbx_funding_organization_two.text())
+            pdbx_grant_number_two = str(self.pdbx_grant_number_two.text())
+            pdbx_grant_country_two = str(self.pdbx_grant_country_two.currentText())
+
+        pdbx_funding_ordinal_three = ''
+        pdbx_funding_organization_three = ''
+        pdbx_grant_number_three = ''
+        pdbx_grant_country_three = ''
+        if str(self.pdbx_funding_organization_three.text()).replace(' ','') != '':
+            pdbx_funding_ordinal_three = '3'
+            pdbx_funding_organization_three = str(self.pdbx_funding_organization_three.text())
+            pdbx_grant_number_three = str(self.pdbx_grant_number_three.text())
+            pdbx_grant_country_three = str(self.pdbx_grant_country_three.currentText())
+
         self.deposit_dict = {
             'contact_author_PI_salutation': str(self.contact_author_PI_salutation.text()),
             'contact_author_PI_first_name': str(self.contact_author_PI_first_name.text()),
@@ -2405,7 +2544,21 @@ class XChemExplorer(QtGui.QApplication):
             'data_collection_protocol': str(self.data_collection_protocol.text()),
             'pdbx_starting_model': str(self.pdbx_starting_model.text()),
             'data_integration_software': str(self.data_integration_software.currentText()),
-            'phasing_software': str(self.phasing_software.currentText())
+            'phasing_software': str(self.phasing_software.currentText()),
+
+            'pdbx_funding_ordinal_one': pdbx_funding_ordinal_one,
+            'pdbx_funding_organization_one': pdbx_funding_organization_one,
+            'pdbx_grant_number_one': pdbx_grant_number_one,
+            'pdbx_grant_country_one': pdbx_grant_country_one,
+            'pdbx_funding_ordinal_two': pdbx_funding_ordinal_two,
+            'pdbx_funding_organization_two': pdbx_funding_organization_two,
+            'pdbx_grant_number_two': pdbx_grant_number_two,
+            'pdbx_grant_country_two': pdbx_grant_country_two,
+            'pdbx_funding_ordinal_three': pdbx_funding_ordinal_three,
+            'pdbx_funding_organization_three': pdbx_funding_organization_three,
+            'pdbx_grant_number_three': pdbx_grant_number_three,
+            'pdbx_grant_country_three': pdbx_grant_country_three
+
         }
 
         structure_author_name = ''
@@ -2520,7 +2673,17 @@ class XChemExplorer(QtGui.QApplication):
             'data_integration_software': None,
             'phasing_software': None,
             'structure_author_name': None,
-            'primary_citation_author_name': None
+            'primary_citation_author_name': None,
+
+            'pdbx_funding_organization_one': '',
+            'pdbx_grant_number_one': '',
+            'pdbx_grant_country_one': '',
+            'pdbx_funding_organization_two': '',
+            'pdbx_grant_number_two': '',
+            'pdbx_grant_country_two': '',
+            'pdbx_funding_organization_three': '',
+            'pdbx_grant_number_three': '',
+            'pdbx_grant_country_three': ''
 
         }
 

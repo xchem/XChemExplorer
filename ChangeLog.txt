@@ -1,3 +1,6 @@
+v1.7.34 (25/06/2021)
+- added pdbx_audit_support category for funding agency now required for PDB deposition
+
 v1.7.33 (02/02/2021)
 - bug fix: enable RefinementParameters button in XChemCOOT
 

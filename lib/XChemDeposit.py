@@ -309,8 +309,7 @@ class templates:
             '_pdbx_struct_assembly_depositor_info.id                   1\n'
             "_pdbx_struct_assembly_depositor_info.method_details       PISA\n"
             '_pdbx_struct_assembly_depositor_info.oligomeric_count     %s\n'        %depositDict['biological_assembly_chain_number']+
-            '#\n'
-            '#\n'
+            '#\n'            
             )
 
         return data_template_cif
@@ -450,6 +449,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.create_model_mmcif(xtal):
                     continue
 
+                self.add_funding_information(xtal)
+
 #                if not self.create_sf_mmcif(xtal):
 #                    continue
 
@@ -501,6 +502,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
                 if not self.create_model_mmcif(xtal):
                     continue
+
+                self.add_funding_information(xtal)
 
                 if not self.add_ligand_cif_to_model_mmcif(xtal):
                     continue
@@ -1125,6 +1128,52 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 #
 #            elif '_refine.ls_d_res_low' in line and len(line.split()) == 2:
 #                sys.stdout.write('_refine.ls_d_res_low                             {0!s}\n'.format(min(low_reso_list)))
+
+    def add_funding_information(self,xtal):
+        pdbx_funding_ordinal_one = self.data_template_dict['pdbx_funding_ordinal_one']
+        if pdbx_funding_ordinal_one.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
+            self.data_template_dict['pdbx_funding_ordinal_one'] = ''
+            self.data_template_dict['pdbx_funding_organization_one'] = ''
+            self.data_template_dict['pdbx_grant_number_one'] = ''
+            self.data_template_dict['pdbx_grant_country_one'] = ''
+            funding_one = ''
+        else:
+            funding_one = "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_one'],self.data_template_dict['pdbx_funding_organization_one'],self.data_template_dict['pdbx_grant_number_one'],self.data_template_dict['pdbx_grant_country_one'])
+
+        pdbx_funding_ordinal_two = self.data_template_dict['pdbx_funding_ordinal_two']
+        if pdbx_funding_ordinal_two.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
+            self.data_template_dict['pdbx_funding_ordinal_two'] = ''
+            self.data_template_dict['pdbx_funding_organization_two'] = ''
+            self.data_template_dict['pdbx_grant_number_two'] = ''
+            self.data_template_dict['pdbx_grant_country_two'] = ''
+            funding_two = ''
+        else:
+            funding_two = "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_two'],self.data_template_dict['pdbx_funding_organization_two'],self.data_template_dict['pdbx_grant_number_two'],self.data_template_dict['pdbx_grant_country_two'])
+
+        pdbx_funding_ordinal_three = self.data_template_dict['pdbx_funding_ordinal_three']
+        if pdbx_funding_ordinal_three.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
+            self.data_template_dict['pdbx_funding_ordinal_three'] = ''
+            self.data_template_dict['pdbx_funding_organization_three'] = ''
+            self.data_template_dict['pdbx_grant_number_three'] = ''
+            self.data_template_dict['pdbx_grant_country_three'] = ''
+            funding_three = ''
+        else:
+            funding_three = "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_three'],self.data_template_dict['pdbx_funding_organization_three'],self.data_template_dict['pdbx_grant_number_three'],self.data_template_dict['pdbx_grant_country_three'])
+
+        funding_info = (
+            '#\n'
+            'loop\n'
+            '_pdbx_audit_support.ordinal                   \n'
+            '_pdbx_audit_support.funding_organization      \n'
+            '_pdbx_audit_support.grant_number              \n'
+            '_pdbx_audit_support.country                   \n'
+            + funding_one + funding_two + funding_three +
+            '#\n'
+        )
+
+        f = open(xtal + '.mmcif', 'a')
+        f.write(funding_info)
+        f.close()
 
     def add_ligand_cif_to_model_mmcif(self,xtal):
         filestatus = False
