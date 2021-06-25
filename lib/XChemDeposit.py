@@ -1136,6 +1136,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.data_template_dict['pdbx_funding_organization_one'] = ''
             self.data_template_dict['pdbx_grant_number_one'] = ''
             self.data_template_dict['pdbx_grant_country_one'] = ''
+            funding_one = ''
+        else:
+            funding_one = "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_one'],self.data_template_dict['pdbx_funding_organization_one'],self.data_template_dict['pdbx_grant_number_one'],self.data_template_dict['pdbx_grant_country_one'])
 
         pdbx_funding_ordinal_two = self.data_template_dict['pdbx_funding_ordinal_two']
         if pdbx_funding_ordinal_two.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
@@ -1143,6 +1146,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.data_template_dict['pdbx_funding_organization_two'] = ''
             self.data_template_dict['pdbx_grant_number_two'] = ''
             self.data_template_dict['pdbx_grant_country_two'] = ''
+            funding_two = ''
+        else:
+            funding_two = "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_two'],self.data_template_dict['pdbx_funding_organization_two'],self.data_template_dict['pdbx_grant_number_two'],self.data_template_dict['pdbx_grant_country_two'])
 
         pdbx_funding_ordinal_three = self.data_template_dict['pdbx_funding_ordinal_three']
         if pdbx_funding_ordinal_three.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
@@ -1150,16 +1156,18 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.data_template_dict['pdbx_funding_organization_three'] = ''
             self.data_template_dict['pdbx_grant_number_three'] = ''
             self.data_template_dict['pdbx_grant_country_three'] = ''
+            funding_three = ''
+        else:
+            funding_three = "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_three'],self.data_template_dict['pdbx_funding_organization_three'],self.data_template_dict['pdbx_grant_number_three'],self.data_template_dict['pdbx_grant_country_three'])
 
         funding_info = (
+            '#\n'
             'loop\n'
             '_pdbx_audit_support.ordinal                   \n'
             '_pdbx_audit_support.funding_organization      \n'
             '_pdbx_audit_support.grant_number              \n'
             '_pdbx_audit_support.country                   \n'
-            "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_one'],self.data_template_dict['pdbx_funding_organization_one'],self.data_template_dict['pdbx_grant_number_one'],self.data_template_dict['pdbx_grant_country_one']) +
-            "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_two'],self.data_template_dict['pdbx_funding_organization_two'],self.data_template_dict['pdbx_grant_number_two'],self.data_template_dict['pdbx_grant_country_two']) +
-            "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_three'],self.data_template_dict['pdbx_funding_organization_three'],self.data_template_dict['pdbx_grant_number_three'],self.data_template_dict['pdbx_grant_country_three']) +
+            + funding_one + funding_two + funding_three +
             '#\n'
         )
 
