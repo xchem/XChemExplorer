@@ -928,6 +928,27 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             else:
                 self.data_template_dict['fragment_name_one_specific_mutation'] = '"' + mutations.replace(' ', '') + '"'
 
+            pdbx_funding_ordinal_one = self.data_template_dict['pdbx_funding_ordinal_one']
+            if pdbx_funding_ordinal_one.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
+                self.data_template_dict['pdbx_funding_ordinal_one'] = ''
+                self.data_template_dict['pdbx_funding_organization_one'] = ''
+                self.data_template_dict['pdbx_grant_number_one'] = ''
+                self.data_template_dict['pdbx_grant_country_one'] = ''
+
+            pdbx_funding_ordinal_two = self.data_template_dict['pdbx_funding_ordinal_two']
+            if pdbx_funding_ordinal_two.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
+                self.data_template_dict['pdbx_funding_ordinal_two'] = ''
+                self.data_template_dict['pdbx_funding_organization_two'] = ''
+                self.data_template_dict['pdbx_grant_number_two'] = ''
+                self.data_template_dict['pdbx_grant_country_two'] = ''
+
+            pdbx_funding_ordinal_three = self.data_template_dict['pdbx_funding_ordinal_three']
+            if pdbx_funding_ordinal_three.lower().replace(' ', '').replace('none', '').replace('null', '') == '':
+                self.data_template_dict['pdbx_funding_ordinal_three'] = ''
+                self.data_template_dict['pdbx_funding_organization_three'] = ''
+                self.data_template_dict['pdbx_grant_number_three'] = ''
+                self.data_template_dict['pdbx_grant_country_three'] = ''
+
             # get protein chains
             self.data_template_dict['protein_chains'] = ''
             chains = self.pdb.GetProteinChains()
