@@ -1157,9 +1157,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             '_pdbx_audit_support.funding_organization      \n'
             '_pdbx_audit_support.grant_number              \n'
             '_pdbx_audit_support.country                   \n'
-            "%s '%s' '%s' '%s'\n" %(depositDict['pdbx_funding_ordinal_one'],depositDict['pdbx_funding_organization_one'],depositDict['pdbx_grant_number_one'],depositDict['pdbx_grant_country_one']) +
-            "%s '%s' '%s' '%s'\n" %(depositDict['pdbx_funding_ordinal_two'],depositDict['pdbx_funding_organization_two'],depositDict['pdbx_grant_number_two'],depositDict['pdbx_grant_country_two']) +
-            "%s '%s' '%s' '%s'\n" %(depositDict['pdbx_funding_ordinal_three'],depositDict['pdbx_funding_organization_three'],depositDict['pdbx_grant_number_three'],depositDict['pdbx_grant_country_three']) +
+            "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_one'],self.data_template_dict['pdbx_funding_organization_one'],self.data_template_dict['pdbx_grant_number_one'],self.data_template_dict['pdbx_grant_country_one']) +
+            "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_two'],self.data_template_dict['pdbx_funding_organization_two'],self.data_template_dict['pdbx_grant_number_two'],self.data_template_dict['pdbx_grant_country_two']) +
+            "%s '%s' '%s' '%s'\n" %(self.data_template_dict['pdbx_funding_ordinal_three'],self.data_template_dict['pdbx_funding_organization_three'],self.data_template_dict['pdbx_grant_number_three'],self.data_template_dict['pdbx_grant_country_three']) +
             '#\n'
         )
 
