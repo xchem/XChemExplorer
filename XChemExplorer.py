@@ -5140,6 +5140,8 @@ class XChemExplorer(QtGui.QApplication):
     def user_update_selected_autoproc_datasets_summary_table(self):
         for key in self.data_collection_column_three_dict:
             if self.data_collection_column_three_dict[key][0] == self.sender():
+                self.update_log.insert('here: ' + self.sender())
+                self.update_log.insert('herere' + str(self.data_collection_column_three_dict))
                 dbTmp = self.xtal_db_dict[key]
                 stage = dbTmp['RefinementOutcome'].split()[0]
                 print('===>', key, stage)
