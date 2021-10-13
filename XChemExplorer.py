@@ -5055,7 +5055,8 @@ class XChemExplorer(QtGui.QApplication):
             self.update_row_in_table(xtal, row, db_dict, self.data_collection_table, self.data_collection_table_columns)
             if selectedResultDict['DataCollectionVisit'] == db_dict['DataCollectionVisit'] \
                 and selectedResultDict['DataCollectionRun'] == db_dict['DataCollectionRun'] \
-                and selectedResultDict['DataProcessingProgram'] == db_dict['DataProcessingProgram']:
+                and selectedResultDict['DataProcessingProgram'] == db_dict['DataProcessingProgram'] \
+                and selectedResultDict['DataProcessingScore'] == db_dict['DataProcessingScore']:
                 self.current_row = row
                 self.data_collection_table.selectRow(row)
         self.data_collection_table.cellClicked.connect(self.select_different_autoprocessing_result)
