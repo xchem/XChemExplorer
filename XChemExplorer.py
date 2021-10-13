@@ -5097,8 +5097,10 @@ class XChemExplorer(QtGui.QApplication):
             visit =    self.data_collection_table.item(selected_row, 1).text()
             run =      self.data_collection_table.item(selected_row, 2).text()
             autoproc = self.data_collection_table.item(selected_row, 3).text()
+            score =    self.data_collection_table.item(selected_row, 12).text()
             # get db_dict from collectionTable for visit, run, autoproc
-            dbDict = self.db.get_db_dict_for_visit_run_autoproc(xtal,visit,run,autoproc)
+#            dbDict = self.db.get_db_dict_for_visit_run_autoproc(xtal,visit,run,autoproc)
+            dbDict = self.db.get_db_dict_for_visit_run_autoproc_score(xtal, visit, run, autoproc, score)
             dbDict['DataProcessingAutoAssigned'] = 'False'
             self.update_log.insert('%s: changing selected autoprocessing result to %s %s %s' %(xtal,visit,run,autoproc))
             # xtal is QString -> str(xtal)

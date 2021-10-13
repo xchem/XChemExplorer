@@ -1870,6 +1870,26 @@ class data_source:
             db_dict[header[n]] = str(item)
         return db_dict
 
+    def get_db_dict_for_visit_run_autoproc_score(self,xtal,visit,run,autoproc,score):
+        db_dict = {}
+        header=[]
+        connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
+        cursor = connect.cursor()
+        sqlite = (  'select * '
+                    'from collectionTable '
+                    "where CrystalName ='%s' and" %xtal +
+                    "      DataCollectionVisit = '%s' and" %visit +
+                    "      DataCollectionRun = '%s' and" %run +
+                    "      DataProcessingProgram = '%s'" %autoproc +
+                    "      DataProcessingScore = '%s'" %score )
+        cursor.execute(sqlite)
+        for column in cursor.description:
+            header.append(column[0])
+        data = cursor.fetchall()
+        for n, item in enumerate(data[0]):
+            db_dict[header[n]] = str(item)
+        return db_dict
+
     def xtals_collected_during_visit_as_dict(self,visitID):
         # first get all collected xtals as list
         if isinstance(visitID,list):    # for Agamemnon data structure
