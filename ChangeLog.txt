@@ -1,3 +1,6 @@
+v1.7.35 (13/10/2021)
+- ignore json merging statistics and xia2.mmcif if aimless.log exists
+
 v1.7.34 (25/06/2021)
 - added pdbx_audit_support category for funding agency now required for PDB deposition
 

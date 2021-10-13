@@ -2681,6 +2681,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             os.symlink(logfile[logfile.rfind('/')+1:], xtal + '.log')
         if os.path.isfile(logfile[logfile.rfind('/') + 1:]):
             logNew=os.path.join(self.projectDir,xtal,'autoprocessing', self.visit + '-' + run + autoproc+ '_' + proc_code, logfile[logfile.rfind('/') + 1:])
+        # September 2021: xia2 does not also output a xia2.mmcif and json merging statistics file, even if aimless was used
+        # for scaling, however, the xia2.mmcif file is differently formatted than the one from dials
+        # hence, if xtal.log file already exists, use this one
+        if os.path.isfile(xtal + '.log'):
+            logNew = os.path.join(self.projectDir, xtal, 'autoprocessing',
+                                  self.visit + '-' + run + autoproc + '_' + proc_code, xtal + '.log')
         return mtzNew,logNew
 
     def makeJPGdir(self,xtal,run):
