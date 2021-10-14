@@ -601,11 +601,11 @@ class parse:
         if 'fast_dp' in logfile:
             self.aimless['DataProcessingProgram']='fast_dp'
         elif '3d-run' in logfile:
-            self.aimless['DataProcessingProgram']='xia2 3d'
+            self.aimless['DataProcessingProgram']='xia2-3d'
         elif '3dii-run' in logfile:
-            self.aimless['DataProcessingProgram']='xia2 3dii'
+            self.aimless['DataProcessingProgram']='xia2-3dii'
         elif 'xia2-3dii' in logfile:
-            self.aimless['DataProcessingProgram'] = 'xia2 3dii'
+            self.aimless['DataProcessingProgram'] = 'xia2-3dii'
         elif 'dials-run' in logfile:
             self.aimless['DataProcessingProgram']='dials'
         elif 'dials' in logfile:
