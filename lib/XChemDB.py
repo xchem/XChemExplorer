@@ -1880,7 +1880,7 @@ class data_source:
                     "where CrystalName ='%s' and" %xtal +
                     "      DataCollectionVisit = '%s' and" %visit +
                     "      DataCollectionRun = '%s' and" %run +
-                    "      DataProcessingProgram = '%s'" %autoproc +
+                    "      DataProcessingProgram = '%s' and" %autoproc +
                     "      DataProcessingScore = '%s'" %score )
         cursor.execute(sqlite)
         for column in cursor.description:
