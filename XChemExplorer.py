@@ -4994,7 +4994,8 @@ class XChemExplorer(QtGui.QApplication):
                     #                                cell_text.setText('')
                 cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
                 table.setItem(row, column, cell_text)
-
+                print('row: {0!s}   column: {1!s}   value: {2!s}   header: {3!s}'.format(row, column, cell_text, header[0]))
+                print('column_name {0!s}'.format(column_name))
 
     def populate_datasets_summary_table_NEW(self):
         self.status_bar.showMessage(
@@ -5055,7 +5056,8 @@ class XChemExplorer(QtGui.QApplication):
             self.update_row_in_table(xtal, row, db_dict, self.data_collection_table, self.data_collection_table_columns)
             if selectedResultDict['DataCollectionVisit'] == db_dict['DataCollectionVisit'] \
                 and selectedResultDict['DataCollectionRun'] == db_dict['DataCollectionRun'] \
-                and selectedResultDict['DataProcessingProgram'] == db_dict['DataProcessingProgram']:
+                and selectedResultDict['DataProcessingProgram'] == db_dict['DataProcessingProgram'] \
+                and selectedResultDict['DataProcessingScore'] == db_dict['DataProcessingScore']:
                 self.current_row = row
                 self.data_collection_table.selectRow(row)
         self.data_collection_table.cellClicked.connect(self.select_different_autoprocessing_result)
@@ -5096,8 +5098,15 @@ class XChemExplorer(QtGui.QApplication):
             visit =    self.data_collection_table.item(selected_row, 1).text()
             run =      self.data_collection_table.item(selected_row, 2).text()
             autoproc = self.data_collection_table.item(selected_row, 3).text()
+            score =    self.data_collection_table.item(selected_row, 12).text()
+            for q in range(13):
+                try:
+                    print('--> {0!s}: {1!s}'.format(q, self.data_collection_table.item(selected_row, q).text()))
+                except AttributeError:
+                    print('--> {0!s}: None'.format(q))
             # get db_dict from collectionTable for visit, run, autoproc
-            dbDict = self.db.get_db_dict_for_visit_run_autoproc(xtal,visit,run,autoproc)
+#            dbDict = self.db.get_db_dict_for_visit_run_autoproc(xtal,visit,run,autoproc)
+            dbDict = self.db.get_db_dict_for_visit_run_autoproc_score(xtal, visit, run, autoproc, score)
             dbDict['DataProcessingAutoAssigned'] = 'False'
             self.update_log.insert('%s: changing selected autoprocessing result to %s %s %s' %(xtal,visit,run,autoproc))
             # xtal is QString -> str(xtal)

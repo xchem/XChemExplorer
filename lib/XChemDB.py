@@ -659,9 +659,11 @@ class data_source:
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
         cursor.execute("select * from mainTable where CrystalName='{0!s}';".format(sampleID))
+        print("SQLITE: select * from mainTable where CrystalName='{0!s}';".format(sampleID))
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
+        print("DATA: {0!s}".format(data))
         for n,item in enumerate(data[0]):
             db_dict[header[n]]=str(item)
         return db_dict
@@ -1866,6 +1868,28 @@ class data_source:
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
+        for n, item in enumerate(data[0]):
+            db_dict[header[n]] = str(item)
+        return db_dict
+
+    def get_db_dict_for_visit_run_autoproc_score(self,xtal,visit,run,autoproc,score):
+        db_dict = {}
+        header=[]
+        connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
+        cursor = connect.cursor()
+        sqlite = (  'select * '
+                    'from collectionTable '
+                    "where CrystalName ='%s' and" %xtal +
+                    "      DataCollectionVisit = '%s' and" %visit +
+                    "      DataCollectionRun = '%s' and" %run +
+                    "      DataProcessingProgram = '%s' and" %autoproc +
+                    "      DataProcessingScore = '%s'" %score )
+        cursor.execute(sqlite)
+        for column in cursor.description:
+            header.append(column[0])
+        data = cursor.fetchall()
+        print('SQLITE: {0!s}'.format(sqlite))
+        print('DATA: {0!s}'.format(data))
         for n, item in enumerate(data[0]):
             db_dict[header[n]] = str(item)
         return db_dict
