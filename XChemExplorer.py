@@ -5099,7 +5099,10 @@ class XChemExplorer(QtGui.QApplication):
             autoproc = self.data_collection_table.item(selected_row, 3).text()
             score =    self.data_collection_table.item(selected_row, 12).text()
             for q in range(13):
-                print('--> {0!s}: {1!s}'.format(q, self.data_collection_table.item(selected_row, q).text()))
+                try:
+                    print('--> {0!s}: {1!s}'.format(q, self.data_collection_table.item(selected_row, q).text()))
+                except AttributeError:
+                    print('--> {0!s}: None'.format(q))
             # get db_dict from collectionTable for visit, run, autoproc
 #            dbDict = self.db.get_db_dict_for_visit_run_autoproc(xtal,visit,run,autoproc)
             dbDict = self.db.get_db_dict_for_visit_run_autoproc_score(xtal, visit, run, autoproc, score)
