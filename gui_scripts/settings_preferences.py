@@ -339,8 +339,9 @@ class setup():
                                                     'Rmerge\nLow',
                                                     'Completeness\nOverall',
                                                     'DataProcessing\nUnitCell',
-                                                    'DataProcessing\nRfree'
-                                                    'DataProcessing\nScore']
+                                                    'DataProcessing\nRfree',
+                                                    'DataProcessing\nScore'
+                                                    ]
 
 
 

@@ -4995,7 +4995,7 @@ class XChemExplorer(QtGui.QApplication):
                 cell_text.setTextAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
                 table.setItem(row, column, cell_text)
                 print('row: {0!s}   column: {1!s}   value: {2!s}   header: {3!s}'.format(row, column, cell_text, header[0]))
-
+                print('column_name {0!s}'.format(column_name))
 
     def populate_datasets_summary_table_NEW(self):
         self.status_bar.showMessage(
