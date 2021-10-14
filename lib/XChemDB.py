@@ -659,9 +659,11 @@ class data_source:
         connect=sqlite3.connect(self.data_source_file)     # creates sqlite file if non existent
         cursor = connect.cursor()
         cursor.execute("select * from mainTable where CrystalName='{0!s}';".format(sampleID))
+        print("SQLITE: select * from mainTable where CrystalName='{0!s}';".format(sampleID))
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
+        print("DATA: {0!s}".format(data))
         for n,item in enumerate(data[0]):
             db_dict[header[n]]=str(item)
         return db_dict
