@@ -233,67 +233,104 @@ class helpers:
             if not external_software['qsub_array']:
                 header='#PBS -joe -N xce_acedrg\n'
 
-        # check if CompoundSMILEScovalent field is not Null
-        # CompoundSMILESproduct can be used to create only a CIF file for the product to make fitting easier
-        # however, the complete smiles string will be used to make the png file
-        productSmiles = None
-        db = XChemDB.data_source(os.path.join(database_directory,data_source_file))
-        sql = "select CompoundSMILESproduct from mainTable where CrystalName = '%s'" %sample
-        query = db.execute_statement(sql)
-        productSmiles = query[0][0]
-        if str(productSmiles).replace(' ','') == '':
-            productSmiles = smiles
-        elif 'none' in str(productSmiles).lower():
-            productSmiles = smiles
-        elif 'null' in str(productSmiles).lower():
-            productSmiles = smiles
-        else:
-            productSmiles = str(productSmiles)
+        # check for combisoaks/ cocktails
+        # note: compoundIDs and smiles are semi-colon separated
+        if len(compoundID.split(';')) > 1:
+            Logfile.insert('looks like you are working with cocktails; found the following IDs and smiles:')
+            if len(compoundID.split(';')) != len(smiles.split(';')):
+                Logfile.error('Number of compoundIDs and SMILES does not match:')
+                Logfile.error('N(compoundID): {0!s} -> {1!s}'.format(len(compoundID.split(';')), compoundID.split(';')))
+                Logfile.error('N(SMILES):     {0!s} -> {1!s}'.format(len(smiles.split(';')), smiles.split(';')))
+                Logfile.error('aborting...')
+                return
+            else:
+                software = ''
+                if restraints_program == 'acedrg':
+                    if os.getcwd().startswith('/dls'):
+                        software += 'module load ccp4\n'
+                elif restraints_program == 'phenix.elbow':
+                    if os.getcwd().startswith('/dls'):
+                        software += 'module load phenix\n'
+                elif restraints_program == 'grade':
+                    if os.getcwd().startswith('/dls'):
+                        software += 'module load buster\n'
+                        software += 'export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n'
+                    software += "export BDG_TOOL_OBABEL='none'\n"
 
-        software=''
-        if restraints_program=='acedrg':
-            if os.getcwd().startswith('/dls'):
-                software += 'module load ccp4\n'
-            if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software+='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
+                for i in range(len(compoundID.split(';'))):
+                    Logfile.insert('{0!s} - {1!s}'.format(compoundID.split(';')[i], smiles.split(';')[i]))
+                    cID = 'L' + (2 - len(str(i))) * '0' + str(i)
+                    if restraints_program=='acedrg':
+                        software += 'acedrg --res {0!s} -i "{1!s}" -o {2!s}\n'.format(cID, smiles.split(';')[i], compoundID.split(';')[i].replace(' ', ''))
+                    elif restraints_program=='phenix.elbow':
+                        software+='phenix.elbow --smiles="{0!s}" --id {1!s}} --output {2!s}\n'.format(smiles.split(';')[i], cID, compoundID.split(';')[i].replace(' ',''))
+                    elif restraints_program=='grade':
+                        if external_software['mogul']:
+                            mogul = ''
+                        else:
+                            mogul = '-nomogul'
+                        software+='grade -resname {0!s} {1!s} "{2!s}" -ocif {3!s}.cif -opdb {4!s}.pdb\n'.format(
+                            cID, mogul, smiles.split(';')[i], compoundID.split(';')[i].replace(' ',''), compoundID.split(';')[i].replace(' ',''))
+
+        else:
+            # check if CompoundSMILEScovalent field is not Null
+            # CompoundSMILESproduct can be used to create only a CIF file for the product to make fitting easier
+            # however, the complete smiles string will be used to make the png file
+            productSmiles = None
+            db = XChemDB.data_source(os.path.join(database_directory,data_source_file))
+            sql = "select CompoundSMILESproduct from mainTable where CrystalName = '%s'" %sample
+            query = db.execute_statement(sql)
+            productSmiles = query[0][0]
+            if str(productSmiles).replace(' ','') == '':
+                productSmiles = smiles
+            elif 'none' in str(productSmiles).lower():
+                productSmiles = smiles
+            elif 'null' in str(productSmiles).lower():
+                productSmiles = smiles
             else:
-                software+='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
-        elif restraints_program=='phenix.elbow':
-            if os.getcwd().startswith('/dls'):
-                software += 'module load phenix\n'
-            if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software+='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
-            else:
-                software+='phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'\
-                    .format(productSmiles, compoundID.replace(' ',''))
-        elif restraints_program=='grade':
-            if os.getcwd().startswith('/dls'):
-                software += 'module load buster\n'
-                software += 'export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n'
-            software+="export BDG_TOOL_OBABEL='none'\n"
-            if external_software['mogul']:
-                mogul = ''
-            else:
-                mogul = '-nomogul'
-            if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
-                software+='grade -resname LIG {0!s} -in ../old.cif -ocif {1!s}.cif -opdb {2!s}.pdb\n'\
-                    .format(mogul, compoundID.replace(' ',''), compoundID.replace(' ',''))
-            else:
-                software+='grade -resname LIG {0!s} "{1!s}" -ocif {2!s}.cif -opdb {3!s}.pdb\n'\
-                    .format(mogul, productSmiles, compoundID.replace(' ',''), compoundID.replace(' ',''))
+                productSmiles = str(productSmiles)
+
+            software=''
+            if restraints_program=='acedrg':
+                if os.getcwd().startswith('/dls'):
+                    software += 'module load ccp4\n'
+                if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
+                    software+='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
+                else:
+                    software+='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
+            elif restraints_program=='phenix.elbow':
+                if os.getcwd().startswith('/dls'):
+                    software += 'module load phenix\n'
+                if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
+                    software+='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
+                else:
+                    software+='phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'\
+                        .format(productSmiles, compoundID.replace(' ',''))
+            elif restraints_program=='grade':
+                if os.getcwd().startswith('/dls'):
+                    software += 'module load buster\n'
+                    software += 'export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n'
+                software+="export BDG_TOOL_OBABEL='none'\n"
+                if external_software['mogul']:
+                    mogul = ''
+                else:
+                    mogul = '-nomogul'
+                if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
+                    software+='grade -resname LIG {0!s} -in ../old.cif -ocif {1!s}.cif -opdb {2!s}.pdb\n'\
+                        .format(mogul, compoundID.replace(' ',''), compoundID.replace(' ',''))
+                else:
+                    software+='grade -resname LIG {0!s} "{1!s}" -ocif {2!s}.cif -opdb {3!s}.pdb\n'\
+                        .format(mogul, productSmiles, compoundID.replace(' ',''), compoundID.replace(' ',''))
+
+            # merge all compound CIFs into 1 file called merged.cif
+            software += '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/merge_ligand_cif_files.py {0!s}\n'.format(os.path.join(initial_model_directory, sample, 'compound'))
+
+
         # Removal of the hydrogen atoms in PDB files is required for REFMAC 5 run. With hydrogens some ligands fail to
         # pass the external restraints in pandda.giant.make_restraints.
         # Copy the file with hydrogens to retain in case needed
 
         check_stereochemistry = ''
-
-#        copy_with_hydrogens = 'cp {0!s}.pdb {0!s}_with_H.pdb'.format(compoundID.replace(' ', ''))
-#
-#        strip_hydrogens = 'phenix.reduce {0!s}.pdb -trim > {0!s}_tmp.pdb'.format(compoundID.replace(' ', ''))
-#
-#        module = ''
-#        if os.path.isdir('/dls'):
-#            module = 'module load mx\n'
 
         Cmds = (
 
@@ -316,17 +353,6 @@ class helpers:
             '\n'
             + software +
             '\n'
-#            '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/assign_stereochemistry.py {0!s} {1!s} {2!s}'
-#            .format(compoundID.replace(' ',''),os.path.join(initial_model_directory,sample), os.path.join(database_directory,data_source_file)) +
-#            '\n'
-#            + copy_with_hydrogens +
-#            '\n'
-#            + strip_hydrogens +
-#            '\n'
-#            'mv {0!s}_tmp.pdb {0!s}.pdb'.format(compoundID.replace(' ', '')) +
-#            '\n'
-#            'rm -f {0!s}_tmp.pdb'.format(compoundID.replace(' ', '')) +
-#            '\n'
             'cd ' + os.path.join(initial_model_directory, sample) +
             '\n'
             'ln -s compound/%s.cif .\n' % compoundID.replace(' ', '') +
@@ -344,8 +370,8 @@ class helpers:
 
         os.chdir(ccp4_scratch_directory)
         Logfile.insert('creating ACEDRG shell script for {0!s},{1!s} in {2!s}'.format(sample, compoundID, ccp4_scratch_directory))
-        print Cmds
-        print 'ccp4_scratch',ccp4_scratch_directory
+#        print Cmds
+#        print 'ccp4_scratch',ccp4_scratch_directory
         f = open('xce_{0!s}_{1!s}.sh'.format(restraints_program,str(counter)),'w')
         f.write(Cmds)
         f.close()

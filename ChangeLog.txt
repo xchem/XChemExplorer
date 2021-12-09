@@ -1,3 +1,6 @@
+v1.8.0 (17/12/2021)
+- added feature for working with cocktails/ combi-soaks: multiple compounds/ smiles separated by semi-colon in db are recognised during restraint generation
+
 v1.7.36 (13/10/2021)
 - bug fix: manual selection of different auto-processing results with same pipeline
 - removed obsolete paths used for parsing of auto-processing results
