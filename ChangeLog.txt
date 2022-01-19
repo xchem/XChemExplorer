@@ -1,3 +1,6 @@
+v1.8.1 (19/01/2022)
+- fix: event map to sf conversion; ignore existing ligand pdb files
+
 v1.8.0 (17/12/2021)
 - added feature for working with cocktails/ combi-soaks: multiple compounds/ smiles separated by semi-colon in db are recognised during restraint generation
 

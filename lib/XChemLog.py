@@ -26,7 +26,7 @@ class startLog:
             '     #                                                                     #\n'
             '     # Version: %s                                       #\n' %pasteVersion+
             '     #                                                                     #\n'
-            '     # Date: 17/12/2021                                                    #\n'
+            '     # Date: 19/01/2022                                                    #\n'
             '     #                                                                     #\n'
             '     # Authors: Tobias Krojer, MAXIV Laboratory, SE                        #\n'
             '     #          tobias.krojer@maxiv.lu.se                                  #\n'

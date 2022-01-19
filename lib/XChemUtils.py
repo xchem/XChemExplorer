@@ -1972,9 +1972,12 @@ class pdbtools(object):
             ligName = (l[0] + '-' + l[2] + '-' + l[1] + '.pdb').replace(' ', '')
             ligList.append(ligName)
 
-            f = open(os.path.join(outDir,ligName), "w")
-            f.write(hierarchy_lig.as_pdb_string(crystal_symmetry=self.pdb_inp.crystal_symmetry()))
-            f.close()
+            try:
+                f = open(os.path.join(outDir,ligName), "w")
+                f.write(hierarchy_lig.as_pdb_string(crystal_symmetry=self.pdb_inp.crystal_symmetry()))
+                f.close()
+            except IOError:
+                print('ERROR: {0!s} exists; skipping...')
 
         return ligList
 
