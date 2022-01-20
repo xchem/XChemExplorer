@@ -643,7 +643,7 @@ def NCBI_taxonomy_ID():
                         '1508227':  'BAT SARS-LIKE CORONAVIRUS',
                         '2697049':  'SARS-CoV-2',
                         '562':      'Escherichia coli',
-                        '837:'      'Porphyromonas gingivalis'
+                        '837':      'Porphyromonas gingivalis'
                         }
 
     return taxonomy_dict
