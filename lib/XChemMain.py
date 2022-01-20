@@ -641,8 +641,10 @@ def NCBI_taxonomy_ID():
                         '7108':     'SPODOPTERA FRUGIPERDA',
                         '5693 ':    'Trypanosoma cruzi',
                         '1508227':  'BAT SARS-LIKE CORONAVIRUS',
-                        '2697049':  'COVID-19',
-                        '562':      'Escherichia coli' }
+                        '2697049':  'SARS-CoV-2',
+                        '562':      'Escherichia coli',
+                        '837:'      'Porphyromonas gingivalis'
+                        }
 
     return taxonomy_dict
 

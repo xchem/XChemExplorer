@@ -1,3 +1,7 @@
+v1.8.2 (20/01/2022)
+- added 'Porphyromonas gingivalis' to NCBI taxonomy id
+- fixed SARS-CoV-2 name in NCBI taxonomy id table
+
 v1.8.1 (19/01/2022)
 - fix: event map to sf conversion; ignore existing ligand pdb files
 
