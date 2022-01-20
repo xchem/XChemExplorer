@@ -849,8 +849,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
 
     def add_to_errorList(self,xtal):
-        if xtal not in self.errorList:
-            self.errorList.append(xtal)
+        if xtal.replace(' ','') == '':
+            self.Logfile.warning('trying to add xtal to error list, but xtal string is empty')
+        else:
+            if xtal not in self.errorList:
+                self.errorList.append(xtal)
 
     def print_errorlist(self):
         self.Logfile.insert('---')
@@ -1165,7 +1168,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         funding_info = (
             '#\n'
-            'loop\n'
+            'loop_\n'
             '_pdbx_audit_support.ordinal                   \n'
             '_pdbx_audit_support.funding_organization      \n'
             '_pdbx_audit_support.grant_number              \n'
