@@ -983,7 +983,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 break
         if not isAimlessFile:
             self.Logfile.warning('processing log file does not seem to be an aimless file: {0!s}'.format(aimless))
-            if os.path.realpath('%s.log' %xtal).endswith('.table1'):
+            if os.path.realpath(aimless).endswith('.table1'):
                 self.Logfile.warning('{0!s}: {1!s}.log seems to be a staraniso .table1 file'.format(xtal,xtal))
                 isAimlessFile = True
             self.Logfile.warning('it does not seem to originate from staraniso either')
