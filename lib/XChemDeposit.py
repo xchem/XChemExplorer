@@ -849,8 +849,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
 
     def add_to_errorList(self,xtal):
-        if xtal not in self.errorList:
-            self.errorList.append(xtal)
+        if xtal.replace(' ','') == '':
+            self.Logfile.warning('trying to add xtal to error list, but xtal string is empty')
+        else:
+            if xtal not in self.errorList:
+                self.errorList.append(xtal)
 
     def print_errorlist(self):
         if not self.errorList:
@@ -968,6 +971,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
+            self.Logfile.insert('ground_state deposition reference dataset: {0!s}'.format(refXtal))
             aimless = os.path.join(self.logDir,refXtal,refXtal+'.log')
         else:
             aimless = '%s.log' %xtal
@@ -978,9 +982,12 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 isAimlessFile = True
                 break
         if not isAimlessFile:
-            if os.path.realpath('%s.log' %xtal).endswith('.table1'):
+            self.Logfile.warning('processing log file does not seem to be an aimless file: {0!s}'.format(aimless))
+            self.Logfile.insert('realpath of processing logfile: {0!s}'.format(os.path.realpath(aimless)))
+            if os.path.realpath(aimless).endswith('.table1'):
                 self.Logfile.warning('{0!s}: {1!s}.log seems to be a staraniso .table1 file'.format(xtal,xtal))
                 isAimlessFile = True
+            self.Logfile.warning('it does not seem to originate from staraniso either')
         if not isAimlessFile:
             if os.path.isfile('aimless_dials.log'):
                 aimless = 'aimless_dials.log'
@@ -1162,7 +1169,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         funding_info = (
             '#\n'
-            'loop\n'
+            'loop_\n'
             '_pdbx_audit_support.ordinal                   \n'
             '_pdbx_audit_support.funding_organization      \n'
             '_pdbx_audit_support.grant_number              \n'
