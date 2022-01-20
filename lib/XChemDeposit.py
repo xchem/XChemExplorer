@@ -856,9 +856,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 self.errorList.append(xtal)
 
     def print_errorlist(self):
-        self.Logfile.insert('---')
-        self.Logfile.insert(str(self.errorList))
-        self.Logfile.insert('===')
         if not self.errorList:
             self.Logfile.insert('XCE did not detect any problems during mmcif file preparation. '
                                 'It is however recommended to check the logfile.')
@@ -974,6 +971,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 
         if self.ground_state:
             refXtal = self.ground_state_pdb.split('/')[len(self.ground_state_pdb.split('/')) - 2]
+            self.Logfile.insert('ground_state deposition reference dataset: {0!s}'.format(refXtal))
             aimless = os.path.join(self.logDir,refXtal,refXtal+'.log')
         else:
             aimless = '%s.log' %xtal
@@ -984,9 +982,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 isAimlessFile = True
                 break
         if not isAimlessFile:
+            self.Logfile.warning('processing log file does not seem to be an aimless file: {0!s}'.format(aimless))
             if os.path.realpath('%s.log' %xtal).endswith('.table1'):
                 self.Logfile.warning('{0!s}: {1!s}.log seems to be a staraniso .table1 file'.format(xtal,xtal))
                 isAimlessFile = True
+            self.Logfile.warning('it does not seem to originate from staraniso either')
         if not isAimlessFile:
             if os.path.isfile('aimless_dials.log'):
                 aimless = 'aimless_dials.log'
