@@ -853,6 +853,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.errorList.append(xtal)
 
     def print_errorlist(self):
+        self.Logfile.insert('---')
+        self.Logfile.insert(str(self.errorList))
+        self.Logfile.insert('===')
         if not self.errorList:
             self.Logfile.insert('XCE did not detect any problems during mmcif file preparation. '
                                 'It is however recommended to check the logfile.')
