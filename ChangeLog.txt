@@ -3,6 +3,7 @@ v1.8.2 (20/01/2022)
 - fixed SARS-CoV-2 name in NCBI taxonomy id table
 - bug fix: XChemDeposit - added missing underscore to loop statement in _pdbx_audit_support block
 - XChemDeposit: issue warning and do not add empty xtal string to error list
+- bug fix: XChemDeposit - recognition of staraniso logfile
 
 v1.8.1 (19/01/2022)
 - fix: event map to sf conversion; ignore existing ligand pdb files
