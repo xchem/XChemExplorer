@@ -1,4 +1,4 @@
-v1.9.0 (21/03/2022)
+v1.9.0 (22/04/2022)
 - add functionality for running PanDDA2 at Diamond Light Source
 - fixed hyperlink to PanDDA manual
 
