@@ -1114,7 +1114,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             'module load ccp4\n'
             'module load phenix\n'
             'module load buster\n'
-            '__conda_setup="$("/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/conda" "shell.bash" "hook" 2> /dev/null)"\n'
+            '__conda_setup="$(\'/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/conda\' \'shell.bash\' \'hook\' 2> /dev/null)"\n'
             'if [ $? -eq 0 ]; then\n'
             '    eval "$__conda_setup"\n'
             'else\n'
@@ -1152,7 +1152,7 @@ class run_pandda_two_analyse(QtCore.QThread):
         self.Logfile.warning('ignoring selected submission option')
 
         self.Logfile.insert('running PANDDA on cluster, using qsub...')
-        os.system('qsub -pe smp 6 -l m_mem_free=30G -q medium.q -o log.out -e log.err" pandda2.sh')
+#        os.system('qsub -pe smp 6 -l m_mem_free=30G -q medium.q -o log.out -e log.err" pandda2.sh')
 
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
