@@ -923,7 +923,6 @@ class run_pandda_analyse(QtCore.QThread):
                     stat_command = self.remote_string.replace("qsub'", str('stat ' + self.filter_pdb + "'"))
                     output = subprocess.Popen(stat_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     out, err = output.communicate()
-                    print out
                     if 'cannot stat' in out:
                         filter_pdb = ''
                     else:
@@ -970,8 +969,6 @@ class run_pandda_analyse(QtCore.QThread):
                     char.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
                 if ignore_zmap_checkbox.isChecked():
                     zmap.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
-
-            print ignore
 
             def append_to_ignore_string(datasets_list, append_string):
                 if len(datasets_list)==0:
@@ -1072,6 +1069,98 @@ class run_pandda_analyse(QtCore.QThread):
                 os.system('qsub -P labxchem -q medium.q -N pandda -l exclusive,m_mem_free=100G pandda.sh')
 
         self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
+
+
+
+class run_pandda_two_analyse(QtCore.QThread):
+
+    def __init__(self,pandda_params,xce_logfile,datasource):
+        QtCore.QThread.__init__(self)
+        self.data_directory=pandda_params['data_dir']
+        self.panddas_directory=pandda_params['out_dir']
+        self.submit_mode=pandda_params['submit_mode']
+
+        self.pandda_analyse_data_table = pandda_params['pandda_table']
+        self.nproc=pandda_params['nproc']
+        self.min_build_datasets=pandda_params['min_build_datasets']
+        self.pdb_style=pandda_params['pdb_style']
+        self.mtz_style=pandda_params['mtz_style']
+        self.sort_event=pandda_params['sort_event']
+        self.number_of_datasets=pandda_params['N_datasets']
+        self.max_new_datasets=pandda_params['max_new_datasets']
+        self.grid_spacing=pandda_params['grid_spacing']
+        self.keyword_arguments = pandda_params['keyword_arguments']
+        self.reference_dir=pandda_params['reference_dir']
+        self.filter_pdb=os.path.join(self.reference_dir,pandda_params['filter_pdb'])
+        self.wilson_scaling = pandda_params['perform_diffraction_data_scaling']
+        self.Logfile=XChemLog.updateLog(xce_logfile)
+        self.datasource=datasource
+        self.db=XChemDB.data_source(datasource)
+        self.appendix=pandda_params['appendix']
+        self.write_mean_maps=pandda_params['write_mean_map']
+        self.calc_map_by = pandda_params['average_map']
+        self.select_ground_state_model=''
+
+    def run(self):
+
+        if not self.data_directory.startswith('/dls'):
+            self.Logfile.error('Sorry, you need to be at DLS for pandda2 to work!')
+            return None
+
+        os.chdir(self.panddas_directory)
+
+        cmd = (
+            '#/bin/sh\n'
+            'module load ccp4\n'
+            'module load phenix\n'
+            'module load buster\n'
+            '__conda_setup="$("/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/conda" "shell.bash" "hook" 2> /dev/null)"\n'
+            'if [ $? -eq 0 ]; then\n'
+            '    eval "$__conda_setup"\n'
+            'else\n'
+            '    if [ -f "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/profile.d/conda.sh" ]; then\n'
+            '        . "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/profile.d/conda.sh"\n'
+            '    else\n'
+            '        export PATH="/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin:$PATH"\n'
+            '    fi\n'
+            'fi\n'
+            'unset __conda_setup\n'
+            'export PYTHONPATH=""\n'
+            'conda activate pandda2_ray\n'
+            'python -u /dls/science/groups/i04-1/conor_dev/pandda_2_gemmi/pandda_gemmi/analyse.py' 
+            ' --data_dirs={0!s}'.format(self.data_directory.replace('/*','')) +
+            ' --out_dir={0!s}'.format(self.panddas_directory) +
+            ' --pdb_regex="{0!s}" '.format(self.pdb_style) +
+            ' --mtz_regex="{0!s}" '.format(self.mtz_style) +
+            ' --autobuild=True '
+            ' --global_processing="serial" ' 
+            ' --local_cpus=6 '
+            ' --local_processing="ray" ' 
+            ' --rank_method=autobuild '
+            ' --comparison_strategy="hybrid" ' 
+            ' --min_characterisation_datasets=25 ' 
+            ' {0!s} '.format(self.keyword_arguments) +
+            ' --debug=True --memory_availability="low" | tee livelog_20220324_event_class_old_score\n'
+        )
+
+        self.Logfile.insert('running pandda.analyse with the following command:\n' + cmd)
+
+        f = open('pandda2.sh','w')
+        f.write(Cmds)
+        f.close()
+
+        self.Logfile.warning('ignoring selected submission option')
+
+        self.Logfile.insert('running PANDDA on cluster, using qsub...')
+#        os.system('qsub -pe smp 6 -l m_mem_free=30G -q medium.q -o log.out -e log.err" pandda2.sh')
+
+        self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
+
+
+
+
+
+
 
 
 
@@ -1333,9 +1422,9 @@ class convert_all_event_maps_in_database(QtCore.QThread):
             'from panddaTable '
             'where PANDDA_site_event_map not like "event%"'
         )
-        print sqlite
+
         query=self.db.execute_statement(sqlite)
-        print query
+
         progress_step=1
         if len(query) != 0:
             progress_step=100/float(len(query))
@@ -1345,7 +1434,6 @@ class convert_all_event_maps_in_database(QtCore.QThread):
         self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
         for item in query:
-            print item
             xtalID=str(item[0])
             event_map=str(item[1])
             resname=str(item[2])
@@ -1359,7 +1447,6 @@ class convert_all_event_maps_in_database(QtCore.QThread):
                 XChemUtils.pdbtools(os.path.join(self.initial_model_directory,xtalID,'refine.pdb')).save_specific_ligands_to_pdb(resname,chainID,resseq,altLoc)
                 if os.path.isfile('ligand_{0!s}_{1!s}_{2!s}_{3!s}.pdb'.format(str(resname), str(chainID), str(resseq), str(altLoc))):
                     ligand_pdb='ligand_{0!s}_{1!s}_{2!s}_{3!s}.pdb'.format(str(resname), str(chainID), str(resseq), str(altLoc))
-                    print os.path.join(self.initial_model_directory,xtalID,ligand_pdb)
                 else:
                     self.Logfile.insert('could not extract ligand; trying next...')
                     continue
@@ -1728,11 +1815,6 @@ class check_number_of_modelled_ligands(QtCore.QThread):
             'PANDDA_site_x':                        x_site,
             'PANDDA_site_y':                        y_site,
             'PANDDA_site_z':                        z_site          }
-
-        print xtal,db_dict
-
-
-
 
 
     def run(self):

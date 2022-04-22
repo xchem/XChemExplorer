@@ -2180,16 +2180,16 @@ class XChemExplorer(QtGui.QApplication):
         for n,l in enumerate(self.labelList):
             label = str(l[0].text())
             description = str(l[1].text())
-            print "update labelTable set Label='%s',Description='%s' where ID=%s" %(label,description,str(n+1))
+#            print "update labelTable set Label='%s',Description='%s' where ID=%s" %(label,description,str(n+1))
             self.db.execute_statement("update labelTable set Label='%s',Description='%s' where ID=%s" %(label,description,str(n+1)))
-            print label,description
+#            print label,description
 
     def load_deposit_config_file(self):
         file_name_temp = QtGui.QFileDialog.getOpenFileNameAndFilter(self.window, 'Open file', self.current_directory,
                                                                     '*.deposit')
         file_name = tuple(file_name_temp)[0]
         self.deposit_dict = pickle.load(open(file_name, "rb"))
-        print self.deposit_dict
+#        print self.deposit_dict
         for key in self.get_deposit_dict_template():
             if key not in self.deposit_dict:
                 self.update_log.warning('field not in .deposit file: ' + str(key))
@@ -2992,7 +2992,7 @@ class XChemExplorer(QtGui.QApplication):
             self.update_log.insert('Sorry, this is not a XChemExplorer config file!')
 
         except:
-            print "Unexpected error:", sys.exc_info()[0]
+            print("Unexpected error:", sys.exc_info()[0])
             raise
 
     def save_config_file(self):
@@ -3666,6 +3666,9 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == 'pandda.analyse':
             self.run_pandda_analyse('production_run')
 
+        elif instruction == 'pandda.analyse (PanDDA2)':
+            self.run_pandda_analyse('production_run_pandda_two')
+
         elif instruction == 'pre-run for ground state model':
             self.run_pandda_analyse('pre_run')
 
@@ -3744,7 +3747,7 @@ class XChemExplorer(QtGui.QApplication):
                     interface = 'dimple_twin'
                 else:
                     interface = 'old'
-                    print self.settings
+#                    print self.settings
                 self.work_thread = XChemThread.start_COOT(self.settings, interface)
                 self.connect(self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished)
                 self.work_thread.start()
@@ -3851,6 +3854,7 @@ class XChemExplorer(QtGui.QApplication):
             'average_map': str(self.pandda_calc_map_combobox.currentText()),
             'max_new_datasets': str(self.pandda_max_new_datasets_entry.text()),
             'grid_spacing': str(self.pandda_grid_spacing_entry.text()),
+            'keyword_arguments': str(self.pandda_keyword_arguments_entry.text()),
             'pandda_dir_structure': str(self.pandda_input_data_dir_entry.text()),
             'perform_diffraction_data_scaling': str(self.wilson_checkbox.isChecked()),
             'filter_pdb': str(self.pandda_reference_file_selection_combobox.currentText()),
@@ -3889,9 +3893,11 @@ class XChemExplorer(QtGui.QApplication):
                 return None
 
         self.update_log.insert('preparing pandda.analyse input script')
-        self.work_thread = XChemPANDDA.run_pandda_analyse(pandda_params, self.xce_logfile,
+        if run == 'production_run_pandda_two':
+            self.work_thread = XChemPANDDA.run_pandda_two_analyse(pandda_params, self.xce_logfile,
                                                           os.path.join(self.database_directory, self.data_source_file))
-        self.work_thread = XChemPANDDA.run_pandda_analyse(pandda_params, self.xce_logfile,
+        else:
+            self.work_thread = XChemPANDDA.run_pandda_analyse(pandda_params, self.xce_logfile,
                                                           os.path.join(self.database_directory, self.data_source_file))
         #self.connect(self.work_thread, QtCore.SIGNAL("datasource_menu_reload_samples"),
                      #self.datasource_menu_reload_samples)
@@ -5119,7 +5125,7 @@ class XChemExplorer(QtGui.QApplication):
             self.update_row_in_table(xtal, row, dbDict, self.datasets_summary_table,
                                      self.datasets_summary_table_columns)
         else:
-            print 'nothing to change'
+            print('nothing to change')
         self.msgBox.done(1)
 
 
