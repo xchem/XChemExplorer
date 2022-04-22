@@ -1146,7 +1146,7 @@ class run_pandda_two_analyse(QtCore.QThread):
         self.Logfile.insert('running pandda.analyse with the following command:\n' + cmd)
 
         f = open('pandda2.sh','w')
-        f.write(Cmds)
+        f.write(cmd)
         f.close()
 
         self.Logfile.warning('ignoring selected submission option')
