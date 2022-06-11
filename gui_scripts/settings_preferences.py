@@ -30,7 +30,7 @@ class setup():
 
     def settings(self, xce_object):
         # set XCE version
-        xce_object.xce_version = 'v1.8.2'
+        xce_object.xce_version = 'v1.9.0'
 
         # general settings
         xce_object.allowed_unitcell_difference_percent = 12
@@ -655,7 +655,10 @@ class setup():
                                          '------------------------------------------',
 #                                         'refine NEW bound-state models with BUSTER - NEW',
                                          'pre-run for ground state model',
-                                         'Build ground state model']
+                                         'Build ground state model',
+                                         '------------------------------------------',
+                                         'pandda.analyse (PanDDA2)'
+                                         ]
 
         xce_object.refine_file_tasks = ['Open COOT - BUSTER refinement -',
                                         'Open COOT - REFMAC refinement -',

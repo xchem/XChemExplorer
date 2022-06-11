@@ -172,7 +172,7 @@ class PanddaTab():
         label.setFont(header_font)
         params_hbox.addWidget(label)
 
-        url_html = "<a href=\"https://pandda.bitbucket.io/manual.html\">For docs: click here</a>"
+        url_html = "<a href=\"https://pandda.bitbucket.io/pandda/manual.html\">For docs: click here</a>"
         label = QtGui.QLabel()
         label.setText(url_html)
         label.setOpenExternalLinks(True)
@@ -237,6 +237,14 @@ class PanddaTab():
         xce_object.pandda_grid_spacing_entry = QtGui.QLineEdit()
         xce_object.pandda_grid_spacing_entry.setText('0.5')
         xce_object.pandda_analyse_input_params_vbox.addWidget(xce_object.pandda_grid_spacing_entry)
+
+        # keyword arguments (pandda2)
+        label = QtGui.QLabel('keyword arguments (pandda2 only)')
+        xce_object.pandda_analyse_input_params_vbox.addWidget(label)
+        xce_object.pandda_keyword_arguments_entry = QtGui.QLineEdit()
+        xce_object.pandda_keyword_arguments_entry.setText('')
+        xce_object.pandda_analyse_input_params_vbox.addWidget(xce_object.pandda_keyword_arguments_entry)
+
         frame_right.setLayout(xce_object.pandda_analyse_input_params_vbox)
 
         grid_pandda.addWidget(frame_right, 0, 1, 5, 5)
