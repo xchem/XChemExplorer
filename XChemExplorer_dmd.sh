@@ -8,6 +8,7 @@ if [ -d "/dls/labxchem" ]
     source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh
     module load mx
     export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul
+    module load ccp4/7.1.018
 fi
 
 ccp4-python $XChemExplorer_DIR/XChemExplorer.py
