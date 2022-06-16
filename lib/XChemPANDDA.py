@@ -862,7 +862,7 @@ class run_pandda_analyse(QtCore.QThread):
                 os.system('/bin/rm -fr %s' %self.panddas_directory)
             os.mkdir(self.panddas_directory)
             if self.data_directory.startswith('/dls'):
-                self.select_ground_state_model = 'module load ccp4\n'
+                self.select_ground_state_model = 'module load ccp4/7.1.018\n'
             self.select_ground_state_model +='$CCP4/bin/ccp4-python %s %s\n' %(os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','select_ground_state_dataset.py'),self.panddas_directory)
             self.make_ligand_links=''
 

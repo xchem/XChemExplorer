@@ -49,7 +49,7 @@ class run_xia2(QtCore.QThread):
                 script += 'setenv XChemExplorer_DIR '+os.getenv('XChemExplorer_DIR')+'\n'
 
             if os.getcwd().startswith('/dls'):
-                script += 'module load ccp4\n'
+                script += 'module load ccp4/7.1.018\n'
                 script += 'module load XDS\n'
 #                script += 'module load phenix\n'
 

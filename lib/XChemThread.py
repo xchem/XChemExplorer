@@ -1501,7 +1501,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if os.path.isdir('/dls'):
             ccp4_scratch+='module load phenix\n'
-            ccp4_scratch+='module load ccp4\n'
+            ccp4_scratch+='module load ccp4/7.1.018\n'
 
         mtz_column_list=mtztools(mtzin).get_all_columns_as_list()
         rfree = ''
@@ -1603,7 +1603,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
 
         if os.path.isdir('/dls'):
             ccp4_scratch+='module load buster\n'
-            ccp4_scratch+='module load ccp4\n'
+            ccp4_scratch+='module load ccp4/7.1.018\n'
 
         if os.path.isfile(ref_mtz):
             hklref_line=' -hklref {0!s}'.format(ref_mtz)
@@ -1736,7 +1736,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch=''
 
         if os.path.isdir('/dls'):
-            ccp4_scratch+='module load ccp4\n'
+            ccp4_scratch+='module load ccp4/7.1.018\n'
 
         hkl = any_reflection_file(file_name=mtzin)
         miller_arrays = hkl.as_miller_arrays()
