@@ -1,3 +1,6 @@
+v1.9.1 (16/06/2022)
+- changed add instances of 'module load ccp4' to 'module load ccp4/7.1.018', except for the pandda2 function
+
 v1.9.0 (22/04/2022)
 - add functionality for running PanDDA2 at Diamond Light Source
 - fixed hyperlink to PanDDA manual

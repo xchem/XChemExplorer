@@ -569,7 +569,7 @@ class Refine(object):
         user = getpass.getuser()
         ccp4_module = ''    # need to source again, because giant.score_model still needs outdated version which does not have gemmi
         if self.ProjectPath.startswith('/dls'):
-            ccp4_module = 'module load ccp4'
+            ccp4_module = 'module load ccp4/7.1.018'
         cmd += ('\n'
                 + ccp4_module +
                 '\n'
@@ -1296,7 +1296,7 @@ class panddaRefine(object):
                     cmd = (
                     'export XChemExplorer_DIR="%s"\n' %os.getenv('XChemExplorer_DIR')+
 #                    'source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n') +
-                    'module load ccp4\n'
+                    'module load ccp4/7.1.018\n'
                     'giant.merge_conformations major=%s minor=%s reset_all_occupancies=False options.major_occupancy=1.0 options.minor_occupancy=1.0' %(ground_state,bound_state)
                     )
                 else:
@@ -1438,7 +1438,7 @@ class panddaRefine(object):
         # CCP4 & PHENIX stuff (if working at DLS)
         module_load=''
         if os.getcwd().startswith('/dls'):
-            module_load = 'module load ccp4\n'
+            module_load = 'module load ccp4/7.1.018\n'
             module_load += 'module load phenix\n'
 
         # 2017-07-20: for the time being this will explicitly source pandda since version 0.2 really only works at DLS

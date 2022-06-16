@@ -247,7 +247,7 @@ class helpers:
                 software = ''
                 if restraints_program == 'acedrg':
                     if os.getcwd().startswith('/dls'):
-                        software += 'module load ccp4\n'
+                        software += 'module load ccp4/7.1.018\n'
                 elif restraints_program == 'phenix.elbow':
                     if os.getcwd().startswith('/dls'):
                         software += 'module load phenix\n'
@@ -293,7 +293,7 @@ class helpers:
             software=''
             if restraints_program=='acedrg':
                 if os.getcwd().startswith('/dls'):
-                    software += 'module load ccp4\n'
+                    software += 'module load ccp4/7.1.018\n'
                 if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
                     software+='acedrg --res LIG -c ../old.cif -o {0!s}\n'.format((compoundID.replace(' ','')))
                 else:
