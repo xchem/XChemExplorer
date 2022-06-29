@@ -250,9 +250,11 @@ class helpers:
                         software += 'module load ccp4/7.1.018\n'
                 elif restraints_program == 'phenix.elbow':
                     if os.getcwd().startswith('/dls'):
+			software += 'module load ccp4/7.1.018\n'
                         software += 'module load phenix\n'
                 elif restraints_program == 'grade':
                     if os.getcwd().startswith('/dls'):
+			software += 'module load ccp4/7.1.018\n'
                         software += 'module load buster\n'
                         software += 'export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n'
                     software += "export BDG_TOOL_OBABEL='none'\n"
@@ -300,6 +302,7 @@ class helpers:
                     software+='acedrg --res LIG -i "{0!s}" -o {1!s}\n'.format(productSmiles, compoundID.replace(' ',''))
             elif restraints_program=='phenix.elbow':
                 if os.getcwd().startswith('/dls'):
+		    software += 'module load ccp4/7.1.018\n'
                     software += 'module load phenix\n'
                 if os.path.isfile(os.path.join(initial_model_directory,sample,'old.cif')):
                     software+='phenix.elbow --file=../old.cif --id LIG --output {0!s}\n'.format((compoundID.replace(' ','')))
@@ -308,6 +311,7 @@ class helpers:
                         .format(productSmiles, compoundID.replace(' ',''))
             elif restraints_program=='grade':
                 if os.getcwd().startswith('/dls'):
+		    software += 'module load ccp4/7.1.018\n'
                     software += 'module load buster\n'
                     software += 'export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n'
                 software+="export BDG_TOOL_OBABEL='none'\n"
@@ -337,10 +341,6 @@ class helpers:
             header +
             '\n'
             'export XChemExplorer_DIR="' + os.getenv('XChemExplorer_DIR') + '"' +
-            '\n'
-#            'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh'
-#            '\n'
-#            + module +
             '\n'
             '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py {0!s} {1!s} {2!s} {3!s}'
             .format(os.path.join(database_directory, data_source_file), sample, 'RefinementCIFStatus', 'running') +
@@ -954,7 +954,7 @@ class parse:
             unitcell_volume=a*b*c* \
                             math.sqrt((1-math.cos(alpha)**2-math.cos(beta)**2-math.cos(gamma)**2) \
                                       +2*(math.cos(alpha)*math.cos(beta)*math.cos(gamma)))
-            print 'unit cell volume',unitcell_volume
+#            print 'unit cell volume',unitcell_volume
 #        if lattice=='monoclinic':
         if 'monoclinic' in lattice:
             unitcell_volume=round(a*b*c*math.sin(beta),1)
