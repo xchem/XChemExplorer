@@ -1,3 +1,7 @@
+v1.9.2 (28/06/2022)
+- replace obsolete 'source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh' with 'module load ccp4/7.1.016' before running pandda.export
+
+
 v1.9.1 (16/06/2022)
 - changed add instances of 'module load ccp4' to 'module load ccp4/7.1.018', except for the pandda2 function
 
