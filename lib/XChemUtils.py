@@ -684,7 +684,8 @@ class parse:
                 self.aimless['DataProcessingScore'] = (float(
                         self.aimless['DataProcessingUniqueReflectionsOverall']) * float(self.aimless['DataProcessingCompletenessOverall']) * high_symmetry_boost * float(self.aimless['DataProcessingIsigOverall'])) / float(
                         self.aimless['DataProcessingUnitCellVolume'])
-            except ValueError:
+            # When P-6 was accidentally used self.aimless['DataProcessingPointGroup'] through a KeyError, so handling this
+            except (ValueError, KeyError):
                 self.aimless['DataProcessingScore'] = 0.0
         self.aimless['DataProcessingUnitCell'] = str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(alpha) + ' ' + str(
             beta) + ' ' + str(gamma)
