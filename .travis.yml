@@ -1,4 +1,0 @@
-sudo: required
-services: docker
-install: docker build -t reskyner/xce .
-script: docker run reskyner/xce /bin/bash -c "/ccp4/bin/ccp4-python /XChemExplorer/compile_test.py"

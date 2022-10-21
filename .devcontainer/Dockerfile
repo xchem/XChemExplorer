@@ -1,0 +1,22 @@
+FROM localhost/ccp4-7.1
+
+ARG INSTALL_ZSH="true"
+ARG UPGRADE_PACKAGES="true"
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+COPY library-scripts/*.sh library-scripts/*.env /tmp/library-scripts/
+RUN bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
+
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y \
+        libxrender1 libfontconfig libxext6 \
+        libglib2.0-0 libsm6 libxi6 libxrandr2 libxfixes3 libxcursor1 libxinerama1 \
+        libgomp1 libxdamage1 libxcb-shm0 libxcb-render0 \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+ENV QT_X11_NO_MITSHM=1 \
+    XChemExplorer_DIR=/workspace/

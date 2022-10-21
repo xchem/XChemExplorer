@@ -1,0 +1,21 @@
+{
+	"name": "XChemExplorer",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"remoteEnv": {
+		"DISPLAY": "${localEnv:DISPLAY}"
+	},
+	"features": {
+		"git": "os-provided"
+	},
+	"workspaceMount": "src=${localWorkspaceFolder},dst=/workspace,type=bind",
+	"workspaceFolder": "/workspace",
+	"runArgs": [
+		"--pid=host",
+		"--net=host"
+	],
+	"mounts": [
+		"src=/dls/labxchem/data/,dst=/dls/labxchem/data/,type=bind"
+	]
+}

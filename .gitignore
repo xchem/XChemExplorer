@@ -2,3 +2,4 @@
 *.pyc
 XChemExplorer_dmd.sh
 .idea
+/libraries
