@@ -1,14 +1,6 @@
-FROM localhost/ccp4-7.1
+FROM gcr.io/diamond-privreg/xchem/ccp4:7.1 as ccp4
 
-ARG INSTALL_ZSH="true"
-ARG UPGRADE_PACKAGES="true"
-ARG USERNAME=vscode
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-
-COPY library-scripts/*.sh library-scripts/*.env /tmp/library-scripts/
-RUN bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
-    && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
+FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
 RUN apt-get update \
     && apt-get upgrade -y \
