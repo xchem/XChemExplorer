@@ -1,5 +1,14 @@
 # last edited: 08/08/2017 - 15:00
 
+import pango
+import gtk
+import pygtk
+import coot_utils_XChem
+import coot
+import XChemLog
+import XChemUtils
+import XChemRefine
+import XChemDB
 import gobject
 import sys
 import os
@@ -12,19 +21,12 @@ from matplotlib.figure import Figure
 
 # XCE libraries
 sys.path.append(os.getenv('XChemExplorer_DIR') + '/lib')
-import XChemDB
-import XChemRefine
-import XChemUtils
-import XChemLog
 
 # libraries from COOT
-import pygtk, gtk, pango
-import coot
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules etc.
 # modified file is now in $XChemExplorer_DIR/lib
-import coot_utils_XChem
 
 
 class GUI(object):
@@ -49,7 +51,8 @@ class GUI(object):
         print self.settings
 
         # checking for external software packages
-        self.external_software = XChemUtils.external_software(self.xce_logfile).check()
+        self.external_software = XChemUtils.external_software(
+            self.xce_logfile).check()
         self.external_software['qsub_remote'] = remote_qsub_submission
 
         self.selection_criteria = ['0 - All Datasets',
@@ -63,8 +66,10 @@ class GUI(object):
 
         self.experiment_stage = [['Review PANDDA export', '2 - PANDDA model', 65000, 0, 0],
                                  ['In Refinement', '3 - In Refinement', 65000, 0, 0],
-                                 ['Comp Chem Ready!', '4 - CompChem ready', 65000, 0, 0],
-                                 ['Ready for Deposition!', '5 - Deposition ready', 65000, 0, 0],
+                                 ['Comp Chem Ready!',
+                                     '4 - CompChem ready', 65000, 0, 0],
+                                 ['Ready for Deposition!',
+                                     '5 - Deposition ready', 65000, 0, 0],
                                  ['In PDB', '6 - Deposited', 65000, 0, 0],
                                  ['Analysed & Rejected', '7 - Analysed & Rejected', 65000, 0, 0]]
 
@@ -121,7 +126,6 @@ class GUI(object):
 
         self.label_button_list = []
 
-
         ###########################################################################################
         # some COOT settings
         coot.set_map_radius(17)
@@ -174,7 +178,6 @@ class GUI(object):
             menu, "set all occupanicies to 1",
             lambda func: self.reset_occupancy())
 
-
     def StartGUI(self):
 
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -205,7 +208,8 @@ class GUI(object):
         #        self.hbox_select_samples.add(self.cb_select_sites)
 
         self.select_samples_button = gtk.Button(label="GO")
-        self.select_samples_button.connect("clicked", self.get_samples_to_look_at)
+        self.select_samples_button.connect(
+            "clicked", self.get_samples_to_look_at)
         self.hbox_select_samples.add(self.select_samples_button)
         frame.add(self.hbox_select_samples)
         self.vbox.pack_start(frame)
@@ -220,7 +224,8 @@ class GUI(object):
         #################################################################################
         # --- refinement protocol ---
         frame = gtk.Frame()
-        self.refinementProtocolcheckbox = gtk.CheckButton('PanDDA model refinement)')
+        self.refinementProtocolcheckbox = gtk.CheckButton(
+            'PanDDA model refinement)')
         # callback is defined later
 #        self.refinementProtocolcheckbox.connect("toggled", self.refinementProtocolCallback)
         self.refinementProtocolcheckbox.set_active(True)
@@ -257,7 +262,8 @@ class GUI(object):
         ResolutionLabel_frame = gtk.Frame()
         self.ResolutionLabel = gtk.Label('Resolution')
         ResolutionLabel_frame.add(self.ResolutionLabel)
-        self.ResolutionValue = gtk.Label(self.QualityIndicators['RefinementResolution'])
+        self.ResolutionValue = gtk.Label(
+            self.QualityIndicators['RefinementResolution'])
         ResolutionBox_frame = gtk.Frame()
         self.ResolutionBox = gtk.EventBox()
         self.ResolutionBox.add(self.ResolutionValue)
@@ -266,7 +272,8 @@ class GUI(object):
         MolprobityScoreLabel_frame = gtk.Frame()
         self.MolprobityScoreLabel = gtk.Label('MolprobityScore')
         MolprobityScoreLabel_frame.add(self.MolprobityScoreLabel)
-        self.MolprobityScoreValue = gtk.Label(self.QualityIndicators['RefinementMolProbityScore'])
+        self.MolprobityScoreValue = gtk.Label(
+            self.QualityIndicators['RefinementMolProbityScore'])
         MolprobityScoreBox_frame = gtk.Frame()
         self.MolprobityScoreBox = gtk.EventBox()
         self.MolprobityScoreBox.add(self.MolprobityScoreValue)
@@ -275,7 +282,8 @@ class GUI(object):
         RamachandranOutliersLabel_frame = gtk.Frame()
         self.RamachandranOutliersLabel = gtk.Label('Rama Outliers')
         RamachandranOutliersLabel_frame.add(self.RamachandranOutliersLabel)
-        self.RamachandranOutliersValue = gtk.Label(self.QualityIndicators['RefinementRamachandranOutliers'])
+        self.RamachandranOutliersValue = gtk.Label(
+            self.QualityIndicators['RefinementRamachandranOutliers'])
         RamachandranOutliersBox_frame = gtk.Frame()
         self.RamachandranOutliersBox = gtk.EventBox()
         self.RamachandranOutliersBox.add(self.RamachandranOutliersValue)
@@ -284,7 +292,8 @@ class GUI(object):
         RamachandranFavoredLabel_frame = gtk.Frame()
         self.RamachandranFavoredLabel = gtk.Label('Rama Favored')
         RamachandranFavoredLabel_frame.add(self.RamachandranFavoredLabel)
-        self.RamachandranFavoredValue = gtk.Label(self.QualityIndicators['RefinementRamachandranFavored'])
+        self.RamachandranFavoredValue = gtk.Label(
+            self.QualityIndicators['RefinementRamachandranFavored'])
         RamachandranFavoredBox_frame = gtk.Frame()
         self.RamachandranFavoredBox = gtk.EventBox()
         self.RamachandranFavoredBox.add(self.RamachandranFavoredValue)
@@ -293,7 +302,8 @@ class GUI(object):
         rmsdBondsLabel_frame = gtk.Frame()
         self.rmsdBondsLabel = gtk.Label('rmsd(Bonds)')
         rmsdBondsLabel_frame.add(self.rmsdBondsLabel)
-        self.rmsdBondsValue = gtk.Label(self.QualityIndicators['RefinementRmsdBonds'])
+        self.rmsdBondsValue = gtk.Label(
+            self.QualityIndicators['RefinementRmsdBonds'])
         rmsdBondsBox_frame = gtk.Frame()
         self.rmsdBondsBox = gtk.EventBox()
         self.rmsdBondsBox.add(self.rmsdBondsValue)
@@ -302,7 +312,8 @@ class GUI(object):
         rmsdAnglesLabel_frame = gtk.Frame()
         self.rmsdAnglesLabel = gtk.Label('rmsd(Angles)')
         rmsdAnglesLabel_frame.add(self.rmsdAnglesLabel)
-        self.rmsdAnglesValue = gtk.Label(self.QualityIndicators['RefinementRmsdAngles'])
+        self.rmsdAnglesValue = gtk.Label(
+            self.QualityIndicators['RefinementRmsdAngles'])
         rmsdAnglesBox_frame = gtk.Frame()
         self.rmsdAnglesBox = gtk.EventBox()
         self.rmsdAnglesBox.add(self.rmsdAnglesValue)
@@ -311,7 +322,8 @@ class GUI(object):
         MatrixWeightLabel_frame = gtk.Frame()
         self.MatrixWeightLabel = gtk.Label('Matrix Weight')
         MatrixWeightLabel_frame.add(self.MatrixWeightLabel)
-        self.MatrixWeightValue = gtk.Label(self.QualityIndicators['RefinementMatrixWeight'])
+        self.MatrixWeightValue = gtk.Label(
+            self.QualityIndicators['RefinementMatrixWeight'])
         MatrixWeightBox_frame = gtk.Frame()
         self.MatrixWeightBox = gtk.EventBox()
         self.MatrixWeightBox.add(self.MatrixWeightValue)
@@ -320,7 +332,8 @@ class GUI(object):
         ligandIDLabel_frame = gtk.Frame()
         self.ligandIDLabel = gtk.Label('Ligand ID')
         ligandIDLabel_frame.add(self.ligandIDLabel)
-        self.ligandIDValue = gtk.Label(self.spider_plot_data['PANDDA_site_ligand_id'])
+        self.ligandIDValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_ligand_id'])
         ligandIDBox_frame = gtk.Frame()
         self.ligandIDBox = gtk.EventBox()
         self.ligandIDBox.add(self.ligandIDValue)
@@ -329,7 +342,8 @@ class GUI(object):
         ligand_occupancyLabel_frame = gtk.Frame()
         self.ligand_occupancyLabel = gtk.Label('occupancy')
         ligand_occupancyLabel_frame.add(self.ligand_occupancyLabel)
-        self.ligand_occupancyValue = gtk.Label(self.spider_plot_data['PANDDA_site_occupancy'])
+        self.ligand_occupancyValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_occupancy'])
         ligand_occupancyBox_frame = gtk.Frame()
         self.ligand_occupancyBox = gtk.EventBox()
         self.ligand_occupancyBox.add(self.ligand_occupancyValue)
@@ -338,7 +352,8 @@ class GUI(object):
         ligand_BaverageLabel_frame = gtk.Frame()
         self.ligand_BaverageLabel = gtk.Label('B average')
         ligand_BaverageLabel_frame.add(self.ligand_BaverageLabel)
-        self.ligand_BaverageValue = gtk.Label(self.spider_plot_data['PANDDA_site_B_average'])
+        self.ligand_BaverageValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_B_average'])
         ligand_BaverageBox_frame = gtk.Frame()
         self.ligand_BaverageBox = gtk.EventBox()
         self.ligand_BaverageBox.add(self.ligand_BaverageValue)
@@ -346,18 +361,22 @@ class GUI(object):
 
         ligand_BratioSurroundingsLabel_frame = gtk.Frame()
         self.ligand_BratioSurroundingsLabel = gtk.Label('B ratio')
-        ligand_BratioSurroundingsLabel_frame.add(self.ligand_BratioSurroundingsLabel)
+        ligand_BratioSurroundingsLabel_frame.add(
+            self.ligand_BratioSurroundingsLabel)
         self.ligand_BratioSurroundingsValue = gtk.Label(
             self.spider_plot_data['PANDDA_site_B_ratio_residue_surroundings'])
         ligand_BratioSurroundingsBox_frame = gtk.Frame()
         self.ligand_BratioSurroundingsBox = gtk.EventBox()
-        self.ligand_BratioSurroundingsBox.add(self.ligand_BratioSurroundingsValue)
-        ligand_BratioSurroundingsBox_frame.add(self.ligand_BratioSurroundingsBox)
+        self.ligand_BratioSurroundingsBox.add(
+            self.ligand_BratioSurroundingsValue)
+        ligand_BratioSurroundingsBox_frame.add(
+            self.ligand_BratioSurroundingsBox)
 
         ligand_RSCCLabel_frame = gtk.Frame()
         self.ligand_RSCCLabel = gtk.Label('RSCC')
         ligand_RSCCLabel_frame.add(self.ligand_RSCCLabel)
-        self.ligand_RSCCValue = gtk.Label(self.spider_plot_data['PANDDA_site_RSCC'])
+        self.ligand_RSCCValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_RSCC'])
         ligand_RSCCBox_frame = gtk.Frame()
         self.ligand_RSCCBox = gtk.EventBox()
         self.ligand_RSCCBox.add(self.ligand_RSCCValue)
@@ -366,7 +385,8 @@ class GUI(object):
         ligand_rmsdLabel_frame = gtk.Frame()
         self.ligand_rmsdLabel = gtk.Label('rmsd')
         ligand_rmsdLabel_frame.add(self.ligand_rmsdLabel)
-        self.ligand_rmsdValue = gtk.Label(self.spider_plot_data['PANDDA_site_rmsd'])
+        self.ligand_rmsdValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_rmsd'])
         ligand_rmsdBox_frame = gtk.Frame()
         self.ligand_rmsdBox = gtk.EventBox()
         self.ligand_rmsdBox.add(self.ligand_rmsdValue)
@@ -375,7 +395,8 @@ class GUI(object):
         ligand_RSRLabel_frame = gtk.Frame()
         self.ligand_RSRLabel = gtk.Label('RSR')
         ligand_RSRLabel_frame.add(self.ligand_RSRLabel)
-        self.ligand_RSRValue = gtk.Label(self.spider_plot_data['PANDDA_site_RSR'])
+        self.ligand_RSRValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_RSR'])
         ligand_RSRBox_frame = gtk.Frame()
         self.ligand_RSRBox = gtk.EventBox()
         self.ligand_RSRBox.add(self.ligand_RSRValue)
@@ -384,7 +405,8 @@ class GUI(object):
         ligand_RSZDLabel_frame = gtk.Frame()
         self.ligand_RSZDLabel = gtk.Label('RSZD')
         ligand_RSZDLabel_frame.add(self.ligand_RSZDLabel)
-        self.ligand_RSZDValue = gtk.Label(self.spider_plot_data['PANDDA_site_RSZD'])
+        self.ligand_RSZDValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_RSZD'])
         ligand_RSZDBox_frame = gtk.Frame()
         self.ligand_RSZDBox = gtk.EventBox()
         self.ligand_RSZDBox.add(self.ligand_RSZDValue)
@@ -419,7 +441,8 @@ class GUI(object):
         self.table_right.attach(ligandIDLabel_frame, 0, 1, 0, 1)
         self.table_right.attach(ligand_occupancyLabel_frame, 0, 1, 1, 2)
         self.table_right.attach(ligand_BaverageLabel_frame, 0, 1, 2, 3)
-        self.table_right.attach(ligand_BratioSurroundingsLabel_frame, 0, 1, 3, 4)
+        self.table_right.attach(
+            ligand_BratioSurroundingsLabel_frame, 0, 1, 3, 4)
         self.table_right.attach(ligand_RSCCLabel_frame, 0, 1, 4, 5)
         self.table_right.attach(ligand_rmsdLabel_frame, 0, 1, 5, 6)
         self.table_right.attach(ligand_RSRLabel_frame, 0, 1, 6, 7)
@@ -443,8 +466,10 @@ class GUI(object):
         button.connect("clicked", self.show_molprobity_to_do)
         hbox.add(button)
         # --- ground state mean map ---
-        self.ground_state_mean_map_button = gtk.Button(label="Show ground state mean map")
-        self.ground_state_mean_map_button.connect("clicked", self.show_ground_state_mean_map)
+        self.ground_state_mean_map_button = gtk.Button(
+            label="Show ground state mean map")
+        self.ground_state_mean_map_button.connect(
+            "clicked", self.show_ground_state_mean_map)
         hbox.add(self.ground_state_mean_map_button)
 #        self.vbox.add(self.ground_state_mean_map_button)
         self.vbox.add(hbox)
@@ -478,7 +503,8 @@ class GUI(object):
         spider_plot_frame = gtk.Frame()
         spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
             os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'NO_SPIDER_PLOT_AVAILABLE.png'))
-        self.spider_plot_pic = pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR)
         self.spider_plot_image = gtk.Image()
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
         spider_plot_frame.add(self.spider_plot_image)
@@ -631,8 +657,9 @@ class GUI(object):
                 new_button = gtk.RadioButton(None, button[0])
             else:
                 new_button = gtk.RadioButton(new_button, button[0])
-            new_button.connect("toggled", self.experiment_stage_button_clicked, button[1])
-            vbox.pack_start(new_button,False,False,0)
+            new_button.connect(
+                "toggled", self.experiment_stage_button_clicked, button[1])
+            vbox.pack_start(new_button, False, False, 0)
 #            vbox.add(new_button)
             self.experiment_stage_button_list.append(new_button)
         frame.add(vbox)
@@ -647,8 +674,9 @@ class GUI(object):
                 new_button = gtk.RadioButton(None, criteria)
             else:
                 new_button = gtk.RadioButton(new_button, criteria)
-            new_button.connect("toggled", self.ligand_confidence_button_clicked, criteria)
-            vbox.pack_start(new_button,False,False,0)
+            new_button.connect(
+                "toggled", self.ligand_confidence_button_clicked, criteria)
+            vbox.pack_start(new_button, False, False, 0)
 #            vbox.add(new_button)
             self.ligand_confidence_button_list.append(new_button)
         frame.add(vbox)
@@ -692,9 +720,11 @@ class GUI(object):
         self.merge_ligand_button = gtk.Button(label="Merge Ligand")
         self.place_ligand_here_button = gtk.Button(label="Place Ligand here")
         self.hbox_for_modeling.add(self.place_ligand_here_button)
-        self.place_ligand_here_button.connect("clicked", self.place_ligand_here)
+        self.place_ligand_here_button.connect(
+            "clicked", self.place_ligand_here)
         self.hbox_for_modeling.add(self.merge_ligand_button)
-        self.merge_ligand_button.connect("clicked", self.merge_ligand_into_protein)
+        self.merge_ligand_button.connect(
+            "clicked", self.merge_ligand_into_protein)
         frame.add(self.hbox_for_modeling)
         self.vbox.pack_start(frame)
 
@@ -704,7 +734,6 @@ class GUI(object):
         #        for citeria in self.ligand_confidence:
         #            self.cb_ligand_confidence.append_text(citeria)
         #        self.vbox.add(self.cb_ligand_confidence)
-
 
         # --- refinement & options ---
         self.hbox_for_refinement = gtk.HBox()
@@ -719,11 +748,10 @@ class GUI(object):
         #        self.VALIDATEbutton = gtk.Button(label="validate structure")
         #        self.DEPOSITbutton = gtk.Button(label="prepare for deposition")
 
-
         # need to put it here, because attributes within refinementProtocolCallback function
         # are defined after checkbox is defined
-        self.refinementProtocolcheckbox.connect("toggled", self.refinementProtocolCallback)
-
+        self.refinementProtocolcheckbox.connect(
+            "toggled", self.refinementProtocolCallback)
 
         # --- CANCEL button ---
         self.CANCELbutton = gtk.Button(label="CANCEL")
@@ -827,7 +855,8 @@ class GUI(object):
         # only repopulate if site exists
         if self.xtalID in self.siteDict:
             for item in sorted(self.siteDict[self.xtalID]):
-                self.cb_site.append_text('site: {0!s} - event: {1!s}'.format(item[5], item[6]))
+                self.cb_site.append_text(
+                    'site: {0!s} - event: {1!s}'.format(item[5], item[6]))
 
     def ChangeSite(self, widget, data=None):
         if self.xtalID in self.siteDict:
@@ -866,13 +895,13 @@ class GUI(object):
         for w in self.label_button_list:
             w.set_active(False)
 
-
         print 'pandda index', self.pandda_index
         self.spider_plot = self.siteDict[self.xtalID][self.pandda_index][4]
         print 'new spider plot:', self.spider_plot
         self.event_map = self.siteDict[self.xtalID][self.pandda_index][0]
         print 'new event map:', self.event_map
-        self.ligand_confidence = str(self.siteDict[self.xtalID][self.pandda_index][7])
+        self.ligand_confidence = str(
+            self.siteDict[self.xtalID][self.pandda_index][7])
         self.update_LigandConfidence_radiobutton()
         site_x = float(self.siteDict[self.xtalID][self.pandda_index][1])
         site_y = float(self.siteDict[self.xtalID][self.pandda_index][2])
@@ -888,14 +917,17 @@ class GUI(object):
         self.spider_plot_data = self.db.get_db_pandda_dict_for_sample_and_site_and_event(self.xtalID, self.site_index,
                                                                                          self.event_index)
         print '>>>>> spider plot data', self.spider_plot_data
-        self.ligandIDValue.set_label(self.spider_plot_data['PANDDA_site_ligand_id'])
+        self.ligandIDValue.set_label(
+            self.spider_plot_data['PANDDA_site_ligand_id'])
         try:
-            self.ligand_occupancyValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_occupancy']), 2)))
+            self.ligand_occupancyValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_occupancy']), 2)))
         except ValueError:
             self.ligand_occupancyValue.set_label('-')
 
         try:
-            self.ligand_BaverageValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_B_average']), 2)))
+            self.ligand_BaverageValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_B_average']), 2)))
         except ValueError:
             self.ligand_BaverageValue.set_label('-')
 
@@ -906,22 +938,26 @@ class GUI(object):
             self.ligand_BratioSurroundingsValue.set_label('-')
 
         try:
-            self.ligand_RSCCValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_RSCC']), 2)))
+            self.ligand_RSCCValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_RSCC']), 2)))
         except ValueError:
             self.ligand_RSCCValue.set_label('-')
 
         try:
-            self.ligand_rmsdValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_rmsd']), 2)))
+            self.ligand_rmsdValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_rmsd']), 2)))
         except ValueError:
             self.ligand_rmsdValue.set_label('-')
 
         try:
-            self.ligand_RSRValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_RSR']), 2)))
+            self.ligand_RSRValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_RSR']), 2)))
         except ValueError:
             self.ligand_RSRValue.set_label('-')
 
         try:
-            self.ligand_RSZDValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_RSZD']), 2)))
+            self.ligand_RSZDValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_RSZD']), 2)))
         except ValueError:
             self.ligand_RSZDValue.set_label('-')
 
@@ -940,7 +976,8 @@ class GUI(object):
         else:
             spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
                 os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'NO_SPIDER_PLOT_AVAILABLE.png'))
-        self.spider_plot_pic = spider_plot_pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR)
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
 
         #########################################################################################
@@ -958,11 +995,13 @@ class GUI(object):
     def experiment_stage_button_clicked(self, widget, data=None):
         if data == '4 - CompChem ready' and self.refinementProtocol.startswith('pandda'):
             print "==> XCE: removing refine.pdb and linking refine_<n>.split.bound-state.pdb to refine.pdb"
-            os.chdir(os.path.join(self.project_directory,self.xtalID))
+            os.chdir(os.path.join(self.project_directory, self.xtalID))
             if os.path.realpath('refine.pdb').replace('.pdb', '.split.bound-state.pdb'):
-                newPDB = os.path.realpath('refine.pdb').replace('.pdb', '.split.bound-state.pdb')
+                newPDB = os.path.realpath('refine.pdb').replace(
+                    '.pdb', '.split.bound-state.pdb')
                 os.system('/bin/rm refine.pdb')
-                os.system('ln -s .%s refine.pdb' %newPDB.replace(os.getcwd(),''))
+                os.system('ln -s .%s refine.pdb' %
+                          newPDB.replace(os.getcwd(), ''))
                 self.refinementProtocolcheckbox.set_active(False)
                 self.refinementProtocol = 'refmac'
             else:
@@ -970,11 +1009,10 @@ class GUI(object):
                 pass
         self.db_dict_mainTable['RefinementOutcome'] = data
         print '==> XCE: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
-                data) + ' in mainTable of datasource'
-            #        self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
+            data) + ' in mainTable of datasource'
+        #        self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
         self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile, self.xtalID, 'ligand_bound',
-                                                                     self.db_dict_mainTable)
-
+                                                                 self.db_dict_mainTable)
 
     def ligand_confidence_button_clicked(self, widget, data=None):
         print 'PANDDA_index', self.pandda_index
@@ -1019,13 +1057,15 @@ class GUI(object):
         # reset spider plot image
         spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
             os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'NO_SPIDER_PLOT_AVAILABLE.png'))
-        self.spider_plot_pic = spider_plot_pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR)
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
 
         # reset ground state mean map
         self.ground_state_mean_map = ''
         self.ground_state_mean_map_button.set_sensitive(False)
-        self.ground_state_mean_map_button.set_label('Show ground state mean map')
+        self.ground_state_mean_map_button.set_label(
+            'Show ground state mean map')
         if os.path.isfile(
                 os.path.join(self.project_directory, self.xtalID, self.xtalID + '-ground-state-mean-map.native.ccp4')):
             self.ground_state_mean_map_button.set_sensitive(True)
@@ -1033,9 +1073,12 @@ class GUI(object):
                                                       self.xtalID + '-ground-state-mean-map.native.ccp4')
 
         # initialize Refinement library
-        self.Refine = XChemRefine.Refine(self.project_directory, self.xtalID, self.compoundID, self.data_source)
-        self.Serial = XChemRefine.GetSerial(self.project_directory, self.xtalID)
-        self.panddaSerial = panddaSerial = m = (4 - len(str(self.Serial))) * '0' + str(self.Serial)
+        self.Refine = XChemRefine.Refine(
+            self.project_directory, self.xtalID, self.compoundID, self.data_source)
+        self.Serial = XChemRefine.GetSerial(
+            self.project_directory, self.xtalID)
+        self.panddaSerial = panddaSerial = m = (
+            4 - len(str(self.Serial))) * '0' + str(self.Serial)
         #        self.Serial=self.Refine.GetSerial()
         if self.Serial == 1:
             # i.e. no refinement has been done; data is probably straight out of dimple
@@ -1069,7 +1112,8 @@ class GUI(object):
         # if the structure was previously refined, try to read the parameters
         #        self.hbox_for_info_graphics.remove(self.canvas)
         if self.Serial > 1:
-            self.RefmacParams = self.Refine.ParamsFromPreviousCycle(self.Serial - 1)
+            self.RefmacParams = self.Refine.ParamsFromPreviousCycle(
+                self.Serial - 1)
             print '==> REFMAC params:', self.RefmacParams
         #            refinement_cycle,Rfree,Rcryst=self.Refine.GetRefinementHistory()
         #            self.canvas = FigureCanvas(self.update_plot(refinement_cycle,Rfree,Rcryst))
@@ -1099,7 +1143,8 @@ class GUI(object):
             imol = coot.handle_read_draw_molecule_with_recentre(
                 os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb'), 0)
             self.mol_dict['ligand'] = imol
-            coot.read_cif_dictionary(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif'))
+            coot.read_cif_dictionary(os.path.join(
+                self.project_directory, self.xtalID, self.compoundID + '.cif'))
         if not os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
             os.chdir(os.path.join(self.project_directory, self.xtalID))
 
@@ -1171,9 +1216,10 @@ class GUI(object):
 
         for item in coot_utils_XChem.molecule_number_list():
             if coot.molecule_name(item).endswith(
-                            self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
+                self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
                     item).endswith(self.pdb_style):
-                coot.set_show_symmetry_master(1)  # master switch to show symmetry molecules
+                # master switch to show symmetry molecules
+                coot.set_show_symmetry_master(1)
                 coot.set_show_symmetry_molecule(item, 1)  # show symm for model
 
         #########################################################################################
@@ -1183,9 +1229,11 @@ class GUI(object):
         if os.path.isfile(os.path.join(self.project_directory, self.xtalID, '2fofc.map')):
             coot.set_colour_map_rotation_on_read_pdb(0)
             coot.set_default_initial_contour_level_for_difference_map(3)
-            coot.handle_read_ccp4_map(os.path.join(self.project_directory, self.xtalID, 'fofc.map'), 1)
+            coot.handle_read_ccp4_map(os.path.join(
+                self.project_directory, self.xtalID, 'fofc.map'), 1)
             coot.set_default_initial_contour_level_for_map(1)
-            coot.handle_read_ccp4_map(os.path.join(self.project_directory, self.xtalID, '2fofc.map'), 0)
+            coot.handle_read_ccp4_map(os.path.join(
+                self.project_directory, self.xtalID, '2fofc.map'), 0)
             coot.set_last_map_colour(0, 0, 1)
         else:
             # try to open mtz file with same name as pdb file
@@ -1198,11 +1246,14 @@ class GUI(object):
             #                    elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
             #                        os.symlink('dimple.mtz',self.mtz_style)
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.mtz_style)):
-                coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, self.mtz_style))
+                coot.auto_read_make_and_draw_maps(os.path.join(
+                    self.project_directory, self.xtalID, self.mtz_style))
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.mtz')):
-                coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, 'init.mtz'))
+                coot.auto_read_make_and_draw_maps(os.path.join(
+                    self.project_directory, self.xtalID, 'init.mtz'))
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.mtz')):
-                coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, 'dimple.mtz'))
+                coot.auto_read_make_and_draw_maps(os.path.join(
+                    self.project_directory, self.xtalID, 'dimple.mtz'))
 
         #########################################################################################
         # update Quality Indicator table
@@ -1217,43 +1268,50 @@ class GUI(object):
                                      gtk.gdk.color_parse(self.QualityIndicators['RefinementRfreeTraficLight']))
         except ValueError:
             pass
-        self.ResolutionValue.set_label(self.QualityIndicators['RefinementResolution'])
+        self.ResolutionValue.set_label(
+            self.QualityIndicators['RefinementResolution'])
         try:
             self.ResolutionBox.modify_bg(gtk.STATE_NORMAL,
                                          gtk.gdk.color_parse(self.QualityIndicators['RefinementResolutionTL']))
         except ValueError:
             pass
-        self.MolprobityScoreValue.set_label(self.QualityIndicators['RefinementMolProbityScore'])
+        self.MolprobityScoreValue.set_label(
+            self.QualityIndicators['RefinementMolProbityScore'])
         try:
             self.MolprobityScoreBox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(
                 self.QualityIndicators['RefinementMolProbityScoreTL']))
         except ValueError:
             pass
-        self.RamachandranOutliersValue.set_label(self.QualityIndicators['RefinementRamachandranOutliers'])
+        self.RamachandranOutliersValue.set_label(
+            self.QualityIndicators['RefinementRamachandranOutliers'])
         try:
             self.RamachandranOutliersBox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(
                 self.QualityIndicators['RefinementRamachandranOutliersTL']))
         except ValueError:
             pass
-        self.RamachandranFavoredValue.set_label(self.QualityIndicators['RefinementRamachandranFavored'])
+        self.RamachandranFavoredValue.set_label(
+            self.QualityIndicators['RefinementRamachandranFavored'])
         try:
             self.RamachandranFavoredBox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(
                 self.QualityIndicators['RefinementRamachandranFavoredTL']))
         except ValueError:
             pass
-        self.rmsdBondsValue.set_label(self.QualityIndicators['RefinementRmsdBonds'])
+        self.rmsdBondsValue.set_label(
+            self.QualityIndicators['RefinementRmsdBonds'])
         try:
             self.rmsdBondsBox.modify_bg(gtk.STATE_NORMAL,
                                         gtk.gdk.color_parse(self.QualityIndicators['RefinementRmsdBondsTL']))
         except ValueError:
             pass
-        self.rmsdAnglesValue.set_label(self.QualityIndicators['RefinementRmsdAngles'])
+        self.rmsdAnglesValue.set_label(
+            self.QualityIndicators['RefinementRmsdAngles'])
         try:
             self.rmsdAnglesBox.modify_bg(gtk.STATE_NORMAL,
                                          gtk.gdk.color_parse(self.QualityIndicators['RefinementRmsdAnglesTL']))
         except ValueError:
             pass
-        self.MatrixWeightValue.set_label(self.QualityIndicators['RefinementMatrixWeight'])
+        self.MatrixWeightValue.set_label(
+            self.QualityIndicators['RefinementMatrixWeight'])
 
         try:
             pic = gtk.gdk.pixbuf_new_from_file(
@@ -1296,10 +1354,12 @@ class GUI(object):
 
             #######################################################
             if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
+                os.mkdir(os.path.join(
+                    self.project_directory, self.xtalID, 'cootOut'))
             # create folder for new refinement cycle
             try:
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+                os.mkdir(os.path.join(self.project_directory,
+                                      self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
             except OSError:
                 print '==> XCE: WARNING -> folder exists; will overwrite contents!'
 
@@ -1309,7 +1369,7 @@ class GUI(object):
             # note: the user has to make sure that the ligand file was merged into main file
             for item in coot_utils_XChem.molecule_number_list():
                 if coot.molecule_name(item).endswith(
-                                self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
+                    self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
                         item).endswith(self.pdb_style):
                     coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
                                                            'Refine_' + str(self.Serial), 'refine.modified.pdb'))
@@ -1328,7 +1388,8 @@ class GUI(object):
             if not os.path.isdir(os.path.join(self.project_directory, self.xtalID)):
                 os.mkdir(os.path.join(self.project_directory, self.xtalID))
             if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial))):
-                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial)))
+                os.mkdir(os.path.join(self.project_directory,
+                                      self.xtalID, 'Refine_' + str(self.Serial)))
 
             #######################################################
             # write PDB file
@@ -1343,8 +1404,9 @@ class GUI(object):
                 elif coot.molecule_name(item).endswith('refine.split.bound-state.pdb'):
                     coot.write_pdb_file(item,
                                         os.path.join(self.project_directory, self.xtalID,
-                                                        'Refine_' + str(self.Serial),
-                                                        'in.pdb'))
+                                                     'Refine_' +
+                                                     str(self.Serial),
+                                                     'in.pdb'))
                     break
                 elif coot.molecule_name(item).endswith('init.pdb'):
                     coot.write_pdb_file(item,
@@ -1357,7 +1419,8 @@ class GUI(object):
                                                      'in.pdb'))
                     break
 
-            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile)
+            self.Refine.RunRefmac(
+                self.Serial, self.RefmacParams, self.external_software, self.xce_logfile)
 
         self.index += 1
         if self.index >= len(self.Todo):
@@ -1384,7 +1447,8 @@ class GUI(object):
                 self.cb.remove_text(0)
         self.Todo = []
         self.siteDict = {}
-        self.Todo, self.siteDict = self.db.get_todoList_for_coot(self.selection_mode)
+        self.Todo, self.siteDict = self.db.get_todoList_for_coot(
+            self.selection_mode)
 #        self.status_label.set_text('found {0!s} samples'.format(len(self.Todo)))
         # refresh sample CB
         for item in sorted(self.Todo):
@@ -1397,12 +1461,11 @@ class GUI(object):
             self.cb_site.set_sensitive(True)
             self.PREVbuttonSite.set_sensitive(True)
             self.NEXTbuttonSite.set_sensitive(True)
-        print '===========>',self.cb_select_samples.get_active_text()
+        print '===========>', self.cb_select_samples.get_active_text()
         if int(self.cb_select_samples.get_active_text().split()[0]) > 3:
             print '==> XCE: sorry cannot change refinement protocol since you are at a stage when we refine the ligand bound state only'
             self.refinementProtocol = 'refmac'
             self.refinementProtocolcheckbox.set_active(False)
-
 
     def update_plot(self, refinement_cycle, Rfree, Rcryst):
         fig = Figure(figsize=(2, 2), dpi=50)
@@ -1424,13 +1487,15 @@ class GUI(object):
     def merge_ligand_into_protein(self, widget):
         print '===> XCE: merge ligand into protein structure'
         # merge_molecules(list(imols), imol) e.g. merge_molecules([1],0)
-        coot.merge_molecules_py([self.mol_dict['ligand']], self.mol_dict['protein'])
+        coot.merge_molecules_py(
+            [self.mol_dict['ligand']], self.mol_dict['protein'])
         print '===> XCE: deleting ligand molecule'
         coot.close_molecule(self.mol_dict['ligand'])
 
     def show_molprobity_to_do(self, widget):
         print self.panddaSerial
-        AdjPanddaSerial = (4 - len(str(self.Serial))) * '0' + str(int(self.panddaSerial) - 1)
+        AdjPanddaSerial = (4 - len(str(self.Serial))) * \
+            '0' + str(int(self.panddaSerial) - 1)
         print os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.panddaSerial),
                            'molprobity_coot.py')
         if os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial - 1),
@@ -1502,22 +1567,26 @@ class GUI(object):
             widget.set_label('Show ground state mean map')
 
     def reset_occupancy(self):
-        self.Logfile.warning('==> COOT: trying to set occupancies of all residues to 1.0')
+        self.Logfile.warning(
+            '==> COOT: trying to set occupancies of all residues to 1.0')
         if self.refinementProtocol.startswith('pandda'):
-            self.Logfile.warning('==> COOT: you cannot reset occupancies while working in PanDDA refine mode')
+            self.Logfile.warning(
+                '==> COOT: you cannot reset occupancies while working in PanDDA refine mode')
         else:
             for imol in coot_utils_XChem.molecule_number_list():
                 if coot.molecule_name(imol).endswith(self.pdb_style) or \
                    coot.molecule_name(imol).endswith('refine.split.bound-state.pdb') or \
                    coot.molecule_name(imol).endswith('ini.pdb') or \
                    coot.molecule_name(imol).endswith('dimple.pdb'):
-                    self.Logfile.warning('==> COOT: setting occupancies of all protein residues in %s to 1.0' %coot.molecule_name(imol))
+                    self.Logfile.warning(
+                        '==> COOT: setting occupancies of all protein residues in %s to 1.0' % coot.molecule_name(imol))
 #                    coot.fill_occupancy_residue_range(imol,"A",1,10000)
                     chains = chain_ids(imol)
                     resiDict = {}
                     for chain in chains:
                         resiDict[chain] = residues_in_chain(imol, chain)
-                    amino_acids = XChemUtils.pdbtools(coot.molecule_name(imol)).amino_acids()
+                    amino_acids = XChemUtils.pdbtools(
+                        coot.molecule_name(imol)).amino_acids()
 
                     resetDict = {}
                     for chain in resiDict:
@@ -1525,28 +1594,28 @@ class GUI(object):
                         resid_prev = -1000
                         n_res = 0
                         for resid in resiDict[chain]:
-                            if residue_name(imol,chain,resid[1],'') in amino_acids:
+                            if residue_name(imol, chain, resid[1], '') in amino_acids:
                                 n_res += 1
                         counter = 0
-                        for n,resid in enumerate(resiDict[chain]):
-                            if residue_name(imol,chain,resid[1],'') in amino_acids:
+                        for n, resid in enumerate(resiDict[chain]):
+                            if residue_name(imol, chain, resid[1], '') in amino_acids:
                                 counter += 1
                                 if chain not in resetDict:
                                     resetDict[chain] = None
                                 if resid[1] != resid_prev + 1:
                                     if resid_prev != -1000:
-                                        residRange.append([start,resid_prev])
+                                        residRange.append([start, resid_prev])
                                     start = resid[1]
                                 resid_prev = resid[1]
                                 if counter == n_res:
-                                    residRange.append([start,resid[1]])
+                                    residRange.append([start, resid[1]])
                         if chain in resetDict:
                             resetDict[chain] = residRange
                     for chain in resetDict:
                         for resid_range in resetDict[chain]:
-                            print 'setting occupancy to 1: ->',chain,resid_range[0],resid_range[1]
-                            coot.fill_occupancy_residue_range(imol,chain,resid_range[0],resid_range[1])
-
+                            print 'setting occupancy to 1: ->', chain, resid_range[0], resid_range[1]
+                            coot.fill_occupancy_residue_range(
+                                imol, chain, resid_range[0], resid_range[1])
 
 
 #
@@ -1554,7 +1623,6 @@ class GUI(object):
 #                        print residues_in_chain(imol, chain)
 #                        for residue in residues_in_chain(imol, chain):
 #                            print residue
-
 
 if __name__ == '__main__':
     GUI().StartGUI()

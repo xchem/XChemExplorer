@@ -1,5 +1,14 @@
 # last edited: 08/08/2017 - 15:00
 
+import pango
+import gtk
+import pygtk
+import coot_utils_XChem
+import coot
+import XChemLog
+import XChemUtils
+import XChemRefine
+import XChemDB
 import gobject
 import sys
 import os
@@ -15,19 +24,12 @@ from matplotlib.figure import Figure
 
 # XCE libraries
 sys.path.append(os.getenv('XChemExplorer_DIR') + '/lib')
-import XChemDB
-import XChemRefine
-import XChemUtils
-import XChemLog
 
 # libraries from COOT
-import pygtk, gtk, pango
-import coot
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules etc.
 # modified file is now in $XChemExplorer_DIR/lib
-import coot_utils_XChem
 
 
 class GUI(object):
@@ -52,7 +54,8 @@ class GUI(object):
         print self.settings
 
         # checking for external software packages
-        self.external_software = XChemUtils.external_software(self.xce_logfile).check()
+        self.external_software = XChemUtils.external_software(
+            self.xce_logfile).check()
         self.external_software['qsub_remote'] = remote_qsub_submission
 
         self.selection_criteria = ['0 - All Datasets',
@@ -66,8 +69,10 @@ class GUI(object):
 
         self.experiment_stage = [['Review PANDDA export', '2 - PANDDA model', 65000, 0, 0],
                                  ['In Refinement', '3 - In Refinement', 65000, 0, 0],
-                                 ['Comp Chem Ready!', '4 - CompChem ready', 65000, 0, 0],
-                                 ['Ready for Deposition!', '5 - Deposition ready', 65000, 0, 0],
+                                 ['Comp Chem Ready!',
+                                     '4 - CompChem ready', 65000, 0, 0],
+                                 ['Ready for Deposition!',
+                                     '5 - Deposition ready', 65000, 0, 0],
                                  ['In PDB', '6 - Deposited', 65000, 0, 0],
                                  ['Analysed & Rejected', '7 - Analysed & Rejected', 65000, 0, 0]]
 
@@ -129,7 +134,6 @@ class GUI(object):
 
         self.label_button_list = []
 
-
         ###########################################################################################
         # some COOT settings
         coot.set_map_radius(17)
@@ -176,7 +180,7 @@ class GUI(object):
                              'TWIN': '',
                              'WATER':   '',
                              'LIGOCC':  '',
-                             'SANITY':  ''  }
+                             'SANITY':  ''}
 
     def StartGUI(self):
 
@@ -208,7 +212,8 @@ class GUI(object):
         #        self.hbox_select_samples.add(self.cb_select_sites)
 
         self.select_samples_button = gtk.Button(label="GO")
-        self.select_samples_button.connect("clicked", self.get_samples_to_look_at)
+        self.select_samples_button.connect(
+            "clicked", self.get_samples_to_look_at)
         self.hbox_select_samples.add(self.select_samples_button)
         frame.add(self.hbox_select_samples)
         self.vbox.pack_start(frame)
@@ -260,7 +265,8 @@ class GUI(object):
         ResolutionLabel_frame = gtk.Frame()
         self.ResolutionLabel = gtk.Label('Resolution')
         ResolutionLabel_frame.add(self.ResolutionLabel)
-        self.ResolutionValue = gtk.Label(self.QualityIndicators['RefinementResolution'])
+        self.ResolutionValue = gtk.Label(
+            self.QualityIndicators['RefinementResolution'])
         ResolutionBox_frame = gtk.Frame()
         self.ResolutionBox = gtk.EventBox()
         self.ResolutionBox.add(self.ResolutionValue)
@@ -269,7 +275,8 @@ class GUI(object):
         MolprobityScoreLabel_frame = gtk.Frame()
         self.MolprobityScoreLabel = gtk.Label('MolprobityScore')
         MolprobityScoreLabel_frame.add(self.MolprobityScoreLabel)
-        self.MolprobityScoreValue = gtk.Label(self.QualityIndicators['RefinementMolProbityScore'])
+        self.MolprobityScoreValue = gtk.Label(
+            self.QualityIndicators['RefinementMolProbityScore'])
         MolprobityScoreBox_frame = gtk.Frame()
         self.MolprobityScoreBox = gtk.EventBox()
         self.MolprobityScoreBox.add(self.MolprobityScoreValue)
@@ -278,7 +285,8 @@ class GUI(object):
         RamachandranOutliersLabel_frame = gtk.Frame()
         self.RamachandranOutliersLabel = gtk.Label('Rama Outliers')
         RamachandranOutliersLabel_frame.add(self.RamachandranOutliersLabel)
-        self.RamachandranOutliersValue = gtk.Label(self.QualityIndicators['RefinementRamachandranOutliers'])
+        self.RamachandranOutliersValue = gtk.Label(
+            self.QualityIndicators['RefinementRamachandranOutliers'])
         RamachandranOutliersBox_frame = gtk.Frame()
         self.RamachandranOutliersBox = gtk.EventBox()
         self.RamachandranOutliersBox.add(self.RamachandranOutliersValue)
@@ -287,7 +295,8 @@ class GUI(object):
         RamachandranFavoredLabel_frame = gtk.Frame()
         self.RamachandranFavoredLabel = gtk.Label('Rama Favored')
         RamachandranFavoredLabel_frame.add(self.RamachandranFavoredLabel)
-        self.RamachandranFavoredValue = gtk.Label(self.QualityIndicators['RefinementRamachandranFavored'])
+        self.RamachandranFavoredValue = gtk.Label(
+            self.QualityIndicators['RefinementRamachandranFavored'])
         RamachandranFavoredBox_frame = gtk.Frame()
         self.RamachandranFavoredBox = gtk.EventBox()
         self.RamachandranFavoredBox.add(self.RamachandranFavoredValue)
@@ -296,7 +305,8 @@ class GUI(object):
         rmsdBondsLabel_frame = gtk.Frame()
         self.rmsdBondsLabel = gtk.Label('rmsd(Bonds)')
         rmsdBondsLabel_frame.add(self.rmsdBondsLabel)
-        self.rmsdBondsValue = gtk.Label(self.QualityIndicators['RefinementRmsdBonds'])
+        self.rmsdBondsValue = gtk.Label(
+            self.QualityIndicators['RefinementRmsdBonds'])
         rmsdBondsBox_frame = gtk.Frame()
         self.rmsdBondsBox = gtk.EventBox()
         self.rmsdBondsBox.add(self.rmsdBondsValue)
@@ -305,7 +315,8 @@ class GUI(object):
         rmsdAnglesLabel_frame = gtk.Frame()
         self.rmsdAnglesLabel = gtk.Label('rmsd(Angles)')
         rmsdAnglesLabel_frame.add(self.rmsdAnglesLabel)
-        self.rmsdAnglesValue = gtk.Label(self.QualityIndicators['RefinementRmsdAngles'])
+        self.rmsdAnglesValue = gtk.Label(
+            self.QualityIndicators['RefinementRmsdAngles'])
         rmsdAnglesBox_frame = gtk.Frame()
         self.rmsdAnglesBox = gtk.EventBox()
         self.rmsdAnglesBox.add(self.rmsdAnglesValue)
@@ -314,7 +325,8 @@ class GUI(object):
         MatrixWeightLabel_frame = gtk.Frame()
         self.MatrixWeightLabel = gtk.Label('Matrix Weight')
         MatrixWeightLabel_frame.add(self.MatrixWeightLabel)
-        self.MatrixWeightValue = gtk.Label(self.QualityIndicators['RefinementMatrixWeight'])
+        self.MatrixWeightValue = gtk.Label(
+            self.QualityIndicators['RefinementMatrixWeight'])
         MatrixWeightBox_frame = gtk.Frame()
         self.MatrixWeightBox = gtk.EventBox()
         self.MatrixWeightBox.add(self.MatrixWeightValue)
@@ -323,7 +335,8 @@ class GUI(object):
         ligandIDLabel_frame = gtk.Frame()
         self.ligandIDLabel = gtk.Label('Ligand ID')
         ligandIDLabel_frame.add(self.ligandIDLabel)
-        self.ligandIDValue = gtk.Label(self.spider_plot_data['PANDDA_site_ligand_id'])
+        self.ligandIDValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_ligand_id'])
         ligandIDBox_frame = gtk.Frame()
         self.ligandIDBox = gtk.EventBox()
         self.ligandIDBox.add(self.ligandIDValue)
@@ -332,7 +345,8 @@ class GUI(object):
         ligand_occupancyLabel_frame = gtk.Frame()
         self.ligand_occupancyLabel = gtk.Label('occupancy')
         ligand_occupancyLabel_frame.add(self.ligand_occupancyLabel)
-        self.ligand_occupancyValue = gtk.Label(self.spider_plot_data['PANDDA_site_occupancy'])
+        self.ligand_occupancyValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_occupancy'])
         ligand_occupancyBox_frame = gtk.Frame()
         self.ligand_occupancyBox = gtk.EventBox()
         self.ligand_occupancyBox.add(self.ligand_occupancyValue)
@@ -341,7 +355,8 @@ class GUI(object):
         ligand_BaverageLabel_frame = gtk.Frame()
         self.ligand_BaverageLabel = gtk.Label('B average')
         ligand_BaverageLabel_frame.add(self.ligand_BaverageLabel)
-        self.ligand_BaverageValue = gtk.Label(self.spider_plot_data['PANDDA_site_B_average'])
+        self.ligand_BaverageValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_B_average'])
         ligand_BaverageBox_frame = gtk.Frame()
         self.ligand_BaverageBox = gtk.EventBox()
         self.ligand_BaverageBox.add(self.ligand_BaverageValue)
@@ -349,18 +364,22 @@ class GUI(object):
 
         ligand_BratioSurroundingsLabel_frame = gtk.Frame()
         self.ligand_BratioSurroundingsLabel = gtk.Label('B ratio')
-        ligand_BratioSurroundingsLabel_frame.add(self.ligand_BratioSurroundingsLabel)
+        ligand_BratioSurroundingsLabel_frame.add(
+            self.ligand_BratioSurroundingsLabel)
         self.ligand_BratioSurroundingsValue = gtk.Label(
             self.spider_plot_data['PANDDA_site_B_ratio_residue_surroundings'])
         ligand_BratioSurroundingsBox_frame = gtk.Frame()
         self.ligand_BratioSurroundingsBox = gtk.EventBox()
-        self.ligand_BratioSurroundingsBox.add(self.ligand_BratioSurroundingsValue)
-        ligand_BratioSurroundingsBox_frame.add(self.ligand_BratioSurroundingsBox)
+        self.ligand_BratioSurroundingsBox.add(
+            self.ligand_BratioSurroundingsValue)
+        ligand_BratioSurroundingsBox_frame.add(
+            self.ligand_BratioSurroundingsBox)
 
         ligand_RSCCLabel_frame = gtk.Frame()
         self.ligand_RSCCLabel = gtk.Label('RSCC')
         ligand_RSCCLabel_frame.add(self.ligand_RSCCLabel)
-        self.ligand_RSCCValue = gtk.Label(self.spider_plot_data['PANDDA_site_RSCC'])
+        self.ligand_RSCCValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_RSCC'])
         ligand_RSCCBox_frame = gtk.Frame()
         self.ligand_RSCCBox = gtk.EventBox()
         self.ligand_RSCCBox.add(self.ligand_RSCCValue)
@@ -369,7 +388,8 @@ class GUI(object):
         ligand_rmsdLabel_frame = gtk.Frame()
         self.ligand_rmsdLabel = gtk.Label('rmsd')
         ligand_rmsdLabel_frame.add(self.ligand_rmsdLabel)
-        self.ligand_rmsdValue = gtk.Label(self.spider_plot_data['PANDDA_site_rmsd'])
+        self.ligand_rmsdValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_rmsd'])
         ligand_rmsdBox_frame = gtk.Frame()
         self.ligand_rmsdBox = gtk.EventBox()
         self.ligand_rmsdBox.add(self.ligand_rmsdValue)
@@ -378,7 +398,8 @@ class GUI(object):
         ligand_RSRLabel_frame = gtk.Frame()
         self.ligand_RSRLabel = gtk.Label('RSR')
         ligand_RSRLabel_frame.add(self.ligand_RSRLabel)
-        self.ligand_RSRValue = gtk.Label(self.spider_plot_data['PANDDA_site_RSR'])
+        self.ligand_RSRValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_RSR'])
         ligand_RSRBox_frame = gtk.Frame()
         self.ligand_RSRBox = gtk.EventBox()
         self.ligand_RSRBox.add(self.ligand_RSRValue)
@@ -387,7 +408,8 @@ class GUI(object):
         ligand_RSZDLabel_frame = gtk.Frame()
         self.ligand_RSZDLabel = gtk.Label('RSZD')
         ligand_RSZDLabel_frame.add(self.ligand_RSZDLabel)
-        self.ligand_RSZDValue = gtk.Label(self.spider_plot_data['PANDDA_site_RSZD'])
+        self.ligand_RSZDValue = gtk.Label(
+            self.spider_plot_data['PANDDA_site_RSZD'])
         ligand_RSZDBox_frame = gtk.Frame()
         self.ligand_RSZDBox = gtk.EventBox()
         self.ligand_RSZDBox.add(self.ligand_RSZDValue)
@@ -422,7 +444,8 @@ class GUI(object):
         self.table_right.attach(ligandIDLabel_frame, 0, 1, 0, 1)
         self.table_right.attach(ligand_occupancyLabel_frame, 0, 1, 1, 2)
         self.table_right.attach(ligand_BaverageLabel_frame, 0, 1, 2, 3)
-        self.table_right.attach(ligand_BratioSurroundingsLabel_frame, 0, 1, 3, 4)
+        self.table_right.attach(
+            ligand_BratioSurroundingsLabel_frame, 0, 1, 3, 4)
         self.table_right.attach(ligand_RSCCLabel_frame, 0, 1, 4, 5)
         self.table_right.attach(ligand_rmsdLabel_frame, 0, 1, 5, 6)
         self.table_right.attach(ligand_RSRLabel_frame, 0, 1, 6, 7)
@@ -446,8 +469,10 @@ class GUI(object):
         button.connect("clicked", self.show_molprobity_to_do)
         hbox.add(button)
         # --- ground state mean map ---
-        self.ground_state_mean_map_button = gtk.Button(label="Show ground state mean map")
-        self.ground_state_mean_map_button.connect("clicked", self.show_ground_state_mean_map)
+        self.ground_state_mean_map_button = gtk.Button(
+            label="Show ground state mean map")
+        self.ground_state_mean_map_button.connect(
+            "clicked", self.show_ground_state_mean_map)
         hbox.add(self.ground_state_mean_map_button)
 #        self.vbox.add(self.ground_state_mean_map_button)
         self.vbox.add(hbox)
@@ -481,7 +506,8 @@ class GUI(object):
         spider_plot_frame = gtk.Frame()
         spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
             os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'NO_SPIDER_PLOT_AVAILABLE.png'))
-        self.spider_plot_pic = pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR)
         self.spider_plot_image = gtk.Image()
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
         spider_plot_frame.add(self.spider_plot_image)
@@ -634,8 +660,9 @@ class GUI(object):
                 new_button = gtk.RadioButton(None, button[0])
             else:
                 new_button = gtk.RadioButton(new_button, button[0])
-            new_button.connect("toggled", self.experiment_stage_button_clicked, button[1])
-            vbox.pack_start(new_button,False,False,0)
+            new_button.connect(
+                "toggled", self.experiment_stage_button_clicked, button[1])
+            vbox.pack_start(new_button, False, False, 0)
 #            vbox.add(new_button)
             self.experiment_stage_button_list.append(new_button)
         frame.add(vbox)
@@ -650,8 +677,9 @@ class GUI(object):
                 new_button = gtk.RadioButton(None, criteria)
             else:
                 new_button = gtk.RadioButton(new_button, criteria)
-            new_button.connect("toggled", self.ligand_confidence_button_clicked, criteria)
-            vbox.pack_start(new_button,False,False,0)
+            new_button.connect(
+                "toggled", self.ligand_confidence_button_clicked, criteria)
+            vbox.pack_start(new_button, False, False, 0)
 #            vbox.add(new_button)
             self.ligand_confidence_button_list.append(new_button)
         frame.add(vbox)
@@ -695,9 +723,11 @@ class GUI(object):
         self.merge_ligand_button = gtk.Button(label="Merge Ligand")
         self.place_ligand_here_button = gtk.Button(label="Place Ligand here")
         self.hbox_for_modeling.add(self.place_ligand_here_button)
-        self.place_ligand_here_button.connect("clicked", self.place_ligand_here)
+        self.place_ligand_here_button.connect(
+            "clicked", self.place_ligand_here)
         self.hbox_for_modeling.add(self.merge_ligand_button)
-        self.merge_ligand_button.connect("clicked", self.merge_ligand_into_protein)
+        self.merge_ligand_button.connect(
+            "clicked", self.merge_ligand_into_protein)
         self.select_cpd_cb = gtk.combo_box_new_text()
         self.select_cpd_cb.connect("changed", self.select_cpd)
         self.hbox_for_modeling.add(self.select_cpd_cb)
@@ -711,18 +741,19 @@ class GUI(object):
         #            self.cb_ligand_confidence.append_text(citeria)
         #        self.vbox.add(self.cb_ligand_confidence)
 
-
         # --- refinement & options ---
         self.hbox_for_refinement = gtk.HBox()
         self.REFINEbutton = gtk.Button(label="Refine")
         self.RefinementParamsButton = gtk.Button(label="refinement parameters")
         self.covalentLinksbutton = gtk.Button(label="covalent links\n-define-")
-        self.covalentLinksCreatebutton = gtk.Button(label="covalent links\n-create & refine-")
+        self.covalentLinksCreatebutton = gtk.Button(
+            label="covalent links\n-create & refine-")
         self.REFINEbutton.connect("clicked", self.REFINE)
         self.hbox_for_refinement.add(self.REFINEbutton)
         self.RefinementParamsButton.connect("clicked", self.RefinementParams)
         self.covalentLinksbutton.connect("clicked", self.covalentLinkDef)
-        self.covalentLinksCreatebutton.connect("clicked", self.covalentLinkCreate)
+        self.covalentLinksCreatebutton.connect(
+            "clicked", self.covalentLinkCreate)
         self.hbox_for_refinement.add(self.RefinementParamsButton)
         self.hbox_for_refinement.add(self.covalentLinksbutton)
         self.hbox_for_refinement.add(self.covalentLinksCreatebutton)
@@ -735,7 +766,6 @@ class GUI(object):
 #        # need to put it here, because attributes within refinementProtocolCallback function
 #        # are defined after checkbox is defined
 #        self.refinementProtocolcheckbox.connect("toggled", self.refinementProtocolCallback)
-
 
         # --- CANCEL button ---
         self.CANCELbutton = gtk.Button(label="CANCEL")
@@ -793,19 +823,22 @@ class GUI(object):
         for imol in coot_utils_XChem.molecule_number_list():
             if imol not in self.mol_dict['ligand_stereo']:
                 continue
-            molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
+            molName = coot.molecule_name(imol)[coot.molecule_name(
+                imol).rfind('/')+1:].replace('.pdb', '')
             if 'rhofit' in coot.molecule_name(imol) or 'phenix' in coot.molecule_name(imol):
-                molNameCIF = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/') + 1:].replace('.pdb', '').replace('_phenix','').replace('_rhofit','')
+                molNameCIF = coot.molecule_name(imol)[coot.molecule_name(imol).rfind(
+                    '/') + 1:].replace('.pdb', '').replace('_phenix', '').replace('_rhofit', '')
             else:
                 molNameCIF = molName
-            print cpd,'-',imol,'-',coot.molecule_name(imol)
+            print cpd, '-', imol, '-', coot.molecule_name(imol)
             if molName == cpd:
                 coot.set_mol_displayed(imol, 1)
-                print 'reading',os.path.join(self.project_directory,self.xtalID,'compound',molNameCIF+'.cif')
-                coot.read_cif_dictionary(os.path.join(self.project_directory,self.xtalID,'compound',molNameCIF+'.cif'))
+                print 'reading', os.path.join(
+                    self.project_directory, self.xtalID, 'compound', molNameCIF+'.cif')
+                coot.read_cif_dictionary(os.path.join(
+                    self.project_directory, self.xtalID, 'compound', molNameCIF+'.cif'))
             else:
                 coot.set_mol_displayed(imol, 0)
-
 
     def update_RefinementOutcome_radiobutton(self):
         # updating dataset outcome radiobuttons
@@ -858,7 +891,8 @@ class GUI(object):
         # only repopulate if site exists
         if self.xtalID in self.siteDict:
             for item in sorted(self.siteDict[self.xtalID]):
-                self.cb_site.append_text('site: {0!s} - event: {1!s}'.format(item[5], item[6]))
+                self.cb_site.append_text(
+                    'site: {0!s} - event: {1!s}'.format(item[5], item[6]))
 
     def ChangeSite(self, widget, data=None):
         if self.xtalID in self.siteDict:
@@ -897,13 +931,13 @@ class GUI(object):
 #        for w in self.label_button_list:
 #            w.set_active(False)
 
-
         print 'pandda index', self.pandda_index
         self.spider_plot = self.siteDict[self.xtalID][self.pandda_index][4]
         print 'new spider plot:', self.spider_plot
         self.event_map = self.siteDict[self.xtalID][self.pandda_index][0]
         print 'new event map:', self.event_map
-        self.ligand_confidence = str(self.siteDict[self.xtalID][self.pandda_index][7])
+        self.ligand_confidence = str(
+            self.siteDict[self.xtalID][self.pandda_index][7])
         self.update_LigandConfidence_radiobutton()
         site_x = float(self.siteDict[self.xtalID][self.pandda_index][1])
         site_y = float(self.siteDict[self.xtalID][self.pandda_index][2])
@@ -919,14 +953,17 @@ class GUI(object):
         self.spider_plot_data = self.db.get_db_pandda_dict_for_sample_and_site_and_event(self.xtalID, self.site_index,
                                                                                          self.event_index)
         print '>>>>> spider plot data', self.spider_plot_data
-        self.ligandIDValue.set_label(self.spider_plot_data['PANDDA_site_ligand_id'])
+        self.ligandIDValue.set_label(
+            self.spider_plot_data['PANDDA_site_ligand_id'])
         try:
-            self.ligand_occupancyValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_occupancy']), 2)))
+            self.ligand_occupancyValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_occupancy']), 2)))
         except ValueError:
             self.ligand_occupancyValue.set_label('-')
 
         try:
-            self.ligand_BaverageValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_B_average']), 2)))
+            self.ligand_BaverageValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_B_average']), 2)))
         except ValueError:
             self.ligand_BaverageValue.set_label('-')
 
@@ -937,22 +974,26 @@ class GUI(object):
             self.ligand_BratioSurroundingsValue.set_label('-')
 
         try:
-            self.ligand_RSCCValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_RSCC']), 2)))
+            self.ligand_RSCCValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_RSCC']), 2)))
         except ValueError:
             self.ligand_RSCCValue.set_label('-')
 
         try:
-            self.ligand_rmsdValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_rmsd']), 2)))
+            self.ligand_rmsdValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_rmsd']), 2)))
         except ValueError:
             self.ligand_rmsdValue.set_label('-')
 
         try:
-            self.ligand_RSRValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_RSR']), 2)))
+            self.ligand_RSRValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_RSR']), 2)))
         except ValueError:
             self.ligand_RSRValue.set_label('-')
 
         try:
-            self.ligand_RSZDValue.set_label(str(round(float(self.spider_plot_data['PANDDA_site_RSZD']), 2)))
+            self.ligand_RSZDValue.set_label(
+                str(round(float(self.spider_plot_data['PANDDA_site_RSZD']), 2)))
         except ValueError:
             self.ligand_RSZDValue.set_label('-')
 
@@ -971,7 +1012,8 @@ class GUI(object):
         else:
             spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
                 os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'NO_SPIDER_PLOT_AVAILABLE.png'))
-        self.spider_plot_pic = spider_plot_pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR)
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
 
         #########################################################################################
@@ -989,15 +1031,16 @@ class GUI(object):
     def experiment_stage_button_clicked(self, widget, data=None):
         self.db_dict_mainTable['RefinementOutcome'] = data
         self.db_dict_mainTable['RefinementOutcomePerson'] = getpass.getuser()
-        self.db_dict_mainTable['RefinementOutcomeDate'] = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
-
+        self.db_dict_mainTable['RefinementOutcomeDate'] = datetime.strftime(
+            datetime.now(), '%Y-%m-%d_%H-%M-%S.%f')[:-4]
 
         self.Logfile.insert('==> COOT: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
             data) + ' in mainTable of datasource')
 #        print '==> XCE: setting Refinement Outcome for ' + self.xtalID + ' to ' + str(
 #            data) + ' in mainTable of datasource'
 #        self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
-        self.db.create_or_remove_missing_records_in_depositTable(self.xce_logfile,self.xtalID,'ligand_bound',self.db_dict_mainTable)
+        self.db.create_or_remove_missing_records_in_depositTable(
+            self.xce_logfile, self.xtalID, 'ligand_bound', self.db_dict_mainTable)
 
     def ligand_confidence_button_clicked(self, widget, data=None):
         print 'PANDDA_index', self.pandda_index
@@ -1047,13 +1090,15 @@ class GUI(object):
         # reset spider plot image
         spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
             os.path.join(os.getenv('XChemExplorer_DIR'), 'image', 'NO_SPIDER_PLOT_AVAILABLE.png'))
-        self.spider_plot_pic = spider_plot_pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR)
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
 
         # reset ground state mean map
         self.ground_state_mean_map = ''
         self.ground_state_mean_map_button.set_sensitive(False)
-        self.ground_state_mean_map_button.set_label('Show ground state mean map')
+        self.ground_state_mean_map_button.set_label(
+            'Show ground state mean map')
         if os.path.isfile(
                 os.path.join(self.project_directory, self.xtalID, self.xtalID + '-ground-state-mean-map.native.ccp4')):
             self.ground_state_mean_map_button.set_sensitive(True)
@@ -1062,9 +1107,12 @@ class GUI(object):
 
         # initialize Refinement library
 #        self.Refine = XChemRefine.Refine(self.project_directory, self.xtalID, self.compoundID, self.data_source)
-        self.Refine = XChemRefine.Refine(self.project_directory, self.xtalID, self.compoundID, self.data_source)
-        self.Serial = XChemRefine.GetSerial(self.project_directory, self.xtalID)
-        self.panddaSerial = panddaSerial = m = (4 - len(str(self.Serial))) * '0' + str(self.Serial)
+        self.Refine = XChemRefine.Refine(
+            self.project_directory, self.xtalID, self.compoundID, self.data_source)
+        self.Serial = XChemRefine.GetSerial(
+            self.project_directory, self.xtalID)
+        self.panddaSerial = panddaSerial = m = (
+            4 - len(str(self.Serial))) * '0' + str(self.Serial)
         #        self.Serial=self.Refine.GetSerial()
         if self.Serial == 1:
             # i.e. no refinement has been done; data is probably straight out of dimple
@@ -1098,7 +1146,8 @@ class GUI(object):
         # if the structure was previously refined, try to read the parameters
         #        self.hbox_for_info_graphics.remove(self.canvas)
         if self.Serial > 1:
-            self.RefmacParams = self.Refine.ParamsFromPreviousCycle(self.Serial - 1)
+            self.RefmacParams = self.Refine.ParamsFromPreviousCycle(
+                self.Serial - 1)
             print '==> REFMAC params:', self.RefmacParams
         #            refinement_cycle,Rfree,Rcryst=self.Refine.GetRefinementHistory()
         #            self.canvas = FigureCanvas(self.update_plot(refinement_cycle,Rfree,Rcryst))
@@ -1111,9 +1160,9 @@ class GUI(object):
         #########################################################################################
         # ligand files
         # first remove old samples if present
-        print '>>>',self.mol_dict['ligand_stereo']
+        print '>>>', self.mol_dict['ligand_stereo']
         for n, item in enumerate(self.mol_dict['ligand_stereo']):
-            print '__',item
+            print '__', item
             self.select_cpd_cb.remove_text(0)
         print 'done'
 
@@ -1146,25 +1195,27 @@ class GUI(object):
             imol = coot.handle_read_draw_molecule_with_recentre(
                 os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb'), 0)
             self.mol_dict['ligand'] = imol
-            coot.read_cif_dictionary(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif'))
+            coot.read_cif_dictionary(os.path.join(
+                self.project_directory, self.xtalID, self.compoundID + '.cif'))
             self.select_cpd_cb.append_text(self.compoundID)
             self.mol_dict['ligand_stereo'] = []
             self.mol_dict['ligand_stereo'].append(imol)
             # ligands in compound directory
-            for cifFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'compound',self.compoundID+'_*.pdb'))):
+            for cifFile in sorted(glob.glob(os.path.join(self.project_directory, self.xtalID, 'compound', self.compoundID+'_*.pdb'))):
                 cif = cifFile[cifFile.rfind('/')+1:]
                 if '_with_H' in cif:
                     continue
-                self.select_cpd_cb.append_text(cif.replace('.pdb',''))
+                self.select_cpd_cb.append_text(cif.replace('.pdb', ''))
                 imol = coot.handle_read_draw_molecule_with_recentre(cifFile, 0)
                 self.mol_dict['ligand_stereo'].append(imol)
-                coot.set_mol_displayed(imol,0)
+                coot.set_mol_displayed(imol, 0)
             # autofitted ligands
-            for pdbFile in sorted(glob.glob(os.path.join(self.project_directory,self.xtalID,'autofit_ligand','*','*.pdb'))):
+            for pdbFile in sorted(glob.glob(os.path.join(self.project_directory, self.xtalID, 'autofit_ligand', '*', '*.pdb'))):
                 autofitRun = pdbFile.split('/')[len(pdbFile.split('/')) - 2]
                 if pdbFile.endswith(autofitRun+'.pdb'):
                     self.select_cpd_cb.append_text(autofitRun)
-                    imol = coot.handle_read_draw_molecule_with_recentre(pdbFile, 0)
+                    imol = coot.handle_read_draw_molecule_with_recentre(
+                        pdbFile, 0)
                     self.mol_dict['ligand_stereo'].append(imol)
                     coot.set_mol_displayed(imol, 0)
             self.select_cpd_cb.set_sensitive(True)
@@ -1181,9 +1232,9 @@ class GUI(object):
 #            self.Logfile.insert('==> COOT: looking for ground-state model ' + os.path.join(self.project_directory, self.xtalID,
 #                                                                         self.pdb_style.replace('.pdb',
 #                                                                                                '') + '.split.ground-state.pdb'))
-##            print '=> XCE: looking for ground-state model', os.path.join(self.project_directory, self.xtalID,
-##                                                                         self.pdb_style.replace('.pdb',
-##                                                                                                '') + '.split.ground-state.pdb')
+# print '=> XCE: looking for ground-state model', os.path.join(self.project_directory, self.xtalID,
+# self.pdb_style.replace('.pdb',
+# '') + '.split.ground-state.pdb')
 #            if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
 #                                           self.pdb_style.replace('.pdb', '') + '.split.ground-state.pdb')):
 #                self.Logfile.insert('==> COOT: found ground-state model')
@@ -1256,9 +1307,10 @@ class GUI(object):
 
         for item in coot_utils_XChem.molecule_number_list():
             if coot.molecule_name(item).endswith(
-                            self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
+                self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
                     item).endswith(self.pdb_style):
-                coot.set_show_symmetry_master(1)  # master switch to show symmetry molecules
+                # master switch to show symmetry molecules
+                coot.set_show_symmetry_master(1)
                 coot.set_show_symmetry_molecule(item, 1)  # show symm for model
 
         #########################################################################################
@@ -1271,13 +1323,15 @@ class GUI(object):
         if os.path.isfile(os.path.join(self.project_directory, self.xtalID, '2fofc_??????.map')):
             coot.set_colour_map_rotation_on_read_pdb(0)
             coot.set_default_initial_contour_level_for_difference_map(3)
-            coot.handle_read_ccp4_map(os.path.join(self.project_directory, self.xtalID, 'fofc.map'), 1)
+            coot.handle_read_ccp4_map(os.path.join(
+                self.project_directory, self.xtalID, 'fofc.map'), 1)
             coot.set_default_initial_contour_level_for_map(1)
-            coot.handle_read_ccp4_map(os.path.join(self.project_directory, self.xtalID, '2fofc.map'), 0)
+            coot.handle_read_ccp4_map(os.path.join(
+                self.project_directory, self.xtalID, '2fofc.map'), 0)
             coot.set_last_map_colour(0, 0, 1)
         else:
             # try to open mtz file with same name as pdb file
-#            coot.set_default_initial_contour_level_for_map(1)
+            #            coot.set_default_initial_contour_level_for_map(1)
             coot.set_colour_map_rotation_on_read_pdb(0)
             #            if not os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.mtz_style)):
             #                os.chdir(os.path.join(self.project_directory,self.xtalID))
@@ -1287,11 +1341,14 @@ class GUI(object):
             #                    elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
             #                        os.symlink('dimple.mtz',self.mtz_style)
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.mtz_style)):
-                coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, self.mtz_style))
+                coot.auto_read_make_and_draw_maps(os.path.join(
+                    self.project_directory, self.xtalID, self.mtz_style))
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.mtz')):
-                coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, 'init.mtz'))
+                coot.auto_read_make_and_draw_maps(os.path.join(
+                    self.project_directory, self.xtalID, 'init.mtz'))
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.mtz')):
-                coot.auto_read_make_and_draw_maps(os.path.join(self.project_directory, self.xtalID, 'dimple.mtz'))
+                coot.auto_read_make_and_draw_maps(os.path.join(
+                    self.project_directory, self.xtalID, 'dimple.mtz'))
 
         #########################################################################################
         # update Quality Indicator table
@@ -1306,43 +1363,50 @@ class GUI(object):
                                      gtk.gdk.color_parse(self.QualityIndicators['RefinementRfreeTraficLight']))
         except ValueError:
             pass
-        self.ResolutionValue.set_label(self.QualityIndicators['RefinementResolution'])
+        self.ResolutionValue.set_label(
+            self.QualityIndicators['RefinementResolution'])
         try:
             self.ResolutionBox.modify_bg(gtk.STATE_NORMAL,
                                          gtk.gdk.color_parse(self.QualityIndicators['RefinementResolutionTL']))
         except ValueError:
             pass
-        self.MolprobityScoreValue.set_label(self.QualityIndicators['RefinementMolProbityScore'])
+        self.MolprobityScoreValue.set_label(
+            self.QualityIndicators['RefinementMolProbityScore'])
         try:
             self.MolprobityScoreBox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(
                 self.QualityIndicators['RefinementMolProbityScoreTL']))
         except ValueError:
             pass
-        self.RamachandranOutliersValue.set_label(self.QualityIndicators['RefinementRamachandranOutliers'])
+        self.RamachandranOutliersValue.set_label(
+            self.QualityIndicators['RefinementRamachandranOutliers'])
         try:
             self.RamachandranOutliersBox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(
                 self.QualityIndicators['RefinementRamachandranOutliersTL']))
         except ValueError:
             pass
-        self.RamachandranFavoredValue.set_label(self.QualityIndicators['RefinementRamachandranFavored'])
+        self.RamachandranFavoredValue.set_label(
+            self.QualityIndicators['RefinementRamachandranFavored'])
         try:
             self.RamachandranFavoredBox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(
                 self.QualityIndicators['RefinementRamachandranFavoredTL']))
         except ValueError:
             pass
-        self.rmsdBondsValue.set_label(self.QualityIndicators['RefinementRmsdBonds'])
+        self.rmsdBondsValue.set_label(
+            self.QualityIndicators['RefinementRmsdBonds'])
         try:
             self.rmsdBondsBox.modify_bg(gtk.STATE_NORMAL,
                                         gtk.gdk.color_parse(self.QualityIndicators['RefinementRmsdBondsTL']))
         except ValueError:
             pass
-        self.rmsdAnglesValue.set_label(self.QualityIndicators['RefinementRmsdAngles'])
+        self.rmsdAnglesValue.set_label(
+            self.QualityIndicators['RefinementRmsdAngles'])
         try:
             self.rmsdAnglesBox.modify_bg(gtk.STATE_NORMAL,
                                          gtk.gdk.color_parse(self.QualityIndicators['RefinementRmsdAnglesTL']))
         except ValueError:
             pass
-        self.MatrixWeightValue.set_label(self.QualityIndicators['RefinementMatrixWeight'])
+        self.MatrixWeightValue.set_label(
+            self.QualityIndicators['RefinementMatrixWeight'])
 
         try:
             pic = gtk.gdk.pixbuf_new_from_file(
@@ -1383,52 +1447,56 @@ class GUI(object):
         #
 
         #######################################################
-#        if self.refinementProtocol.startswith('pandda'):
-#
-#            #######################################################
-#            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
-#                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
-#            # create folder for new refinement cycle
-#            try:
-#                self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
-#                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
-#            except OSError:
-#                self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
-##                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
-#                self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
-#
-#            #######################################################
-#            # write PDB file
-#            # now take protein pdb file and write it to newly create Refine_<serial> folder
-#            # note: the user has to make sure that the ligand file was merged into main file
-#            for item in coot_utils_XChem.molecule_number_list():
-#                if coot.molecule_name(item).endswith(
-#                                self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
-#                        item).endswith(self.pdb_style):
-#                    coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
-#                                                           'Refine_' + str(self.Serial), 'refine.modified.pdb'))
-#                    break
-#                #                elif coot.molecule_name(item).endswith('dimple.pdb'):
-#                #                    coot.write_pdb_file(item,os.path.join(self.project_directory,self.xtalID,'cootOut','Refine_'+str(self.Serial),'refine.modified.pdb'))
-#                #                    break
-#
-#            XChemRefine.panddaRefine(self.project_directory, self.xtalID, self.compoundID,
-#                                     self.data_source).RunQuickRefine(self.Serial, self.RefmacParams,
-#                                                                      self.external_software, self.xce_logfile,
-#                                                                      self.refinementProtocol, self.covLinkAtomSpec)
-#        else:
+        #        if self.refinementProtocol.startswith('pandda'):
+        #
+        #            #######################################################
+        #            if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
+        #                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
+        #            # create folder for new refinement cycle
+        #            try:
+        #                self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+        #                os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+        #            except OSError:
+        #                self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
+        ##                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
+        #                self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
+        #
+        #            #######################################################
+        #            # write PDB file
+        #            # now take protein pdb file and write it to newly create Refine_<serial> folder
+        #            # note: the user has to make sure that the ligand file was merged into main file
+        #            for item in coot_utils_XChem.molecule_number_list():
+        #                if coot.molecule_name(item).endswith(
+        #                                self.pdb_style.replace('.pdb', '') + '.split.bound-state.pdb') or coot.molecule_name(
+        #                        item).endswith(self.pdb_style):
+        #                    coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
+        #                                                           'Refine_' + str(self.Serial), 'refine.modified.pdb'))
+        #                    break
+        #                #                elif coot.molecule_name(item).endswith('dimple.pdb'):
+        #                #                    coot.write_pdb_file(item,os.path.join(self.project_directory,self.xtalID,'cootOut','Refine_'+str(self.Serial),'refine.modified.pdb'))
+        #                #                    break
+        #
+        #            XChemRefine.panddaRefine(self.project_directory, self.xtalID, self.compoundID,
+        #                                     self.data_source).RunQuickRefine(self.Serial, self.RefmacParams,
+        #                                                                      self.external_software, self.xce_logfile,
+        #                                                                      self.refinementProtocol, self.covLinkAtomSpec)
+        #        else:
 
         #######################################################
         if not os.path.isdir(os.path.join(self.project_directory, self.xtalID, 'cootOut')):
             os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut'))
         # create folder for new refinement cycle
         try:
-            self.Logfile.insert('==> COOT: trying to make folder: %s' %os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
-            os.mkdir(os.path.join(self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+            self.Logfile.insert('==> COOT: trying to make folder: %s' % os.path.join(
+                self.project_directory, self.xtalID, 'cootOut', 'Refine_' + str(self.Serial)))
+            os.mkdir(os.path.join(self.project_directory, self.xtalID,
+                                  'cootOut', 'Refine_' + str(self.Serial)))
         except OSError:
-            self.Logfile.warning('==> COOT: folder exists; will overwrite contents!')
+            self.Logfile.warning(
+                '==> COOT: folder exists; will overwrite contents!')
 #                print '==> XCE: WARNING -> folder exists; will overwrite contents!'
-            self.Logfile.warning('==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
+            self.Logfile.warning(
+                '==> COOT: it is advised to check the sample directory as this might be a symptom for a PDB file problem')
 
 
 #        #######################################################
@@ -1459,10 +1527,11 @@ class GUI(object):
         if foundPDB:
             coot.delete_hydrogens(item)
             coot.write_pdb_file(item, os.path.join(self.project_directory, self.xtalID, 'cootOut',
-                                                           'Refine_' + str(self.Serial), 'in.pdb'))
+                                                   'Refine_' + str(self.Serial), 'in.pdb'))
 
 #            self.Refine.RunRefmac(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
-            self.Refine.RunBuster(self.Serial, self.RefmacParams, self.external_software, self.xce_logfile, self.covLinkAtomSpec)
+            self.Refine.RunBuster(self.Serial, self.RefmacParams,
+                                  self.external_software, self.xce_logfile, self.covLinkAtomSpec)
         self.index += 1
         if self.index >= len(self.Todo):
             #            self.index = len(self.Todo)
@@ -1476,14 +1545,14 @@ class GUI(object):
         print self.RefmacParams
 
     def covalentLinkDef(self, widget):
-        coot.user_defined_click_py(2,self.show_potential_link)
+        coot.user_defined_click_py(2, self.show_potential_link)
 
-    def show_potential_link(self,*clicks):
+    def show_potential_link(self, *clicks):
         # first find imol of protein molecule
         # it's a prerequisite that the ligand is merged into the protein
         imol_protein = None
         for imol in coot_utils_XChem.molecule_number_list():
-            print '>',coot.molecule_name(imol)
+            print '>', coot.molecule_name(imol)
             if coot.molecule_name(imol).endswith(self.pdb_style) or \
                     coot.molecule_name(imol).endswith('init.pdb') or \
                     coot.molecule_name(imol).endswith('dimple.pdb') or \
@@ -1497,18 +1566,24 @@ class GUI(object):
             click_2 = clicks[1]
             imol_1 = click_1[1]
             imol_2 = click_2[1]
-            print 'imolp',imol,'imo11',imol_1,'imol2',imol_2
+            print 'imolp', imol, 'imo11', imol_1, 'imol2', imol_2
             if imol_1 == imol_2 and imol_1 == imol_protein:
-                print 'click_1',click_1
+                print 'click_1', click_1
                 self.covLinkAtomSpec = None
-                xyz_1 = atom_info_string(click_1[1],click_1[2],click_1[3],click_1[4],click_1[5],click_1[6])
-                residue_1 = residue_name(click_1[1],click_1[2],click_1[3],click_1[4])
-                xyz_2 = atom_info_string(click_2[1],click_2[2],click_2[3],click_2[4],click_2[5],click_2[6])
-                residue_2 = residue_name(click_2[1],click_2[2],click_2[3],click_2[4])
+                xyz_1 = atom_info_string(
+                    click_1[1], click_1[2], click_1[3], click_1[4], click_1[5], click_1[6])
+                residue_1 = residue_name(
+                    click_1[1], click_1[2], click_1[3], click_1[4])
+                xyz_2 = atom_info_string(
+                    click_2[1], click_2[2], click_2[3], click_2[4], click_2[5], click_2[6])
+                residue_2 = residue_name(
+                    click_2[1], click_2[2], click_2[3], click_2[4])
                 thick = 4
-                to_generic_object_add_line(self.covLinkObject, "yellowtint", thick, xyz_1[3], xyz_1[4], xyz_1[5], xyz_2[3], xyz_2[4], xyz_2[5])
+                to_generic_object_add_line(
+                    self.covLinkObject, "yellowtint", thick, xyz_1[3], xyz_1[4], xyz_1[5], xyz_2[3], xyz_2[4], xyz_2[5])
                 set_display_generic_object(self.covLinkObject, 1)
-                self.covLinkAtomSpec = [imol_protein,click_1,click_2,residue_1,residue_2]
+                self.covLinkAtomSpec = [imol_protein,
+                                        click_1, click_2, residue_1, residue_2]
             else:
                 print 'error: both atoms must belong to the same object; did you merge the ligand with your protein?'
 
@@ -1539,8 +1614,10 @@ class GUI(object):
                 self.cb.remove_text(0)
         self.Todo = []
         self.siteDict = {}
-        self.Todo, self.siteDict = self.db.get_todoList_for_coot(self.selection_mode)
-        self.status_label.set_text('found {0!s} samples'.format(len(self.Todo)))
+        self.Todo, self.siteDict = self.db.get_todoList_for_coot(
+            self.selection_mode)
+        self.status_label.set_text(
+            'found {0!s} samples'.format(len(self.Todo)))
         # refresh sample CB
         for item in sorted(self.Todo):
             self.cb.append_text('{0!s}'.format(item[0]))
@@ -1569,7 +1646,8 @@ class GUI(object):
         for imol in coot_utils_XChem.molecule_number_list():
             if imol not in self.mol_dict['ligand_stereo']:
                 continue
-            molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
+            molName = coot.molecule_name(imol)[coot.molecule_name(
+                imol).rfind('/')+1:].replace('.pdb', '')
             if molName == cpd:
                 print '===> XCE: moving ligand to pointer'
                 coot_utils_XChem.move_molecule_here(imol)
@@ -1579,34 +1657,40 @@ class GUI(object):
 #        print 'LIGAND: ', self.mol_dict['ligand']
 #        coot_utils_XChem.move_molecule_here(self.mol_dict['ligand'])
 
-
     def merge_ligand_into_protein(self, widget):
         cpd = str(self.select_cpd_cb.get_active_text())
         for imol in coot_utils_XChem.molecule_number_list():
             if imol not in self.mol_dict['ligand_stereo']:
                 continue
-            molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/')+1:].replace('.pdb','')
+            molName = coot.molecule_name(imol)[coot.molecule_name(
+                imol).rfind('/')+1:].replace('.pdb', '')
             if molName == cpd:
-                print '===> XCE: merge ligand into protein structure -->',cpd
+                print '===> XCE: merge ligand into protein structure -->', cpd
                 coot.merge_molecules_py([imol], self.mol_dict['protein'])
                 if 'rhofit' in coot.molecule_name(imol) or 'phenix' in coot.molecule_name(imol):
-                    molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind('/') + 1:].replace('.pdb', '').replace('_phenix','').replace('_rhofit','')
+                    molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind(
+                        '/') + 1:].replace('.pdb', '').replace('_phenix', '').replace('_rhofit', '')
                 if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif')):
-                    os.system('/bin/rm %s' % os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif'))
-                    print 'XCE: changing directory', os.path.join(self.project_directory, self.xtalID)
+                    os.system('/bin/rm %s' % os.path.join(self.project_directory,
+                                                          self.xtalID, self.compoundID + '.cif'))
+                    print 'XCE: changing directory', os.path.join(
+                        self.project_directory, self.xtalID)
                     os.chdir(os.path.join(self.project_directory, self.xtalID))
                     print 'XCE: changing symlink ln -s %s %s.cif' % (
-                    os.path.join('compound', molName + '.cif'), self.compoundID)
-                    os.system('ln -s %s %s.cif' % (os.path.join('compound', molName + '.cif'), self.compoundID))
+                        os.path.join('compound', molName + '.cif'), self.compoundID)
+                    os.system(
+                        'ln -s %s %s.cif' % (os.path.join('compound', molName + '.cif'), self.compoundID))
                 if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb')):
-                    os.system('/bin/rm %s' % os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb'))
-                    print 'XCE: changing directory', os.path.join(self.project_directory, self.xtalID)
+                    os.system('/bin/rm %s' % os.path.join(self.project_directory,
+                                                          self.xtalID, self.compoundID + '.pdb'))
+                    print 'XCE: changing directory', os.path.join(
+                        self.project_directory, self.xtalID)
                     os.chdir(os.path.join(self.project_directory, self.xtalID))
                     print 'XCE: changing symlink ln -s %s %s.pdb' % (
-                    os.path.join('compound', molName + '.pdb'), self.compoundID)
+                        os.path.join('compound', molName + '.pdb'), self.compoundID)
                     os.system('ln -s %s %s.pdb' % (os.path.join('compound', molName
-                                                            + '.pdb'), self.compoundID))
-            print '===> XCE: deleting ligand molecule',molName
+                                                                + '.pdb'), self.compoundID))
+            print '===> XCE: deleting ligand molecule', molName
             coot.close_molecule(imol)
 
         self.select_cpd_cb.set_sensitive(False)
@@ -1619,15 +1703,16 @@ class GUI(object):
 
     def show_molprobity_to_do(self, widget):
         print self.panddaSerial
-        AdjPanddaSerial = (4 - len(str(self.Serial))) * '0' + str(int(self.panddaSerial) - 1)
+        AdjPanddaSerial = (4 - len(str(self.Serial))) * \
+            '0' + str(int(self.panddaSerial) - 1)
 
         print '==> XCE COOT: trying to find ' + os.path.join(self.project_directory, self.xtalID,
                                                              'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py')
         if os.path.isfile(os.path.join(self.project_directory, self.xtalID,
-                                                             'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py')):
+                                       'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py')):
             print '==> XCE: running MolProbity Summary for', self.xtalID
             coot.run_script(os.path.join(self.project_directory, self.xtalID,
-                                                             'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py'))
+                                         'Refine_' + str(self.Serial - 1)+'-report/molprobe/molprobity_coot.py'))
 #        elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
 #                                         'molprobity_coot.py')):
 #            print '==> XCE: running MolProbity Summary for', self.xtalID

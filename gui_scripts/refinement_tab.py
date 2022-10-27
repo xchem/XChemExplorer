@@ -1,9 +1,9 @@
-import sys, os
+import layout
+import sys
+import os
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'gui_scripts'))
-
-import layout
 
 
 class RefinementTab():
@@ -20,6 +20,7 @@ class RefinementTab():
 
         # table
         xce_object.refinement_table = QtGui.QTableWidget()
-        self.layout_funcs.table_setup(xce_object.refinement_table, xce_object.refinement_table_columns)
-        xce_object.summary_vbox_for_table.addWidget(xce_object.refinement_table)
-
+        self.layout_funcs.table_setup(
+            xce_object.refinement_table, xce_object.refinement_table_columns)
+        xce_object.summary_vbox_for_table.addWidget(
+            xce_object.refinement_table)

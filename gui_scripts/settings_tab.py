@@ -1,9 +1,9 @@
-import sys, os
+import layout
+import sys
+import os
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'gui_scripts'))
-
-import layout
 
 
 class SettingsTab():
@@ -30,41 +30,38 @@ class SettingsTab():
         # Settings Tab
         xce_object.data_collection_vbox_for_settings = QtGui.QVBoxLayout()
 
-        xce_object.buttons_etc.setLayout(xce_object.data_collection_vbox_for_settings)
+        xce_object.buttons_etc.setLayout(
+            xce_object.data_collection_vbox_for_settings)
         xce_object.scroll.setWidget(xce_object.buttons_etc)
 
-        xce_object.initial_model_directory_label = self.layout_funcs.settings_section_setup \
-            (xce_object.data_collection_vbox_for_settings,
-             '\n\n<b>Project Directory: - REQUIRED -</b>',
-             xce_object.initial_model_directory,
-             'Select Project Directory',
-             xce_object.settings_button_clicked)
+        xce_object.initial_model_directory_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                            '\n\n<b>Project Directory: - REQUIRED -</b>',
+                                                                                            xce_object.initial_model_directory,
+                                                                                            'Select Project Directory',
+                                                                                            xce_object.settings_button_clicked)
 
-        xce_object.reference_directory_label = self.layout_funcs.settings_section_setup \
-            (xce_object.data_collection_vbox_for_settings,
-             '\n\n<b>Reference Structure Directory: - OPTIONAL -</b>',
-             xce_object.reference_directory,
-             'Select Reference Structure Directory',
-             xce_object.settings_button_clicked)
+        xce_object.reference_directory_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                        '\n\n<b>Reference Structure Directory: - OPTIONAL -</b>',
+                                                                                        xce_object.reference_directory,
+                                                                                        'Select Reference Structure Directory',
+                                                                                        xce_object.settings_button_clicked)
 
         if xce_object.data_source_file != '':
             xce_object.data_source_file_label_text = os.path.join(xce_object.database_directory,
                                                                   xce_object.data_source_file)
-            xce_object.data_source_file_label = self.layout_funcs.settings_section_setup \
-                (xce_object.data_collection_vbox_for_settings,
-                 '\n\n<b>Data Source: - REQUIRED -</b>',
-                 xce_object.data_source_file_label_text,
-                 'Select Data Source File',
-                 xce_object.settings_button_clicked)
+            xce_object.data_source_file_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                         '\n\n<b>Data Source: - REQUIRED -</b>',
+                                                                                         xce_object.data_source_file_label_text,
+                                                                                         'Select Data Source File',
+                                                                                         xce_object.settings_button_clicked)
         else:
             xce_object.data_source_file_label_text = ''
 
-            xce_object.data_source_file_label = self.layout_funcs.settings_section_setup \
-                (xce_object.data_collection_vbox_for_settings,
-                 '\n\n<b>Data Source: - REQUIRED -</b>',
-                 xce_object.data_source_file_label_text,
-                 'Select Data Source File',
-                 xce_object.settings_button_clicked)
+            xce_object.data_source_file_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                         '\n\n<b>Data Source: - REQUIRED -</b>',
+                                                                                         xce_object.data_source_file_label_text,
+                                                                                         'Select Data Source File',
+                                                                                         xce_object.settings_button_clicked)
 
         xce_object.data_collection_vbox_for_settings.addWidget(
             QtGui.QLabel('\n\n<b>Data Collection Directory: (e.g. /dls/i04-1/data/2017/lb18145-70) -</b>'))
@@ -74,18 +71,23 @@ class SettingsTab():
         settings_beamline_vbox = QtGui.QVBoxLayout()
 
         settings_hbox_beamline_directory = QtGui.QHBoxLayout()
-        xce_object.beamline_directory_label = QtGui.QLabel(xce_object.beamline_directory)
-        settings_hbox_beamline_directory.addWidget(xce_object.beamline_directory_label)
-        settings_button_beamline_directory = QtGui.QPushButton('Select Data Collection Directory')
+        xce_object.beamline_directory_label = QtGui.QLabel(
+            xce_object.beamline_directory)
+        settings_hbox_beamline_directory.addWidget(
+            xce_object.beamline_directory_label)
+        settings_button_beamline_directory = QtGui.QPushButton(
+            'Select Data Collection Directory')
         settings_button_beamline_directory.setMaximumWidth(500)
 
-        settings_button_beamline_directory.clicked.connect(xce_object.settings_button_clicked)
+        settings_button_beamline_directory.clicked.connect(
+            xce_object.settings_button_clicked)
 
-        settings_hbox_beamline_directory.addWidget(settings_button_beamline_directory)
+        settings_hbox_beamline_directory.addWidget(
+            settings_button_beamline_directory)
         settings_beamline_vbox.addLayout(settings_hbox_beamline_directory)
-        xce_object.read_agamemnon = QtGui.QCheckBox('Read Agamemnon data structure')
+        xce_object.read_agamemnon = QtGui.QCheckBox(
+            'Read Agamemnon data structure')
         settings_beamline_vbox.addWidget(xce_object.read_agamemnon)
-
 
 
 #        settings_hbox_datasets_summary_file = QtGui.QHBoxLayout()
@@ -104,38 +106,36 @@ class SettingsTab():
 #        settings_beamline_vbox.addLayout(settings_hbox_datasets_summary_file)
 
         settings_beamline_frame.setLayout(settings_beamline_vbox)
-        xce_object.data_collection_vbox_for_settings.addWidget(settings_beamline_frame)
+        xce_object.data_collection_vbox_for_settings.addWidget(
+            settings_beamline_frame)
 
-        xce_object.ccp4_scratch_directory_label = self.layout_funcs.settings_section_setup \
-            (xce_object.data_collection_vbox_for_settings,
-             '\n\n<b>CCP4_SCR Directory: - OPTIONAL -</b>',
-             xce_object.ccp4_scratch_directory,
-             'Select CCP4_SCR Directory',
-             xce_object.settings_button_clicked)
+        xce_object.ccp4_scratch_directory_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                           '\n\n<b>CCP4_SCR Directory: - OPTIONAL -</b>',
+                                                                                           xce_object.ccp4_scratch_directory,
+                                                                                           'Select CCP4_SCR Directory',
+                                                                                           xce_object.settings_button_clicked)
 
-        xce_object.panddas_directory_label = self.layout_funcs.settings_section_setup \
-            (xce_object.data_collection_vbox_for_settings,
-             '\n\n<b>PANDDAs directory: - OPTIONAL -</b>',
-             xce_object.panddas_directory,
-             'Select PanDDA Directory',
-             xce_object.settings_button_clicked)
+        xce_object.panddas_directory_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                      '\n\n<b>PANDDAs directory: - OPTIONAL -</b>',
+                                                                                      xce_object.panddas_directory,
+                                                                                      'Select PanDDA Directory',
+                                                                                      xce_object.settings_button_clicked)
 
-        xce_object.html_export_directory_label = self.layout_funcs.settings_section_setup \
-            (xce_object.data_collection_vbox_for_settings,
-             '\n\n<b>HTML export directory: - OPTIONAL -</b>',
-             xce_object.html_export_directory,
-             'Select HTML Export Directory',
-             xce_object.settings_button_clicked)
+        xce_object.html_export_directory_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                          '\n\n<b>HTML export directory: - OPTIONAL -</b>',
+                                                                                          xce_object.html_export_directory,
+                                                                                          'Select HTML Export Directory',
+                                                                                          xce_object.settings_button_clicked)
 
-        xce_object.group_deposition_directory_label = self.layout_funcs.settings_section_setup \
-            (xce_object.data_collection_vbox_for_settings,
-             '\n\n<b>Group deposition directory: - OPTIONAL -</b>',
-             xce_object.group_deposit_directory,
-             'Select Group deposition Directory',
-             xce_object.settings_button_clicked)
+        xce_object.group_deposition_directory_label = self.layout_funcs.settings_section_setup(xce_object.data_collection_vbox_for_settings,
+                                                                                               '\n\n<b>Group deposition directory: - OPTIONAL -</b>',
+                                                                                               xce_object.group_deposit_directory,
+                                                                                               'Select Group deposition Directory',
+                                                                                               xce_object.settings_button_clicked)
 
         # xce_object.data_collection_vbox_for_settings.setSpacing(0)
-        xce_object.data_collection_vbox_for_settings.setContentsMargins(30, 30, 30, 30)
+        xce_object.data_collection_vbox_for_settings.setContentsMargins(
+            30, 30, 30, 30)
 
         xce_object.buttons_etc.resize(xce_object.buttons_etc.sizeHint().width() + 100, xce_object.buttons_etc.sizeHint()
                                       .height())
