@@ -11,7 +11,7 @@ def reset_residues(projectDir):
             if os.path.isfile(mol):
                 if not os.path.isfile(mol+'_original'):
                     os.system('/bin/cp %s %s' % (mol, mol+'_original'))
-                print '%s: found %s' % (xtal, mol)
+                print('%s: found %s' % (xtal, mol))
                 out = ''
                 changeResi = None
                 for line in open(mol):
@@ -26,7 +26,7 @@ def reset_residues(projectDir):
                             out += line[:56] + '1.00' + line[60:]
                     else:
                         out += line
-                print 'saving file', mol, '...'
+                print('saving file', mol, '...')
                 newFile = open(mol, 'w')
                 newFile.write(out)
                 newFile.close()

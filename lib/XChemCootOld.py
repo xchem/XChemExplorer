@@ -36,10 +36,10 @@ class GUI(object):
 
         ###########################################################################################
         # read in settings file from XChemExplorer to set the relevant paths
-        print 'current dir', os.getcwd()
+        print('current dir', os.getcwd())
         self.settings = pickle.load(open(".xce_settings.pkl", "rb"))
         remote_qsub_submission = self.settings['remote_qsub']
-        print 'setting', self.settings
+        print('setting', self.settings)
 #        self.refine_model_directory=self.settings['refine_model_directory']
         self.database_directory = self.settings['database_directory']
         self.xce_logfile = self.settings['xce_logfile']
@@ -726,7 +726,7 @@ class GUI(object):
         # updating ligand confidence radiobuttons
         current_stage = 0
         for i, entry in enumerate(self.ligand_confidence_category):
-            print '--->', entry, self.ligand_confidence
+            print('--->', entry, self.ligand_confidence)
             try:
                 if entry.split()[0] == self.ligand_confidence.split()[0]:
                     current_stage = i
@@ -784,18 +784,18 @@ class GUI(object):
                     if self.compoundID+'.pdb' in coot.molecule_name(imol):
                         coot.close_molecule(imol)
 
-        print 'pandda index', self.pandda_index
+        print('pandda index', self.pandda_index)
         self.spider_plot = self.siteDict[self.xtalID][self.pandda_index][4]
-        print 'new spider plot:', self.spider_plot
+        print('new spider plot:', self.spider_plot)
         self.event_map = self.siteDict[self.xtalID][self.pandda_index][0]
-        print 'new event map:', self.event_map
+        print('new event map:', self.event_map)
         self.ligand_confidence = str(
             self.siteDict[self.xtalID][self.pandda_index][7])
         self.update_LigandConfidence_radiobutton()
         site_x = float(self.siteDict[self.xtalID][self.pandda_index][1])
         site_y = float(self.siteDict[self.xtalID][self.pandda_index][2])
         site_z = float(self.siteDict[self.xtalID][self.pandda_index][3])
-        print 'new site coordinates:', site_x, site_y, site_z
+        print('new site coordinates:', site_x, site_y, site_z)
         coot.set_rotation_centre(site_x, site_y, site_z)
 
         self.ligand_site_name_value.set_label(
@@ -809,7 +809,7 @@ class GUI(object):
 
         self.spider_plot_data = self.db.get_db_pandda_dict_for_sample_and_site_and_event(
             self.xtalID, self.site_index, self.event_index)
-        print '>>>>> spider plot data', self.spider_plot_data
+        print('>>>>> spider plot data', self.spider_plot_data)
         self.ligandIDValue.set_label(
             self.spider_plot_data['PANDDA_site_ligand_id'])
         try:
@@ -886,23 +886,23 @@ class GUI(object):
 
     def experiment_stage_button_clicked(self, widget, data=None):
         self.db_dict_mainTable['RefinementOutcome'] = data
-        print '==> XCE: setting Refinement Outcome for ' + \
-            self.xtalID+' to '+str(data)+' in mainTable of datasource'
+        print('==> XCE: setting Refinement Outcome for ' + \
+            self.xtalID+' to '+str(data)+' in mainTable of datasource')
         self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
 
     def ligand_confidence_button_clicked(self, widget, data=None):
-        print 'PANDDA_index', self.pandda_index
+        print('PANDDA_index', self.pandda_index)
         if self.pandda_index == -1:
             self.db_dict_mainTable['RefinementLigandConfidence'] = data
-            print '==> XCE: setting Ligand Confidence for ' + \
-                self.xtalID+' to '+str(data)+' in mainTable of datasource'
+            print('==> XCE: setting Ligand Confidence for ' + \
+                self.xtalID+' to '+str(data)+' in mainTable of datasource')
             self.db.update_data_source(self.xtalID, self.db_dict_mainTable)
             self.Todo[self.index][6] = data
         else:
             self.db_dict_panddaTable['PANDDA_site_confidence'] = data
-            print '==> XCE: setting Ligand Confidence for '+self.xtalID + \
+            print('==> XCE: setting Ligand Confidence for '+self.xtalID + \
                 ' (site='+str(self.site_index)+', event='+str(self.event_index) + \
-                ') to '+str(data)+' in panddaTable of datasource'
+                ') to '+str(data)+' in panddaTable of datasource')
             self.db.update_site_event_panddaTable(
                 self.xtalID, self.site_index, self.event_index, self.db_dict_panddaTable)
             self.siteDict[self.xtalID][self.pandda_index][7] = data
@@ -922,13 +922,13 @@ class GUI(object):
         if self.Serial == 1:
             # i.e. no refinement has been done; data is probably straight out of dimple
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
-                print '==> XCE: updating quality indicators in data source for '+self.xtalID
+                print('==> XCE: updating quality indicators in data source for '+self.xtalID)
                 XChemUtils.parse().update_datasource_with_PDBheader(self.xtalID, self.data_source,
                                                                     os.path.join(self.project_directory, self.xtalID, self.pdb_style))
                 XChemUtils.parse().update_datasource_with_phenix_validation_summary(
                     self.xtalID, self.data_source, '')   # '' because file does not exist
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.pdb')):
-                print '==> XCE: updating quality indicators in data source for '+self.xtalID
+                print('==> XCE: updating quality indicators in data source for '+self.xtalID)
                 XChemUtils.parse().update_datasource_with_PDBheader(self.xtalID, self.data_source,
                                                                     os.path.join(self.project_directory, self.xtalID, 'dimple.pdb'))
                 XChemUtils.parse().update_datasource_with_phenix_validation_summary(
@@ -1135,7 +1135,7 @@ class GUI(object):
         self.cb.set_active(self.index)
 
     def RefinementParams(self, widget):
-        print '\n==> XCE: changing refinement parameters'
+        print('\n==> XCE: changing refinement parameters')
         self.RefmacParams = self.Refine.RefinementParams(self.RefmacParams)
 
     def set_selection_mode(self, widget):
@@ -1179,28 +1179,28 @@ class GUI(object):
         return fig
 
     def place_ligand_here(self, widget):
-        print '===> XCE: moving ligand to pointer'
+        print('===> XCE: moving ligand to pointer')
 #        coot.move_molecule_here(<molecule_number>)
-        print 'LIGAND: ', self.mol_dict['ligand']
+        print('LIGAND: ', self.mol_dict['ligand'])
         coot_utils_XChem.move_molecule_here(self.mol_dict['ligand'])
 
     def merge_ligand_into_protein(self, widget):
-        print '===> XCE: merge ligand into protein structure'
+        print('===> XCE: merge ligand into protein structure')
         # merge_molecules(list(imols), imol) e.g. merge_molecules([1],0)
         coot.merge_molecules_py(
             [self.mol_dict['ligand']], self.mol_dict['protein'])
-        print '===> XCE: deleting ligand molecule'
+        print('===> XCE: deleting ligand molecule')
         coot.close_molecule(self.mol_dict['ligand'])
 
     def show_molprobity_to_do(self, widget):
         if os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_'+str(self.Serial-1), 'molprobity_coot.py')):
-            print '==> XCE: running MolProbity Summary for', self.xtalID
+            print('==> XCE: running MolProbity Summary for', self.xtalID)
             coot.run_script(os.path.join(self.project_directory, self.xtalID,
                                          'Refine_'+str(self.Serial-1), 'molprobity_coot.py'))
         else:
-            print '==> XCE: cannot find ' + \
+            print('==> XCE: cannot find ' + \
                 os.path.join(self.project_directory, self.xtalID,
-                             'Refine_'+str(self.Serial-1), 'molprobity_coot.py')
+                             'Refine_'+str(self.Serial-1), 'molprobity_coot.py'))
 
 #    def fit_ligand(self,widget):
 #        print 'fit'

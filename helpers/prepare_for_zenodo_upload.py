@@ -11,28 +11,28 @@ def copy_files(htmlDir):
         os.mkdir('zenodo')
     os.chdir(os.path.join(htmlDir, 'zenodo'))
 
-    print 'copying compoundImages'
+    print('copying compoundImages')
     os.system('/bin/cp ../compoundImages/* .')
 
-    print 'copying pdbs'
+    print('copying pdbs')
     os.system('/bin/cp ../pdbs/* .')
 
-    print 'copying maps'
+    print('copying maps')
     os.system('/bin/cp ../maps/* .')
 
-    print 'copying residueplots'
+    print('copying residueplots')
     os.system('/bin/cp ../residueplots/* .')
 
-    print 'copying mapImages'
+    print('copying mapImages')
     os.system('/bin/cp ../mapImages/* .')
 
-    print 'copying icbs'
+    print('copying icbs')
     os.system('/bin/cp ../icbs/* .')
 
-    print 'copying css'
+    print('copying css')
     os.system('/bin/cp ../css/* .')
 
-    print 'copying js'
+    print('copying js')
     os.system('/bin/cp ../js/* .')
 
 
@@ -67,7 +67,7 @@ def edit_index_html(htmlDir, uploadID):
                 'js/', 'https://zenodo.org/record/'+uploadID+'/files/')
         out += line
 
-    print 'writing index.html to', os.path.join(htmlDir, 'zenodo')
+    print('writing index.html to', os.path.join(htmlDir, 'zenodo'))
     f = open('0_index.html', 'w')
     f.write(out)
     f.close()
@@ -92,7 +92,7 @@ def edit_icb_html_files(htmlDir, uploadID):
                 line = line.replace(
                     ' act.projectFile = "', ' act.projectFile = "https://zenodo.org/record/'+uploadID+'/files/')
             out += line
-        print 'updating', file
+        print('updating', file)
         f = open(file, 'w')
         f.write(out)
         f.close()
@@ -100,7 +100,7 @@ def edit_icb_html_files(htmlDir, uploadID):
 
 if __name__ == '__main__':
 
-    print len(sys.argv)
+    print(len(sys.argv))
 
     if len(sys.argv) == 2:
         htmlDir = sys.argv[1]
@@ -115,4 +115,4 @@ if __name__ == '__main__':
             edit_icb_html_files(htmlDir, uploadID)
 
     else:
-        print 'wrong input!'
+        print('wrong input!')

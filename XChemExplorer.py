@@ -177,7 +177,7 @@ class XChemExplorer(QtGui.QApplication):
     def search_for_datasets(self):
         self.update_log.insert(
             'search diffraction data directory for datasets...')
-        print('will search ' + str(self.diffraction_data_directory))
+        print(('will search ' + str(self.diffraction_data_directory)))
         self.work_thread = XChemMain.find_diffraction_image_directory_fast(
             self.diffraction_data_directory)
         self.explorer_active = 1
@@ -222,7 +222,7 @@ class XChemExplorer(QtGui.QApplication):
                         trans_dict[dataset] = new_sample_id
                 if len(trans_dict) >= 1:
                     allRows = self.datasets_reprocess_table.rowCount()
-                    for row in xrange(0, allRows):
+                    for row in range(0, allRows):
                         dataset_id = str(
                             self.datasets_reprocess_table.item(row, 0).text())
                         sample_id = str(
@@ -243,7 +243,7 @@ class XChemExplorer(QtGui.QApplication):
         for index in sorted(indexes):
             xtal = str(self.datasets_reprocess_table.item(
                 index.row(), 1).text())
-            print(xtal, self.diffraction_data_table_dict[xtal][0])
+            print((xtal, self.diffraction_data_table_dict[xtal][0]))
             self.update_log.insert(
                 '{0!s} marked for reprocessing'.format(index.row()))
             self.diffraction_data_table_dict[xtal][0].setChecked(True)
@@ -481,7 +481,7 @@ class XChemExplorer(QtGui.QApplication):
         pg_ref = ''
         ucVol_ref = 0.0
         for reference in self.reference_file_list:
-            print(reference[0], reference_root)
+            print((reference[0], reference_root))
             if reference[0] == reference_root:
                 pg_ref = reference[5]
                 ucVol_ref = reference[4]
@@ -507,7 +507,7 @@ class XChemExplorer(QtGui.QApplication):
                 continue
 
             if pg_xtal == pg_ref and difference < self.allowed_unitcell_difference_percent:
-                print(xtal, pg_xtal, ucVol_xtal)
+                print((xtal, pg_xtal, ucVol_xtal))
                 index = reference_file_selection_combobox.findText(
                     reference_root, QtCore.Qt.MatchFixedString)
                 reference_file_selection_combobox.setCurrentIndex(index)
@@ -807,7 +807,7 @@ class XChemExplorer(QtGui.QApplication):
             self.pandda_output_data_dir_entry.setText(self.panddas_directory)
             self.ground_state_pandda_directory_label.setText(
                 self.panddas_directory)
-            print('PANDDA', self.panddas_directory)
+            print(('PANDDA', self.panddas_directory))
             self.settings['panddas_directory'] = self.panddas_directory
 
             self.layout_funcs.pandda_html(self)
@@ -1050,7 +1050,7 @@ class XChemExplorer(QtGui.QApplication):
 
     def run_qsub_remotely(self):
         self.remote_qsub_submission = str(self.remote_qsub_command.text())
-        print(str(self.remote_qsub_submission))
+        print((str(self.remote_qsub_submission)))
         if self.remote_qsub_checkbox.isChecked():
             self.update_log.insert(
                 'submitting jobs to remote machine with: %s' % self.remote_qsub_submission)
@@ -2664,7 +2664,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.deposit_dict['pdbx_grant_country_three'], QtCore.Qt.MatchFixedString)
             self.pdbx_grant_country_three.setCurrentIndex(index)
 
-        except ValueError, e:
+        except ValueError as e:
             #            self.update_status_bar('Sorry, this is not a XChemExplorer deposit file!')
             self.update_log.error(
                 'file is not a valid .deposit file: ' + str(e))
@@ -3058,7 +3058,7 @@ class XChemExplorer(QtGui.QApplication):
                         db_dict[str(self.header[n])] = str(entry)
                 self.xtal_db_dict[str(line[sampleID_column])] = db_dict
 
-        print('==> XCE: found ' + str(len(self.xtal_db_dict)) + ' samples')
+        print(('==> XCE: found ' + str(len(self.xtal_db_dict)) + ' samples'))
 
     def datasource_menu_save_samples(self):
         print('hallo')
@@ -3122,7 +3122,7 @@ class XChemExplorer(QtGui.QApplication):
 
     def show_html_summary_in_firefox(self, xtal):
         html_summary = self.albula_button_dict[xtal][2]
-        print('html_summary', html_summary)
+        print(('html_summary', html_summary))
         new = 2
         webbrowser.open(html_summary, new=new)
 
@@ -3133,7 +3133,7 @@ class XChemExplorer(QtGui.QApplication):
         if os.path.isfile(os.path.join(self.database_directory, self.data_source_file)):
             self.load_crystal_form_from_datasource()
             if self.xtalform_dict != {}:
-                print(self.xtalform_dict)
+                print((self.xtalform_dict))
                 for key in self.xtalform_dict:
                     self.pandda_analyse_crystal_from_selection_combobox.addItem(
                         key)
@@ -3209,10 +3209,10 @@ class XChemExplorer(QtGui.QApplication):
                 command = str(
                     'self.settings["' + key_list[current_key] + '"]= self.' + current_key)
                 exec(command)
-                print('==> XCE: found ' + key_list[current_key])
+                print(('==> XCE: found ' + key_list[current_key]))
             except:
-                print('==> XCE: WARNING: Failed to find settings for: ' + key_list[current_key] + ' Error type: '
-                      + str(sys.exc_info()[0]))
+                print(('==> XCE: WARNING: Failed to find settings for: ' + key_list[current_key] + ' Error type: '
+                      + str(sys.exc_info()[0])))
                 exec(str(current_key + " = ''"))
                 continue
 
@@ -3287,7 +3287,7 @@ class XChemExplorer(QtGui.QApplication):
                 'Sorry, this is not a XChemExplorer config file!')
 
         except:
-            print("Unexpected error:", sys.exc_info()[0])
+            print(("Unexpected error:", sys.exc_info()[0]))
             raise
 
     def save_config_file(self):
@@ -3401,18 +3401,18 @@ class XChemExplorer(QtGui.QApplication):
                                      reference_file_mtz,
                                      reference_file_cif])
                 else:
-                    print(
-                        'WARNING: ' + xtal + ' has not been submitted to dimple because no files were found: ')
+                    print((
+                        'WARNING: ' + xtal + ' has not been submitted to dimple because no files were found: '))
                     if not os.path.isfile(os.path.join(db_dict['ProjectDirectory'], xtal, db_dict['DataProcessingPathToMTZfile'],
                                                        db_dict['DataProcessingMTZfileName'])):
-                        print('    ' + str(os.path.join(db_dict['ProjectDirectory'], xtal, db_dict['DataProcessingPathToMTZfile'],
-                                                        db_dict['DataProcessingMTZfileName'])) + ' is missing')
+                        print(('    ' + str(os.path.join(db_dict['ProjectDirectory'], xtal, db_dict['DataProcessingPathToMTZfile'],
+                                                        db_dict['DataProcessingMTZfileName'])) + ' is missing'))
                     if not os.path.isfile(os.path.join(db_dict['ProjectDirectory'], xtal, db_dict['DataProcessingPathToMTZfile'])):
-                        print('    ' + str(os.path.join(
-                            db_dict['ProjectDirectory'], xtal, db_dict['DataProcessingPathToMTZfile'])) + ' is missing')
+                        print(('    ' + str(os.path.join(
+                            db_dict['ProjectDirectory'], xtal, db_dict['DataProcessingPathToMTZfile'])) + ' is missing'))
                     if not os.path.isfile(os.path.join(db_dict['DataProcessingPathToMTZfile'])):
-                        print(
-                            '    ' + str(os.path.join(db_dict['DataProcessingPathToMTZfile']) + ' is missing'))
+                        print((
+                            '    ' + str(os.path.join(db_dict['DataProcessingPathToMTZfile']) + ' is missing')))
 
         if job_list:
             self.update_log.insert(
@@ -3535,7 +3535,7 @@ class XChemExplorer(QtGui.QApplication):
 
         run_dict = {}
         allRows = self.datasets_reprocess_table.rowCount()
-        for row in xrange(0, allRows):
+        for row in range(0, allRows):
             dataset_id = str(self.datasets_reprocess_table.item(row, 0).text())
             sample_id = str(self.datasets_reprocess_table.item(row, 1).text())
             if self.diffraction_data_table_dict[dataset_id][0].isChecked():
@@ -3574,7 +3574,7 @@ class XChemExplorer(QtGui.QApplication):
 
     def update_reprocessing_table(self):
         allRows = self.datasets_reprocess_table.rowCount()
-        for row in xrange(0, allRows):
+        for row in range(0, allRows):
             sample_id = str(self.datasets_reprocess_table.item(row, 1).text())
             if sample_id in self.xtal_db_dict:
                 db_dict = self.xtal_db_dict[sample_id]
@@ -3881,8 +3881,8 @@ class XChemExplorer(QtGui.QApplication):
                     if self.main_tab_widget.currentIndex() == task_index:
                         if self.explorer_active == 0 and self.data_source_set == True:
                             if action == 'Run':
-                                print('==> XCE: Remote submission status = ' +
-                                      str(self.using_remote_qsub_submission))
+                                print(('==> XCE: Remote submission status = ' +
+                                      str(self.using_remote_qsub_submission)))
                                 # print(instruction)
                                 self.prepare_and_run_task(instruction)
                             elif action == 'Status':
@@ -5384,7 +5384,7 @@ class XChemExplorer(QtGui.QApplication):
     def get_sample_list_from_table(self, table):
         sampleList = []
         allRows = table.rowCount()
-        for row in xrange(0, allRows):
+        for row in range(0, allRows):
             sample_id = str(table.item(row, 0).text())
             sampleList.append(sample_id)
         return sorted(sampleList)
@@ -5392,7 +5392,7 @@ class XChemExplorer(QtGui.QApplication):
     def get_row_of_sample_in_table(self, table, xtal):
         allRows = table.rowCount()
         sampleRow = allRows
-        for n, row in enumerate(xrange(0, allRows)):
+        for n, row in enumerate(range(0, allRows)):
             sample_id = str(table.item(row, 0).text())
             if sample_id == xtal:
                 sampleRow = n
@@ -5485,9 +5485,9 @@ class XChemExplorer(QtGui.QApplication):
                 cell_text.setTextAlignment(
                     QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter)
                 table.setItem(row, column, cell_text)
-                print('row: {0!s}   column: {1!s}   value: {2!s}   header: {3!s}'.format(
-                    row, column, cell_text, header[0]))
-                print('column_name {0!s}'.format(column_name))
+                print(('row: {0!s}   column: {1!s}   value: {2!s}   header: {3!s}'.format(
+                    row, column, cell_text, header[0])))
+                print(('column_name {0!s}'.format(column_name)))
 
     def populate_datasets_summary_table_NEW(self):
         self.status_bar.showMessage(
@@ -5605,10 +5605,10 @@ class XChemExplorer(QtGui.QApplication):
             score = self.data_collection_table.item(selected_row, 12).text()
             for q in range(13):
                 try:
-                    print('--> {0!s}: {1!s}'.format(q,
-                                                    self.data_collection_table.item(selected_row, q).text()))
+                    print(('--> {0!s}: {1!s}'.format(q,
+                                                    self.data_collection_table.item(selected_row, q).text())))
                 except AttributeError:
-                    print('--> {0!s}: None'.format(q))
+                    print(('--> {0!s}: None'.format(q)))
             # get db_dict from collectionTable for visit, run, autoproc
 #            dbDict = self.db.get_db_dict_for_visit_run_autoproc(xtal,visit,run,autoproc)
             dbDict = self.db.get_db_dict_for_visit_run_autoproc_score(
@@ -5651,7 +5651,7 @@ class XChemExplorer(QtGui.QApplication):
                     'herere' + str(self.data_collection_column_three_dict))
                 dbTmp = self.xtal_db_dict[key]
                 stage = dbTmp['RefinementOutcome'].split()[0]
-                print('===>', key, stage)
+                print(('===>', key, stage))
                 if int(stage) > 2:
                     msgBox = QtGui.QMessageBox()
                     msgBox.setText(
@@ -5668,10 +5668,10 @@ class XChemExplorer(QtGui.QApplication):
                             'will not change data processing selection')
                         # restore previous selection
                         for n, entry in enumerate(self.data_collection_dict[key]):
-                            print('==>', n)
+                            print(('==>', n))
                             if entry[0] == 'logfile':
                                 if entry[8]:
-                                    print('===> found:', n)
+                                    print(('===> found:', n))
                                     self.data_collection_column_three_dict[key][0].selectRow(
                                         n)
                         break

@@ -31,7 +31,7 @@ def find_highest_resolution_datasets(panddaDir):
                     for item in tmpLine.split(','):
                         if item != '':
                             datasetList.append(item)
-    print datasetList
+    print(datasetList)
     return datasetList
 
 
@@ -45,7 +45,7 @@ def get_datasets_without_event_map(panddaDir, datasetList):
                 break
         if noEvent:
             datasetListwithoutEvent.append(dataset)
-    print datasetListwithoutEvent
+    print(datasetListwithoutEvent)
     return datasetListwithoutEvent
 
 
@@ -58,7 +58,7 @@ def select_dataset_with_lowest_Rfree(panddaDir, datasetListwithoutEvent):
                 panddaDir, 'processed_datasets', dataset, dataset+'-pandda-input.pdb'))
             Rfree = stats['Rfree']
             try:
-                print dataset, Rfree, stats['ResolutionHigh']
+                print(dataset, Rfree, stats['ResolutionHigh'])
                 datasetList.append([dataset, float(Rfree)])
             except ValueError:
                 pass
@@ -70,8 +70,8 @@ def select_dataset_with_lowest_Rfree(panddaDir, datasetListwithoutEvent):
 def link_pdb_mtz_files(panddaDir, lowestRfree):
     targetDir = '/'.join(panddaDir.split('/')[:len(panddaDir.split('/'))-1])
     panddaFolder = panddaDir.split('/')[len(panddaDir.split('/'))-1]
-    print targetDir
-    print panddaFolder
+    print(targetDir)
+    print(panddaFolder)
     os.chdir(targetDir)
     if os.path.isfile(os.path.join(panddaDir, 'processed_datasets', lowestRfree, lowestRfree+'-pandda-input.pdb')):
         os.system('/bin/rm %s-ground-state.pdb 2> /dev/null' % lowestRfree)
@@ -99,21 +99,21 @@ def link_pdb_mtz_files(panddaDir, lowestRfree):
 
 
 def convert_mean_map_to_mtz(emap, mtz):
-    print 'converting ground-state-mean-map to MTZ'
+    print('converting ground-state-mean-map to MTZ')
     cmd = ('mapmask MAPIN %s MAPOUT %s << eof\n' % (emap, emap.replace('.ccp4', '.P1.ccp4')) +
            ' XYZLIM CELL\n'
            ' PAD 0.0\n'
            ' SYMMETRY 1\n'
            'eof\n')
-    print cmd
+    print(cmd)
     os.system(cmd)
-    print '--->', mtz
+    print('--->', mtz)
     reso = mtztools(mtz).get_dmin()
-    print '-> resolution:', reso
+    print('-> resolution:', reso)
     cmd = ('module load phenix\n'
            'phenix.map_to_structure_factors %s d_min=%s\n' % (emap.replace('.ccp4', '.P1.ccp4'), reso) +
            '/bin/mv map_to_structure_factors.mtz %s' % emap.replace('.ccp4', '.mtz'))
-    print cmd
+    print(cmd)
     os.system(cmd)
 
 

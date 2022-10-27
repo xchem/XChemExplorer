@@ -4,7 +4,7 @@ import sys
 
 
 def FindTLSgroups(pdbFile):
-    print '\n==> XCE @ helpers: running phenix.find_tls_groups on new pdb file'
+    print('\n==> XCE @ helpers: running phenix.find_tls_groups on new pdb file')
     os.system(
         'phenix.find_tls_groups {0!s} > phenix.find_tls_groups.out'.format(pdbFile))
     GroupNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',

@@ -150,7 +150,7 @@ def run_pandda_inspect_at_home(pandda_directory):
                    '3.	run:  rsync -av * %s@nx.diamond.ac.uk:%s\n' % (getpass.getuser(), pandda_directory) +
                    'Now proceed within XChemExplorer as before.\n')
 
-    print instruction
+    print(instruction)
 
 
 def deposition_interface_note():

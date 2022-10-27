@@ -99,7 +99,7 @@ if __name__ == '__main__':
 #            os.symlink('dimple.mtz','refine.mtz')
 
         # finally, update data source
-        print '==> xce: updating data source after DIMPLE run'
+        print('==> xce: updating data source after DIMPLE run')
         db.update_data_source(xtal, db_dict)
 
     else:

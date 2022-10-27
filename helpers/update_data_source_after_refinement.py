@@ -43,7 +43,7 @@ def parse_pdb(inital_model_directory, xtal, db_dict):
         db_dict['RefinementBoundConformation'] = os.path.realpath(
             os.path.join(inital_model_directory, xtal, 'refine.pdb'))
 
-    print db_dict
+    print(db_dict)
 
     return db_dict
 
@@ -147,7 +147,7 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
                         site_index = str(coord[3])
                         distance = misc().calculate_distance_between_coordinates(residue_xyz[0], residue_xyz[1], residue_xyz[2],
                                                                                  event_x, event_y, event_z)
-                        print 'distance', distance
+                        print('distance', distance)
                         # if coordinate of ligand and event are closer than 7A, then we assume they belong together
                         if distance < 7:
                             db_pandda_dict['PANDDA_site_ligand_id'] = residue
@@ -167,7 +167,7 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
                                 db_pandda_dict['PANDDA_site_spider_plot'] = ''
 
                         if db_pandda_dict != {}:
-                            print '==> XCE: updating pandda Table of data source'
+                            print('==> XCE: updating pandda Table of data source')
                             db.update_panddaTable(
                                 xtal, site_index, db_pandda_dict)
 
@@ -206,13 +206,13 @@ def update_ligand_information_in_panddaTable(inital_model_directory, xtal):
                     db_pandda_dict['PANDDA_site_ligand_altLoc'] = residue_altLoc
                     db_pandda_dict['PANDDA_site_ligand_placed'] = 'True'
                 if db_pandda_dict != {}:
-                    print '==> XCE: updating pandda Table of data source'
+                    print('==> XCE: updating pandda Table of data source')
                     db.update_panddaTable(xtal, site_index, db_pandda_dict)
 
 
 def update_data_source(db_dict):
     if db_dict != {}:
-        print '==> xce: updating mainTable of data source'
+        print('==> xce: updating mainTable of data source')
         db.update_data_source(xtal, db_dict)
         # update refinement outcome if necessary
         sqlite = (

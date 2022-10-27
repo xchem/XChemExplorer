@@ -1165,7 +1165,7 @@ class parse:
                    'RefinementRmsdBondsTL': pdb['rmsdBondsTL'], 'RefinementRmsdAngles': pdb['rmsdAngles'],
                    'RefinementRmsdAnglesTL': pdb['rmsdAnglesTL'], 'RefinementSpaceGroup': pdb['SpaceGroup'],
                    'RefinementResolution': pdb['ResolutionHigh'], 'RefinementResolutionTL': pdb['ResolutionColor']}
-        print db_dict
+        print(db_dict)
         db = XChemDB.data_source(datasource)
         db.update_data_source(xtal, db_dict)
 
@@ -2454,8 +2454,8 @@ class pdbtools(object):
         return X, Y, Z
 
     def get_center_of_gravity_of_residue_ish(self, chain, number):
-        print '-> chain:', chain
-        print '-> number:', number
+        print('-> chain:', chain)
+        print('-> number:', number)
         X = 0.0
         Y = 0.0
         Z = 0.0
@@ -2605,8 +2605,8 @@ class pdbtools(object):
         DuplicateResidue = False
         for entry in residueListPDBin:
             if entry in residueListReference:
-                print 'residue already exisits in '+self.pdb+':'
-                print str(entry)
+                print('residue already exisits in '+self.pdb+':')
+                print(str(entry))
                 DuplicateResidue = True
 
         if not DuplicateResidue:
@@ -2624,7 +2624,7 @@ class pdbtools(object):
             f.write(outPDB)
             f.close()
         else:
-            print 'cannot merge pdb files!'
+            print('cannot merge pdb files!')
 
     def get_symmetry_operators(self):
         symop = []
@@ -2644,7 +2644,7 @@ class pdbtools(object):
                 if line.split()[0] == spg_number:
                     foundSPG = True
         else:
-            print "CCP4 environmental variable is not set"
+            print("CCP4 environmental variable is not set")
 
         return symop
 
@@ -2685,7 +2685,7 @@ class pdbtools(object):
         for line in open(pdbIN):
             if line.startswith('ATOM') or line.startswith('HETATM'):
                 nres += 1
-        print 'NRES', nres
+        print('NRES', nres)
         unit_cell = self.get_unit_cell_from_pdb()
         spg = self.get_spg_from_pdb()
         symop = self.get_symmetry_operators()
@@ -2773,10 +2773,10 @@ class pdbtools(object):
                       'spacegroup {0!s}\n'.format(spg) +
                       'shift fractional {0!s}\n'.format(str(shift).replace('[', '').replace(']', '')) +
                       'eof\n')
-            print 'pdinin', pdbIN
-            print 'outdir', outDir
-            print 'root', root
-            print pdbset
+            print('pdinin', pdbIN)
+            print('outdir', outDir)
+            print('root', root)
+            print(pdbset)
             os.system(pdbset)
 
 
@@ -3060,7 +3060,7 @@ class maptools_gemmi:
             return
         cmd = 'gemmi map2sf %s %s FWT PHWT --dmin=%s' % (
             self.emap, self.emtz, resolution)
-        print('converting map with command:\n' + cmd)
+        print(('converting map with command:\n' + cmd))
         os.system(cmd)
         if os.path.isfile(self.emtz):
             print('event map to SF conversion successful')

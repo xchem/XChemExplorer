@@ -14,13 +14,13 @@ def enumerateStereoChem(compoundID, sampleDir, db, xtal):
     # this is because funny things happen to aromatic rings in case the file was made with GRADE
     os.chdir(os.path.join(sampleDir, 'compound'))
     sql = "select CompoundSMILES from mainTable where CrystalName = '%s'" % xtal
-    print 'sqlite query:', sql
+    print('sqlite query:', sql)
     query = db.execute_statement(sql)
     originalSMILES = query[0][0]
-    print originalSMILES
+    print(originalSMILES)
     cmd = 'phenix.elbow --smiles="%s" --id=LIG --output=tmp' % (originalSMILES)
-    print 'current working directory:', os.getcwd()
-    print 'runnning:', cmd
+    print('current working directory:', os.getcwd())
+    print('runnning:', cmd)
     os.system(cmd)
 
     stereosmiles = None
@@ -28,14 +28,14 @@ def enumerateStereoChem(compoundID, sampleDir, db, xtal):
     if os.path.isfile(os.path.join(sampleDir, 'compound', 'tmp.pdb')):
         pdb = os.path.join(sampleDir, 'compound', 'tmp.pdb')
     else:
-        print 'cannot find tmp.pdb'
+        print('cannot find tmp.pdb')
         pass
     if pdb:
         mol = Chem.MolFromPDBFile(pdb)
         Chem.AssignStereochemistry(
             mol, cleanIt=True, force=True, flagPossibleStereoCenters=True)
         if Chem.FindMolChiralCenters(mol, includeUnassigned=True) == []:
-            print 'no chiral centres found'
+            print('no chiral centres found')
             db_dict = {}
             db_dict['CompoundStereo'] = 'FALSE'
             updateDB(db, db_dict, xtal)
@@ -57,14 +57,14 @@ def checkFiles(compoundID, sampleDir, db, stereosmiles, xtal):
     for cif in glob.glob(os.path.join(compoundID + '_*.cif')):
         foundCIF = True
         allCIF += cif+';'
-        print '---', cif, '===', allCIF
+        print('---', cif, '===', allCIF)
     if foundCIF:
         db_dict = {}
         db_dict['CompoundStereo'] = 'TRUE'
         db_dict['CompoundStereoSMILES'] = stereosmiles
         db_dict['CompoundStereoCIFprogram'] = 'phenix.elbow'
         db_dict['CompoundStereoCIFs'] = allCIF[:-1]
-        print '>>>', db_dict
+        print('>>>', db_dict)
         updateDB(db, db_dict, xtal)
 
 
@@ -79,8 +79,8 @@ if __name__ == '__main__':
     compoundID = sys.argv[1]
     sampleDir = sys.argv[2]
     xtal = sampleDir[sampleDir.rfind('/')+1:]
-    print 'sampleID:', xtal
+    print('sampleID:', xtal)
     database = sys.argv[3]
-    print 'database:', database
+    print('database:', database)
     db = XChemDB.data_source(database)
     enumerateStereoChem(compoundID, sampleDir, db, xtal)

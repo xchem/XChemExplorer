@@ -392,7 +392,7 @@ class LayoutFuncs():
     # function for datasource, run and status button setup
     def setup_push_button(self, xce_object, button_dict):
         # use iterkeys to determine order of key by letter
-        for name in sorted(button_dict.iterkeys()):
+        for name in sorted(button_dict.keys()):
             # add current item to menu bar
             button = eval(
                 'QtGui.QPushButton("' + str(button_dict[name][0]) + '")')
@@ -447,7 +447,7 @@ class LayoutFuncs():
     # function to add items to top menu bar
     def setup_menubar(self, xce_object, menu_bar, menu_items_dict):
         # use iterkeys to determine order of key by letter
-        for config in sorted(menu_items_dict.iterkeys()):
+        for config in sorted(menu_items_dict.keys()):
             # add current item to menu bar
             menu = eval(
                 'menu_bar.addMenu("' + str(menu_items_dict[config][0]) + '")')
@@ -465,7 +465,7 @@ class LayoutFuncs():
                     action.triggered.connect(menu_item[2])
                     menu.addAction(action)
                 except:
-                    print(menu_item[2])
+                    print((menu_item[2]))
                     raise
 
         return menu_bar

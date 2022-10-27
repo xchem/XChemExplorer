@@ -117,16 +117,16 @@ def main(argv):
         opts, args = getopt.getopt(
             argv, 't:s:d:', ['targetID=', 'sqlitefile=', 'panddadir='])
     except getopt.GetoptError as err:
-        print err
-        print 'process.py -t <TargetID> -s <SQLiteFile> -d <PANDDA dir>'
+        print(err)
+        print('process.py -t <TargetID> -s <SQLiteFile> -d <PANDDA dir>')
         sys.exit(2)
     if len(opts) < 3:
-        print 'Missing arguments:'
-        print 'process.py -t <TargetID> -s <SQLiteFile> -d <PANDDA dir>'
+        print('Missing arguments:')
+        print('process.py -t <TargetID> -s <SQLiteFile> -d <PANDDA dir>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'process.py -t <TargetID> -s <SQLiteFile>'
+            print('process.py -t <TargetID> -s <SQLiteFile>')
             sys.exit()
         elif opt in ("-t", "--targetID"):
             targetID = arg
@@ -316,13 +316,13 @@ def main(argv):
 
             rows = cur.fetchall()
             if not rows:
-                print '==> WARNING: none of your samples seems to be at least CompChem ready (4)'
+                print('==> WARNING: none of your samples seems to be at least CompChem ready (4)')
                 return None
-            writer = csv.DictWriter(f, fieldnames=rows[1].keys())
+            writer = csv.DictWriter(f, fieldnames=list(rows[1].keys()))
             writer.writeheader()
             for row in rows:
                 # Make compound structure
-                print row['ModelName'], row['PANDDA_site_spider_plot']
+                print(row['ModelName'], row['PANDDA_site_spider_plot'])
                 compound = Chem.MolFromSmiles(
                     row['CompoundSMILES'].encode("ascii"))
                 Draw.MolToFile(compound, panddadir+'/compoundImages/' +
@@ -344,12 +344,12 @@ def main(argv):
                         shutil.copy(row['PANDDA_site_spider_plot'],
                                     panddadir+"/residueplots/"+row['ModelName']+".png")
                 except (IOError, TypeError):
-                    print '*** WARNING: cannot find PDB and/or MTZ of ' + \
-                        row['ModelName']+' ***'
-                    print 'PDB bound  :', row['RefinementBoundConformation']
-                    print 'MTZ        :', row['RefinementMTZ_latest']
-                    print 'event map  :', row['PANDDA_site_event_map']
-                    print 'spider plot:', row['PANDDA_site_spider_plot']
+                    print('*** WARNING: cannot find PDB and/or MTZ of ' + \
+                        row['ModelName']+' ***')
+                    print('PDB bound  :', row['RefinementBoundConformation'])
+                    print('MTZ        :', row['RefinementMTZ_latest'])
+                    print('event map  :', row['PANDDA_site_event_map'])
+                    print('spider plot:', row['PANDDA_site_spider_plot'])
                     pass
 #        shutil.copy(row['RefinementPDB_latest'],panddadir+"/pdbs/"+row['ModelName']+".pdb")
 #        if row['PANDDA_site_spider_plot'] is not None:
@@ -377,14 +377,14 @@ def main(argv):
                              "web/jscss/js/jquery.dataTables.min.js"), panddadir+"/js/jquery.dataTables.min.js")
 
     # Create zip files
-    print "Creating zipfile of PDBs..."
+    print("Creating zipfile of PDBs...")
     os.chdir(panddadir+"/pdbs")
     zf = zipfile.ZipFile("allPDBs.zip", "w")
     for pdb in glob.glob("*.pdb"):
         zf.write(pdb)
     zf.close()
 
-    print "Creatig zipfile of event maps..."
+    print("Creatig zipfile of event maps...")
     os.chdir("../maps")
     zf = zipfile.ZipFile("allEventMaps.zip", "w")
     for pdb in glob.glob("*.mtz"):

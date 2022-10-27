@@ -51,7 +51,7 @@ class GUI(object):
         self.data_source = self.settings['data_source']
         self.db = XChemDB.data_source(self.data_source)
 
-        print self.settings
+        print(self.settings)
 
         # checking for external software packages
         self.external_software = XChemUtils.external_software(
@@ -831,11 +831,11 @@ class GUI(object):
                     '/') + 1:].replace('.pdb', '').replace('_phenix', '').replace('_rhofit', '')
             else:
                 molNameCIF = molName
-            print cpd, '-', imol, '-', coot.molecule_name(imol)
+            print(cpd, '-', imol, '-', coot.molecule_name(imol))
             if molName == cpd:
                 coot.set_mol_displayed(imol, 1)
-                print 'reading', os.path.join(
-                    self.project_directory, self.xtalID, 'compound', molNameCIF+'.cif')
+                print('reading', os.path.join(
+                    self.project_directory, self.xtalID, 'compound', molNameCIF+'.cif'))
                 coot.read_cif_dictionary(os.path.join(
                     self.project_directory, self.xtalID, 'compound', molNameCIF+'.cif'))
             else:
@@ -869,7 +869,7 @@ class GUI(object):
         # updating ligand confidence radiobuttons
         current_stage = 0
         for i, entry in enumerate(self.ligand_confidence_category):
-            print '--->', entry, self.ligand_confidence
+            print('--->', entry, self.ligand_confidence)
             try:
                 if entry.split()[0] == self.ligand_confidence.split()[0]:
                     current_stage = i
@@ -906,8 +906,8 @@ class GUI(object):
 
     def ChooseSite(self, widget):
         tmp = str(widget.get_active_text())
-        print self.siteDict
-        print self.site_index
+        print(self.siteDict)
+        print(self.site_index)
         self.site_index = tmp.split()[1]
         self.event_index = tmp.split()[4]
         for n, item in enumerate(self.siteDict[self.xtalID]):
@@ -932,18 +932,18 @@ class GUI(object):
 #        for w in self.label_button_list:
 #            w.set_active(False)
 
-        print 'pandda index', self.pandda_index
+        print('pandda index', self.pandda_index)
         self.spider_plot = self.siteDict[self.xtalID][self.pandda_index][4]
-        print 'new spider plot:', self.spider_plot
+        print('new spider plot:', self.spider_plot)
         self.event_map = self.siteDict[self.xtalID][self.pandda_index][0]
-        print 'new event map:', self.event_map
+        print('new event map:', self.event_map)
         self.ligand_confidence = str(
             self.siteDict[self.xtalID][self.pandda_index][7])
         self.update_LigandConfidence_radiobutton()
         site_x = float(self.siteDict[self.xtalID][self.pandda_index][1])
         site_y = float(self.siteDict[self.xtalID][self.pandda_index][2])
         site_z = float(self.siteDict[self.xtalID][self.pandda_index][3])
-        print 'new site coordinates:', site_x, site_y, site_z
+        print('new site coordinates:', site_x, site_y, site_z)
         coot.set_rotation_centre(site_x, site_y, site_z)
 
 #        self.ligand_site_name_value.set_label(str(self.siteDict[self.xtalID][self.pandda_index][8]))
@@ -953,7 +953,7 @@ class GUI(object):
 
         self.spider_plot_data = self.db.get_db_pandda_dict_for_sample_and_site_and_event(self.xtalID, self.site_index,
                                                                                          self.event_index)
-        print '>>>>> spider plot data', self.spider_plot_data
+        print('>>>>> spider plot data', self.spider_plot_data)
         self.ligandIDValue.set_label(
             self.spider_plot_data['PANDDA_site_ligand_id'])
         try:
@@ -1043,7 +1043,7 @@ class GUI(object):
             self.xce_logfile, self.xtalID, 'ligand_bound', self.db_dict_mainTable)
 
     def ligand_confidence_button_clicked(self, widget, data=None):
-        print 'PANDDA_index', self.pandda_index
+        print('PANDDA_index', self.pandda_index)
         if self.pandda_index == -1:
             self.db_dict_mainTable['RefinementLigandConfidence'] = data
             self.Logfile.insert('==> COOT: setting Ligand Confidence for ' + self.xtalID + ' to ' + str(
@@ -1116,21 +1116,21 @@ class GUI(object):
         if self.Serial == 1:
             # i.e. no refinement has been done; data is probably straight out of dimple
             if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.pdb_style)):
-                print '==> XCE: updating quality indicators in data source for ' + self.xtalID
+                print('==> XCE: updating quality indicators in data source for ' + self.xtalID)
                 XChemUtils.parse().update_datasource_with_PDBheader(self.xtalID, self.data_source,
                                                                     os.path.join(self.project_directory, self.xtalID,
                                                                                  self.pdb_style))
                 XChemUtils.parse().update_datasource_with_phenix_validation_summary(self.xtalID, self.data_source,
                                                                                     '')  # '' because file does not exist
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'init.pdb')):
-                print '==> XCE: updating quality indicators in data source for ' + self.xtalID
+                print('==> XCE: updating quality indicators in data source for ' + self.xtalID)
                 XChemUtils.parse().update_datasource_with_PDBheader(self.xtalID, self.data_source,
                                                                     os.path.join(self.project_directory, self.xtalID,
                                                                                  'init.pdb'))
                 XChemUtils.parse().update_datasource_with_phenix_validation_summary(self.xtalID, self.data_source,
                                                                                     '')  # '' because file does not exist
             elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'dimple.pdb')):
-                print '==> XCE: updating quality indicators in data source for ' + self.xtalID
+                print('==> XCE: updating quality indicators in data source for ' + self.xtalID)
                 XChemUtils.parse().update_datasource_with_PDBheader(self.xtalID, self.data_source,
                                                                     os.path.join(self.project_directory, self.xtalID,
                                                                                  'dimple.pdb'))
@@ -1147,7 +1147,7 @@ class GUI(object):
         if self.Serial > 1:
             self.RefmacParams = self.Refine.ParamsFromPreviousCycle(
                 self.Serial - 1)
-            print '==> REFMAC params:', self.RefmacParams
+            print('==> REFMAC params:', self.RefmacParams)
         #            refinement_cycle,Rfree,Rcryst=self.Refine.GetRefinementHistory()
         #            self.canvas = FigureCanvas(self.update_plot(refinement_cycle,Rfree,Rcryst))
         #        else:
@@ -1159,11 +1159,11 @@ class GUI(object):
         #########################################################################################
         # ligand files
         # first remove old samples if present
-        print '>>>', self.mol_dict['ligand_stereo']
+        print('>>>', self.mol_dict['ligand_stereo'])
         for n, item in enumerate(self.mol_dict['ligand_stereo']):
-            print '__', item
+            print('__', item)
             self.select_cpd_cb.remove_text(0)
-        print 'done'
+        print('done')
 
         #########################################################################################
         # remove potential generic line which indicates a possible covalent link
@@ -1220,7 +1220,7 @@ class GUI(object):
             self.select_cpd_cb.set_sensitive(True)
             self.select_cpd_cb.set_active(0)
         else:
-            print 'no compound found in sample directory'
+            print('no compound found in sample directory')
 #            self.select_cpd_cb.append_text('')
             self.select_cpd_cb.set_sensitive(False)
 
@@ -1537,7 +1537,7 @@ class GUI(object):
         self.cb.set_active(self.index)
 
     def RefinementParams(self, widget):
-        print '\n==> XCE: changing refinement parameters'
+        print('\n==> XCE: changing refinement parameters')
         self.RefmacParams = XChemRefine.RefineParams(self.project_directory, self.xtalID, self.compoundID,
                                                      self.data_source).RefmacRefinementParams(self.RefmacParams)
 
@@ -1549,7 +1549,7 @@ class GUI(object):
         # it's a prerequisite that the ligand is merged into the protein
         imol_protein = None
         for imol in coot_utils_XChem.molecule_number_list():
-            print '>', coot.molecule_name(imol)
+            print('>', coot.molecule_name(imol))
             if coot.molecule_name(imol).endswith(self.pdb_style) or \
                     coot.molecule_name(imol).endswith('init.pdb') or \
                     coot.molecule_name(imol).endswith('dimple.pdb') or \
@@ -1557,15 +1557,15 @@ class GUI(object):
                 imol_protein = imol
                 break
 
-        print 'please click on the two atoms you want to link'
+        print('please click on the two atoms you want to link')
         if (len(clicks) == 2):
             click_1 = clicks[0]
             click_2 = clicks[1]
             imol_1 = click_1[1]
             imol_2 = click_2[1]
-            print 'imolp', imol, 'imo11', imol_1, 'imol2', imol_2
+            print('imolp', imol, 'imo11', imol_1, 'imol2', imol_2)
             if imol_1 == imol_2 and imol_1 == imol_protein:
-                print 'click_1', click_1
+                print('click_1', click_1)
                 self.covLinkAtomSpec = None
                 xyz_1 = atom_info_string(
                     click_1[1], click_1[2], click_1[3], click_1[4], click_1[5], click_1[6])
@@ -1582,7 +1582,7 @@ class GUI(object):
                 self.covLinkAtomSpec = [imol_protein,
                                         click_1, click_2, residue_1, residue_2]
             else:
-                print 'error: both atoms must belong to the same object; did you merge the ligand with your protein?'
+                print('error: both atoms must belong to the same object; did you merge the ligand with your protein?')
 
     def covalentLinkCreate(self, widget):
         if self.covLinkAtomSpec is not None:
@@ -1595,7 +1595,7 @@ class GUI(object):
             generic_object_clear(self.covLinkObject)
             self.start_refinement()
         else:
-            print 'error: no covalent link defined'
+            print('error: no covalent link defined')
 
     def set_selection_mode(self, widget):
         self.selection_mode = widget.get_active_text()
@@ -1646,9 +1646,9 @@ class GUI(object):
             molName = coot.molecule_name(imol)[coot.molecule_name(
                 imol).rfind('/')+1:].replace('.pdb', '')
             if molName == cpd:
-                print '===> XCE: moving ligand to pointer'
+                print('===> XCE: moving ligand to pointer')
                 coot_utils_XChem.move_molecule_here(imol)
-                print 'LIGAND: ', molName
+                print('LIGAND: ', molName)
 #        print '===> XCE: moving ligand to pointer'
 #        #        coot.move_molecule_here(<molecule_number>)
 #        print 'LIGAND: ', self.mol_dict['ligand']
@@ -1662,7 +1662,7 @@ class GUI(object):
             molName = coot.molecule_name(imol)[coot.molecule_name(
                 imol).rfind('/')+1:].replace('.pdb', '')
             if molName == cpd:
-                print '===> XCE: merge ligand into protein structure -->', cpd
+                print('===> XCE: merge ligand into protein structure -->', cpd)
                 coot.merge_molecules_py([imol], self.mol_dict['protein'])
                 if 'rhofit' in coot.molecule_name(imol) or 'phenix' in coot.molecule_name(imol):
                     molName = coot.molecule_name(imol)[coot.molecule_name(imol).rfind(
@@ -1670,24 +1670,24 @@ class GUI(object):
                 if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.cif')):
                     os.system('/bin/rm %s' % os.path.join(self.project_directory,
                                                           self.xtalID, self.compoundID + '.cif'))
-                    print 'XCE: changing directory', os.path.join(
-                        self.project_directory, self.xtalID)
+                    print('XCE: changing directory', os.path.join(
+                        self.project_directory, self.xtalID))
                     os.chdir(os.path.join(self.project_directory, self.xtalID))
-                    print 'XCE: changing symlink ln -s %s %s.cif' % (
-                        os.path.join('compound', molName + '.cif'), self.compoundID)
+                    print('XCE: changing symlink ln -s %s %s.cif' % (
+                        os.path.join('compound', molName + '.cif'), self.compoundID))
                     os.system(
                         'ln -s %s %s.cif' % (os.path.join('compound', molName + '.cif'), self.compoundID))
                 if os.path.isfile(os.path.join(self.project_directory, self.xtalID, self.compoundID + '.pdb')):
                     os.system('/bin/rm %s' % os.path.join(self.project_directory,
                                                           self.xtalID, self.compoundID + '.pdb'))
-                    print 'XCE: changing directory', os.path.join(
-                        self.project_directory, self.xtalID)
+                    print('XCE: changing directory', os.path.join(
+                        self.project_directory, self.xtalID))
                     os.chdir(os.path.join(self.project_directory, self.xtalID))
-                    print 'XCE: changing symlink ln -s %s %s.pdb' % (
-                        os.path.join('compound', molName + '.pdb'), self.compoundID)
+                    print('XCE: changing symlink ln -s %s %s.pdb' % (
+                        os.path.join('compound', molName + '.pdb'), self.compoundID))
                     os.system('ln -s %s %s.pdb' % (os.path.join('compound', molName
                                                                 + '.pdb'), self.compoundID))
-            print '===> XCE: deleting ligand molecule', molName
+            print('===> XCE: deleting ligand molecule', molName)
             coot.close_molecule(imol)
 
         self.select_cpd_cb.set_sensitive(False)
@@ -1699,24 +1699,24 @@ class GUI(object):
 #        coot.close_molecule(self.mol_dict['ligand'])
 
     def show_molprobity_to_do(self, widget):
-        print self.panddaSerial
+        print(self.panddaSerial)
         AdjPanddaSerial = (4 - len(str(self.Serial))) * \
             '0' + str(int(self.panddaSerial) - 1)
-        print os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.panddaSerial),
-                           'molprobity_coot.py')
+        print(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.panddaSerial),
+                           'molprobity_coot.py'))
         if os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial - 1),
                                        'molprobity_coot.py')):
-            print '==> XCE: running MolProbity Summary for', self.xtalID
+            print('==> XCE: running MolProbity Summary for', self.xtalID)
             coot.run_script(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(self.Serial - 1),
                                          'molprobity_coot.py'))
         elif os.path.isfile(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
                                          'molprobity_coot.py')):
-            print '==> XCE: running MolProbity Summary for', self.xtalID
+            print('==> XCE: running MolProbity Summary for', self.xtalID)
             coot.run_script(os.path.join(self.project_directory, self.xtalID, 'Refine_' + str(AdjPanddaSerial),
                                          'molprobity_coot.py'))
         else:
-            print '==> XCE: cannot find ' + os.path.join(self.project_directory, self.xtalID,
-                                                         'Refine_' + str(self.Serial - 1), 'molprobity_coot.py')
+            print('==> XCE: cannot find ' + os.path.join(self.project_directory, self.xtalID,
+                                                         'Refine_' + str(self.Serial - 1), 'molprobity_coot.py'))
 
     def refinementProtocolCallback(self, widget):
         if widget.get_active():
@@ -1731,7 +1731,7 @@ class GUI(object):
             self.refinementProtocol = 'refmac'
             self.PREVbuttonSite.set_sensitive(False)
             self.NEXTbuttonSite.set_sensitive(False)
-        print self.refinementProtocol
+        print(self.refinementProtocol)
 
     def refinementProgramCallback(self, widget):
         if widget.get_active():
@@ -1747,7 +1747,7 @@ class GUI(object):
                 self.refinementProtocol = 'pandda_refmac'
             else:
                 self.refinementProtocol = 'refmac'
-        print self.refinementProtocol
+        print(self.refinementProtocol)
 
     def show_ground_state_mean_map(self, widget):
         if widget.get_label().startswith('Show'):
