@@ -22,8 +22,10 @@ jobs:
         with:
           python-version: "2.7"
         
-      - name: Install linter
-        run: pip3 install flake8 black[python2]
+      - name: Install linters
+        run: |
+          pip install flake8
+          pip3 install black[python2]
 
       - name: Lint with flake8
         run: |
