@@ -5,7 +5,8 @@ from XChemUtils import parse
 import os
 import sys
 import glob
-sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
+
+sys.path.append(os.path.join(os.getenv("XChemExplorer_DIR"), "lib"))
 
 
 # - select datasets with highest resolution
@@ -16,20 +17,27 @@ sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
 def find_highest_resolution_datasets(panddaDir):
     found = False
     datasetList = []
-    for logFile in glob.glob(os.path.join(panddaDir, 'logs', '*.log')):
+    for logFile in glob.glob(os.path.join(panddaDir, "logs", "*.log")):
         for n, line in enumerate(open(logFile)):
-            if line.startswith('Statistical Electron Density Characterisation') and len(line.split()) == 6:
+            if (
+                line.startswith("Statistical Electron Density Characterisation")
+                and len(line.split()) == 6
+            ):
                 resolution = line.split()[5]
                 found = True
                 foundLine = n
-            if found and n >= foundLine+3:
-                if line.startswith('---'):
+            if found and n >= foundLine + 3:
+                if line.startswith("---"):
                     break
                 else:
-                    tmpLine = line.replace(' ', '').replace(
-                        '\t', '').replace('\n', '').replace('\r', '')
-                    for item in tmpLine.split(','):
-                        if item != '':
+                    tmpLine = (
+                        line.replace(" ", "")
+                        .replace("\t", "")
+                        .replace("\n", "")
+                        .replace("\r", "")
+                    )
+                    for item in tmpLine.split(","):
+                        if item != "":
                             datasetList.append(item)
     print(datasetList)
     return datasetList
@@ -39,8 +47,10 @@ def get_datasets_without_event_map(panddaDir, datasetList):
     datasetListwithoutEvent = []
     for dataset in datasetList:
         noEvent = True
-        for files in glob.glob(os.path.join(panddaDir, 'processed_datasets', dataset, '*')):
-            if 'event' in files:
+        for files in glob.glob(
+            os.path.join(panddaDir, "processed_datasets", dataset, "*")
+        ):
+            if "event" in files:
                 noEvent = False
                 break
         if noEvent:
@@ -51,14 +61,24 @@ def get_datasets_without_event_map(panddaDir, datasetList):
 
 def select_dataset_with_lowest_Rfree(panddaDir, datasetListwithoutEvent):
     datasetList = []
-    lowestRfree = ''
+    lowestRfree = ""
     for dataset in datasetListwithoutEvent:
-        if os.path.isfile(os.path.join(panddaDir, 'processed_datasets', dataset, dataset+'-pandda-input.pdb')):
-            stats = parse().PDBheader(os.path.join(
-                panddaDir, 'processed_datasets', dataset, dataset+'-pandda-input.pdb'))
-            Rfree = stats['Rfree']
+        if os.path.isfile(
+            os.path.join(
+                panddaDir, "processed_datasets", dataset, dataset + "-pandda-input.pdb"
+            )
+        ):
+            stats = parse().PDBheader(
+                os.path.join(
+                    panddaDir,
+                    "processed_datasets",
+                    dataset,
+                    dataset + "-pandda-input.pdb",
+                )
+            )
+            Rfree = stats["Rfree"]
             try:
-                print(dataset, Rfree, stats['ResolutionHigh'])
+                print(dataset, Rfree, stats["ResolutionHigh"])
                 datasetList.append([dataset, float(Rfree)])
             except ValueError:
                 pass
@@ -68,60 +88,121 @@ def select_dataset_with_lowest_Rfree(panddaDir, datasetListwithoutEvent):
 
 
 def link_pdb_mtz_files(panddaDir, lowestRfree):
-    targetDir = '/'.join(panddaDir.split('/')[:len(panddaDir.split('/'))-1])
-    panddaFolder = panddaDir.split('/')[len(panddaDir.split('/'))-1]
+    targetDir = "/".join(panddaDir.split("/")[: len(panddaDir.split("/")) - 1])
+    panddaFolder = panddaDir.split("/")[len(panddaDir.split("/")) - 1]
     print(targetDir)
     print(panddaFolder)
     os.chdir(targetDir)
-    if os.path.isfile(os.path.join(panddaDir, 'processed_datasets', lowestRfree, lowestRfree+'-pandda-input.pdb')):
-        os.system('/bin/rm %s-ground-state.pdb 2> /dev/null' % lowestRfree)
-        os.symlink(os.path.join(panddaFolder, 'processed_datasets', lowestRfree,
-                                lowestRfree+'-pandda-input.pdb'), lowestRfree+'-ground-state.pdb')
-    if os.path.isfile(os.path.join(panddaDir, 'processed_datasets', lowestRfree, lowestRfree+'-pandda-input.mtz')):
-        os.system('/bin/rm %s-ground-state.free.mtz 2> /dev/null' %
-                  lowestRfree)
-        os.symlink(os.path.join(panddaFolder, 'processed_datasets', lowestRfree,
-                                lowestRfree+'-pandda-input.mtz'), lowestRfree+'-ground-state.free.mtz')
+    if os.path.isfile(
+        os.path.join(
+            panddaDir,
+            "processed_datasets",
+            lowestRfree,
+            lowestRfree + "-pandda-input.pdb",
+        )
+    ):
+        os.system("/bin/rm %s-ground-state.pdb 2> /dev/null" % lowestRfree)
+        os.symlink(
+            os.path.join(
+                panddaFolder,
+                "processed_datasets",
+                lowestRfree,
+                lowestRfree + "-pandda-input.pdb",
+            ),
+            lowestRfree + "-ground-state.pdb",
+        )
+    if os.path.isfile(
+        os.path.join(
+            panddaDir,
+            "processed_datasets",
+            lowestRfree,
+            lowestRfree + "-pandda-input.mtz",
+        )
+    ):
+        os.system("/bin/rm %s-ground-state.free.mtz 2> /dev/null" % lowestRfree)
+        os.symlink(
+            os.path.join(
+                panddaFolder,
+                "processed_datasets",
+                lowestRfree,
+                lowestRfree + "-pandda-input.mtz",
+            ),
+            lowestRfree + "-ground-state.free.mtz",
+        )
 
-    if os.path.isfile(os.path.join(panddaDir, 'processed_datasets', lowestRfree, lowestRfree+'-ground-state-mean-map.native.ccp4')):
+    if os.path.isfile(
+        os.path.join(
+            panddaDir,
+            "processed_datasets",
+            lowestRfree,
+            lowestRfree + "-ground-state-mean-map.native.ccp4",
+        )
+    ):
         os.system(
-            '/bin/rm %s-ground-state-mean-map.native.ccp4 2> /dev/null' % lowestRfree)
-        os.symlink(os.path.join(panddaFolder, 'processed_datasets', lowestRfree, lowestRfree +
-                                '-ground-state-mean-map.native.ccp4'), lowestRfree+'-ground-state-mean-map.native.ccp4')
-    elif os.path.isfile(os.path.join(panddaDir, 'processed_datasets', lowestRfree, lowestRfree+'-ground-state-average-map.native.ccp4')):
+            "/bin/rm %s-ground-state-mean-map.native.ccp4 2> /dev/null" % lowestRfree
+        )
+        os.symlink(
+            os.path.join(
+                panddaFolder,
+                "processed_datasets",
+                lowestRfree,
+                lowestRfree + "-ground-state-mean-map.native.ccp4",
+            ),
+            lowestRfree + "-ground-state-mean-map.native.ccp4",
+        )
+    elif os.path.isfile(
+        os.path.join(
+            panddaDir,
+            "processed_datasets",
+            lowestRfree,
+            lowestRfree + "-ground-state-average-map.native.ccp4",
+        )
+    ):
         os.system(
-            '/bin/rm %s-ground-state-mean-map.native.ccp4 2> /dev/null' % lowestRfree)
-        os.symlink(os.path.join(panddaFolder, 'processed_datasets', lowestRfree, lowestRfree +
-                                '-ground-state-average-map.native.ccp4'), lowestRfree+'-ground-state-mean-map.native.ccp4')
+            "/bin/rm %s-ground-state-mean-map.native.ccp4 2> /dev/null" % lowestRfree
+        )
+        os.symlink(
+            os.path.join(
+                panddaFolder,
+                "processed_datasets",
+                lowestRfree,
+                lowestRfree + "-ground-state-average-map.native.ccp4",
+            ),
+            lowestRfree + "-ground-state-mean-map.native.ccp4",
+        )
 
     convert_mean_map_to_mtz(
-        lowestRfree+'-ground-state-mean-map.native.ccp4', lowestRfree+'-ground-state.free.mtz')
+        lowestRfree + "-ground-state-mean-map.native.ccp4",
+        lowestRfree + "-ground-state.free.mtz",
+    )
 
 
 def convert_mean_map_to_mtz(emap, mtz):
-    print('converting ground-state-mean-map to MTZ')
-    cmd = ('mapmask MAPIN %s MAPOUT %s << eof\n' % (emap, emap.replace('.ccp4', '.P1.ccp4')) +
-           ' XYZLIM CELL\n'
-           ' PAD 0.0\n'
-           ' SYMMETRY 1\n'
-           'eof\n')
+    print("converting ground-state-mean-map to MTZ")
+    cmd = (
+        "mapmask MAPIN %s MAPOUT %s << eof\n"
+        % (emap, emap.replace(".ccp4", ".P1.ccp4"))
+        + " XYZLIM CELL\n"
+        " PAD 0.0\n"
+        " SYMMETRY 1\n"
+        "eof\n"
+    )
     print(cmd)
     os.system(cmd)
-    print('--->', mtz)
+    print("--->", mtz)
     reso = mtztools(mtz).get_dmin()
-    print('-> resolution:', reso)
-    cmd = ('module load phenix\n'
-           'phenix.map_to_structure_factors %s d_min=%s\n' % (emap.replace('.ccp4', '.P1.ccp4'), reso) +
-           '/bin/mv map_to_structure_factors.mtz %s' % emap.replace('.ccp4', '.mtz'))
+    print("-> resolution:", reso)
+    cmd = "module load phenix\n" "phenix.map_to_structure_factors %s d_min=%s\n" % (
+        emap.replace(".ccp4", ".P1.ccp4"),
+        reso,
+    ) + "/bin/mv map_to_structure_factors.mtz %s" % emap.replace(".ccp4", ".mtz")
     print(cmd)
     os.system(cmd)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     panddaDir = sys.argv[1]
     datasetList = find_highest_resolution_datasets(panddaDir)
-    datasetListwithoutEvent = get_datasets_without_event_map(
-        panddaDir, datasetList)
-    lowestRfree = select_dataset_with_lowest_Rfree(
-        panddaDir, datasetListwithoutEvent)
+    datasetListwithoutEvent = get_datasets_without_event_map(panddaDir, datasetList)
+    lowestRfree = select_dataset_with_lowest_Rfree(panddaDir, datasetListwithoutEvent)
     link_pdb_mtz_files(panddaDir, lowestRfree)

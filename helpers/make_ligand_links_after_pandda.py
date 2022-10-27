@@ -9,8 +9,8 @@ import sys
 
 
 def make_links(projectDir, panddaDir):
-    os.chdir(os.path.join(panddaDir, 'processed_datasets'))
-    for xtal in glob.glob('*'):
+    os.chdir(os.path.join(panddaDir, "processed_datasets"))
+    for xtal in glob.glob("*"):
         #        for cif in glob.glob(os.path.join(xtal,'ligand_files','*.cif')):
         #            print cif
         #            os.system('/bin/rm %s' %cif)
@@ -18,12 +18,12 @@ def make_links(projectDir, panddaDir):
         #            print pdb
         #            os.system('/bin/rm %s' %pdb)
 
-        for pdb in glob.glob(os.path.join(projectDir, xtal, 'compound', '*.pdb')):
-            os.system('ln -s %s %s/ligand_files' % (pdb, xtal))
-        for cif in glob.glob(os.path.join(projectDir, xtal, 'compound', '*.cif')):
-            os.system('ln -s %s %s/ligand_files' % (cif, xtal))
+        for pdb in glob.glob(os.path.join(projectDir, xtal, "compound", "*.pdb")):
+            os.system("ln -s %s %s/ligand_files" % (pdb, xtal))
+        for cif in glob.glob(os.path.join(projectDir, xtal, "compound", "*.cif")):
+            os.system("ln -s %s %s/ligand_files" % (cif, xtal))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     projectDir = sys.argv[1]
     panddaDir = sys.argv[2]

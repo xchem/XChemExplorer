@@ -3,10 +3,11 @@ from rdkit.Chem import AllChem
 from rdkit import Chem
 import os
 import sys
-sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
+
+sys.path.append(os.path.join(os.getenv("XChemExplorer_DIR"), "lib"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     smiles = sys.argv[1]
     compoundID = sys.argv[2]
@@ -16,5 +17,5 @@ if __name__ == '__main__':
     mol = Chem.MolFromSmiles(smiles)
     AllChem.Compute2DCoords(mol)
 
-    os.chdir(os.path.join(inital_model_directory, xtal, 'compound'))
-    Draw.MolToFile(mol, "{0!s}.png".format(compoundID.replace(' ', '')))
+    os.chdir(os.path.join(inital_model_directory, xtal, "compound"))
+    Draw.MolToFile(mol, "{0!s}.png".format(compoundID.replace(" ", "")))

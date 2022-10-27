@@ -7,11 +7,26 @@ import sys
 import glob
 from PyQt4 import QtGui, QtCore
 
-sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
+sys.path.append(os.path.join(os.getenv("XChemExplorer_DIR"), "lib"))
 
 
 class run_xia2(QtCore.QThread):
-    def __init__(self, initial_model_directory, run_dict, protocol, spg, ref, reso_limit, cc_half, xce_logfile, external_software, ccp4_scratch_directory, max_queue_jobs, database, overwrite):
+    def __init__(
+        self,
+        initial_model_directory,
+        run_dict,
+        protocol,
+        spg,
+        ref,
+        reso_limit,
+        cc_half,
+        xce_logfile,
+        external_software,
+        ccp4_scratch_directory,
+        max_queue_jobs,
+        database,
+        overwrite,
+    ):
         QtCore.QThread.__init__(self)
         self.initial_model_directory = initial_model_directory
         self.run_dict = run_dict
@@ -34,184 +49,294 @@ class run_xia2(QtCore.QThread):
         # first create directories if they do not exist
 
         if not self.protocol:
-            self.Logfile.insert(
-                'please select data processing protocol first!')
+            self.Logfile.insert("please select data processing protocol first!")
             return None
 
         for i, xtal in enumerate(self.run_dict):
 
-            script = ''
+            script = ""
 
-            if self.external_software['qsub']:
-                script += '#PBS -joe -N XCE_reprocess\n'
+            if self.external_software["qsub"]:
+                script += "#PBS -joe -N XCE_reprocess\n"
             else:
-                script += '#!'+os.getenv('SHELL')+'\n'
+                script += "#!" + os.getenv("SHELL") + "\n"
 
-            if 'bash' in os.getenv('SHELL'):
-                script += 'export XChemExplorer_DIR="' + \
-                    os.getenv('XChemExplorer_DIR')+'"\n'
-            elif 'csh' in os.getenv('SHELL'):
-                script += 'setenv XChemExplorer_DIR ' + \
-                    os.getenv('XChemExplorer_DIR')+'\n'
+            if "bash" in os.getenv("SHELL"):
+                script += (
+                    'export XChemExplorer_DIR="'
+                    + os.getenv("XChemExplorer_DIR")
+                    + '"\n'
+                )
+            elif "csh" in os.getenv("SHELL"):
+                script += (
+                    "setenv XChemExplorer_DIR " + os.getenv("XChemExplorer_DIR") + "\n"
+                )
 
-            if os.getcwd().startswith('/dls'):
-                script += 'module load ccp4/7.1.018\n'
-                script += 'module load XDS\n'
-#                script += 'module load phenix\n'
+            if os.getcwd().startswith("/dls"):
+                script += "module load ccp4/7.1.018\n"
+                script += "module load XDS\n"
+            #                script += 'module load phenix\n'
 
-# 2018-09-19 - removed this for Joe's test
-#                script += 'module load ccp4\n'
-#                script += 'module load XDS\n'
-#                script += 'module load ccp4 xia2\n'
-#                print 'hallo'
+            # 2018-09-19 - removed this for Joe's test
+            #                script += 'module load ccp4\n'
+            #                script += 'module load XDS\n'
+            #                script += 'module load ccp4 xia2\n'
+            #                print 'hallo'
 
             if not self.spg:
-                spg_option = ''
+                spg_option = ""
             else:
-                spg_option = 'space_group='+str(self.spg[0])
+                spg_option = "space_group=" + str(self.spg[0])
 
             if not self.ref:
-                ref_option = ''
+                ref_option = ""
             else:
-                ref_option = 'reference_reflection_file='+str(self.ref[0])
+                ref_option = "reference_reflection_file=" + str(self.ref[0])
 
             if not self.reso_limit:
-                reso_limit_option = ''
+                reso_limit_option = ""
             else:
-                reso_limit_option = 'misigma='+str(self.reso_limit[0])
+                reso_limit_option = "misigma=" + str(self.reso_limit[0])
 
             if not self.cc_half:
-                cc_half_option = ''
+                cc_half_option = ""
             else:
-                cc_half_option = 'cc_half='+str(self.cc_half[0])
+                cc_half_option = "cc_half=" + str(self.cc_half[0])
 
             # first link diffraction images into directory
             if not os.path.isdir(os.path.join(self.initial_model_directory, xtal)):
                 os.mkdir(os.path.join(self.initial_model_directory, xtal))
-            if not os.path.isdir(os.path.join(self.initial_model_directory, xtal, 'diffraction_images')):
-                os.mkdir(os.path.join(self.initial_model_directory,
-                                      xtal, 'diffraction_images'))
+            if not os.path.isdir(
+                os.path.join(self.initial_model_directory, xtal, "diffraction_images")
+            ):
+                os.mkdir(
+                    os.path.join(
+                        self.initial_model_directory, xtal, "diffraction_images"
+                    )
+                )
 
-            if not os.path.isdir(os.path.join(self.initial_model_directory, xtal, 'processed')):
-                os.mkdir(os.path.join(
-                    self.initial_model_directory, xtal, 'processed'))
-# 2018-09-19 - disabled this for Joe's test
-#            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,'processed','run_in_progress')):
-#                self.Logfile.insert('data processing is in progress; skipping...')
-#                continue
+            if not os.path.isdir(
+                os.path.join(self.initial_model_directory, xtal, "processed")
+            ):
+                os.mkdir(os.path.join(self.initial_model_directory, xtal, "processed"))
+            # 2018-09-19 - disabled this for Joe's test
+            #            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,'processed','run_in_progress')):
+            #                self.Logfile.insert('data processing is in progress; skipping...')
+            #                continue
             f = True
             if f:
-                print('hallo')
+                print("hallo")
             else:
                 if self.overwrite:
-                    os.chdir(os.path.join(self.initial_model_directory,
-                                          xtal, 'diffraction_images'))
-                    self.Logfile.insert('removing all links to diffraction images in '+os.path.join(
-                        self.initial_model_directory, xtal, 'diffraction_images'))
-                    os.system('/bin/rm -fr *')
-                    os.chdir(os.path.join(
-                        self.initial_model_directory, xtal, 'processed'))
-                    self.Logfile.insert('removing all links to diffraction images in '+os.path.join(
-                        self.initial_model_directory, xtal, 'processed'))
-                    os.system('/bin/rm -fr *')
-                os.chdir(os.path.join(
-                    self.initial_model_directory, xtal, 'processed'))
-# 2018-09-19 - disabled this for Joe's test
-#                os.system('touch run_in_progress')
+                    os.chdir(
+                        os.path.join(
+                            self.initial_model_directory, xtal, "diffraction_images"
+                        )
+                    )
+                    self.Logfile.insert(
+                        "removing all links to diffraction images in "
+                        + os.path.join(
+                            self.initial_model_directory, xtal, "diffraction_images"
+                        )
+                    )
+                    os.system("/bin/rm -fr *")
+                    os.chdir(
+                        os.path.join(self.initial_model_directory, xtal, "processed")
+                    )
+                    self.Logfile.insert(
+                        "removing all links to diffraction images in "
+                        + os.path.join(self.initial_model_directory, xtal, "processed")
+                    )
+                    os.system("/bin/rm -fr *")
+                os.chdir(os.path.join(self.initial_model_directory, xtal, "processed"))
+            # 2018-09-19 - disabled this for Joe's test
+            #                os.system('touch run_in_progress')
 
             for n, entry in enumerate(sorted(self.run_dict[xtal])):
                 newRun = 1
-                for runDir in sorted(glob.glob(os.path.join(self.initial_model_directory, xtal, 'diffraction_images', 'run_*'))):
-                    newRun = int(runDir[runDir.rfind('_')+1:])+1
+                for runDir in sorted(
+                    glob.glob(
+                        os.path.join(
+                            self.initial_model_directory,
+                            xtal,
+                            "diffraction_images",
+                            "run_*",
+                        )
+                    )
+                ):
+                    newRun = int(runDir[runDir.rfind("_") + 1 :]) + 1
 
-                os.mkdir(os.path.join(self.initial_model_directory,
-                                      xtal, 'diffraction_images', 'run_'+str(newRun)))
+                os.mkdir(
+                    os.path.join(
+                        self.initial_model_directory,
+                        xtal,
+                        "diffraction_images",
+                        "run_" + str(newRun),
+                    )
+                )
                 image_dir = os.path.join(
-                    self.initial_model_directory, xtal, 'diffraction_images', 'run_'+str(newRun))
-                os.chdir(os.path.join(self.initial_model_directory,
-                                      xtal, 'diffraction_images', 'run_'+str(newRun)))
-                os.system('ln -s '+os.path.join(entry[0], entry[1])+'* .')
+                    self.initial_model_directory,
+                    xtal,
+                    "diffraction_images",
+                    "run_" + str(newRun),
+                )
+                os.chdir(
+                    os.path.join(
+                        self.initial_model_directory,
+                        xtal,
+                        "diffraction_images",
+                        "run_" + str(newRun),
+                    )
+                )
+                os.system("ln -s " + os.path.join(entry[0], entry[1]) + "* .")
 
-                os.chdir(os.path.join(
-                    self.initial_model_directory, xtal, 'processed'))
-                os.mkdir(os.path.join(self.initial_model_directory,
-                                      xtal, 'processed', 'run_'+str(newRun)))
+                os.chdir(os.path.join(self.initial_model_directory, xtal, "processed"))
+                os.mkdir(
+                    os.path.join(
+                        self.initial_model_directory,
+                        xtal,
+                        "processed",
+                        "run_" + str(newRun),
+                    )
+                )
 
                 for pipeline in self.protocol:
-                    script += 'cd ' + \
-                        os.path.join(self.initial_model_directory, xtal,
-                                     'processed', 'run_'+str(newRun), pipeline)+'\n'
-                    if not os.path.isdir(os.path.join(self.initial_model_directory, xtal, 'processed', 'run_'+str(newRun), pipeline)):
-                        os.mkdir(os.path.join(self.initial_model_directory,
-                                              xtal, 'processed', 'run_'+str(newRun), pipeline))
+                    script += (
+                        "cd "
+                        + os.path.join(
+                            self.initial_model_directory,
+                            xtal,
+                            "processed",
+                            "run_" + str(newRun),
+                            pipeline,
+                        )
+                        + "\n"
+                    )
+                    if not os.path.isdir(
+                        os.path.join(
+                            self.initial_model_directory,
+                            xtal,
+                            "processed",
+                            "run_" + str(newRun),
+                            pipeline,
+                        )
+                    ):
+                        os.mkdir(
+                            os.path.join(
+                                self.initial_model_directory,
+                                xtal,
+                                "processed",
+                                "run_" + str(newRun),
+                                pipeline,
+                            )
+                        )
 
-                    script += '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'), 'helpers', 'update_status_flag.py') + \
-                        ' {0!s} {1!s} {2!s} {3!s}\n'.format(
-                            self.database, xtal, 'DataProcessingStatus', 'running')
+                    script += (
+                        "$CCP4/bin/ccp4-python "
+                        + os.path.join(
+                            os.getenv("XChemExplorer_DIR"),
+                            "helpers",
+                            "update_status_flag.py",
+                        )
+                        + " {0!s} {1!s} {2!s} {3!s}\n".format(
+                            self.database, xtal, "DataProcessingStatus", "running"
+                        )
+                    )
 
-# 2018-09-19 - changed this for Joe's test
-#                    script+='$CCP4/bin/xia2 pipeline='+pipeline+' '+ref_option+' '+spg_option+' '+reso_limit_option+' '+cc_half_option+' '+image_dir+'\n'
-                    script += 'xia2 pipeline='+pipeline+' '+ref_option+' '+spg_option + \
-                        ' '+reso_limit_option+' '+cc_half_option+' '+image_dir+'\n'
+                    # 2018-09-19 - changed this for Joe's test
+                    #                    script+='$CCP4/bin/xia2 pipeline='+pipeline+' '+ref_option+' '+spg_option+' '+reso_limit_option+' '+cc_half_option+' '+image_dir+'\n'
+                    script += (
+                        "xia2 pipeline="
+                        + pipeline
+                        + " "
+                        + ref_option
+                        + " "
+                        + spg_option
+                        + " "
+                        + reso_limit_option
+                        + " "
+                        + cc_half_option
+                        + " "
+                        + image_dir
+                        + "\n"
+                    )
 
-            script += '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'), 'helpers', 'update_status_flag.py') + \
-                ' {0!s} {1!s} {2!s} {3!s}\n'.format(
-                    self.database, xtal, 'DataProcessingStatus', 'finished')
-            script += 'cd ' + \
-                os.path.join(self.initial_model_directory,
-                             xtal, 'processed')+'\n'
-            script += '/bin/rm run_in_progress\n'
+            script += (
+                "$CCP4/bin/ccp4-python "
+                + os.path.join(
+                    os.getenv("XChemExplorer_DIR"), "helpers", "update_status_flag.py"
+                )
+                + " {0!s} {1!s} {2!s} {3!s}\n".format(
+                    self.database, xtal, "DataProcessingStatus", "finished"
+                )
+            )
+            script += (
+                "cd "
+                + os.path.join(self.initial_model_directory, xtal, "processed")
+                + "\n"
+            )
+            script += "/bin/rm run_in_progress\n"
 
             os.chdir(self.ccp4_scratch_directory)
-            f = open('xce_xia2_{0!s}.sh'.format(str(i+1)), 'w')
+            f = open("xce_xia2_{0!s}.sh".format(str(i + 1)), "w")
             f.write(script)
             f.close()
-            os.system('chmod +x xce_xia2_{0!s}.sh'.format(str(i+1)))
-            db_dict = {'DataProcessingStatus': 'started'}
+            os.system("chmod +x xce_xia2_{0!s}.sh".format(str(i + 1)))
+            db_dict = {"DataProcessingStatus": "started"}
             self.Logfile.insert(
-                '{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
+                "{0!s}: setting DataProcessingStatus flag to started".format(xtal)
+            )
             self.db.update_data_source(xtal, db_dict)
 
         # submit job
-        self.Logfile.insert('created input scripts for ' +
-                            str(n+1)+' in '+self.ccp4_scratch_directory)
+        self.Logfile.insert(
+            "created input scripts for "
+            + str(n + 1)
+            + " in "
+            + self.ccp4_scratch_directory
+        )
         os.chdir(self.ccp4_scratch_directory)
-        if os.getcwd().startswith('/dls'):
-            if self.external_software['qsub_array']:
-                Cmds = (
-                    '#PBS -joe -N xce_xia2_master\n'
-                    './xce_xia2_$SGE_TASK_ID.sh\n'
-                )
-                f = open('xia2_master.sh', 'w')
+        if os.getcwd().startswith("/dls"):
+            if self.external_software["qsub_array"]:
+                Cmds = "#PBS -joe -N xce_xia2_master\n" "./xce_xia2_$SGE_TASK_ID.sh\n"
+                f = open("xia2_master.sh", "w")
                 f.write(Cmds)
                 f.close()
                 self.Logfile.insert(
-                    'submitting array job with maximal 100 jobs running on cluster')
-                self.Logfile.insert('using the following command:')
+                    "submitting array job with maximal 100 jobs running on cluster"
+                )
+                self.Logfile.insert("using the following command:")
                 self.Logfile.insert(
-                    'qsub -t 1:{0!s} -tc {1!s} xia2_master.sh'.format(str(i+1), self.max_queue_jobs))
-                os.system('qsub -P labxchem -q medium.q -N xia2 -t 1:{0!s} -tc {1!s} xia2_master.sh'.format(
-                    str(i+1), self.max_queue_jobs))
+                    "qsub -t 1:{0!s} -tc {1!s} xia2_master.sh".format(
+                        str(i + 1), self.max_queue_jobs
+                    )
+                )
+                os.system(
+                    "qsub -P labxchem -q medium.q -N xia2 -t 1:{0!s} -tc {1!s} xia2_master.sh".format(
+                        str(i + 1), self.max_queue_jobs
+                    )
+                )
             else:
                 self.Logfile.insert(
-                    "cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
-        elif self.external_software['qsub']:
+                    "cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file"
+                )
+        elif self.external_software["qsub"]:
             self.Logfile.insert(
-                'submitting {0!s} individual jobs to cluster'.format((str(i+1))))
-            self.Logfile.insert(
-                'WARNING: this could potentially lead to a crash...')
-            for n in range(i+1):
-                self.Logfile.insert(
-                    'qsub xce_xia2_{0!s}.sh'.format((str(n+1))))
+                "submitting {0!s} individual jobs to cluster".format((str(i + 1)))
+            )
+            self.Logfile.insert("WARNING: this could potentially lead to a crash...")
+            for n in range(i + 1):
+                self.Logfile.insert("qsub xce_xia2_{0!s}.sh".format((str(n + 1))))
                 os.system(
-                    'qsub -q medium.q -N xia2 xce_xia2_{0!s}.sh'.format((str(n+1))))
+                    "qsub -q medium.q -N xia2 xce_xia2_{0!s}.sh".format((str(n + 1)))
+                )
         else:
             self.Logfile.insert(
-                'running %s consecutive XIA2 jobs on your local machine')
-            for n in range(i+1):
-                self.Logfile.insert(
-                    'starting xce_xia2_{0!s}.sh'.format((str(n+1))))
-                os.system('./xce_xia2_{0!s}.sh'.format((str(n+1))))
+                "running %s consecutive XIA2 jobs on your local machine"
+            )
+            for n in range(i + 1):
+                self.Logfile.insert("starting xce_xia2_{0!s}.sh".format((str(n + 1))))
+                os.system("./xce_xia2_{0!s}.sh".format((str(n + 1))))
 
 
 #            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
