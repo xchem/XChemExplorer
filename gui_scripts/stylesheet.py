@@ -8,9 +8,10 @@ def set_stylesheet(xce_object):
     palette.setColor(QtGui.QPalette.Background, QtGui.QColor("#ececec"))
     xce_object.setPalette(palette)
 
-    icons_directory = os.path.join((os.getenv('XChemExplorer_DIR')), 'icons')
+    icons_directory = os.path.join((os.getenv("XChemExplorer_DIR")), "icons")
 
-    xce_object.setStyleSheet("""
+    xce_object.setStyleSheet(
+        """
     QApplication {
     padding: 0px;
     }
@@ -38,7 +39,9 @@ def set_stylesheet(xce_object):
     border: 1px solid rgb(184, 192, 210);
     }
     QComboBox::down-arrow {
-    image: url(""" + icons_directory + """/drop-down.png);
+    image: url("""
+        + icons_directory
+        + """/drop-down.png);
     background-color: rgb(255, 255, 255);
     }
     QComboBox::drop-down {
@@ -76,6 +79,7 @@ def set_stylesheet(xce_object):
     QScrollBar {
     background:  rgb(236, 236, 236);
     }
-    """)
+    """
+    )
 
-    QtGui.qApp.setStyle('Cleanlooks')
+    QtGui.qApp.setStyle("Cleanlooks")

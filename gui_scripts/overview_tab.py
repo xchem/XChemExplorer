@@ -5,10 +5,10 @@ import sys
 import os
 from PyQt4 import QtGui, QtCore, QtWebKit
 
-sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'gui_scripts'))
+sys.path.append(os.path.join(os.getenv("XChemExplorer_DIR"), "gui_scripts"))
 
 
-class OverviewTab():
+class OverviewTab:
     def __init__(self):
         self.layout_funcs = layout.LayoutFuncs()
 
@@ -19,13 +19,16 @@ class OverviewTab():
         #                                                                                                              #
         ################################################################################################################
         # define subtab list, widget and dict
-        overview_tab_list = ['Data Source', 'Summary']
+        overview_tab_list = ["Data Source", "Summary"]
         xce_object.overview_tab_widget = QtGui.QTabWidget()
         xce_object.overview_tab_dict = {}
 
         # make subtabs
         self.layout_funcs.make_tab_dict(
-            overview_tab_list, xce_object.overview_tab_widget, xce_object.overview_tab_dict)
+            overview_tab_list,
+            xce_object.overview_tab_widget,
+            xce_object.overview_tab_dict,
+        )
 
         # initiate the table in overview/datasource
         xce_object.overview_datasource_table = QtGui.QTableWidget()

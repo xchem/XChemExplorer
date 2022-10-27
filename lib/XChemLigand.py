@@ -9,5 +9,6 @@ def generate_steroisomers(input_smiles):
     """
     mol = Chem.MolFromSmiles(input_smiles)
     out_mols = AllChem.EnumerateStereoisomers(
-        mol, AllChem.StereoEnumerationOptions(onlyUnassigned=False, tryEmbedding=True))
+        mol, AllChem.StereoEnumerationOptions(onlyUnassigned=False, tryEmbedding=True)
+    )
     return [Chem.MolToSmiles(x, isomericSmiles=True) for x in out_mols]
