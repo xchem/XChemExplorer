@@ -13,7 +13,10 @@ RUN apt-get update \
         python3-pip \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* \
     && echo . /ccp4-7.1/bin/ccp4.setup-sh | tee ~/.bashrc ~/.zshrc \
-    && pip3 install flake8 black[python2]
+    && curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o /tmp/get-pip.py \
+    && /ccp4-7.1/bin/ccp4-python /tmp/get-pip.py \
+    && /ccp4-7.1/bin/ccp4-python -m pip install flake8 \
+    && pip3 install black[python2]
 
 ENV QT_X11_NO_MITSHM=1 \
     XChemExplorer_DIR=/workspace/
