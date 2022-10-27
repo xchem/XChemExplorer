@@ -1,7 +1,8 @@
 {
     "python.defaultInterpreterPath": "/ccp4-7.1/bin/ccp4-python",
+    "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
-    "python.linting.flake8Path": "/usr/local/bin/flake8",
+    "python.linting.flake8Path": "/ccp4-7.1/bin/flake8",
     "python.formatting.provider": "black",
-    "python.formatting.blackPath": "/usr/local/bin/black"
+    "python.formatting.blackPath": "/usr/local/bin/black",
 }
