@@ -17,5 +17,12 @@
 	],
 	"mounts": [
 		"src=/dls/labxchem/data/,dst=/dls/labxchem/data/,type=bind"
-	]
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python@2021.9.1246542782"
+			]
+		}
+	}
 }
