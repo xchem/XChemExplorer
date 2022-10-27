@@ -1,6 +1,7 @@
 from PyQt4 import QtGui
 import os
 
+
 def set_stylesheet(xce_object):
     palette = QtGui.QPalette()
 

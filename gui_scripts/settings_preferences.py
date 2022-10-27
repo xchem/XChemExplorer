@@ -1,4 +1,11 @@
-import os, sys, subprocess
+import XChemDeposit
+import XChemLog
+import XChemMain
+import XChemDB
+import XChemUtils
+import os
+import sys
+import subprocess
 from PyQt4 import QtCore, QtGui
 from functools import partial
 import webbrowser
@@ -6,12 +13,6 @@ import webbrowser
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'gui_scripts'))
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'web'))
-
-import XChemUtils
-import XChemDB
-import XChemMain
-import XChemLog
-import XChemDeposit
 
 
 class setup():
@@ -25,7 +26,8 @@ class setup():
             os.startfile(file)
 
     def set_xce_logfile(self, xce_object):
-        XChemLog.startLog(xce_object.xce_logfile).create_logfile(xce_object.xce_version)
+        XChemLog.startLog(xce_object.xce_logfile).create_logfile(
+            xce_object.xce_version)
         xce_object.update_log = XChemLog.updateLog(xce_object.xce_logfile)
 
     def settings(self, xce_object):
@@ -39,57 +41,63 @@ class setup():
         xce_object.data_source_set = False
         xce_object.max_queue_jobs = 100
 
-        ## directory settings
+        # directory settings
 
         # set current directory and direct log to it
         xce_object.current_directory = os.getcwd()
-        xce_object.xce_logfile = os.path.join(xce_object.current_directory, 'xce.log')
+        xce_object.xce_logfile = os.path.join(
+            xce_object.current_directory, 'xce.log')
 
         # if in the correct place, set the various directories
         if xce_object.current_directory.startswith('/dls/labxchem'):
-#        if 'labxchem' in xce_object.current_directory:
+            #        if 'labxchem' in xce_object.current_directory:
             if len(xce_object.current_directory.split('/')) >= 9 and xce_object.current_directory.split('/')[6] == 'processing' and xce_object.current_directory.split('/')[8] == 'processing':
                 xce_object.labxchem_directory = '/' + os.path.join(
-                        *xce_object.current_directory.split('/')[1:8])  # need splat operator: *
+                    *xce_object.current_directory.split('/')[1:8])  # need splat operator: *
                 xce_object.labxchem_directory_current = '/' + os.path.join(
                     *xce_object.current_directory.split('/')[1:9])  # labxchem_directory_current is where they actually have write permission
             else:
                 xce_object.labxchem_directory = '/' + os.path.join(
-                        *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
+                    *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
                 xce_object.labxchem_directory_current = '/' + os.path.join(
-                        *xce_object.current_directory.split('/')[1:7])  # need splat operator: *
+                    *xce_object.current_directory.split('/')[1:7])  # need splat operator: *
 #            xce_object.labxchem_directory = '/' + os.path.join(
 #                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
-            xce_object.beamline_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'beamline')
-            if os.path.isdir(os.path.join(xce_object.labxchem_directory, 'processing', 'analysis','model_building')):
+            xce_object.beamline_directory = os.path.join(
+                xce_object.labxchem_directory, 'processing', 'beamline')
+            if os.path.isdir(os.path.join(xce_object.labxchem_directory, 'processing', 'analysis', 'model_building')):
                 xce_object.initial_model_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
-                                                              'model_building')
+                                                                  'model_building')
             else:
                 xce_object.initial_model_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
-                                                              'initial_model')
-            xce_object.reference_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'reference')
-            xce_object.database_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'database')
+                                                                  'initial_model')
+            xce_object.reference_directory = os.path.join(
+                xce_object.labxchem_directory, 'processing', 'reference')
+            xce_object.database_directory = os.path.join(
+                xce_object.labxchem_directory, 'processing', 'database')
             xce_object.panddas_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'analysis',
                                                         'panddas')
-
 
             xce_object.datasets_summary_file = None
 #            xce_object.datasets_summary_file = os.path.join(xce_object.database_directory,
 #                                                            str(os.getcwd().split('/')[5]) + '_summary.pkl')
             xce_object.data_source_file = ''
-            xce_object.html_export_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'html')
+            xce_object.html_export_directory = os.path.join(
+                xce_object.labxchem_directory, 'processing', 'html')
             xce_object.group_deposit_directory = os.path.join(xce_object.labxchem_directory, 'processing',
                                                               'group_deposition')
             if os.path.isfile(
                     os.path.join(xce_object.labxchem_directory, 'processing', 'database', 'soakDBDataFile.sqlite')):
                 xce_object.data_source_file = 'soakDBDataFile.sqlite'
-                xce_object.database_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'database')
+                xce_object.database_directory = os.path.join(
+                    xce_object.labxchem_directory, 'processing', 'database')
                 xce_object.data_source_set = True
                 xce_object.db = XChemDB.data_source(
                     os.path.join(xce_object.database_directory, xce_object.data_source_file))
                 xce_object.db.create_missing_columns()
 
-            xce_object.ccp4_scratch_directory = os.path.join(xce_object.labxchem_directory, 'processing', 'tmp')
+            xce_object.ccp4_scratch_directory = os.path.join(
+                xce_object.labxchem_directory, 'processing', 'tmp')
 
             directory_list = [xce_object.beamline_directory, os.path.join(xce_object.labxchem_directory,
                                                                           'processing', 'analysis'),
@@ -116,12 +124,11 @@ class setup():
             xce_object.datasets_summary_file = ''
             xce_object.group_deposit_directory = xce_object.current_directory
 
-
-        ## deposition
+        # deposition
 
         xce_object.deposit_dict = {}
 
-        ## internal lists and dictionaries
+        # internal lists and dictionaries
 
         xce_object.data_collection_list = []
         xce_object.visit_list = []
@@ -132,13 +139,15 @@ class setup():
         xce_object.pandda_analyse_input_table_dict = {}
         xce_object.dewar_configuration_dict = {}
         xce_object.data_collection_statistics_dict = {}
-        xce_object.initial_model_dimple_dict = {}  # contains toggle button if dimple should be run
+        # contains toggle button if dimple should be run
+        xce_object.initial_model_dimple_dict = {}
         xce_object.reference_file_list = []
         xce_object.all_columns_in_data_source = XChemDB.data_source(os.path.join
                                                                     (xce_object.database_directory,
                                                                      xce_object.data_source_file)) \
             .return_column_list()
-        xce_object.albula_button_dict = {}  # using dials.image_viewer instead of albula, but keep name for dictionary
+        # using dials.image_viewer instead of albula, but keep name for dictionary
+        xce_object.albula_button_dict = {}
         xce_object.xtalform_dict = {}
 
         xce_object.dataset_outcome_dict = {}  # contains the dataset outcome buttons
@@ -153,11 +162,11 @@ class setup():
 
         xce_object.agamemnon = False
         xce_object.target_list, xce_object.visit_list = XChemMain.get_target_and_visit_list(
-            xce_object.beamline_directory,False)
+            xce_object.beamline_directory, False)
 
         xce_object.diffraction_data_dict = {}
 
-        ## internal switches and flags
+        # internal switches and flags
 
         xce_object.explorer_active = 0
         xce_object.coot_running = 0
@@ -166,7 +175,7 @@ class setup():
         xce_object.albula = None
         xce_object.albula_subframes = []
         xce_object.show_diffraction_image = None
-        xce_object.gdaLogInstructions = [0,False]
+        xce_object.gdaLogInstructions = [0, False]
         # can be any widget to be displayed in data collection summary tab
         xce_object.data_collection_details_currently_on_display = None
 
@@ -191,7 +200,7 @@ class setup():
 
         self.set_xce_logfile(xce_object)
 
-        ## external software packages
+        # external software packages
         xce_object.using_remote_qsub_submission = False
         xce_object.remote_qsub_submission = "/usr/bin/ssh <dls fed ID>@nx.diamond.ac.uk 'module load global/cluster; qsub'"
 
@@ -201,7 +210,8 @@ class setup():
         xce_object.diffraction_data_search_info = 'n/a'
         xce_object.diffraction_data_reference_mtz = 'ignore'
         xce_object.html_export_directory = os.getcwd()
-        xce_object.external_software = XChemUtils.external_software(xce_object.xce_logfile).check()
+        xce_object.external_software = XChemUtils.external_software(
+            xce_object.xce_logfile).check()
 
         xce_object.second_cif_file = None
 
@@ -218,16 +228,17 @@ class setup():
                     'No program for generation of ligand coordinates and restraints available!')
 
     def preferences(self, xce_object):
-        ## preferences
+        # preferences
 
-        xce_object.preferences_data_to_copy = [['aimless logiles and merged mtz only', 'mtz_log_only'], ]
+        xce_object.preferences_data_to_copy = [
+            ['aimless logiles and merged mtz only', 'mtz_log_only'], ]
         # ['All Files in the respective auto-processing directory','everything'],
 
         xce_object.preferences_selection_mechanism = ['IsigI*Comp*UniqueRefl',
                                                       'highest_resolution',
                                                       'lowest_Rfree',
                                                       'dials - only',
-#                                                      'xia2 3d - only',
+                                                      #                                                      'xia2 3d - only',
                                                       'xia2 3dii - only',
                                                       'autoProc - only',
                                                       'autoProc_staraniso - only']
@@ -238,10 +249,9 @@ class setup():
         xce_object.max_queue_jobs = 100
         xce_object.dimple_twin_mode = False
 
-
-        xce_object.preferences_initial_refinement_pipeline = [  'dimple',
-                                                                'pipedream',
-                                                                'phenix.ligand_pipeline'    ]
+        xce_object.preferences_initial_refinement_pipeline = ['dimple',
+                                                              'pipedream',
+                                                              'phenix.ligand_pipeline']
 
         xce_object.preferences = {'processed_data_to_copy':                     'mtz_log_only',
                                   'dataset_selection_mechanism':                'IsigI*Comp*UniqueRefl',
@@ -251,10 +261,9 @@ class setup():
                                   'filename_root':                              '${samplename}',
                                   'max_queue_jobs':                             100,
                                   'dimple_twin_mode':                           False,
-                                  'initial_refinement_pipeline':                'dimple'    }
+                                  'initial_refinement_pipeline':                'dimple'}
 
-
-        ## settings
+        # settings
 
         xce_object.settings = {'current_directory': xce_object.current_directory,
                                'beamline_directory': xce_object.beamline_directory,
@@ -276,7 +285,7 @@ class setup():
                                'group_deposit_directory': xce_object.group_deposit_directory,
                                'remote_qsub': '',
                                'dimple_twin_mode': False,
-                               'agamemnon': False           }
+                               'agamemnon': False}
 
     def tables(self, xce_object):
         # Table column settings
@@ -306,7 +315,7 @@ class setup():
         #                                            - appears in create_widgets_for_autoprocessing_results_only()
 
         xce_object.datasets_summary_table_columns = ['Sample ID',
-#                                                     'Resolution\n[Mn<I/sig(I)> = 2.0]',
+                                                     #                                                     'Resolution\n[Mn<I/sig(I)> = 2.0]',
                                                      'Resolution\nHigh',
                                                      'DataProcessing\nSpaceGroup',
                                                      'DataProcessing\nRfree',
@@ -319,9 +328,9 @@ class setup():
                                                      'img2',
                                                      'img3',
                                                      'img4'
-#                                                     'img5',
-#                                                     'Show\nDetails',
-#                                                     'Show Diffraction\nImage'
+                                                     #                                                     'img5',
+                                                     #                                                     'Show\nDetails',
+                                                     #                                                     'Show Diffraction\nImage'
                                                      ]
 
         # functions that use tables.data_collection_table_columns:
@@ -343,8 +352,6 @@ class setup():
                                                     'DataProcessing\nScore'
                                                     ]
 
-
-
         # functions that use tables.datasets_reprocess_columns:
         #
         # - update_datasets_reprocess_table() - appears in search_for_datasets()
@@ -352,7 +359,7 @@ class setup():
         xce_object.datasets_reprocess_columns = ['Dataset ID',
                                                  'Sample ID',
                                                  'Run\nxia2',
-#                                                 'Resolution\n[Mn<I/sig(I)> = 1.5]',
+                                                 #                                                 'Resolution\n[Mn<I/sig(I)> = 1.5]',
                                                  'Resolution\nHigh',
                                                  'Rmerge\nLow',
                                                  'Dimple\nRfree',
@@ -368,7 +375,7 @@ class setup():
                                          'Select',
                                          'Compound ID',
                                          'Smiles',
-#                                         'Resolution\n[Mn<I/sig(I)> = 1.5]',
+                                         #                                         'Resolution\n[Mn<I/sig(I)> = 1.5]',
                                          'Resolution\nHigh',
                                          'Dimple\nRcryst',
                                          'Dimple\nRfree',
@@ -386,16 +393,16 @@ class setup():
         # - populate_pandda_analyse_input_table() - appears in update_all_tables()
 
         xce_object.pandda_table_columns = [
-                                           'Sample ID',
-                                           'Export\nSelected',
-                                           'Refinement\nSpace Group',
-                                           'Resolution\n[Mn<I/sig(I)> = 1.5]',
-                                           'Dimple\nRcryst',
-                                           'Dimple\nRfree',
-                                           'Crystal Form\nName',
-                                            'Ignore\ncompletely',
-                                           'Exclude from\n characterisation\n(binds)',
-                                           'Exclude from\n z-map analysis\n(does not bind)']
+            'Sample ID',
+            'Export\nSelected',
+            'Refinement\nSpace Group',
+            'Resolution\n[Mn<I/sig(I)> = 1.5]',
+            'Dimple\nRcryst',
+            'Dimple\nRfree',
+            'Crystal Form\nName',
+            'Ignore\ncompletely',
+            'Exclude from\n characterisation\n(binds)',
+            'Exclude from\n z-map analysis\n(does not bind)']
 
         # functions that use tables.refinement_table_columns:
         #
@@ -423,9 +430,12 @@ class setup():
         #             }
         xce_object.menu_dict = {'A: file': ["&File",
                                             [
-                                                ['Open Config File', 'Ctrl+O', xce_object.open_config_file],
-                                                ['Save Config File', 'Ctrl+S', xce_object.save_config_file],
-                                                ['Quit', 'Ctrl+Q', xce_object.quit_xce]
+                                                ['Open Config File', 'Ctrl+O',
+                                                    xce_object.open_config_file],
+                                                ['Save Config File', 'Ctrl+S',
+                                                    xce_object.save_config_file],
+                                                ['Quit', 'Ctrl+Q',
+                                                    xce_object.quit_xce]
                                             ]],
                                 'B: datasource': ["&Datasource",
                                                   [
@@ -443,38 +453,46 @@ class setup():
                                                        xce_object.select_datasource_columns_to_display],
                                                       ['Create New Datasource (SQLite)', '',
                                                        xce_object.create_new_data_source],
-                                                      ['Export CSV for wonka', '', xce_object.export_data_for_WONKA]
+                                                      ['Export CSV for wonka', '',
+                                                          xce_object.export_data_for_WONKA]
                                                   ]],
                                 'C: preferences': ["&Preferences",
                                                    [
-                                                       ['Edit preferences', '', xce_object.show_preferences]
+                                                       ['Edit preferences', '',
+                                                           xce_object.show_preferences]
                                                    ]],
                                 'D: deposition': ["&Deposition",
                                                   [
-                                                      ['Edit information', '', xce_object.deposition_data],
-                                                      ['Export to HTML', '', xce_object.export_to_html],
-                                                      ['Export to HTML - CompChem', '', xce_object.export_to_html_CompChem],
-                                                      ['Export to HTML - deposition ready', '', xce_object.export_to_html_deposition_ready],
-#                                                      ['Find PanDDA apo structures', '',
-#                                                       xce_object.create_missing_apo_records_in_depositTable],
-#                                                      ['Update file info of apo structures', '',
-#                                                       xce_object.update_file_information_of_apo_records],
-#                                                      ['Prepare mmcif for apo structures', '',
-#                                                       xce_object.prepare_models_for_deposition_apo],
-#                                                      ['Prepare mmcif for ligand bound structures', '',
-#                                                       xce_object.prepare_models_for_deposition_ligand_bound],
-#                                                      ['Copy files to group deposition directory (ligand bound)', '',
-#                                                       xce_object.prepare_for_group_deposition_upload_ligand_bound],
-#                                                      ['Copy files to group deposition directory (ground state)', '',
-#                                                       xce_object.prepare_for_group_deposition_upload_ground_state],
-                                                      ['Update DB with PDB codes', '', xce_object.enter_pdb_codes],
-                                                      ['Check SMILES', '', xce_object.check_smiles_in_db_and_pdb]
+                                                      ['Edit information', '',
+                                                          xce_object.deposition_data],
+                                                      ['Export to HTML', '',
+                                                          xce_object.export_to_html],
+                                                      ['Export to HTML - CompChem', '',
+                                                          xce_object.export_to_html_CompChem],
+                                                      ['Export to HTML - deposition ready', '',
+                                                          xce_object.export_to_html_deposition_ready],
+                                                      #                                                      ['Find PanDDA apo structures', '',
+                                                      #                                                       xce_object.create_missing_apo_records_in_depositTable],
+                                                      #                                                      ['Update file info of apo structures', '',
+                                                      #                                                       xce_object.update_file_information_of_apo_records],
+                                                      #                                                      ['Prepare mmcif for apo structures', '',
+                                                      #                                                       xce_object.prepare_models_for_deposition_apo],
+                                                      #                                                      ['Prepare mmcif for ligand bound structures', '',
+                                                      #                                                       xce_object.prepare_models_for_deposition_ligand_bound],
+                                                      #                                                      ['Copy files to group deposition directory (ligand bound)', '',
+                                                      #                                                       xce_object.prepare_for_group_deposition_upload_ligand_bound],
+                                                      #                                                      ['Copy files to group deposition directory (ground state)', '',
+                                                      #                                                       xce_object.prepare_for_group_deposition_upload_ground_state],
+                                                      ['Update DB with PDB codes', '',
+                                                          xce_object.enter_pdb_codes],
+                                                      ['Check SMILES', '',
+                                                          xce_object.check_smiles_in_db_and_pdb]
                                                   ]],
-#                                'E: proasis': ["Proasis",
-#                                               [
-#                                                   ['Launch Proasis in browser', '', partial(webbrowser.open,
-#                                                                                             url='http://cs04r-sc-vserv-137.diamond.ac.uk/Proasis4_2017/')]
-#                                               ]],
+                                #                                'E: proasis': ["Proasis",
+                                #                                               [
+                                #                                                   ['Launch Proasis in browser', '', partial(webbrowser.open,
+                                #                                                                                             url='http://cs04r-sc-vserv-137.diamond.ac.uk/Proasis4_2017/')]
+                                #                                               ]],
                                 'F: help': ["&Help",
                                             [
                                                 ['Open XCE manual', '',
@@ -490,9 +508,10 @@ class setup():
                                                      "/dls/science/groups/i04-1/software/xce_troubleshooting.pdf")]
                                             ]],
                                 'G: labels': ["&Labels",
-                                               [
-                                                   ['Edit label information', '', xce_object.add_label_information]
-                                               ]]
+                                              [
+                                                  ['Edit label information', '',
+                                                      xce_object.add_label_information]
+                                              ]]
 
                                 }
 
@@ -513,124 +532,125 @@ class setup():
                                                                    ]]}
 
         xce_object.dataset_task_run_button_dict = {'dataset_run_button':
+                                                   [r"Run",
+                                                    [
+                                                        ['XChemToolTips.dataset_task_run_button_tip()',  # tooltip
+                                                         # stylesheet
+                                                         'QPushButton { padding: 1px; margin: 1px }',
+                                                         '',  # font
+                                                         'xce_object.button_clicked']  # action
+                                                    ]]}
+
+        xce_object.dataset_task_status_button_dict = {'dataset_status_button':
+                                                      [r"Status",
+                                                       [
+                                                           ['XChemToolTips.dataset_task_status_button_tip()',
+                                                            # tooltip
+                                                            'QPushButton { padding: 1px; margin: 1px }',
+                                                            # stylesheet
+                                                            '',  # font
+                                                            'xce_object.button_clicked']  # action
+                                                       ]]}
+
+        xce_object.map_cif_file_task_run_button_dict = {'dataset_run_button':
+                                                        [r"Run",
+                                                         [
+                                                             ['XChemToolTips.map_cif_file_task_run_button_tip()',
+                                                              # tooltip
+                                                              'QPushButton { padding: 1px; margin: 1px }',
+                                                              # stylesheet
+                                                              '',  # font
+                                                              'xce_object.button_clicked']  # action
+                                                         ]]}
+
+        xce_object.map_cif_file_task_status_button_dict = {'dataset_status_button':
+                                                           [r"Status",
+                                                            [
+                                                                [
+                                                                    'XChemToolTips.map_cif_file_task_status_button_tip()',
+                                                                    # tooltip
+                                                                    'QPushButton { padding: 1px; margin: 1px }',
+                                                                    # stylesheet
+                                                                    '',  # font
+                                                                    'xce_object.button_clicked']  # action
+                                                            ]]}
+
+        xce_object.panddas_file_task_run_button_dict = {'dataset_run_button':
+                                                        [r"Run",
+                                                         [
+                                                             ['XChemToolTips.panddas_file_task_run_button_tip()',
+                                                              # tooltip
+                                                              'QPushButton { padding: 1px; margin: 1px }',
+                                                              # stylesheet
+                                                              '',  # font
+                                                              'xce_object.button_clicked']  # action
+                                                         ]]}
+
+        xce_object.panddas_file_task_status_button_dict = {'dataset_status_button':
+                                                           [r"Status",
+                                                            [
+                                                                [
+                                                                    'XChemToolTips.panddas_file_task_status_button_tip()',
+                                                                    # tooltip
+                                                                    'QPushButton { padding: 1px; margin: 1px }',
+                                                                    # stylesheet
+                                                                    '',  # font
+                                                                    'xce_object.button_clicked']  # action
+                                                            ]]}
+
+        xce_object.refine_file_task_run_button_dict = {'dataset_run_button':
                                                        [r"Run",
                                                         [
-                                                            ['XChemToolTips.dataset_task_run_button_tip()',  # tooltip
-                                                             'QPushButton { padding: 1px; margin: 1px }',  # stylesheet
+                                                            ['XChemToolTips.refine_file_task_run_button_tip()',
+                                                             # tooltip
+                                                             'QPushButton { padding: 1px; margin: 1px }',
+                                                             # stylesheet
                                                              '',  # font
                                                              'xce_object.button_clicked']  # action
                                                         ]]}
 
-        xce_object.dataset_task_status_button_dict = {'dataset_status_button':
+        xce_object.refine_file_task_status_button_dict = {'dataset_status_button':
                                                           [r"Status",
                                                            [
-                                                               ['XChemToolTips.dataset_task_status_button_tip()',
-                                                                # tooltip
-                                                                'QPushButton { padding: 1px; margin: 1px }',
-                                                                # stylesheet
-                                                                '',  # font
-                                                                'xce_object.button_clicked']  # action
-                                                           ]]}
-
-        xce_object.map_cif_file_task_run_button_dict = {'dataset_run_button':
-                                                            [r"Run",
-                                                             [
-                                                                 ['XChemToolTips.map_cif_file_task_run_button_tip()',
-                                                                  # tooltip
-                                                                  'QPushButton { padding: 1px; margin: 1px }',
-                                                                  # stylesheet
-                                                                  '',  # font
-                                                                  'xce_object.button_clicked']  # action
-                                                             ]]}
-
-        xce_object.map_cif_file_task_status_button_dict = {'dataset_status_button':
-                                                               [r"Status",
-                                                                [
-                                                                    [
-                                                                        'XChemToolTips.map_cif_file_task_status_button_tip()',
-                                                                        # tooltip
-                                                                        'QPushButton { padding: 1px; margin: 1px }',
-                                                                        # stylesheet
-                                                                        '',  # font
-                                                                        'xce_object.button_clicked']  # action
-                                                                ]]}
-
-        xce_object.panddas_file_task_run_button_dict = {'dataset_run_button':
-                                                            [r"Run",
-                                                             [
-                                                                 ['XChemToolTips.panddas_file_task_run_button_tip()',
-                                                                  # tooltip
-                                                                  'QPushButton { padding: 1px; margin: 1px }',
-                                                                  # stylesheet
-                                                                  '',  # font
-                                                                  'xce_object.button_clicked']  # action
-                                                             ]]}
-
-        xce_object.panddas_file_task_status_button_dict = {'dataset_status_button':
-                                                               [r"Status",
-                                                                [
-                                                                    [
-                                                                        'XChemToolTips.panddas_file_task_status_button_tip()',
-                                                                        # tooltip
-                                                                        'QPushButton { padding: 1px; margin: 1px }',
-                                                                        # stylesheet
-                                                                        '',  # font
-                                                                        'xce_object.button_clicked']  # action
-                                                                ]]}
-
-        xce_object.refine_file_task_run_button_dict = {'dataset_run_button':
-                                                           [r"Run",
-                                                            [
-                                                                ['XChemToolTips.refine_file_task_run_button_tip()',
-                                                                 # tooltip
-                                                                 'QPushButton { padding: 1px; margin: 1px }',
-                                                                 # stylesheet
-                                                                 '',  # font
-                                                                 'xce_object.button_clicked']  # action
-                                                            ]]}
-
-        xce_object.refine_file_task_status_button_dict = {'dataset_status_button':
-                                                              [r"Status",
                                                                [
-                                                                   [
-                                                                       'XChemToolTips.refine_file_task_status_button_tip()',
-                                                                       # tooltip
-                                                                       'QPushButton { padding: 1px; margin: 1px }',
-                                                                       # stylesheet
-                                                                       '',  # font
-                                                                       'xce_object.button_clicked']  # action
-                                                               ]]}
+                                                                   'XChemToolTips.refine_file_task_status_button_tip()',
+                                                                   # tooltip
+                                                                   'QPushButton { padding: 1px; margin: 1px }',
+                                                                   # stylesheet
+                                                                   '',  # font
+                                                                   'xce_object.button_clicked']  # action
+                                                           ]]}
 
     def dropdown_items(self, xce_object):
         xce_object.dataset_tasks = ['Get New Results from Autoprocessing',
-#                                    'Run DIMPLE on All Autoprocessing MTZ files',
+                                    #                                    'Run DIMPLE on All Autoprocessing MTZ files',
                                     'Rescore Datasets',
                                     'Run xia2 on selected datasets',
                                     'Run xia2 on selected datasets - overwrite']
 
         xce_object.map_cif_file_tasks = [
-#                                         'Run initial refinement on selected MTZ files',
-#                                         'Remove selected initial refinement files',
-                                         'Run DIMPLE on selected MTZ files',
-                                         'Remove selected DIMPLE files',
-                                         'Set DIMPLE output',
-#                                          'Set only results from selected pipeline',
-#                                         'Create CIF/PDB/PNG file of ALL compounds',
-#                                         'Create CIF/PDB/PNG file of NEW compounds',
-                                         '------------------------------------------',
-                                         'Create CIF/PDB/PNG file of SELECTED compounds',
-                                         'Merge ligand CIF file with selected compounds',
-                                         'Restore original CIF file of selected compounds',
-                                         'Fit ligands into maps after initial refinement',
-                                         '------------------------------------------',
-                                         'Run PIPEDREAM on selected MTZ files',
-                                         'Remove selected PIPEDREAM files',
-                                         'Set PIPEDREAM output',
-                                         '------------------------------------------',
-                                         'Run PHENIX.LIGAND_PIPELINE on selected MTZ files',
-                                         'Remove selected PHENIX.LIGAND_PIPELINE files',
-                                         'Set PHENIX.LIGAND_PIPELINE output'
-                                         ]
+            #                                         'Run initial refinement on selected MTZ files',
+            #                                         'Remove selected initial refinement files',
+            'Run DIMPLE on selected MTZ files',
+            'Remove selected DIMPLE files',
+            'Set DIMPLE output',
+            #                                          'Set only results from selected pipeline',
+            #                                         'Create CIF/PDB/PNG file of ALL compounds',
+            #                                         'Create CIF/PDB/PNG file of NEW compounds',
+            '------------------------------------------',
+            'Create CIF/PDB/PNG file of SELECTED compounds',
+            'Merge ligand CIF file with selected compounds',
+            'Restore original CIF file of selected compounds',
+            'Fit ligands into maps after initial refinement',
+            '------------------------------------------',
+            'Run PIPEDREAM on selected MTZ files',
+            'Remove selected PIPEDREAM files',
+            'Set PIPEDREAM output',
+            '------------------------------------------',
+            'Run PHENIX.LIGAND_PIPELINE on selected MTZ files',
+            'Remove selected PHENIX.LIGAND_PIPELINE files',
+            'Set PHENIX.LIGAND_PIPELINE output'
+        ]
 
         xce_object.panddas_file_tasks = ['pandda.analyse',
                                          'pandda.inspect',
@@ -641,7 +661,7 @@ class setup():
                                          'Export SELECTED PANDDA models',
                                          '------------------------------------------',
                                          'Show HTML summary',
-#                                         'Update datasource with results from pandda.inspect',
+                                         #                                         'Update datasource with results from pandda.inspect',
                                          'cluster datasets',
                                          'Event Map -> SF',
                                          'apo -> mmcif',
@@ -653,7 +673,7 @@ class setup():
                                          'refine ALL bound-state models with BUSTER (no sanity check)',
                                          'refine NEW bound-state models with BUSTER (no sanity check)',
                                          '------------------------------------------',
-#                                         'refine NEW bound-state models with BUSTER - NEW',
+                                         #                                         'refine NEW bound-state models with BUSTER - NEW',
                                          'pre-run for ground state model',
                                          'Build ground state model',
                                          '------------------------------------------',
@@ -663,12 +683,11 @@ class setup():
         xce_object.refine_file_tasks = ['Open COOT - BUSTER refinement -',
                                         'Open COOT - REFMAC refinement -',
                                         'Open COOT - dimple_twin -',
-#                                        '-------------------------------',
-#                                        'Reset to last successful refinement (BUSTER or REFMAC)',
+                                        #                                        '-------------------------------',
+                                        #                                        'Reset to last successful refinement (BUSTER or REFMAC)',
                                         '']
 
 #        xce_object.refine_file_tasks = ['Open COOT',
 #                                        'Open COOT for old PanDDA',
 #                                        'Update Deposition Table',
 #                                        'Prepare Group Deposition']
-

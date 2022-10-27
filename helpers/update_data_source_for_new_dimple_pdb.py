@@ -1,36 +1,38 @@
 # last edited: 15/11/2016, 15:00
 
-import os,sys
-sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'),'lib'))
-import glob
-
-from iotbx import mtz
-
-from XChemUtils import parse
 import XChemDB
+from XChemUtils import parse
+from iotbx import mtz
+import glob
+import os
+import sys
+sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
 
-if __name__=='__main__':
-    db_file=sys.argv[1]
-    xtal=sys.argv[2]
-    inital_model_directory=sys.argv[3]
 
-    db=XChemDB.data_source(db_file)
-    if os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple.pdb')):
-        db_dict= {'DimplePathToPDB': os.path.join(inital_model_directory, xtal, 'dimple.pdb')}
-        dimple_ran_successfully=False
-        if os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple.mtz')):
-            db_dict['DimplePathToMTZ']=os.path.join(inital_model_directory,xtal,'dimple.mtz')
-            dimple_ran_successfully=True
-            db_dict['DataProcessingDimpleSuccessful']='True'
+if __name__ == '__main__':
+    db_file = sys.argv[1]
+    xtal = sys.argv[2]
+    inital_model_directory = sys.argv[3]
+
+    db = XChemDB.data_source(db_file)
+    if os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple.pdb')):
+        db_dict = {'DimplePathToPDB': os.path.join(
+            inital_model_directory, xtal, 'dimple.pdb')}
+        dimple_ran_successfully = False
+        if os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple.mtz')):
+            db_dict['DimplePathToMTZ'] = os.path.join(
+                inital_model_directory, xtal, 'dimple.mtz')
+            dimple_ran_successfully = True
+            db_dict['DataProcessingDimpleSuccessful'] = 'True'
             db_dict['DimpleStatus'] = 'finished'
         if not dimple_ran_successfully:
-            db_dict['DataProcessingDimpleSuccessful']='False'
+            db_dict['DataProcessingDimpleSuccessful'] = 'False'
             db_dict['DimpleStatus'] = 'failed'
-        pdb=parse().PDBheader(os.path.join(inital_model_directory,xtal,'dimple.pdb'))
-        db_dict['DimpleRcryst']=pdb['Rcryst']
-        db_dict['DimpleRfree']=pdb['Rfree']
-        db_dict['RefinementOutcome']='1 - Analysis Pending'
-        db_dict['RefinementSpaceGroup']=pdb['SpaceGroup']
+        pdb = parse().PDBheader(os.path.join(inital_model_directory, xtal, 'dimple.pdb'))
+        db_dict['DimpleRcryst'] = pdb['Rcryst']
+        db_dict['DimpleRfree'] = pdb['Rfree']
+        db_dict['RefinementOutcome'] = '1 - Analysis Pending'
+        db_dict['RefinementSpaceGroup'] = pdb['SpaceGroup']
 #        if not os.path.isfile(xtal+'.free.mtz'):
 #            os.chdir(os.path.join(inital_model_directory,xtal))
 #            os.system('/bin/rm '+xtal+'.free.mtz')
@@ -43,39 +45,42 @@ if __name__=='__main__':
 
         # setting free.mtz file
 
-        os.chdir(os.path.join(inital_model_directory,xtal))
-        os.system('/bin/rm -f %s.free.mtz' %xtal)
+        os.chdir(os.path.join(inital_model_directory, xtal))
+        os.system('/bin/rm -f %s.free.mtz' % xtal)
         mtzFree = None
         db_dict['RefinementMTZfree'] = ''
-        if os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared2.mtz')):
-            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared2.mtz')
-        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz')):
-            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz')
-        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared.mtz')):
-            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared.mtz')
-        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared2.mtz')):
-            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple','prepared2.mtz')
-        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','free.mtz')):
-            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','free.mtz')
-        elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple','free.mtz')):
-            mtzFree = os.path.join(inital_model_directory,xtal,'dimple','dimple','free.mtz')
+        if os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple', 'dimple_rerun_on_selected_file', 'dimple', 'prepared2.mtz')):
+            mtzFree = os.path.join(inital_model_directory, xtal, 'dimple',
+                                   'dimple_rerun_on_selected_file', 'dimple', 'prepared2.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple', 'dimple_rerun_on_selected_file', 'dimple', 'prepared.mtz')):
+            mtzFree = os.path.join(inital_model_directory, xtal, 'dimple',
+                                   'dimple_rerun_on_selected_file', 'dimple', 'prepared.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple', 'dimple', 'prepared.mtz')):
+            mtzFree = os.path.join(
+                inital_model_directory, xtal, 'dimple', 'dimple', 'prepared.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple', 'dimple', 'prepared2.mtz')):
+            mtzFree = os.path.join(
+                inital_model_directory, xtal, 'dimple', 'dimple', 'prepared2.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple', 'dimple_rerun_on_selected_file', 'dimple', 'free.mtz')):
+            mtzFree = os.path.join(inital_model_directory, xtal, 'dimple',
+                                   'dimple_rerun_on_selected_file', 'dimple', 'free.mtz')
+        elif os.path.isfile(os.path.join(inital_model_directory, xtal, 'dimple', 'dimple', 'free.mtz')):
+            mtzFree = os.path.join(
+                inital_model_directory, xtal, 'dimple', 'dimple', 'free.mtz')
 
         if mtzFree is not None:
             if 'F_unique' in mtz.object(mtzFree).column_labels():
-                cmd = ( 'cad hklin1 %s hklout %s.free.mtz << eof\n' %(mtzFree,xtal) +
-                        ' monitor BRIEF\n'
-                        ' labin file 1 E1=F E2=SIGF E3=FreeR_flag\n'
-                        ' labout file 1 E1=F E2=SIGF E3=FreeR_flag\n'
-                        'eof\n' )
+                cmd = ('cad hklin1 %s hklout %s.free.mtz << eof\n' % (mtzFree, xtal) +
+                       ' monitor BRIEF\n'
+                       ' labin file 1 E1=F E2=SIGF E3=FreeR_flag\n'
+                       ' labout file 1 E1=F E2=SIGF E3=FreeR_flag\n'
+                       'eof\n')
 
                 os.system(cmd)
             else:
-                os.symlink(mtzFree,xtal+'.free.mtz')
+                os.symlink(mtzFree, xtal+'.free.mtz')
 
-            db_dict['RefinementMTZfree']=xtal+'.free.mtz'
-
-
-
+            db_dict['RefinementMTZfree'] = xtal+'.free.mtz'
 
         # if no refinement was carried out yet, then we also want to link the dimple files to refine.pdb/refine.log
         # so that we can look at them with the COOT plugin
@@ -95,13 +100,13 @@ if __name__=='__main__':
 
         # finally, update data source
         print '==> xce: updating data source after DIMPLE run'
-        db.update_data_source(xtal,db_dict)
+        db.update_data_source(xtal, db_dict)
 
     else:
         # the actual dimple script creates symbolic links regardless if dimple was successful or not
         # python os.path.isfile is False if symbolic link points to non existing file
         # so we remove all of them!
-        os.chdir(os.path.join(inital_model_directory,xtal))
+        os.chdir(os.path.join(inital_model_directory, xtal))
         os.system('/bin/rm dimple.pdb')
         os.system('/bin/rm dimple.mtz')
         os.system('/bin/rm 2fofc.map')

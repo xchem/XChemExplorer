@@ -1,22 +1,24 @@
 # last edited: 09/02/2017, 15:00
 
 from __future__ import print_function
-import os,glob
+import os
+import glob
 import sys
 from datetime import datetime
 
-sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'),'lib'))
+sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
+
 
 class startLog:
 
-    def __init__(self,logfile):
-        self.logfile=logfile
+    def __init__(self, logfile):
+        self.logfile = logfile
 
-    def create_logfile(self,version):
+    def create_logfile(self, version):
 
-        pasteVersion=version
-        for i in range(0,20-len(version)):
-            pasteVersion+=' '
+        pasteVersion = version
+        for i in range(0, 20-len(version)):
+            pasteVersion += ' '
 
         message = (
             '\n\n'
@@ -24,7 +26,7 @@ class startLog:
             '     #                                                                     #\n'
             '     # XCHEMEXPLORER - multi dataset analysis                              #\n'
             '     #                                                                     #\n'
-            '     # Version: %s                                       #\n' %pasteVersion+
+            '     # Version: %s                                       #\n' % pasteVersion +
             '     #                                                                     #\n'
             '     # Date: 10/10/2022                                                    #\n'
             '     #                                                                     #\n'
@@ -37,14 +39,16 @@ class startLog:
 
         if not os.path.isfile(self.logfile):
             os.system('touch '+self.logfile)
-            message+='creating new logfile for the current XChemExplorer ('+version+') session:\n'+self.logfile+'\n'
+            message += 'creating new logfile for the current XChemExplorer (' + \
+                version+') session:\n'+self.logfile+'\n'
 
         else:
-            message+='writing into existing logfile for current XChemExplorer ('+version+') session:\n'+self.logfile+'\n'
+            message += 'writing into existing logfile for current XChemExplorer (' + \
+                version+') session:\n'+self.logfile+'\n'
         updateLog(self.logfile).insert(message)
-        #print(message)
+        # print(message)
 
-#class depositLog:
+# class depositLog:
 #
 #    def __init__(self,logfile):
 #        self.logfile=logfile
@@ -102,28 +106,32 @@ class startLog:
 #
 #        updateLog(self.logfile).insert(message)
 
+
 class updateLog:
 
-    def __init__(self,logfile):
-        self.logfile=open(logfile, "a")
+    def __init__(self, logfile):
+        self.logfile = open(logfile, "a")
 
-    def insert(self,message):
-        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
-        print( str(present_time)+' ==> XCE: '+message, file = self.logfile)
+    def insert(self, message):
+        present_time = datetime.strftime(
+            datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
+        print(str(present_time)+' ==> XCE: '+message, file=self.logfile)
         print('==> XCE: '+message)
 
-    def warning(self,message):
-        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
-        print( str(present_time)+' ==> XCE: WARNING! '+message, file = self.logfile)
+    def warning(self, message):
+        present_time = datetime.strftime(
+            datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
+        print(str(present_time)+' ==> XCE: WARNING! '+message, file=self.logfile)
         print('==> XCE: WARNING! '+message)
 
-    def error(self,message):
-        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
-        print( str(present_time)+' ==> XCE: ERROR!!! '+message, file = self.logfile)
+    def error(self, message):
+        present_time = datetime.strftime(
+            datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
+        print(str(present_time)+' ==> XCE: ERROR!!! '+message, file=self.logfile)
         print('==> XCE: ERROR!!! '+message)
 
-    def hint(self,message):
-        present_time=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
-        print( str(present_time)+' ==> XCE: HINT -> '+message, file = self.logfile)
+    def hint(self, message):
+        present_time = datetime.strftime(
+            datetime.now(), '%Y-%m-%d %H:%M:%S.%f')[:-4]
+        print(str(present_time)+' ==> XCE: HINT -> '+message, file=self.logfile)
         print('==> XCE: HINT -> '+message)
-

@@ -2,6 +2,7 @@ import os
 import glob
 import sys
 
+
 def merge_cifs(cpdDir):
     os.chdir(cpdDir)
     out = ''
@@ -11,6 +12,7 @@ def merge_cifs(cpdDir):
     f = open('merged.cif', 'w')
     f.write(out)
     f.close()
+
 
 if __name__ == '__main__':
     cpdDir = sys.argv[1]

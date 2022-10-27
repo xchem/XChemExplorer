@@ -1,28 +1,25 @@
+from settings_tab import SettingsTab
+from deposition_tab import DepositionTab
+from refinement_tab import RefinementTab
+from pandda_tab import PanddaTab
+from maps_tab import MapsTab
+from datasets_tab import DatasetsTab
+from overview_tab import OverviewTab
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
+import XChemMain
+import XChemToolTips
+from settings_preferences import setup
 import multiprocessing
 import subprocess
-import sys, os
+import sys
+import os
 from PyQt4 import QtGui, QtCore, QtWebKit
 from functools import partial
 
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'web'))
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'gui_scripts'))
-
-from settings_preferences import setup
-
-import XChemToolTips
-import XChemMain
-
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-
-from overview_tab import OverviewTab
-from datasets_tab import DatasetsTab
-from maps_tab import MapsTab
-from pandda_tab import PanddaTab
-from refinement_tab import RefinementTab
-from deposition_tab import DepositionTab
-from settings_tab import SettingsTab
 
 
 class LayoutObjects():
@@ -44,7 +41,8 @@ class LayoutObjects():
         setup().top_menu_dict(xce_object)
 
         # create menu from menu dictionary
-        menu_bar = self.layout_funcs.setup_menubar(xce_object, menu_bar, xce_object.menu_dict)
+        menu_bar = self.layout_funcs.setup_menubar(
+            xce_object, menu_bar, xce_object.menu_dict)
 
         # END OF MENU BAR - CODE BELOW: stuff removed from apo structure stuff that appears might have a funky
         # consequence - work out later.
@@ -53,13 +51,13 @@ class LayoutObjects():
         # xce_object.prepare_mmcif_files_dict['apo'] = prepare_mmcif_files_for_apo_structures
         # xce_object.prepare_mmcif_files_dict['ligand_bound'] = prepare_mmcif_files_for_ligand_bound_structures
 
-
         return menu_bar
 
     # function containing setup for bottom boxes
     def initialise_bottom_boxes(self, xce_object):
 
-        icons_directory = os.path.join((os.getenv('XChemExplorer_DIR')), 'icons')
+        icons_directory = os.path.join(
+            (os.getenv('XChemExplorer_DIR')), 'icons')
 
         # import all buttons
         setup().bottom_box_buttons(xce_object)
@@ -83,11 +81,12 @@ class LayoutObjects():
                                                                                     xce_object.dataset_task_status_button_dict)
 
         # array of both button xce_objects to apply to bottom box layout
-        dataset_buttons = [xce_object.dataset_task_run_button, xce_object.dataset_task_status_button]
-
+        dataset_buttons = [xce_object.dataset_task_run_button,
+                           xce_object.dataset_task_status_button]
 
         # label for the bottom box layout
-        dataset_label = str("<html><img src='" + str(icons_directory) + "/004-database-configuration.png'></html> Datasets")
+        dataset_label = str("<html><img src='" + str(icons_directory) +
+                            "/004-database-configuration.png'></html> Datasets")
 
         # return the frame and combobox from the bottom box setup function
         frame_dataset_task, xce_object.dataset_tasks_combobox = self.layout_funcs.bottom_box_setup(xce_object,
@@ -122,10 +121,12 @@ class LayoutObjects():
                                                 xce_object.map_cif_file_task_status_button_dict)
 
         # array of both button xce_objects to apply to bottom box layout
-        map_cif_file_buttons = [xce_object.map_cif_file_task_run_button, xce_object.map_cif_file_task_status_button]
+        map_cif_file_buttons = [
+            xce_object.map_cif_file_task_run_button, xce_object.map_cif_file_task_status_button]
 
         # label for the bottom box layout
-        map_cif_file_label = str("<html><img src='" + str(icons_directory) + "/003-internet.png'></html> Maps & Restraints")
+        map_cif_file_label = str(
+            "<html><img src='" + str(icons_directory) + "/003-internet.png'></html> Maps & Restraints")
 
         # return the frame and combobox from the bottom box setup function
         frame_map_cif_file_task, xce_object.map_cif_file_tasks_combobox = \
@@ -161,10 +162,12 @@ class LayoutObjects():
                                                 xce_object.panddas_file_task_status_button_dict)
 
         # array of both button xce_objects to apply to bottom box layout
-        panddas_file_buttons = [xce_object.panddas_file_task_run_button, xce_object.panddas_file_task_status_button]
+        panddas_file_buttons = [
+            xce_object.panddas_file_task_run_button, xce_object.panddas_file_task_status_button]
 
         # label for the bottom box layout
-        panddas_file_label = str("<html><img src='" + str(icons_directory) + "/002-chinese-panda-bear.png'></html> Hit Identification")
+        panddas_file_label = str("<html><img src='" + str(icons_directory) +
+                                 "/002-chinese-panda-bear.png'></html> Hit Identification")
 
         # return the frame and combobox from the bottom box setup function
         frame_panddas_file_task, xce_object.panddas_file_tasks_combobox = \
@@ -191,17 +194,21 @@ class LayoutObjects():
 
         # setup the run button with push button function
         xce_object.refine_file_task_run_button = \
-            self.layout_funcs.setup_push_button(xce_object, xce_object.refine_file_task_run_button_dict)
+            self.layout_funcs.setup_push_button(
+                xce_object, xce_object.refine_file_task_run_button_dict)
 
         # setup the task button with push button function
         xce_object.refine_file_task_status_button = \
-            self.layout_funcs.setup_push_button(xce_object, xce_object.refine_file_task_status_button_dict)
+            self.layout_funcs.setup_push_button(
+                xce_object, xce_object.refine_file_task_status_button_dict)
 
         # array of both button xce_objects to apply to bottom box layout
-        refine_file_buttons = [xce_object.refine_file_task_run_button, xce_object.refine_file_task_status_button]
+        refine_file_buttons = [
+            xce_object.refine_file_task_run_button, xce_object.refine_file_task_status_button]
 
         # label for the bottom box layout
-        refine_file_label = str("<html><img src='" + str(icons_directory) + "/001-ducky.png'></html> Refinement")
+        refine_file_label = str(
+            "<html><img src='" + str(icons_directory) + "/001-ducky.png'></html> Refinement")
 
         # return the frame and combobox from the bottom box setup function
         frame_refine_file_task, xce_object.refine_file_tasks_combobox = \
@@ -220,7 +227,7 @@ class LayoutObjects():
                                                          xce_object.refine_file_task_status_button]
 
         return update_from_datasource_button, frame_dataset_task, frame_map_cif_file_task, frame_panddas_file_task, \
-               frame_refine_file_task
+            frame_refine_file_task
 
     def main_layout(self, xce_object):
         # initialise menu bar
@@ -228,7 +235,7 @@ class LayoutObjects():
 
         # initialise bottom boxes
         update_from_datasource_button, frame_dataset_task, frame_map_cif_file_task, frame_panddas_file_task, \
-        frame_refine_file_task = self.initialise_bottom_boxes(xce_object)
+            frame_refine_file_task = self.initialise_bottom_boxes(xce_object)
 
         # Tab layout & content
         # --------------------
@@ -282,7 +289,8 @@ class LayoutObjects():
         vbox_main = QtGui.QVBoxLayout()
         menu_bar.setMaximumWidth(xce_object.screen.width())
         vbox_main.addWidget(menu_bar)
-        xce_object.main_tab_widget.setMaximumSize(xce_object.screen.width(), xce_object.screen.height() - 245)
+        xce_object.main_tab_widget.setMaximumSize(
+            xce_object.screen.width(), xce_object.screen.height() - 245)
         vbox_main.addWidget(xce_object.main_tab_widget)
 
         hboxTaskFrames = QtGui.QHBoxLayout()
@@ -314,7 +322,6 @@ class LayoutObjects():
         #                                                                                                              #
         ################################################################################################################
 
-
         # workflow task container - order of tabs as they appear for the main window
         xce_object.workflow = ['Overview',  # 0
                                'Datasets',  # 1
@@ -338,7 +345,8 @@ class LayoutObjects():
         # tab widget
         xce_object.main_tab_widget = QtGui.QTabWidget()
         xce_object.tab_dict = {}
-        self.layout_funcs.make_tab_dict(xce_object.workflow, xce_object.main_tab_widget, xce_object.tab_dict)
+        self.layout_funcs.make_tab_dict(
+            xce_object.workflow, xce_object.main_tab_widget, xce_object.tab_dict)
 
 
 class LayoutFuncs():
@@ -366,8 +374,10 @@ class LayoutFuncs():
 
     def pandda_html(self, xce_object):
         if os.path.exists(str(xce_object.panddas_directory + '/interesting_datasets')):
-            print('WARNING: USING RESULTS FROM OLD PANDDA ANALYSE! THIS IS NOT FULLY SUPPORTED IN XCE2')
-            print('PLEASE CHANGE YOUR PANDDA DIRECTORY TO A NEW RUN, OR USE THE OLD VERSION OF XCE!')
+            print(
+                'WARNING: USING RESULTS FROM OLD PANDDA ANALYSE! THIS IS NOT FULLY SUPPORTED IN XCE2')
+            print(
+                'PLEASE CHANGE YOUR PANDDA DIRECTORY TO A NEW RUN, OR USE THE OLD VERSION OF XCE!')
             xce_object.pandda_initial_html_file = str(
                 xce_object.panddas_directory + '/results_summareis/pandda_initial.html')
             xce_object.pandda_analyse_html_file = str(
@@ -384,14 +394,17 @@ class LayoutFuncs():
         # use iterkeys to determine order of key by letter
         for name in sorted(button_dict.iterkeys()):
             # add current item to menu bar
-            button = eval('QtGui.QPushButton("' + str(button_dict[name][0]) + '")')
+            button = eval(
+                'QtGui.QPushButton("' + str(button_dict[name][0]) + '")')
             # for each configuration item
             for button_config in button_dict[name][1]:
                 eval(str('button.setToolTip(' + str(button_config[0]) + ')'))
-                eval(str('button.setStyleSheet("' + str(button_config[1] + '")')))
+                eval(
+                    str('button.setStyleSheet("' + str(button_config[1] + '")')))
                 if len(button_config[2]) > 1:
                     eval(str('button.setFont(' + str(button_config[2]) + ')'))
-                eval(str('button.clicked.connect(' + str(button_config[3]) + ')'))
+                eval(
+                    str('button.clicked.connect(' + str(button_config[3]) + ')'))
 
         return button
 
@@ -436,14 +449,17 @@ class LayoutFuncs():
         # use iterkeys to determine order of key by letter
         for config in sorted(menu_items_dict.iterkeys()):
             # add current item to menu bar
-            menu = eval('menu_bar.addMenu("' + str(menu_items_dict[config][0]) + '")')
+            menu = eval(
+                'menu_bar.addMenu("' + str(menu_items_dict[config][0]) + '")')
             # for each configuration item
             for menu_item in menu_items_dict[config][1]:
                 # add the drop down option
-                action = eval(str('QtGui.QAction("' + str(menu_item[0]) + '", xce_object.window)'))
+                action = eval(
+                    str('QtGui.QAction("' + str(menu_item[0]) + '", xce_object.window)'))
                 # add a shortcut if defined
                 if len(menu_item[1]) > 1:
-                    eval(str('action.setShortcut("' + str(menu_item[1]) + '")'))
+                    eval(
+                        str('action.setShortcut("' + str(menu_item[1]) + '")'))
                 # connect the relevant function and add as an action
                 try:
                     action.triggered.connect(menu_item[2])
@@ -493,25 +509,41 @@ class LayoutFuncs():
 
     def add_widgets_layouts(self, xce_object):
         tab_add_widget = [
-            [xce_object.tab_dict[xce_object.workflow_dict['Overview']][1], xce_object.overview_tab_widget],
-            [xce_object.overview_tab_dict['Data Source'][1], xce_object.overview_datasource_table],
-            [xce_object.overview_tab_dict['Summary'][1], xce_object.overview_canvas],
-            [xce_object.pandda_tab_dict['Dataset Summary'][1], xce_object.pandda_initial_html],
-            [xce_object.pandda_tab_dict['Processing Output'][1], xce_object.pandda_analyse_html],
+            [xce_object.tab_dict[xce_object.workflow_dict['Overview']]
+                [1], xce_object.overview_tab_widget],
+            [xce_object.overview_tab_dict['Data Source']
+                [1], xce_object.overview_datasource_table],
+            [xce_object.overview_tab_dict['Summary']
+                [1], xce_object.overview_canvas],
+            [xce_object.pandda_tab_dict['Dataset Summary']
+                [1], xce_object.pandda_initial_html],
+            [xce_object.pandda_tab_dict['Processing Output']
+                [1], xce_object.pandda_analyse_html],
             [xce_object.pandda_tab_dict['pandda.inspect'][1], xce_object.pandda_inspect_html]]
 
         tab_add_layout = [
-            [xce_object.tab_dict[xce_object.workflow_dict['Datasets']][1], xce_object.datasets_data_collection_vbox],
-            [xce_object.datasets_tab_dict['Summary'][1], xce_object.datasets_summarys_vbox_for_table],
-            [xce_object.datasets_tab_dict['Summary'][1], xce_object.datasets_summarys_vbox_for_details],
-            [xce_object.datasets_tab_dict['Reprocess'][1], xce_object.reprocess_vbox],
-            [xce_object.tab_dict[xce_object.workflow_dict['Maps']][1], xce_object.maps_checkbutton_hbox],
-            [xce_object.tab_dict[xce_object.workflow_dict['Maps']][1], xce_object.initial_model_vbox_for_table],
-            [xce_object.pandda_tab_dict['Statistical Map Summaries'][1], xce_object.pandda_map_layout],
-            [xce_object.pandda_tab_dict['pandda.analyse'][1], xce_object.pandda_analyse_hbox],
-            [xce_object.tab_dict[xce_object.workflow_dict['PANDDAs']][1], xce_object.panddas_results_vbox],
-            [xce_object.tab_dict[xce_object.workflow_dict['Refinement']][1], xce_object.summary_vbox_for_table],
-            [xce_object.tab_dict[xce_object.workflow_dict['Deposition']][1], xce_object.deposition_vbox],
+            [xce_object.tab_dict[xce_object.workflow_dict['Datasets']]
+                [1], xce_object.datasets_data_collection_vbox],
+            [xce_object.datasets_tab_dict['Summary'][1],
+                xce_object.datasets_summarys_vbox_for_table],
+            [xce_object.datasets_tab_dict['Summary'][1],
+                xce_object.datasets_summarys_vbox_for_details],
+            [xce_object.datasets_tab_dict['Reprocess']
+                [1], xce_object.reprocess_vbox],
+            [xce_object.tab_dict[xce_object.workflow_dict['Maps']]
+                [1], xce_object.maps_checkbutton_hbox],
+            [xce_object.tab_dict[xce_object.workflow_dict['Maps']]
+                [1], xce_object.initial_model_vbox_for_table],
+            [xce_object.pandda_tab_dict['Statistical Map Summaries']
+                [1], xce_object.pandda_map_layout],
+            [xce_object.pandda_tab_dict['pandda.analyse']
+                [1], xce_object.pandda_analyse_hbox],
+            [xce_object.tab_dict[xce_object.workflow_dict['PANDDAs']]
+                [1], xce_object.panddas_results_vbox],
+            [xce_object.tab_dict[xce_object.workflow_dict['Refinement']]
+                [1], xce_object.summary_vbox_for_table],
+            [xce_object.tab_dict[xce_object.workflow_dict['Deposition']]
+                [1], xce_object.deposition_vbox],
             [xce_object.tab_dict[xce_object.workflow_dict['Settings']][1], xce_object.settings_vbox]]
 
         for item in tab_add_widget:

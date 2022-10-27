@@ -1,12 +1,11 @@
-import sys, os
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
+import layout
+import sys
+import os
 from PyQt4 import QtGui, QtCore, QtWebKit
 
 sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'gui_scripts'))
-
-import layout
-
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
 
 class OverviewTab():
@@ -25,7 +24,8 @@ class OverviewTab():
         xce_object.overview_tab_dict = {}
 
         # make subtabs
-        self.layout_funcs.make_tab_dict(overview_tab_list, xce_object.overview_tab_widget, xce_object.overview_tab_dict)
+        self.layout_funcs.make_tab_dict(
+            overview_tab_list, xce_object.overview_tab_widget, xce_object.overview_tab_dict)
 
         # initiate the table in overview/datasource
         xce_object.overview_datasource_table = QtGui.QTableWidget()
