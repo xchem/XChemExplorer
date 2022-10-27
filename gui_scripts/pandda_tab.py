@@ -115,7 +115,7 @@ class PanddaTab():
         xce_object.pandda_analyse_input_params_vbox.addLayout(
             pandda_mtz_style_hbox)
 
-        print(xce_object.initial_model_directory)
+        print((xce_object.initial_model_directory))
         data_dir_string = xce_object.initial_model_directory.replace('/*', '')
 
         def copy_ligands(obj):

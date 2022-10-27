@@ -21,11 +21,11 @@ sys.path.append(os.getenv('XChemExplorer_DIR')+'/lib')
 
 
 def create_SF_mmcif(outDir, mtzList):
-    print 'hallo'
+    print('hallo')
 
 
 def get_protein_sequence(database, xtalID):
-    print 'hallo'
+    print('hallo')
 
 
 def check_depositDict(depositDict):
@@ -36,12 +36,12 @@ def check_depositDict(depositDict):
         elif 'State_or_Province' in depositDict[entry]:
             continue
         elif depositDict[entry] == '':
-            print 'ERROR'
+            print('ERROR')
 
 
 def update_title(depositDict):
 
-    print 'hallo'
+    print('hallo')
 
 
 def create_data_template_text():
@@ -50,7 +50,7 @@ def create_data_template_text():
 
 
 def create_Model_mmcif(outDir, pdbList):
-    print 'hallo'
+    print('hallo')
 
 # def update_file_locations_of_apo_structuresin_DB(database,projectDir,xce_logfile):
 #    Logfile=XChemLog.updateLog(xce_logfile)
@@ -147,7 +147,7 @@ class templates:
                     '#\n'
                 )
             except UnboundLocalError:
-                print 'Error: Something went wrong! Please check if you have saved the .deposit file to the database: Menu Deposition -> Edit Information'
+                print('Error: Something went wrong! Please check if you have saved the .deposit file to the database: Menu Deposition -> Edit Information')
         else:
             molecule_two_letter_sequence = ';'
             counter = 1

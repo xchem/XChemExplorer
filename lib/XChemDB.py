@@ -1086,12 +1086,12 @@ class data_source:
         cursor = connect.cursor()
         cursor.execute(
             "select * from mainTable where CrystalName='{0!s}';".format(sampleID))
-        print(
-            "SQLITE: select * from mainTable where CrystalName='{0!s}';".format(sampleID))
+        print((
+            "SQLITE: select * from mainTable where CrystalName='{0!s}';".format(sampleID)))
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
-        print("DATA: {0!s}".format(data))
+        print(("DATA: {0!s}".format(data)))
         for n, item in enumerate(data[0]):
             db_dict[header[n]] = str(item)
         return db_dict
@@ -1197,7 +1197,7 @@ class data_source:
                     continue
                 if self.check_if_sample_exists_in_data_source(sampleID):
                     update_string = ''
-                    for key, value in line.iteritems():
+                    for key, value in line.items():
                         if key == 'ID' or key == 'CrystalName':
                             continue
                         if key not in available_columns:
@@ -1217,7 +1217,7 @@ class data_source:
                 else:
                     column_string = ''
                     value_string = ''
-                    for key, value in line.iteritems():
+                    for key, value in line.items():
                         if key == 'ID':
                             continue
                         if key not in available_columns:
@@ -1234,7 +1234,7 @@ class data_source:
         connect.commit()
 
     def update_data_source(self, sampleID, data_dict):
-        print 'here'
+        print('here')
         data_dict['LastUpdated'] = str(
             datetime.now().strftime("%Y-%m-%d %H:%M"))
         data_dict['LastUpdated_by'] = getpass.getuser()
@@ -1430,8 +1430,8 @@ class data_source:
                 if not str(value).replace(' ', '') == '':  # ignore if nothing in csv field
                     value_string += "'"+str(value)+"'"+','
                     column_string += key+','
-            print "INSERT INTO panddaTable (" + \
-                column_string[:-1]+") VALUES ("+value_string[:-1]+");"
+            print("INSERT INTO panddaTable (" + \
+                column_string[:-1]+") VALUES ("+value_string[:-1]+");")
             cursor.execute("INSERT INTO panddaTable (" +
                            column_string[:-1]+") VALUES ("+value_string[:-1]+");")
         connect.commit()
@@ -1525,8 +1525,8 @@ class data_source:
                 if not str(value).replace(' ', '') == '':  # ignore if nothing in csv field
                     value_string += "'"+str(value)+"'"+','
                     column_string += key+','
-            print "INSERT INTO panddaTable (" + \
-                column_string[:-1]+") VALUES ("+value_string[:-1]+");"
+            print("INSERT INTO panddaTable (" + \
+                column_string[:-1]+") VALUES ("+value_string[:-1]+");")
             cursor.execute("INSERT INTO panddaTable (" +
                            column_string[:-1]+") VALUES ("+value_string[:-1]+");")
         connect.commit()
@@ -1563,8 +1563,8 @@ class data_source:
                     continue
                 if not str(value).replace(' ', '') == '':  # ignore empty fields
                     update_string = str(key)+'='+"'"+str(value)+"'"
-                    print "UPDATE depositTable SET "+update_string + \
-                        " WHERE CrystalName="+"'"+sampleID+"';"
+                    print("UPDATE depositTable SET "+update_string + \
+                        " WHERE CrystalName="+"'"+sampleID+"';")
                     cursor.execute(
                         "UPDATE depositTable SET "+update_string+" WHERE CrystalName="+"'"+sampleID+"';")
         else:
@@ -1579,8 +1579,8 @@ class data_source:
                 if not str(value).replace(' ', '') == '':  # ignore if nothing in csv field
                     value_string += "'"+str(value)+"'"+','
                     column_string += key+','
-            print "INSERT INTO depositTable (" + \
-                column_string[:-1]+") VALUES ("+value_string[:-1]+");"
+            print("INSERT INTO depositTable (" + \
+                column_string[:-1]+") VALUES ("+value_string[:-1]+");")
             cursor.execute("INSERT INTO depositTable (" +
                            column_string[:-1]+") VALUES ("+value_string[:-1]+");")
         connect.commit()
@@ -1901,8 +1901,8 @@ class data_source:
                 if tmp:
                     crystalDict[entry[0]] = []
                     for item in tmp:
-                        print [entry[0], str(item[0]), str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(
-                            item[5]), str(item[6]), str(item[7]), str(item[8]), str(item[9]), str(item[10]), str(item[11])]
+                        print([entry[0], str(item[0]), str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(
+                            item[5]), str(item[6]), str(item[7]), str(item[8]), str(item[9]), str(item[10]), str(item[11])])
                         crystalDict[entry[0]].append([str(item[0]), str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(
                             item[5]), str(item[6]), str(item[7]), str(item[8]), str(item[9]), str(item[10]), str(item[11])])
 
@@ -1965,7 +1965,7 @@ class data_source:
             'order by cast (panddaTable.PANDDA_site_index as integer) ASC;'
         )
 
-        print 'data source', self.data_source_file
+        print('data source', self.data_source_file)
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
         cursor.execute(sqlite)
@@ -2388,8 +2388,8 @@ class data_source:
         for column in cursor.description:
             header.append(column[0])
         data = cursor.fetchall()
-        print('SQLITE: {0!s}'.format(sqlite))
-        print('DATA: {0!s}'.format(data))
+        print(('SQLITE: {0!s}'.format(sqlite)))
+        print(('DATA: {0!s}'.format(data)))
         for n, item in enumerate(data[0]):
             db_dict[header[n]] = str(item)
         return db_dict

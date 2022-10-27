@@ -383,7 +383,7 @@ class GUI(object):
         self.Refine = XChemRefine.Refine(
             self.reference_directory, self.refinementDir, 'dummy_compound_ID', 'dummy_database')
         self.Serial = self.Refine.GetSerial()
-        print '====> Serial', self.Serial
+        print('====> Serial', self.Serial)
 
         #########################################################################################
         # history
@@ -404,7 +404,7 @@ class GUI(object):
 
         #########################################################################################
         # update Quality Indicator table
-        print self.QualityIndicators
+        print(self.QualityIndicators)
         try:
             self.RRfreeValue.set_label(str(round(float(
                 self.QualityIndicators['Rcryst']), 3)) + ' / '+str(round(float(self.QualityIndicators['Rfree']), 3)))
@@ -497,8 +497,8 @@ class GUI(object):
         snooze = 0
         while os.path.exists(os.path.join(self.reference_directory, self.refinementDir, 'REFINEMENT_IN_PROGRESS')):
             time.sleep(10)
-            print '==> XCE: waiting for refinement to finish; elapsed time = ' + \
-                str(snooze) + 's'
+            print('==> XCE: waiting for refinement to finish; elapsed time = ' + \
+                str(snooze) + 's')
             snooze += 10
         self.update_pdb_mtz_files('')
 
@@ -524,7 +524,7 @@ class GUI(object):
 #            self.update_pdb_mtz_files('')
 
     def RefinementParams(self, widget):
-        print '\n==> XCE: changing refinement parameters'
+        print('\n==> XCE: changing refinement parameters')
         self.RefmacParams = self.Refine.RefinementParams(self.RefmacParams)
 
     def set_selection_mode(self, widget):
@@ -554,12 +554,12 @@ class GUI(object):
         # first we check if there is a refinement folder and the respective refine.pdb
         # from previous refinement cycles
         Root = self.cb_select_pdb.get_active_text()
-        print 'ROOT', Root
-        print 'REFI_DIR', os.path.join(
-            self.reference_directory, self.refinementDir, 'refine.pdb')
+        print('ROOT', Root)
+        print('REFI_DIR', os.path.join(
+            self.reference_directory, self.refinementDir, 'refine.pdb'))
         if os.path.isfile(os.path.join(self.reference_directory, self.refinementDir, 'refine.pdb')):
             os.chdir(self.reference_directory)
-            print 'CURRENT DIR', os.getcwd()
+            print('CURRENT DIR', os.getcwd())
             os.system('/bin/rm %s 2> /dev/null' % Root)
             os.symlink(os.path.realpath(os.path.join(
                 self.refinementDir, 'refine.pdb')), '%s' % Root)
@@ -583,8 +583,8 @@ class GUI(object):
             self.mol_dict['protein'] = imol
 
         if self.mtzFree == '':
-            print 'FREE', os.path.join(
-                self.reference_directory, pdbRoot.replace('.pdb', '')+'.free.mtz')
+            print('FREE', os.path.join(
+                self.reference_directory, pdbRoot.replace('.pdb', '')+'.free.mtz'))
             if os.path.isfile(os.path.join(self.reference_directory, pdbRoot.replace('.pdb', '')+'.free.mtz')):
                 self.mtzFree = os.path.join(
                     self.reference_directory, pdbRoot.replace('.pdb', '')+'.free.mtz')
@@ -617,13 +617,13 @@ class GUI(object):
 
         groundStateMap = os.path.join(
             self.reference_directory, Root+'-mean-map.native.ccp4').replace('.pdb', '')
-        print '===>', groundStateMap
+        print('===>', groundStateMap)
         if os.path.isfile(groundStateMap):
             imol = coot.handle_read_ccp4_map(groundStateMap, 0)
             coot.set_contour_level_in_sigma(imol, 1)
             coot.set_last_map_colour(0.6, 0.6, 0)
         else:
-            print '==> XCE: ERROR - cannot find ground state mean map!'
+            print('==> XCE: ERROR - cannot find ground state mean map!')
 
         self.RefreshData()
 
@@ -696,9 +696,9 @@ class GUI(object):
             coot.run_script(os.path.join(self.reference_directory, self.refinementDir,
                                          'Refine_'+str(self.Serial-1), 'molprobity_coot.py'))
         else:
-            print '==> XCE: cannot find ' + \
+            print('==> XCE: cannot find ' + \
                 os.path.join(self.reference_directory, self.xtalID,
-                             'Refine_'+str(self.Serial-1), 'molprobity_coot.py')
+                             'Refine_'+str(self.Serial-1), 'molprobity_coot.py'))
 
     def update_plot(self, refinement_cycle, Rfree, Rcryst):
         fig = Figure(figsize=(2, 2), dpi=50)
@@ -720,7 +720,7 @@ class GUI(object):
                     #                    try:
                     #                    resolution=float(line.split()[5])
                     resolution = line.split()[5]
-                    print resolution
+                    print(resolution)
                     found = True
                     foundLine = n
 #                    except ValueError:
@@ -737,7 +737,7 @@ class GUI(object):
 
     def get_highest_reso_ground_state_map(self):
         mapList = self.get_ground_state_maps_by_resolution()
-        print mapList
+        print(mapList)
         self.ground_state_map_List = []
         self.ground_state_map_List.append(min(mapList, key=lambda x: x[0]))
         return self.ground_state_map_List

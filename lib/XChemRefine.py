@@ -170,7 +170,7 @@ class RefineParams(object):
         return self.RefmacParams
 
     def on_key_release_Ncycles(self, widget, event):
-        print widget.get_text()
+        print(widget.get_text())
         self.RefmacParams['NCYCLES'] = widget.get_text()
         return self.RefmacParams
 
@@ -272,7 +272,7 @@ class RefineParams(object):
         found = False
         for item in glob.glob(os.path.join(self.ProjectPath, self.xtalID, '*')):
             if item.startswith(os.path.join(self.ProjectPath, self.xtalID, 'Refine_')):
-                print item[item.rfind('_')+1:]
+                print(item[item.rfind('_')+1:])
                 RefinementCycle.append(int(item[item.rfind('_')+1:]))
                 found = True
         if found:
@@ -311,7 +311,7 @@ class RefineParams(object):
             RefinementCycle = [0]
             RcrystList = [0]
             RfreeList = [0]
-        print RefinementCycle, RcrystList, RfreeList
+        print(RefinementCycle, RcrystList, RfreeList)
         return(sorted(RefinementCycle), RcrystList, RfreeList)
 
 
@@ -335,7 +335,7 @@ class Refine(object):
         if os.path.isdir(os.path.join(self.ProjectPath, self.xtalID)):
             for item in glob.glob(os.path.join(self.ProjectPath, self.xtalID, '*')):
                 if item.startswith(os.path.join(self.ProjectPath, self.xtalID, 'Refine_')):
-                    print int(item[item.rfind('_')+1:])
+                    print(int(item[item.rfind('_')+1:]))
                     temp.append(int(item[item.rfind('_')+1:]))
                     found = 1
         if found:
@@ -806,7 +806,7 @@ class Refine(object):
             else:
                 RefmacParams['TLS'] = '\n'
 
-        print '==> XCE: assembling refmac.csh'
+        print('==> XCE: assembling refmac.csh')
 
         #######################################################
         # we write 'REFINEMENT_IN_PROGRESS' immediately to avoid unncessary refiment
@@ -999,14 +999,14 @@ class Refine(object):
             Logfile.insert('changing directory to %s' % (
                 os.path.join(self.ProjectPath, self.xtalID, 'Refine_'+Serial)))
         if external_software['qsub_remote'] != '':
-            print os.getenv('LD_LIBRARY_PATH')
+            print(os.getenv('LD_LIBRARY_PATH'))
             if os.path.isfile(xce_logfile):
                 Logfile.insert('starting refinement on remote cluster')
             remote_command = external_software['qsub_remote'].replace(
                 "qsub'", 'cd %s; qsub' % os.path.join(self.ProjectPath, self.xtalID, 'Refine_'+Serial))
             os.system("%s -P labxchem -q medium.q refmac.csh'" %
                       remote_command)
-            print '%s -P labxchem -q medium.q refmac.csh' % remote_command
+            print('%s -P labxchem -q medium.q refmac.csh' % remote_command)
 
         elif external_software['qsub'] and os.path.isdir('/dls'):
             Logfile.insert(
@@ -1118,7 +1118,7 @@ class Refine(object):
         return self.RefmacParams
 
     def on_key_release_Ncycles(self, widget, event):
-        print widget.get_text()
+        print(widget.get_text())
         self.RefmacParams['NCYCLES'] = widget.get_text()
         return self.RefmacParams
 
@@ -1199,7 +1199,7 @@ class Refine(object):
         found = False
         for item in glob.glob(os.path.join(self.ProjectPath, self.xtalID, '*')):
             if item.startswith(os.path.join(self.ProjectPath, self.xtalID, 'Refine_')):
-                print item[item.rfind('_')+1:]
+                print(item[item.rfind('_')+1:])
                 RefinementCycle.append(int(item[item.rfind('_')+1:]))
                 found = True
         if found:
@@ -1238,7 +1238,7 @@ class Refine(object):
             RefinementCycle = [0]
             RcrystList = [0]
             RfreeList = [0]
-        print RefinementCycle, RcrystList, RfreeList
+        print(RefinementCycle, RcrystList, RfreeList)
         return(sorted(RefinementCycle), RcrystList, RfreeList)
 
 
@@ -1686,7 +1686,7 @@ class panddaRefine(object):
             remote_command = external_software['qsub_remote'].replace('qsub', 'cd %s; qsub' % os.path.join(
                 self.ProjectPath, self.xtalID, 'cootOut', 'Refine_'+str(Serial)))
             os.system('%s -P labxchem refmac.csh' % remote_command)
-            print '%s -P labxchem refmac.csh' % remote_command
+            print('%s -P labxchem refmac.csh' % remote_command)
         else:
             Logfile.insert(
                 'changing permission of refmac.csh: chmod +x refmac.csh')
@@ -1795,7 +1795,7 @@ class panddaRefine(object):
         return self.RefmacParams
 
     def on_key_release_Ncycles(self, widget, event):
-        print widget.get_text()
+        print(widget.get_text())
         self.RefmacParams['NCYCLES'] = widget.get_text()
         return self.RefmacParams
 
@@ -1856,7 +1856,7 @@ class panddaRefine(object):
         found = False
         for item in glob.glob(os.path.join(self.ProjectPath, self.xtalID, '*')):
             if item.startswith(os.path.join(self.ProjectPath, self.xtalID, 'Refine_')):
-                print item[item.rfind('_')+1:]
+                print(item[item.rfind('_')+1:])
                 RefinementCycle.append(int(item[item.rfind('_')+1:]))
                 found = True
         if found:
@@ -1895,7 +1895,7 @@ class panddaRefine(object):
             RefinementCycle = [0]
             RcrystList = [0]
             RfreeList = [0]
-        print RefinementCycle, RcrystList, RfreeList
+        print(RefinementCycle, RcrystList, RfreeList)
         return(sorted(RefinementCycle), RcrystList, RfreeList)
 
 

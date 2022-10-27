@@ -238,7 +238,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 else:
                     self.Logfile.insert(
                         '%s: model has not changed since it was created on %s' % (xtal, timestamp_db))
-            except (ValueError, IndexError), e:
+            except (ValueError, IndexError) as e:
                 self.Logfile.error(str(e))
         return samples_to_export
 
@@ -1011,8 +1011,8 @@ class run_pandda_analyse(QtCore.QThread):
             if os.path.isfile(self.filter_pdb + '.pdb'):
                 print('filter pdb located')
                 filter_pdb = ' filter.pdb='+self.filter_pdb+'.pdb'
-                print('will use ' + filter_pdb +
-                      'as a filter for pandda.analyse')
+                print(('will use ' + filter_pdb +
+                      'as a filter for pandda.analyse'))
             else:
                 if self.use_remote:
                     stat_command = self.remote_string.replace(

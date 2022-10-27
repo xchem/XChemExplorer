@@ -85,7 +85,7 @@ def parse_cc_log(sampleDir, compoundID):
     try:
         bestCC = max(ccList)
         for ccRun in ccDict:
-            print ccRun, ccDict[ccRun], bestCC
+            print(ccRun, ccDict[ccRun], bestCC)
             if str(ccDict[ccRun]) == str(bestCC):
                 bestRun = ccRun
                 break

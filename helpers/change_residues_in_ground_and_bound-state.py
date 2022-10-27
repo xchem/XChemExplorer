@@ -13,7 +13,7 @@ def replace_residues():
             if os.path.isfile(mol):
                 if not os.path.isfile(mol+'_original'):
                     os.system('/bin/cp %s %s' % (mol, mol+'_original'))
-                print '%s: found %s' % (xtal, mol)
+                print('%s: found %s' % (xtal, mol))
                 os.system('phenix.superpose_pdbs %s %s' % (mol, newModel))
                 out = ''
                 changeResi = None
@@ -25,13 +25,13 @@ def replace_residues():
                         resi = chainID + resseq
                         if changeResi != None:
                             if resi == changeResi:
-                                print 'here', changeResi
+                                print('here', changeResi)
                                 continue
                             else:
                                 changeResi = None
                         if resi in residues_to_change:
                             changeResi = resi
-                            print 'changeResi', changeResi
+                            print('changeResi', changeResi)
                             for line in open(newModelName+'_fitted.pdb'):
                                 if line.startswith('ATOM') or line.startswith('HETATM'):
                                     chainIDFitted = str(
@@ -46,7 +46,7 @@ def replace_residues():
                             out += line
                     else:
                         out += line
-                print 'saving file', mol, '...'
+                print('saving file', mol, '...')
                 newFile = open(mol, 'w')
                 newFile.write(out)
                 newFile.close()

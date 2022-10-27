@@ -60,16 +60,16 @@ def get_target_and_visit_list(beamline_directory, agamemnon):
         visit_list.append(os.path.realpath(beamline_directory))
 
     for visit in visit_list:
-        print '-->', os.path.join(visit, 'processed', '*')
+        print('-->', os.path.join(visit, 'processed', '*'))
         if agamemnon:
             for target in glob.glob(os.path.join(visit, 'processed', 'auto', '*')):
-                print target
+                print(target)
                 if target[target.rfind('/')+1:] not in ['results', 'README-log', 'edna-latest.html']:
                     if target[target.rfind('/')+1:] not in target_list:
                         target_list.append(target[target.rfind('/')+1:])
         else:
             for target in glob.glob(os.path.join(visit, 'processed', '*')):
-                print target
+                print(target)
                 if target[target.rfind('/')+1:] not in ['results', 'README-log', 'edna-latest.html']:
                     if target[target.rfind('/')+1:] not in target_list:
                         target_list.append(target[target.rfind('/')+1:])
@@ -251,12 +251,12 @@ def print_cluster_status_message(program, cluster_dict, xce_logfile):
 def display_queue_status_in_terminal(in_dict):
     # latest_run=max(tmp,key=lambda x: x[1])[0]
     max_dimple_runtime = max(in_dict['dimple'], key=lambda x: x[2])[2]
-    print '----------------------------------------------------------------------------'
-    print '| Task                   | Nr. Jobs               | Max. Runtime (minutes) |'
-    print '----------------------------------------------------------------------------'
-    print '{0:24} {1:24} {2:24} {3:1}'.format('| DIMPLE', '| {0!s}'.format(
-        len(in_dict['dimple'])), '| %s' & max_dimple_runtime, '|')
-    print '----------------------------------------------------------------------------'
+    print('----------------------------------------------------------------------------')
+    print('| Task                   | Nr. Jobs               | Max. Runtime (minutes) |')
+    print('----------------------------------------------------------------------------')
+    print('{0:24} {1:24} {2:24} {3:1}'.format('| DIMPLE', '| {0!s}'.format(
+        len(in_dict['dimple'])), '| %s' & max_dimple_runtime, '|'))
+    print('----------------------------------------------------------------------------')
 
 
 def get_datasource_summary(db_file):
@@ -345,7 +345,7 @@ def get_datasource_summary(db_file):
 
 
 def remove_all_refmac_jobs_from_cluster_and_reinstate_last_stable_state():
-    print 'hallo'
+    print('hallo')
 
 
 def change_links_to_selected_data_collection_outcome(sample, data_collection_dict, data_collection_column_three_dict, dataset_outcome_dict, initial_model_directory, data_source_file, xce_logfile):
@@ -448,7 +448,7 @@ def get_dict_of_gda_barcodes(beamline):
         gda_log = files[files.rfind('/')+1:]
         if gda_log.startswith('gda_server.') and gda_log.endswith('.gz'):
             with gzip.open(files, 'r') as f:
-                print 'parsing', files
+                print('parsing', files)
 #    		for line in fin:
                 for line in f:
                     if 'BART SampleChanger - getBarcode() returning' in line:
@@ -1149,12 +1149,12 @@ def html_ngl(firstPDB, firstEvent, firstMap, firstDiffMap, ligID):
         "                stage.mouseControls.add('scroll', function () {\n"
         '                    if (fwtMap) {\n'
         '                        var level2fofc = fwtMap.getParameters().isolevel.toFixed(1);\n'
-        "                        isolevel2fofcText.innerText = '2fofc level: ' + level2fofc + '\u03C3';\n"
+        "                        isolevel2fofcText.innerText = '2fofc level: ' + level2fofc + '\\u03C3';\n"
         '                    }\n'
         '                    \n'
         '                    if (surfFofc) {\n'
         '                        var levelFofc = surfFofc.getParameters().isolevel.toFixed(1);\n'
-        "                        isolevelFofcText.innerText = 'fofc level: ' + levelFofc + '\u03C3';\n"
+        "                        isolevelFofcText.innerText = 'fofc level: ' + levelFofc + '\\u03C3';\n"
         '                    }\n'
         '                });\n'
         '                \n'
@@ -1518,7 +1518,7 @@ class find_diffraction_image_directory(QtCore.QThread):
                             found_new_file_root = True
                             current_file_root = file_root
                         if counter > 20 and file_root not in run_list:
-                            print counter, file_root
+                            print(counter, file_root)
                             run_list.append(file_root)
                             found_new_file_root = False
                             counter = 0
@@ -1548,8 +1548,8 @@ class find_diffraction_image_directory_fast(QtCore.QThread):
 #        self.datasetID_to_sampleID_conversion='*'
 
     def run(self):
-        print('Running diffraction image search in ' +
-              str(self.diffraction_data_directory))
+        print(('Running diffraction image search in ' +
+              str(self.diffraction_data_directory)))
         os.chdir(self.diffraction_data_directory)
         if len(glob.glob(os.path.join(self.diffraction_data_directory, '*'))) != 0:
             progress_step = 100 / \

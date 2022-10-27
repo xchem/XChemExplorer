@@ -20,7 +20,7 @@ from PyQt4 import QtGui, QtCore
 
 import time
 import pickle
-import cPickle
+import pickle
 import base64
 import math
 import subprocess

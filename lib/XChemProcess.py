@@ -101,7 +101,7 @@ class run_xia2(QtCore.QThread):
 #                continue
             f = True
             if f:
-                print 'hallo'
+                print('hallo')
             else:
                 if self.overwrite:
                     os.chdir(os.path.join(self.initial_model_directory,

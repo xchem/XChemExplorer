@@ -9,8 +9,8 @@ sys.path.append(os.path.join(os.getenv('XChemExplorer_DIR'), 'lib'))
 def update_data_source(db_file, crystalString, status):
     db = XChemDB.data_source(db_file)
 
-    print "update mainTable set PANDDAStatus = '{0!s}' where CrystalName in ({1!s})".format(
-        status, "'"+crystalString.replace(",", "','")+"'")
+    print("update mainTable set PANDDAStatus = '{0!s}' where CrystalName in ({1!s})".format(
+        status, "'"+crystalString.replace(",", "','")+"'"))
     db.execute_statement("update mainTable set PANDDAStatus = '{0!s}' where CrystalName in ({1!s})".format(
         status, "'"+crystalString.replace(",", "','")+"'"))
 

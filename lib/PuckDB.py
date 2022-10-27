@@ -12,16 +12,16 @@ class puck_db(object):
         self.data_base = data_base
 
     def get_all_pucks_from_DB(self):
-        print 'hello'
+        print('hello')
 
     def insert_mounted_crystals(self):
-        print 'hello'
+        print('hello')
 
     def kill_mounted_cryatsl(self):
-        print 'hello'
+        print('hello')
 
     def change_puck_location(self):
-        print 'hello'
+        print('hello')
 
     def execute_sqlite(self):
-        print 'hello'
+        print('hello')
