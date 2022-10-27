@@ -1,4 +1,5 @@
 {
+    "python.pythonPath": "/ccp4-7.1/bin/ccp4-python",
     "python.defaultInterpreterPath": "/ccp4-7.1/bin/ccp4-python",
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
