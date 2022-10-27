@@ -20,4 +20,4 @@ RUN apt-get update \
 ENV QT_X11_NO_MITSHM=1 \
     XChemExplorer_DIR=${XCE_DIR}
 
-ENTRYPOINT /ccp4-7.1/bin/ccp4-python /xce/XChemExplorer.py
+ENTRYPOINT /ccp4-7.1/bin/ccp4-python -m xce
