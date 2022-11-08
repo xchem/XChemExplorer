@@ -89,29 +89,15 @@ def space_group_list():
 
 
 def get_target_and_visit_list(beamline_directory, agamemnon):
-    #    target_list=['*']      # always give the option to read in all targets
     target_list = ["=== SELECT TARGET ===", "=== project directory ==="]
     visit_list = []
     # the beamline directory could be a the real directory or
     # a directory where the visits are linked into
-    #    if agamemnon:
-    #        # /dls/i03/data/2019/lb18145-136
-    #        for target in glob.glob(beamline_directory[:beamline_directory.rfind('-') + 1] + '*/agamemnon/*'):
-    #            visit_list.append(beamline_directory[:beamline_directory.rfind('/')].replace('/agamemnon',''))
-    #            if target[target.rfind('/') + 1:] not in ['results', 'README-log', 'edna-latest.html']:
-    #                if target[target.rfind('/') + 1:] not in target_list:
-    #                    target_list.append(target[target.rfind('/') + 1:])
-    #        for target in glob.glob(beamline_directory[:beamline_directory.rfind('-') + 1] + '*/auto/*'):
-    #            visit_list.append(beamline_directory[:beamline_directory.rfind('/')].replace('/auto', ''))
-    #            if target[target.rfind('/') + 1:] not in ['results', 'README-log', 'edna-latest.html']:
-    #                if target[target.rfind('/') + 1:] not in target_list:
-    #                    target_list.append(target[target.rfind('/') + 1:])
-    #    else:
     if (
         len(beamline_directory.split("/"))
         and beamline_directory.split("/")[1] == "dls"
         and beamline_directory.split("/")[3] == "data"
-        and not "labxchem" in beamline_directory
+        and "labxchem" not in beamline_directory
     ):
         visit_list.append(beamline_directory)
     else:
@@ -140,23 +126,6 @@ def get_target_and_visit_list(beamline_directory, agamemnon):
                     if target[target.rfind("/") + 1 :] not in target_list:
                         target_list.append(target[target.rfind("/") + 1 :])
     return target_list, visit_list
-
-
-# def get_target_and_visit_list_for_Pietro(beamline_directory):
-# target_list=['*']      # always give the option to read in all targets
-#    target_list=['=== SELECT TARGET ===']      # always give the option to read in all targets
-#    visit_list=[]
-#    # the beamline directory could be a the real directory or
-#    # a directory where the visits are linked into
-#    for stuff in glob.glob(os.path.join(beamline_directory,'*')):
-#        visit_list.append(stuff)
-#
-#    for visit in visit_list:
-#        for target in glob.glob(os.path.join(visit,'processed','*')):
-#            if target[target.rfind('/')+1:] not in ['results','README-log','edna-latest.html']:
-#                if target[target.rfind('/')+1:] not in target_list:
-#                    target_list.append(target[target.rfind('/')+1:])
-#    return target_list,visit_list
 
 
 def get_dewar_configuration(beamline_directory):
@@ -231,9 +200,7 @@ def get_jobs_running_on_cluster():
                     run_time = datetime.now() - datetime.strptime(
                         start, "%Y-%m-%d %H:%M:%S"
                     )
-                    run_time_seconds = int(run_time.total_seconds())
                     run_time_minutes = int(run_time.total_seconds() / 60)
-                    run_time_hours = int(run_time.total_seconds() / 3600)
 
                 ##########################################################
                 # determine run time of each job in minutes
@@ -317,7 +284,8 @@ def print_cluster_status_message(program, cluster_dict, xce_logfile):
         Logfile.insert("average run time " + str(average_runtime) + " minutes")
         if job_ids:
             Logfile.insert(
-                "you can kill them by pasting the following line into a new terminal window:"
+                "you can kill them by pasting the following line"
+                " into a new terminal window:"
             )
             out = "qdel "
             for job in job_ids:
@@ -368,53 +336,63 @@ def get_datasource_summary(db_file):
 
     out_dict["nr_smiles_for_samples"] = len(
         db.execute_statement(
-            "select compoundSMILES from mainTable where compoundSMILES is not (NULL or '')"
+            "select compoundSMILES from mainTable"
+            " where compoundSMILES is not (NULL or '')"
         )
     )
 
     out_dict["nr_data_collection_success"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'success';"
+            "select DataCollectionOutcome from mainTable"
+            " where DataCollectionOutcome is 'success';"
         )
     )
     out_dict["nr_data_collection_centring_fail"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - centring failed';"
+            "select DataCollectionOutcome from mainTable"
+            " where DataCollectionOutcome is 'Failed - centring failed';"
         )
     )
     out_dict["nr_data_collection_no-diffraction"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - no diffraction';"
+            "select DataCollectionOutcome from mainTable"
+            " where DataCollectionOutcome is 'Failed - no diffraction';"
         )
     )
     out_dict["nr_data_collection_processing_fail"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - processing';"
+            "select DataCollectionOutcome from mainTable"
+            " where DataCollectionOutcome is 'Failed - processing';"
         )
     )
     out_dict["nr_data_collection_loop-empty"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - loop empty';"
+            "select DataCollectionOutcome from mainTable"
+            " where DataCollectionOutcome is 'Failed - loop empty';"
         )
     )
     out_dict["nr_data_collection_loop-broken"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - loop broken';"
+            "select DataCollectionOutcome from mainTable where"
+            " DataCollectionOutcome is 'Failed - loop broken';"
         )
     )
     out_dict["nr_data_collection_low-resolution"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - low resolution';"
+            "select DataCollectionOutcome from mainTable where"
+            " DataCollectionOutcome is 'Failed - low resolution';"
         )
     )
     out_dict["nr_data_collection_no-X-rays"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - no X-rays';"
+            "select DataCollectionOutcome from mainTable where"
+            " DataCollectionOutcome is 'Failed - no X-rays';"
         )
     )
     out_dict["nr_data_collection_unknown"] = len(
         db.execute_statement(
-            "select DataCollectionOutcome from mainTable where DataCollectionOutcome is 'Failed - unknown';"
+            "select DataCollectionOutcome from mainTable where"
+            " DataCollectionOutcome is 'Failed - unknown';"
         )
     )
 
@@ -449,7 +427,8 @@ def get_datasource_summary(db_file):
     )
     out_dict["nr_initial_maps_fail"] = len(
         db.execute_statement(
-            "select DataProcessingDimpleSuccessful from mainTable where DataProcessingDimpleSuccessful = 'False';"
+            "select DataProcessingDimpleSuccessful from mainTable"
+            " where DataProcessingDimpleSuccessful = 'False';"
         )
     )
     out_dict["nr_initial_maps_pending"] = (
@@ -465,13 +444,15 @@ def get_datasource_summary(db_file):
     )
     out_dict["nr_pandda_reject"] = len(
         db.execute_statement(
-            "select DimplePANDDAreject from mainTable where DimplePANDDAreject = 'True';"
+            "select DimplePANDDAreject from mainTable"
+            " where DimplePANDDAreject = 'True';"
         )
     )
     out_dict["nr_pandda_processed"] = (
         len(
             db.execute_statement(
-                "select DimplePANDDAwasRun from mainTable where DimplePANDDAwasRun = 'True';"
+                "select DimplePANDDAwasRun from mainTable"
+                " where DimplePANDDAwasRun = 'True';"
             )
         )
         - out_dict["nr_pandda_hits"]
@@ -486,33 +467,39 @@ def get_datasource_summary(db_file):
 
     out_dict["nr_cif_files"] = len(
         db.execute_statement(
-            "select RefinementCIF from mainTable where RefinementCIF is not (Null or '');"
+            "select RefinementCIF from mainTable"
+            " where RefinementCIF is not (Null or '');"
         )
     )
 
     out_dict["nr_analysis-pending"] = len(
         db.execute_statement(
-            "select RefinementOutcome from mainTable where RefinementOutcome is '1 - Analysis Pending';"
+            "select RefinementOutcome from mainTable"
+            " where RefinementOutcome is '1 - Analysis Pending';"
         )
     )
     out_dict["nr_pandda-models"] = len(
         db.execute_statement(
-            "select RefinementOutcome from mainTable where RefinementOutcome is '2 - PANDDA model';"
+            "select RefinementOutcome from mainTable"
+            " where RefinementOutcome is '2 - PANDDA model';"
         )
     )
     out_dict["nr_in-refinement"] = len(
         db.execute_statement(
-            "select RefinementOutcome from mainTable where RefinementOutcome is '3 - In Refinement';"
+            "select RefinementOutcome from mainTable"
+            " where RefinementOutcome is '3 - In Refinement';"
         )
     )
     out_dict["nr_comp-chem-ready"] = len(
         db.execute_statement(
-            "select RefinementOutcome from mainTable where RefinementOutcome is '4 - ComChem ready';"
+            "select RefinementOutcome from mainTable"
+            " where RefinementOutcome is '4 - ComChem ready';"
         )
     )
     out_dict["nr_deposition-ready"] = len(
         db.execute_statement(
-            "select RefinementOutcome from mainTable where RefinementOutcome is '5 - Deposition ready';"
+            "select RefinementOutcome from mainTable"
+            " where RefinementOutcome is '5 - Deposition ready';"
         )
     )
 
@@ -549,7 +536,6 @@ def change_links_to_selected_data_collection_outcome(
                 run = entry[2]
                 autoproc = entry[4]
                 db_dict = entry[6]
-                outcome = dataset_outcome_dict[sample]
                 path_to_logfile = db_dict["DataProcessingPathToLogfile"]
                 path_to_mtzfile = db_dict["DataProcessingPathToMTZfile"]
                 mtz_filename = db_dict["DataProcessingMTZfileName"]
@@ -591,10 +577,6 @@ def change_links_to_selected_data_collection_outcome(
                     os.system("/bin/rm " + sample + ".mtz 2> /dev/null")
                     os.system("/bin/rm " + sample + ".log 2> /dev/null")
                     # make new links
-                    #                    Logfile.insert('setting symlink: '+os.path.join(path_to_logfile,log_filename)+' -> '+sample+'.log')
-                    #                    os.symlink(os.path.join(path_to_logfile,log_filename),sample+'.log')
-                    #                    Logfile.insert('setting symlink: '+os.path.join(path_to_mtzfile,mtz_filename)+' -> '+sample+'.mtz')
-                    #                    os.symlink(os.path.join(path_to_mtzfile,mtz_filename),sample+'.mtz')
                     Logfile.insert(
                         "setting relative symlink: "
                         + os.path.join(relative_path_to_logfile, log_filename)
@@ -624,25 +606,6 @@ def change_links_to_selected_data_collection_outcome(
 
                 else:
                     Logfile.insert("please copy data to PROJECT DIRECTORY first!")
-
-
-# def find_diffraction_image_directory(diffraction_data_directory):
-#    data_dict={}
-#    diffraction_image_extension = ['.img','.cbf','.mccd','.mar2560','.mar2300']
-#    os.chdir(diffraction_data_directory)
-#    for xtal in glob.glob('*'):
-#        data_dict[xtal]=[]
-#        for root,dirs,files in os.walk(xtal):
-#            if 'screening' in root:
-#                continue
-#            for n,image_file in enumerate(glob.glob(os.path.join(root,'*'))):
-#                file_extension=image_file[image_file.rfind('.'):]
-#                if n > 20 and file_extension in diffraction_image_extension:
-#                    data_dict[xtal].append(os.path.join(diffraction_data_directory,root))
-#                    break
-#        if data_dict[xtal]==[]:
-#            del data_dict[xtal]
-#    return data_dict
 
 
 def get_nr_files_from_gda_log_folder(beamline):
@@ -685,8 +648,6 @@ def get_dict_of_gda_barcodes(beamline):
 
 
 def append_dict_of_gda_barcodes(out_dict, files, xce_logfile):
-    #    out_dict={}
-    #    for files in glob.glob(os.path.join('/dls_sw',beamline,'logs','*')):
     Logfile = XChemLog.updateLog(xce_logfile)
     found_barcode_entry = False
     gda_log = files[files.rfind("/") + 1 :]
@@ -771,7 +732,8 @@ def get_gda_barcodes(
                                 if sampleID in sampleList:
                                     pinDict[sampleID] = barcode
                                     Logfile.insert(
-                                        "found: sample={0!s}, barcode={1!s}, file={2!s}".format(
+                                        "found: sample={0!s}, barcode={1!s},"
+                                        " file={2!s}".format(
                                             sampleID, barcode, gdaLogFile
                                         )
                                     )
@@ -794,9 +756,8 @@ def get_gda_barcodes(
                             if sampleID in sampleList:
                                 pinDict[sampleID] = barcode
                                 Logfile.insert(
-                                    "found: sample={0!s}, barcode={1!s}, file={2!s}".format(
-                                        sampleID, barcode, gdaLogFile
-                                    )
+                                    "found: sample={0!s}, barcode={1!s},"
+                                    " file={2!s}".format(sampleID, barcode, gdaLogFile)
                                 )
                             found_barcode_entry = False
             except IOError:
@@ -913,8 +874,8 @@ def getVisitAndBeamline(visitDirectory):
         except IndexError:
             pass
     if not visitDirectory.startswith("/dls"):
-        # this is all a bit of a fudge in case someone transfers a DLS visit directory back home
-        # does most certainly not catch all possible scenarios
+        # this is all a bit of a fudge in case someone transfers a DLS visit directory
+        # back home does most certainly not catch all possible scenarios
         if visitDirectory.split("/")[len(visitDirectory.split("/")) - 2] == "processed":
             visit = visitDirectory.split("/")[len(visitDirectory.split("/")) - 3]
         else:
@@ -1203,7 +1164,6 @@ def pdbx_country():
 
 
 def html_header():
-
     header = (
         "<html>\n"
         "<head>\n"
@@ -1666,22 +1626,6 @@ def html_table_row(
     ligChain = ligID.split("-")[1]
     ligResid = ligID.split("-")[2]
 
-    #    row = (
-    #        '<tr>\n'
-    #        '<td>%s</td>\n' %xtalID +
-    #        '<td><a target="_blank" href="http://www.rcsb.org/structure/%s">%s</a></td>\n' %(pdbID,pdbID) +
-    #        '<td>%s</td>\n' %ligID +
-    #        '<td>%s</td>\n' % ligConfidence +
-    #        '<td>%s</td>\n' % modelStatus +
-    #        "<td><img src='png/%s' height=130px></td>\n" %compoundImage +
-    #        "<td><img src='png/%s' height=153px></td>\n" %residuePlot +
-    #        "<td><div id='%s' class='map'><a onclick=create_view('viewport','files/%s','files/%s','files/%s','files/%s','%s','%s')><img src='png/%s'></a></div></td>\n" %(pdbID,pdb,event,FWT,DELFWT,ligChain,ligResid,thumbNail) +
-    #        '<td>%s</td>\n' %resoHigh +
-    #        '<td>%s </br> %s</td>\n' %(spg,unitCell) +
-    #        "<td><a href='download/%s_%s.zip'>Save</a></td>\n" %(pdb.replace('.pdb',''),ligID) +
-    #        '</tr>\n'
-    #    )
-
     row = (
         "		<tr>\n"
         "		<td>%s</td>\n" % xtalID
@@ -1722,11 +1666,9 @@ def coot_prepare_input(x, y, z, ligID, sampleDir, eventMap):
         'molecule = read_pdb("refine.split.bound-state.pdb")\n'
         "set_rotation_centre(%s, %s, %s)\n" % (x, y, z) + "set_zoom(30.)\n"
         "set_view_quaternion(-0.180532, -0.678828, 0, 0.711759)\n"
-        'coot.handle_read_ccp4_map(("%s"),0)\n' % eventMap +
-        #        'mtz = "final.mtz"\n'
-        #        'map21 = make_and_draw_map(mtz, "FWT", "PHWT", "", 0, 0)\n'
-        #        'map11 = make_and_draw_map(mtz, "DELFWT", "PHDELWT", "", 0, 1)\n'
-        'coot.raster3d("%s.r3d")\n' % ligID + "coot_real_exit(0)\n"
+        'coot.handle_read_ccp4_map(("%s"),0)\n' % eventMap
+        + 'coot.raster3d("%s.r3d")\n' % ligID
+        + "coot_real_exit(0)\n"
     )
     f = open(ligID + ".py", "w")
     f.write(cmd)
@@ -1778,8 +1720,6 @@ class find_diffraction_image_directory(QtCore.QThread):
             ".mar2300",
         ]
 
-    #        self.datasetID_to_sampleID_conversion='*'
-
     def run(self):
         os.chdir(self.diffraction_data_directory)
         if len(glob.glob(os.path.join(self.diffraction_data_directory, "*"))) != 0:
@@ -1814,7 +1754,6 @@ class find_diffraction_image_directory(QtCore.QThread):
                             self.data_dict[xtal][0].append(
                                 os.path.join(self.diffraction_data_directory, root)
                             )
-                #                        break
                 if self.data_dict[xtal][0]:
                     found_new_file_root = False
                     run_list = []
@@ -1859,8 +1798,6 @@ class find_diffraction_image_directory_fast(QtCore.QThread):
             ".mar2300",
         ]
 
-    #        self.datasetID_to_sampleID_conversion='*'
-
     def run(self):
         print(
             (
@@ -1883,14 +1820,14 @@ class find_diffraction_image_directory_fast(QtCore.QThread):
             "searching diffraction data directory",
         )
         for xtal in glob.glob("*"):
-            # print xtal
             if "screening" in xtal:
                 continue
             self.data_dict[xtal] = []
             rootList = []
             imageCounter = 0
 
-            # find image file extension; the assumption is that there is only one file type
+            # find image file extension; the assumption is that there is only one file
+            # type
             imageExtension = "cbf"
             for files in sorted(glob.glob(os.path.join(xtal, "*"))):
                 fileName = os.path.join(self.diffraction_data_directory, files)
@@ -1905,14 +1842,12 @@ class find_diffraction_image_directory_fast(QtCore.QThread):
 
                 if file_root not in rootList:
                     rootList.append(file_root)
-                    currentRoot = file_root
                     imageCounter = 0
 
                 if imageCounter == 20:
                     self.data_dict[xtal].append(
                         [os.path.join(self.diffraction_data_directory, xtal), file_root]
                     )
-                #                    self.data_dict[xtal][1].append(file_root)
 
                 imageCounter += 1
 
