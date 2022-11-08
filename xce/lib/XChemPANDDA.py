@@ -1847,200 +1847,6 @@ class giant_cluster_datasets(QtCore.QThread):
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
 
 
-class check_if_pandda_can_run:
-
-    # reasons why pandda cannot be run
-    # - there is currently a job running in the pandda directory
-    # - min datasets available is too low
-    # - required input paramters are not complete
-    # - map amplitude and phase labels don't exist
-
-    def __init__(self, pandda_params, xce_logfile, datasource):
-        self.data_directory = pandda_params["data_dir"]
-        self.panddas_directory = pandda_params["out_dir"]
-        self.min_build_datasets = pandda_params["min_build_datasets"]
-        self.pdb_style = pandda_params["pdb_style"]
-        self.mtz_style = pandda_params["mtz_style"]
-        self.input_dir_structure = pandda_params["pandda_dir_structure"]
-        self.problem_found = False
-        self.error_code = -1
-        self.Logfile = XChemLog.updateLog(xce_logfile)
-        self.db = XChemDB.data_source(datasource)
-
-    def number_of_available_datasets(self):
-        counter = 0
-        for file in glob.glob(os.path.join(self.input_dir_structure, self.pdb_style)):
-            if os.path.isfile(file):
-                counter += 1
-        self.Logfile.insert(
-            "pandda.analyse: found {0!s} useable datasets".format(counter)
-        )
-        return counter
-
-    def get_first_dataset_in_project_directory(self):
-        first_dataset = ""
-        for file in glob.glob(os.path.join(self.input_dir_structure, self.pdb_style)):
-            if os.path.isfile(file):
-                first_dataset = file
-                break
-        return first_dataset
-
-    def compare_number_of_atoms_in_reference_vs_all_datasets(
-        self, refData, dataset_list
-    ):
-        mismatched_datasets = []
-        pdbtools = XChemUtils.pdbtools(refData)
-        refPDBlist = pdbtools.get_init_pdb_as_list()
-        n_atom_ref = len(refPDBlist)
-        for n_datasets, dataset in enumerate(dataset_list):
-            if os.path.isfile(
-                os.path.join(
-                    self.data_directory.replace("*", ""), dataset, self.pdb_style
-                )
-            ):
-                n_atom = len(
-                    pdbtools.get_pdb_as_list(
-                        os.path.join(
-                            self.data_directory.replace("*", ""),
-                            dataset,
-                            self.pdb_style,
-                        )
-                    )
-                )
-                if n_atom_ref == n_atom:
-                    self.Logfile.insert(
-                        "{0!s}: atoms in PDB file ({1!s}): {2!s};"
-                        " atoms in Reference file: {3!s} ===> OK".format(
-                            dataset, self.pdb_style, str(n_atom), str(n_atom_ref)
-                        )
-                    )
-                if n_atom_ref != n_atom:
-                    self.Logfile.insert(
-                        "{0!s}: atoms in PDB file ({1!s}): {2!s};"
-                        " atoms in Reference file: {3!s} ===> ERROR".format(
-                            dataset, self.pdb_style, str(n_atom), str(n_atom_ref)
-                        )
-                    )
-                    mismatched_datasets.append(dataset)
-        return n_datasets, mismatched_datasets
-
-    def get_datasets_which_fit_to_reference_file(
-        self,
-        ref,
-        reference_directory,
-        cluster_dict,
-        allowed_unitcell_difference_percent,
-    ):
-        refStructure = XChemUtils.pdbtools(
-            os.path.join(reference_directory, ref + ".pdb")
-        )
-        symmRef = refStructure.get_spg_number_from_pdb()
-        ucVolRef = refStructure.calc_unitcell_volume_from_pdb()
-        cluster_dict[ref] = []
-        cluster_dict[ref].append(os.path.join(reference_directory, ref + ".pdb"))
-        for dataset in glob.glob(os.path.join(self.data_directory, self.pdb_style)):
-            datasetStructure = XChemUtils.pdbtools(dataset)
-            symmDataset = datasetStructure.get_spg_number_from_pdb()
-            ucVolDataset = datasetStructure.calc_unitcell_volume_from_pdb()
-
-            if symmDataset == symmRef:
-                try:
-                    difference = (
-                        math.fabs(1 - (float(ucVolRef) / float(ucVolDataset))) * 100
-                    )
-                    if difference < allowed_unitcell_difference_percent:
-                        sampleID = dataset.replace("/" + self.pdb_style, "")[
-                            dataset.replace("/" + self.pdb_style, "").rfind("/") + 1 :
-                        ]
-                        cluster_dict[ref].append(sampleID)
-                except ZeroDivisionError:
-                    continue
-        return cluster_dict
-
-    def remove_dimple_files(self, dataset_list):
-        for n_datasets, dataset in enumerate(dataset_list):
-            db_dict = {}
-            if os.path.isfile(
-                os.path.join(
-                    self.data_directory.replace("*", ""), dataset, self.pdb_style
-                )
-            ):
-                os.system(
-                    "/bin/rm "
-                    + os.path.join(
-                        self.data_directory.replace("*", ""), dataset, self.pdb_style
-                    )
-                )
-                self.Logfile.insert(
-                    "{0!s}: removing {1!s}".format(dataset, self.pdb_style)
-                )
-                db_dict["DimplePathToPDB"] = ""
-                db_dict["DimpleRcryst"] = ""
-                db_dict["DimpleRfree"] = ""
-                db_dict["DimpleResolutionHigh"] = ""
-                db_dict["DimpleStatus"] = "pending"
-            if os.path.isfile(
-                os.path.join(
-                    self.data_directory.replace("*", ""), dataset, self.mtz_style
-                )
-            ):
-                os.system(
-                    "/bin/rm "
-                    + os.path.join(
-                        self.data_directory.replace("*", ""), dataset, self.mtz_style
-                    )
-                )
-                self.Logfile.insert(
-                    "{0!s}: removing {1!s}".format(dataset, self.mtz_style)
-                )
-                db_dict["DimplePathToMTZ"] = ""
-            if db_dict != {}:
-                self.db.update_data_source(dataset, db_dict)
-
-    def analyse_pdb_style(self):
-        pdb_found = False
-        for file in glob.glob(os.path.join(self.data_directory, self.pdb_style)):
-            if os.path.isfile(file):
-                pdb_found = True
-                break
-        if not pdb_found:
-            self.error_code = 1
-            message = self.warning_messages()
-        return message
-
-    def analyse_mtz_style(self):
-        mtz_found = False
-        for file in glob.glob(os.path.join(self.data_directory, self.mtz_style)):
-            if os.path.isfile(file):
-                mtz_found = True
-                break
-        if not mtz_found:
-            self.error_code = 2
-            message = self.warning_messages()
-        return message
-
-    def analyse_min_build_dataset(self):
-        counter = 0
-        for file in glob.glob(os.path.join(self.data_directory, self.mtz_style)):
-            if os.path.isfile(file):
-                counter += 1
-        if counter <= self.min_build_datasets:
-            self.error_code = 3
-            message = self.warning_messages()
-        return message
-
-    def warning_messages(self):
-        message = ""
-        if self.error_code == 1:
-            message = "PDB file does not exist"
-        if self.error_code == 2:
-            message = "MTZ file does not exist"
-        if self.error_code == 3:
-            message = "Not enough datasets available"
-
-        return message
-
-
 class convert_all_event_maps_in_database(QtCore.QThread):
     def __init__(self, initial_model_directory, xce_logfile, datasource):
         QtCore.QThread.__init__(self)
@@ -2206,86 +2012,6 @@ class convert_event_map_to_SF:
             # update datasource with event_map_mtz information
             self.update_database()
 
-    def calculate_electron_density_map(self, mtzin):
-        missing_columns = False
-        column_dict = XChemUtils.mtztools(mtzin).get_all_columns_as_dict()
-        if "FWT" in column_dict["F"] and "PHWT" in column_dict["PHS"]:
-            labin = " labin F1=FWT PHI=PHWT\n"
-        elif "2FOFCWT" in column_dict["F"] and "PH2FOFCWT" in column_dict["PHS"]:
-            labin = " labin F1=2FOFCWT PHI=PH2FOFCWT\n"
-        else:
-            missing_columns = True
-
-        if not missing_columns:
-            os.chdir(os.path.join(self.project_directory, self.xtalID))
-            cmd = "fft hklin " + mtzin + " mapout 2fofc.map << EOF\n" + labin + "EOF\n"
-            self.Logfile.insert("calculating 2fofc map from " + mtzin)
-            os.system(cmd)
-        else:
-            self.Logfile.insert("cannot calculate 2fofc.map; missing map coefficients")
-
-    def prepare_conversion_script(self):
-
-        os.chdir(os.path.join(self.project_directory, self.xtalID))
-
-        # see also:
-        # http://www.phaser.cimr.cam.ac.uk/index.php/Using_Electron_Density_as_a_Model
-
-        if os.getcwd().startswith("/dls"):
-            phenix_module = "module_load_phenix\n"
-        else:
-            phenix_module = ""
-
-        cmd = (
-            "#!" + os.getenv("SHELL") + "\n"
-            "\n" + phenix_module + "\n"
-            "pdbset XYZIN %s XYZOUT mask_ligand.pdb << eof\n" % self.ligand_pdb
-            + " SPACEGROUP {0!s}\n".format(self.space_group)
-            + " CELL {0!s}\n".format((" ".join(self.unit_cell)))
-            + " END\n"
-            "eof\n"
-            "\n"
-            "ncsmask XYZIN mask_ligand.pdb MSKOUT mask_ligand.msk << eof\n"
-            " GRID %s\n" % (" ".join(self.gridElectronDensityMap)) + " RADIUS 10\n"
-            " PEAK 1\n"
-            "eof\n"
-            "\n"
-            "mapmask MAPIN %s MAPOUT onecell_event_map.map << eof\n" % self.event_map
-            + " XYZLIM CELL\n"
-            "eof\n"
-            "\n"
-            "maprot MAPIN onecell_event_map.map MSKIN mask_ligand.msk WRKOUT"
-            " masked_event_map.map << eof\n"
-            " MODE FROM\n"
-            " SYMMETRY WORK %s\n" % self.space_group_numberElectronDensityMap
-            + " AVERAGE\n"
-            " ROTATE EULER 0 0 0\n"
-            " TRANSLATE 0 0 0\n"
-            "eof\n"
-            "\n"
-            "mapmask MAPIN masked_event_map.map MAPOUT masked_event_map_fullcell.map <<"
-            " eof\n"
-            " XYZLIM CELL\n"
-            " PAD 0.0\n"
-            "eof\n"
-            "\n"
-            "sfall HKLOUT %s.mtz MAPIN masked_event_map_fullcell.map << eof\n"
-            % self.event
-            + " LABOUT FC=FC_event PHIC=PHIC_event\n"
-            " MODE SFCALC MAPIN\n"
-            " RESOLUTION %s\n" % self.resolution + " END\n"
-        )
-
-        self.Logfile.insert("preparing script for conversion of Event map to SF")
-        f = open("eventMap2sf.sh", "w")
-        f.write(cmd)
-        f.close()
-        os.system("chmod +x eventMap2sf.sh")
-
-    def run_conversion_script(self):
-        self.Logfile.insert("running conversion script...")
-        os.system("./eventMap2sf.sh")
-
     def convert_map_to_p1(self):
         self.Logfile.insert("running mapmask -> converting map to p1...")
         cmd = (
@@ -2316,17 +2042,6 @@ class convert_event_map_to_SF:
             )
         )
 
-    def run_cinvfft(self, mtzin):
-        # mtzin is usually refine.mtz
-        self.Logfile.insert(
-            "running cinvfft -mapin {0!s} -mtzin {1!s} -mtzout {2!s}_tmp.mtz"
-            " -colout event".format(self.event_map, mtzin, self.event)
-        )
-        os.system(
-            "cinvfft -mapin {0!s} -mtzin {1!s} -mtzout {2!s}_tmp.mtz"
-            " -colout event".format(self.event_map, mtzin, self.event)
-        )
-
     def remove_and_rename_column_labels(self):
 
         cmd = (
@@ -2341,22 +2056,6 @@ class convert_event_map_to_SF:
         self.Logfile.insert("running CAD: new column labels F_ampl,PHIF")
         os.system(cmd)
 
-    def remove_and_rename_column_labels_after_cinvfft(self):
-
-        cmd = (
-            "#!" + os.getenv("SHELL") + "\n"
-            "\n"
-            "cad hklin1 %s_tmp.mtz hklout %s.mtz << eof\n" % (self.event, self.event)
-            + " labin file_number 1 E1=event.F_phi.F E2=event.F_phi.phi\n"
-            " labout file_number 1 E1=F_ampl E2=PHIF\n"
-            "eof\n"
-            "\n"
-        )
-        self.Logfile.insert(
-            "running CAD: renaming event.F_phi.F -> F_ampl and event.F_phi.phi -> PHIF"
-        )
-        os.system(cmd)
-
     def update_database(self):
         sqlite = (
             "update panddaTable set "
@@ -2366,15 +2065,6 @@ class convert_event_map_to_SF:
         )
         self.db.execute_statement(sqlite)
         self.Logfile.insert("updating data source: " + sqlite)
-
-    def clean_output_directory(self):
-        os.system("/bin/rm mask_targetcell.pdb")
-        os.system("/bin/rm mask_targetcell.msk")
-        os.system("/bin/rm onecell.map")
-        os.system("/bin/rm masked_targetcell.map")
-        os.system("/bin/rm masked_fullcell.map")
-        os.system("/bin/rm eventMap2sf.sh")
-        os.system("/bin/rm " + self.ligand_pdb)
 
 
 class run_pandda_inspect_at_home(QtCore.QThread):

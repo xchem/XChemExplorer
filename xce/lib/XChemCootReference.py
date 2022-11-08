@@ -843,51 +843,6 @@ class GUI(object):
         )
         return fig
 
-    def get_ground_state_maps_by_resolution(self):
-        found = False
-        mapList = []
-        for logFile in glob.glob(
-            os.path.join(
-                self.reference_directory,
-                str(self.cb_select_mean_map.get_active_text()),
-                "logs",
-                "*.log",
-            )
-        ):
-            for n, line in enumerate(open(logFile)):
-                if (
-                    line.startswith("Statistical Electron Density Characterisation")
-                    and len(line.split()) == 6
-                ):
-                    #                    try:
-                    #                    resolution=float(line.split()[5])
-                    resolution = line.split()[5]
-                    print(resolution)
-                    found = True
-                    foundLine = n
-                #                    except ValueError:
-                #                        print 'error'
-                #                        break
-                if found and n == foundLine + 3:
-                    xtal = line.split(",")[0].replace(" ", "").replace("\t", "")
-                    meanmap = os.path.join(
-                        self.reference_directory,
-                        self.cb_select_mean_map.get_active_text(),
-                        "processed_datasets",
-                        xtal,
-                        xtal + "-ground-state-mean-map.native.ccp4",
-                    )
-                    mapList.append([resolution, meanmap])
-                    found = False
-        return mapList
-
-    def get_highest_reso_ground_state_map(self):
-        mapList = self.get_ground_state_maps_by_resolution()
-        print(mapList)
-        self.ground_state_map_List = []
-        self.ground_state_map_List.append(min(mapList, key=lambda x: x[0]))
-        return self.ground_state_map_List
-
 
 if __name__ == "__main__":
     GUI().StartGUI()

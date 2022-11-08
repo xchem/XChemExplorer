@@ -42,18 +42,3 @@ class select_columns_to_show(QtGui.QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
-
-    def data_source_column_active(self):
-        columns_to_show = ["Sample ID"]
-        for key in self.column_dict:
-            if self.column_dict[key].isChecked():
-                columns_to_show.append(self.columns_in_data_source[key][1])
-        return columns_to_show
-
-    # static method to create the dialog and return (date, time, accepted)
-    @staticmethod
-    def return_selected_columns(parent=None):
-        dialog = select_columns_to_show(parent)
-        result = dialog.exec_()
-        columns = dialog.data_source_column_active()
-        return (columns, result == QtGui.QDialog.Accepted)

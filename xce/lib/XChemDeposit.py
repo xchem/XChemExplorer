@@ -12,40 +12,6 @@ import glob
 
 from PyQt4 import QtCore
 
-
-def create_SF_mmcif(outDir, mtzList):
-    print("hallo")
-
-
-def get_protein_sequence(database, xtalID):
-    print("hallo")
-
-
-def check_depositDict(depositDict):
-    # check depositDict
-    for entry in depositDict:
-        if "middle_name" in depositDict[entry]:
-            continue
-        elif "State_or_Province" in depositDict[entry]:
-            continue
-        elif depositDict[entry] == "":
-            print("ERROR")
-
-
-def update_title(depositDict):
-
-    print("hallo")
-
-
-def create_data_template_text():
-
-    data_template_text = data_template(depositDict, sequence)
-
-
-def create_Model_mmcif(outDir, pdbList):
-    print("hallo")
-
-
 # def update_file_locations_of_apo_structuresin_DB(database,projectDir,xce_logfile):
 #    Logfile=XChemLog.updateLog(xce_logfile)
 #    Logfile.insert('updating file information for apo structures')
@@ -651,16 +617,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             "======= finished preparing mmcif files for wwPDB deposition ======="
         )
 
-    def ground_state_mmcif_exists(self):
-        mmcifStatus = False
-        for dirs in glob.glob(os.path.join(self.panddaDir, "processed_datasets", "*")):
-            xtal = dirs[dirs.rfind("/") + 1 :]
-            if os.path.isfile(os.path.join(dirs, xtal + "_sf.mmcif")):
-                self.Logfile.insert("%s: found mmcif file for apo structure" % xtal)
-                mmcifStatus = True
-
-        return mmcifStatus
-
     def data_template_dict_exists(self, xtal):
         dictStatus = False
         self.data_template_dict = None
@@ -722,37 +678,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         else:
             self.Logfile.insert("%s: found db_dict dictionary in mainTable" % xtal)
             self.update_beamline_info_data_template_dict(xtal)
-            dictStatus = True
-        return dictStatus
-
-    def zenodo_dict_exists(self, xtal):
-        dictStatus = False
-        self.zenodo_dict = None
-        if self.ground_state:
-            self.zenodo_dict = self.db.get_zenodo_dict_for_pandda_analysis(
-                self.panddaDir
-            )
-        else:
-            self.Logfile.insert(
-                "%s: reading information from zenodoTable for pandda run: %s"
-                % (xtal, self.db_dict["DimplePANDDApath"])
-            )
-            self.zenodo_dict = self.db.get_zenodo_dict_for_pandda_analysis(
-                self.db_dict["DimplePANDDApath"]
-            )
-        if self.zenodo_dict == {}:
-            dictStatus = True
-            self.zenodo_dict["ZenodoDOI"] = ""
-            self.Logfile.warning(
-                "%s: cannot find information about zenodo deposition in zenodoTable!!!"
-                % xtal
-            )
-        #            self.Logfile.error('%s: cannot find information about zenodo deposition in zenodoTable; moving to next dataset...' %xtal)
-        #            self.add_to_errorList(xtal)
-        else:
-            self.Logfile.insert(
-                "%s: found zenodo_dict dictionary in zenodoTable" % xtal
-            )
             dictStatus = True
         return dictStatus
 

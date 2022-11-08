@@ -827,18 +827,6 @@ class GUI(object):
                 button.set_active(True)
                 break
 
-    def update_label_radiobutton(self):
-        found = False
-        for button in self.label_button_list:
-            if button.get_label() == self.label:
-                button.set_active(True)
-                found = True
-        if not found:
-            for button in self.label_button_list:
-                if button.get_label() == "not_shown":
-                    button.set_active(True)
-                    break
-
     def update_LigandConfidence_radiobutton(self):
         # updating ligand confidence radiobuttons
         current_stage = 0

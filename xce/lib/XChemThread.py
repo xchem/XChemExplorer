@@ -130,49 +130,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
 
-    def change_absolute_to_relative_links(self, target, filename):
-        os.unlink(filename)
-        os.symlink(os.path.relpath(target), filename)
-        self.Logfile.insert("{0!s} -> {1!s}".format(os.readlink(filename), target))
-
-    def find_file(self, filename, xtal):
-        found_file = False
-        for files in glob.glob("*"):
-            if files == filename:
-                # at this point, this could ba a file or a (broken) symbolic link
-                try:
-                    link = os.readlink(filename)
-                    if link.startswith("/"):
-                        if os.path.isfile(
-                            link.replace(
-                                link[: link.find(xtal)],
-                                self.initial_model_directory + "/",
-                            )
-                        ):
-                            target = link.replace(
-                                link[: link.find(xtal)],
-                                self.initial_model_directory + "/",
-                            )
-                            found_file = True
-                            self.change_absolute_to_relative_links(target, filename)
-                        elif os.path.isfile(files):
-                            # this will leave the absolute path
-                            found_file = True
-                        else:
-                            self.Logfile.insert("removing broken link: " + filename)
-                            os.system("/bin/rm {0!s} 2> /dev/null".format(filename))
-                    else:
-                        if not os.path.isfile(link):
-                            self.Logfile.insert("removing broken link: " + filename)
-                            os.system("/bin/rm {0!s} 2> /dev/null".format(filename))
-                        else:
-                            found_file = True
-                except OSError:
-                    if os.path.isfile(filename):
-                        found_file = True
-                break
-        return found_file
-
     def sync_data_processing(self, xtal, db_dict):
 
         # AIMLESS logfile
