@@ -8,11 +8,11 @@ class SettingsTab:
         self.layout_funcs = layout.LayoutFuncs()
 
     def setup(self, xce_object):
-        ################################################################################################################
-        #                                                                                                              #
-        #                                                 SETTINGS TAB                                                 #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                                 SETTINGS TAB                                 #
+        #                                                                              #
+        ################################################################################
         xce_object.settings_container = QtGui.QWidget()
         xce_object.buttons_etc = QtGui.QWidget()
         xce_object.settings_vbox = QtGui.QVBoxLayout()
@@ -76,7 +76,8 @@ class SettingsTab:
 
         xce_object.data_collection_vbox_for_settings.addWidget(
             QtGui.QLabel(
-                "\n\n<b>Data Collection Directory: (e.g. /dls/i04-1/data/2017/lb18145-70) -</b>"
+                "\n\n<b>Data Collection Directory:"
+                " (e.g. /dls/i04-1/data/2017/lb18145-70) -</b>"
             )
         )
 
@@ -102,21 +103,6 @@ class SettingsTab:
         settings_beamline_vbox.addLayout(settings_hbox_beamline_directory)
         xce_object.read_agamemnon = QtGui.QCheckBox("Read Agamemnon data structure")
         settings_beamline_vbox.addWidget(xce_object.read_agamemnon)
-
-        #        settings_hbox_datasets_summary_file = QtGui.QHBoxLayout()
-        #        xce_object.datasets_summary_file_label = QtGui.QLabel(xce_object.datasets_summary_file)
-        #        settings_hbox_datasets_summary_file.addWidget(xce_object.datasets_summary_file_label)
-        #        settings_button_datasets_summary_file = QtGui.QPushButton('Select Existing\nCollection Summary File')
-        #        settings_button_datasets_summary_file.setMaximumWidth(247)
-        #        settings_button_datasets_summary_file.clicked.connect(xce_object.settings_button_clicked)
-        #        settings_hbox_datasets_summary_file.addWidget(settings_button_datasets_summary_file)
-        #
-        #        settings_button_new_datasets_summary_file = QtGui.QPushButton('Assign New\nCollection Summary File')
-        #        settings_button_new_datasets_summary_file.clicked.connect(xce_object.settings_button_clicked)
-        #        settings_button_new_datasets_summary_file.setMaximumWidth(247)
-        #        settings_hbox_datasets_summary_file.addWidget(settings_button_new_datasets_summary_file)
-        #
-        #        settings_beamline_vbox.addLayout(settings_hbox_datasets_summary_file)
 
         settings_beamline_frame.setLayout(settings_beamline_vbox)
         xce_object.data_collection_vbox_for_settings.addWidget(settings_beamline_frame)
@@ -159,7 +145,6 @@ class SettingsTab:
             )
         )
 
-        # xce_object.data_collection_vbox_for_settings.setSpacing(0)
         xce_object.data_collection_vbox_for_settings.setContentsMargins(30, 30, 30, 30)
 
         xce_object.buttons_etc.resize(
