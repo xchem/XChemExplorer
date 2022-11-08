@@ -919,31 +919,6 @@ class data_source:
             pass
         return db_dict
 
-    def get_zenodo_dict_for_pandda_analysis(self, panddaPath):
-        db_dict = {}
-        header = []
-        data = []
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        try:
-            cursor.execute(
-                "select * from zenodoTable where DimplePANDDApath='{0!s}';".format(
-                    panddaPath
-                )
-            )
-            for column in cursor.description:
-                header.append(column[0])
-            data = cursor.fetchall()
-            try:
-                for n, item in enumerate(data[0]):
-                    db_dict[header[n]] = str(item)
-            except IndexError:
-                pass
-        except sqlite3.OperationalError:
-            db_dict = {}
-        return db_dict
-
     def get_db_pandda_dict_for_sample_and_site(self, sampleID, site_index):
         db_dict = {}
         header = []
@@ -1257,75 +1232,6 @@ class data_source:
             )
         connect.commit()
 
-    def update_insert_panddaTable(self, sampleID, data_dict):
-        data_dict["LastUpdated"] = str(datetime.now().strftime("%Y-%m-%d %H:%M"))
-        data_dict["LastUpdated_by"] = getpass.getuser()
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute("Select CrystalName,PANDDA_site_index FROM panddaTable")
-        #        available_columns=[]
-        #        cursor.execute("SELECT * FROM panddaTable")
-        #        for column in cursor.description:           # only update existing columns in data source
-        #            available_columns.append(column[0])
-        samples_sites_in_table = []
-        tmp = cursor.fetchall()
-        for item in tmp:
-            line = [x.encode("UTF8") for x in list(item)]
-            samples_sites_in_table.append(line)
-
-        found_sample_site = False
-        for entry in samples_sites_in_table:
-            if entry[0] == sampleID and entry[1] == data_dict["PANDDA_site_index"]:
-                found_sample_site = True
-
-        if found_sample_site:
-            for key in data_dict:
-                value = data_dict[key]
-                if key == "ID" or key == "CrystalName" or key == "PANDDA_site_index":
-                    continue
-                if not str(value).replace(" ", "") == "":  # ignore empty fields
-                    update_string = str(key) + "=" + "'" + str(value) + "'"
-                    #                    print "UPDATE panddaTable SET "+update_string+" WHERE CrystalName="+"'"+sampleID+"' and PANDDA_site_index is '"+data_dict['PANDDA_site_index']+"';"
-                    cursor.execute(
-                        "UPDATE panddaTable SET "
-                        + update_string
-                        + " WHERE CrystalName="
-                        + "'"
-                        + sampleID
-                        + "' and PANDDA_site_index is '"
-                        + data_dict["PANDDA_site_index"]
-                        + "';"
-                    )
-        else:
-            column_string = ""
-            value_string = ""
-            for key in data_dict:
-                value = data_dict[key]
-                if key == "ID":
-                    continue
-                #                if key not in available_columns:
-                #                    continue
-                if (
-                    not str(value).replace(" ", "") == ""
-                ):  # ignore if nothing in csv field
-                    value_string += "'" + str(value) + "'" + ","
-                    column_string += key + ","
-            print(
-                "INSERT INTO panddaTable ("
-                + column_string[:-1]
-                + ") VALUES ("
-                + value_string[:-1]
-                + ");"
-            )
-            cursor.execute(
-                "INSERT INTO panddaTable ("
-                + column_string[:-1]
-                + ") VALUES ("
-                + value_string[:-1]
-                + ");"
-            )
-        connect.commit()
-
     def update_insert_any_table(self, table, data_dict, condition_dict):
         data_dict["LastUpdated"] = str(datetime.now().strftime("%Y-%m-%d %H:%M"))
         data_dict["LastUpdated_by"] = getpass.getuser()
@@ -1540,72 +1446,6 @@ class data_source:
             )
         connect.commit()
 
-    def update_insert_not_null_fields_only(self, sampleID, data_dict):
-        data_dict["LastUpdated"] = str(datetime.now().strftime("%Y-%m-%d %H:%M"))
-        data_dict["LastUpdated_by"] = getpass.getuser()
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute("Select CrystalName FROM mainTable")
-        available_columns = []
-        cursor.execute("SELECT * FROM mainTable")
-        for column in cursor.description:  # only update existing columns in data source
-            available_columns.append(column[0])
-        if self.check_if_sample_exists_in_data_source(sampleID):
-            for key in data_dict:
-                value = data_dict[key]
-                #                print value
-                if key == "ID" or key == "CrystalName":
-                    continue
-                if not str(value).replace(" ", "") == "":  # ignore empty fields
-                    update_string = str(key) + "=" + "'" + str(value) + "'"
-                    #                    cursor.execute("UPDATE mainTable SET "+update_string+" WHERE CrystalName="+"'"+sampleID+"' and "+str(key)+" is null;")
-                    cursor.execute(
-                        "UPDATE mainTable SET "
-                        + update_string
-                        + " WHERE CrystalName="
-                        + "'"
-                        + sampleID
-                        + "' and ("
-                        + str(key)
-                        + " is null or "
-                        + str(key)
-                        + "='');"
-                    )
-        else:
-            column_string = "CrystalName" + ","
-            value_string = "'" + sampleID + "'" + ","
-            for key in data_dict:
-                value = data_dict[key]
-                if key == "ID":
-                    continue
-                if key not in available_columns:
-                    continue
-                if (
-                    not str(value).replace(" ", "") == ""
-                ):  # ignore if nothing in csv field
-                    value_string += "'" + str(value) + "'" + ","
-                    column_string += key + ","
-            cursor.execute(
-                "INSERT INTO mainTable ("
-                + column_string[:-1]
-                + ") VALUES ("
-                + value_string[:-1]
-                + ");"
-            )
-        connect.commit()
-
-    def get_value_from_field(self, sampleID, column):
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute(
-            "SELECT "
-            + column
-            + " FROM  mainTable WHERE CrystalName='"
-            + sampleID
-            + "';"
-        )
-        return cursor.fetchone()
-
     def export_to_csv_file(self, csv_file):
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
@@ -1700,119 +1540,6 @@ class data_source:
     #            sample_list_for_coot.append(line)
     #
     #        return sample_list_for_coot
-
-    def get_pandda_info_for_coot(self, xtalID, pandda_site):
-        pandda_info_for_coot = []
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-
-        sqlite = (
-            "select"
-            " PANDDA_site_event_map,"
-            " PANDDA_site_x,"
-            " PANDDA_site_y,"
-            " PANDDA_site_z,"
-            " PANDDA_site_spider_plot "
-            "from panddaTable  "
-            "where "
-            " CrystalName is '%s'" % xtalID
-            + " and PANDDA_site_index is '{0!s}';".format(pandda_site)
-        )
-
-        cursor.execute(sqlite)
-
-        tmp = cursor.fetchall()
-        for item in tmp:
-            tmpx = []
-            for i in list(item):
-                if i is None:
-                    tmpx.append("None")
-                else:
-                    tmpx.append(i)
-            line = [x.encode("UTF8") for x in tmpx]
-            pandda_info_for_coot.append(line)
-
-        return pandda_info_for_coot
-
-    def get_todo_list_for_coot(self, RefinementOutcome, pandda_site):
-        sample_list_for_coot = []
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-
-        if RefinementOutcome == "0 - All Datasets":
-            outcome = " not null "
-        else:
-            outcome = " '{0!s}' ".format(RefinementOutcome)
-
-        if int(pandda_site) > 0:
-            #            sqlite = (
-            #                "select"
-            #                " mainTable.CrystalName,"
-            #                " mainTable.CompoundCode,"
-            #                " mainTable.RefinementCIF,"
-            #                " mainTable.RefinementMTZfree,"
-            #                " mainTable.RefinementPathToRefinementFolder,"
-            #                " panddaTable.RefinementOutcome, "
-            #                " panddaTable.PANDDA_site_confidence "
-            #                "from mainTable inner join panddaTable on mainTable.CrystalName = panddaTable.CrystalName "
-            #                "where panddaTable.PANDDA_site_index is '%s'" %pandda_site+
-            #                " and panddaTable.PANDDA_site_ligand_placed is 'True'"
-            #                " and panddaTable.RefinementOutcome is %s;" %outcome
-            #                )
-            sqlite = (
-                "select"
-                " mainTable.CrystalName,"
-                " mainTable.CompoundCode,"
-                " mainTable.RefinementCIF,"
-                " mainTable.RefinementMTZfree,"
-                " mainTable.RefinementPathToRefinementFolder,"
-                " panddaTable.RefinementOutcome, "
-                " panddaTable.PANDDA_site_confidence "
-                "from mainTable inner join panddaTable on mainTable.CrystalName = panddaTable.CrystalName "
-                "where panddaTable.PANDDA_site_index is '%s'" % pandda_site
-                + " and panddaTable.PANDDA_site_ligand_placed is 'True'"
-                " and panddaTable.RefinementOutcome like " + outcome.split()[0] + "%';"
-            )
-        #            sqlite = (
-        #                "select"
-        #                " mainTable.CrystalName,"
-        #                " mainTable.CompoundCode,"
-        #                " mainTable.RefinementCIF,"
-        #                " mainTable.RefinementMTZfree,"
-        #                " mainTable.RefinementPathToRefinementFolder,"
-        #                " panddaTable.RefinementOutcome, "
-        #                " panddaTable.PANDDA_site_confidence "
-        #                "from mainTable inner join panddaTable on mainTable.CrystalName = panddaTable.CrystalName "
-        #                "where panddaTable.PANDDA_site_index is '%s'" %pandda_site+
-        #                " and panddaTable.RefinementOutcome like "+outcome.split()[0]+"%';"
-        #                )
-        else:
-            sqlite = (
-                "select"
-                " CrystalName,"
-                " CompoundCode,"
-                " RefinementCIF,"
-                " RefinementMTZfree,"
-                " RefinementPathToRefinementFolder,"
-                " RefinementOutcome,"
-                " RefinementLigandConfidence "
-                "from mainTable "
-                "where RefinementOutcome is %s and DimpleRfree is not Null;" % outcome
-            )
-        cursor.execute(sqlite)
-
-        tmp = cursor.fetchall()
-        for item in tmp:
-            tmpx = []
-            for i in list(item):
-                if i is None:
-                    tmpx.append("None")
-                else:
-                    tmpx.append(i)
-            line = [x.encode("UTF8") for x in tmpx]
-            sample_list_for_coot.append(line)
-
-        return sample_list_for_coot
 
     def get_todoList_for_coot(self, RefinementOutcome):
         sample_list_for_coot = []
@@ -2012,146 +1739,6 @@ class data_source:
         csvWriter = csv.writer(open("for_wonka.csv", "w"))
         csvWriter.writerows([header] + rows)
 
-    def create_missing_apo_records_in_depositTable(self, xce_logfile):
-        Logfile = XChemLog.updateLog(xce_logfile)
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute(
-            "select panddaTable.ApoStructures from panddaTable where panddaTable.ApoStructures is not Null"
-        )
-        tmp = cursor.fetchall()
-        #        print str(tmp)
-        apoStructureList = []
-        for item in tmp:
-            for xtal in str(item[0]).split(";"):
-                if xtal not in apoStructureList:
-                    apoStructureList.append(xtal)
-        if not apoStructureList:
-            Logfile.insert("no apo structures were assigned to your pandda models")
-        else:
-            Logfile.insert(
-                "the following datasets were at some point used as apo structures for pandda.analyse: "
-                + str(apoStructureList)
-            )
-            apoInDB = []
-            cursor.execute(
-                "select CrystalName from depositTable where StructureType is 'apo'"
-            )
-            tmp = cursor.fetchall()
-            for xtal in tmp:
-                Logfile.insert(
-                    str(xtal[0]) + " exists as entry for apo structure in database"
-                )
-                apoInDB.append(str(xtal[0]))
-            newEntries = ""
-            for xtal in apoStructureList:
-                if xtal not in apoInDB:
-                    Logfile.insert("no entry for " + xtal + " in depositTable")
-                    newEntries += "('{0!s}','apo'),".format(xtal)
-            if newEntries != "":
-                sqlite = "insert into depositTable (CrystalName,StructureType) values {0!s};".format(
-                    newEntries[:-1]
-                )
-                Logfile.insert(
-                    "creating new entries with the following SQLite command:\n" + sqlite
-                )
-                cursor.execute(sqlite)
-                connect.commit()
-
-    def create_missing_apo_records_for_all_structures_in_depositTable(
-        self, projectDir, xce_logfile
-    ):
-        Logfile = XChemLog.updateLog(xce_logfile)
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute(
-            "select CrystalName from depositTable where StructureType is 'apo'"
-        )
-        tmp = cursor.fetchall()
-        #        print str(tmp)
-        apoStructureList = []
-        for item in tmp:
-            apoStructureList.append(str(item[0]))
-
-        counter = 0  # there is a SQLite limit which does not allow to insert more than 500 records at once
-        newEntries = ""
-        for files in glob.glob(os.path.join(projectDir, "*")):
-            xtal = files[files.rfind("/") + 1 :]
-            if xtal not in apoStructureList:
-                dimple_pdb = False
-                dimple_mtz = False
-                aimless_log = False
-                if os.path.isfile(os.path.join(files, "dimple.pdb")):
-                    dimple_pdb = True
-                if os.path.isfile(os.path.join(files, "dimple.mtz")):
-                    dimple_mtz = True
-                if os.path.isfile(os.path.join(files, xtal + ".log")) or os.path.isfile(
-                    os.path.join("aimless.log")
-                ):
-                    aimless_log = True
-
-                if dimple_mtz == False or dimple_pdb == False or aimless_log == False:
-                    Logfile.insert(
-                        "{0!s}: missing files -> dimple.pdb: {1!s}, dimple.mtz: {2!s}, {3!s}.log: {4!s}".format(
-                            xtal,
-                            str(dimple_pdb),
-                            str(dimple_mtz),
-                            xtal,
-                            str(aimless_log),
-                        )
-                    )
-                else:
-                    newEntries += "('{0!s}','apo'),".format(xtal)
-                    counter += 1
-
-                if counter == 450:  # set to 450 to stay well below 500 records limit
-                    sqlite = "insert into depositTable (CrystalName,StructureType) values {0!s};".format(
-                        newEntries[:-1]
-                    )
-                    Logfile.insert(
-                        "creating new entries with the following SQLite command:\n"
-                        + sqlite
-                    )
-                    cursor.execute(sqlite)
-                    connect.commit()
-                    counter = 0
-                    newEntries = ""
-
-        if newEntries != "":
-            sqlite = "insert into depositTable (CrystalName,StructureType) values {0!s};".format(
-                newEntries[:-1]
-            )
-            Logfile.insert(
-                "creating new entries with the following SQLite command:\n" + sqlite
-            )
-            cursor.execute(sqlite)
-            connect.commit()
-        else:
-            Logfile.insert("did not find any new apo structures")
-
-    #        if apoStructureList==[]:
-    #            Logfile.insert('no apo structures were assigned to your pandda models')
-    #        else:
-    #            Logfile.insert('the following datasets were at some point used as apo structures for pandda.analyse: '+str(apoStructureList))
-    #            apoInDB=[]
-    #            cursor.execute("select CrystalName from depositTable where StructureType is 'apo'")
-    #            tmp = cursor.fetchall()
-    #            for xtal in tmp:
-    #                Logfile.insert(str(xtal[0])+' exists as entry for apo structure in database')
-    #                apoInDB.append(str(xtal[0]))
-    #            newEntries=''
-    #            for xtal in apoStructureList:
-    #                if xtal not in apoInDB:
-    #                    Logfile.insert('no entry for '+xtal+' in depositTable')
-    #                    newEntries+="('%s','apo')," %xtal
-    #            if newEntries != '':
-    #                sqlite='insert into depositTable (CrystalName,StructureType) values %s;' %newEntries[:-1]
-    #                Logfile.insert('creating new entries with the following SQLite command:\n'+sqlite)
-    #                cursor.execute(sqlite)
-    #                connect.commit()
-
-    #    def get_deposit_dict_for_xtal(self,sampleID,structure_type):
-
     def create_or_remove_missing_records_in_depositTable(
         self, xce_logfile, xtal, type, db_dict
     ):
@@ -2256,54 +1843,6 @@ class data_source:
             cursor.execute(sqlite)
             connect.commit()
 
-    def remove_selected_apo_structures_from_depositTable(self, xce_logfile, xtalList):
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-
-        Logfile = XChemLog.updateLog(xce_logfile)
-
-        Logfile.insert("removing the following apo structures from depositTable")
-        deleteStrg = "("
-        for xtal in xtalList:
-            Logfile.insert(xtal)
-            deleteStrg += "Crystalname is '" + xtal + "' or "
-        deleteStrg = deleteStrg[:-4] + ")"
-
-        sqlite = (
-            "delete from depositTable where {0!s} and StructureType is 'apo'".format(
-                deleteStrg
-            )
-        )
-        Logfile.insert("executing the following SQLite command:\n" + sqlite)
-        cursor.execute(sqlite)
-        connect.commit()
-
-    #        for item in tmp:
-    #            print item
-    #            for xtal in str(item[0]).split(';'):
-    #                if xtal not in apoStructureList: apoStructureList.append(xtal)
-    #        if apoStructureList==[]:
-    #            Logfile.insert('no apo structures were assigned to your pandda models')
-    #        else:
-    #            Logfile.insert('the following datasets were at some point used as apo structures for pandda.analyse: '+str(apoStructureList))
-    #            apoInDB=[]
-    #            cursor.execute("select CrystalName from depositTable where StructureType is 'apo'")
-    #            tmp = cursor.fetchall()
-    #            for xtal in tmp:
-    #                Logfile.insert(str(xtal[0])+' exists as entry for apo structure in database')
-    #                apoInDB.append(str(xtal[0]))
-    #            newEntries=''
-    #            for xtal in apoStructureList:
-    #                if xtal not in apoInDB:
-    #                    Logfile.insert('no entry for '+xtal+' in depositTable')
-    #                    newEntries+="('%s','apo')," %xtal
-    #            if newEntries != '':
-    #                sqlite='insert into depositTable (CrystalName,StructureType) values %s;' %newEntries[:-1]
-    #                Logfile.insert('creating new entries with the following SQLite command:\n'+sqlite)
-    #                cursor.execute(sqlite)
-    #                connect.commit()
-    #
-
     def collected_xtals_during_visit(self, visitID):
         # creates sqlite file if non existent
         connect = sqlite3.connect(self.data_source_file)
@@ -2364,57 +1903,6 @@ class data_source:
 
         return userassigned
 
-    def all_results_of_xtals_collected_during_visit_as_dict(self, visitID):
-        # first get all collected xtals as list
-        collectedXtals = self.collected_xtals_during_visit(visitID)
-        xtalDict = {}
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        for xtal in sorted(collectedXtals):
-            if xtal not in xtalDict:
-                xtalDict[xtal] = []
-            sqlite = (
-                "select DataCollectionVisit,"
-                "       DataCollectionRun,"
-                "       DataProcessingProgram,"
-                "       DataCollectionDate,"
-                "       DataProcessingResolutionHigh,"
-                "       DataProcessingRmergeLow,"
-                "       DataCollectionCrystalImage1,"
-                "       DataCollectionCrystalImage2,"
-                "       DataCollectionCrystalImage3,"
-                "       DataCollectionCrystalImage4 "
-                "from collectionTable "
-                "where CrystalName = '%s'" % xtal
-            )
-            #            print sqlite
-            cursor.execute(sqlite)
-            sq = cursor.fetchall()
-            #            print sq
-            for s in sq:
-                #                print s
-                t = [
-                    str(s[0]),
-                    str(s[1]),
-                    str(s[2]),
-                    str(s[3]),
-                    str(s[4]),
-                    str(s[5]),
-                    str(s[6]),
-                    str(s[7]),
-                    str(s[8]),
-                    str(s[9]),
-                ]
-                inDict = False
-                for entry in xtalDict[xtal]:
-                    if t[0] == entry[0] and t[1] == entry[1] and t[2] == entry[2]:
-                        inDict = True
-                        break
-                if not inDict:
-                    xtalDict[xtal].append(t)
-        return xtalDict
-
     def all_autoprocessing_results_for_xtal_as_dict(self, xtal):
         dbList = []
         header = []
@@ -2433,47 +1921,6 @@ class data_source:
                 db_dict[header[n]] = str(item)
             dbList.append(db_dict)
         return dbList
-
-    def get_db_list_for_sample_in_panddaTable(self, xtal):
-        dbList = []
-        header = []
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute(
-            "select * from panddaTable where CrystalName='{0!s}';".format(xtal)
-        )
-        for column in cursor.description:
-            header.append(column[0])
-        data = cursor.fetchall()
-        for result in data:
-            db_dict = {}
-            for n, item in enumerate(result):
-                db_dict[header[n]] = str(item)
-            dbList.append(db_dict)
-        return dbList
-
-    def get_db_dict_for_visit_run_autoproc(self, xtal, visit, run, autoproc):
-        db_dict = {}
-        header = []
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        sqlite = (
-            "select * "
-            "from collectionTable "
-            "where CrystalName ='%s' and" % xtal
-            + "      DataCollectionVisit = '%s' and" % visit
-            + "      DataCollectionRun = '%s' and" % run
-            + "      DataProcessingProgram = '%s'" % autoproc
-        )
-        cursor.execute(sqlite)
-        for column in cursor.description:
-            header.append(column[0])
-        data = cursor.fetchall()
-        for n, item in enumerate(data[0]):
-            db_dict[header[n]] = str(item)
-        return db_dict
 
     def get_db_dict_for_visit_run_autoproc_score(
         self, xtal, visit, run, autoproc, score
@@ -2521,28 +1968,6 @@ class data_source:
             xtalDict[xtal] = db_dict
         return xtalDict
 
-    def getCrystalImageDict(self, visit, xtalList):
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        imageDict = {}
-        for xtal in xtalList:
-            sqlite = (
-                "select CrystalName,"
-                "   min(DataCollectionDate),"
-                "   DataCollectionCrystalImage1,"
-                "   DataCollectionCrystalImage2,"
-                "   DataCollectionCrystalImage3,"
-                "   DataCollectionCrystalImage4 "
-                "from collectionTable "
-                "where DataCollectionVisit = '%s'" % visit
-                + " and CrystalName = '%s'" % xtal
-            )
-            cursor.execute(sqlite)
-            img = cursor.fetchall()
-            imageDict[xtal] = [str(img[1]), str(img[2]), str(img[3]), str(img[4])]
-        return imageDict
-
     def samples_for_html_summary(self, whichSamples):
         # creates sqlite file if non existent
         connect = sqlite3.connect(self.data_source_file)
@@ -2567,32 +1992,6 @@ class data_source:
             if str(sample[0]) not in xtalList:
                 xtalList.append(str(sample[0]))
         return xtalList
-
-    def get_event_map_for_ligand(self, xtal, ligChain, ligNumber, ligName):
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-
-        sql = (
-            "select "
-            " PANDDA_site_event_map "
-            "from "
-            " panddaTable "
-            "where "
-            " CrystalName = '%s' and " % xtal
-            + " PANDDA_site_ligand_chain='%s' and " % ligChain
-            + " PANDDA_site_ligand_sequence_number='%s' and " % ligNumber
-            + " PANDDA_site_ligand_resname='%s'" % ligName
-        )
-
-        cursor.execute(sql)
-
-        eventMap = ""
-        maps = cursor.fetchall()
-        for map in maps:
-            eventMap = map[0]
-
-        return eventMap
 
     def get_ligand_confidence_for_ligand(self, xtal, ligChain, ligNumber, ligName):
         # creates sqlite file if non existent
@@ -2619,17 +2018,6 @@ class data_source:
             ligConfidence = lig[0]
 
         return ligConfidence
-
-    def get_labels_from_db(self):
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute("select Label from labelTable")
-        labels = cursor.fetchall()
-        labelList = []
-        for l in labels:
-            labelList.append(l[0])
-        return labelList
 
     def get_label_info_from_db(self):
         # creates sqlite file if non existent

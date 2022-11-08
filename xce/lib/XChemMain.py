@@ -128,28 +128,6 @@ def get_target_and_visit_list(beamline_directory, agamemnon):
     return target_list, visit_list
 
 
-def get_dewar_configuration(beamline_directory):
-    dewar_sample_configuration_dict = {}
-    # need to do it like this for now until we got a way to query ispyb
-    for xml in glob.glob(
-        os.path.join(beamline_directory, "xml", "exptTableParams-*.xml")
-    ):
-        prefix = ""
-        container_reference = ""
-        sample_location = ""
-        for line in open(xml):
-            if "prefix" in line:
-                prefix = line[line.find(">") + 1 : line.rfind("<")]
-            if "container_reference" in line:
-                container_reference = line[line.find(">") + 1 : line.rfind("<")]
-            if "sample_location" in line:
-                sample_location = line[line.find(">") + 1 : line.rfind("<")]
-        dewar_sample_configuration_dict[
-            str(container_reference) + "-" + str(sample_location)
-        ] = prefix
-    return dewar_sample_configuration_dict
-
-
 def get_jobs_running_on_cluster():
     out_dict = {}
 
@@ -291,31 +269,6 @@ def print_cluster_status_message(program, cluster_dict, xce_logfile):
             for job in job_ids:
                 out += str(job) + " "
             Logfile.insert(out)
-
-
-def display_queue_status_in_terminal(in_dict):
-    # latest_run=max(tmp,key=lambda x: x[1])[0]
-    max_dimple_runtime = max(in_dict["dimple"], key=lambda x: x[2])[2]
-    print(
-        "----------------------------------------------------------------------------"
-    )
-    print(
-        "| Task                   | Nr. Jobs               | Max. Runtime (minutes) |"
-    )
-    print(
-        "----------------------------------------------------------------------------"
-    )
-    print(
-        "{0:24} {1:24} {2:24} {3:1}".format(
-            "| DIMPLE",
-            "| {0!s}".format(len(in_dict["dimple"])),
-            "| %s" & max_dimple_runtime,
-            "|",
-        )
-    )
-    print(
-        "----------------------------------------------------------------------------"
-    )
 
 
 def get_datasource_summary(db_file):
@@ -506,10 +459,6 @@ def get_datasource_summary(db_file):
     return out_dict
 
 
-def remove_all_refmac_jobs_from_cluster_and_reinstate_last_stable_state():
-    print("hallo")
-
-
 def change_links_to_selected_data_collection_outcome(
     sample,
     data_collection_dict,
@@ -606,92 +555,6 @@ def change_links_to_selected_data_collection_outcome(
 
                 else:
                     Logfile.insert("please copy data to PROJECT DIRECTORY first!")
-
-
-def get_nr_files_from_gda_log_folder(beamline):
-    n = len(glob.glob(os.path.join("/dls_sw", beamline, "logs", "gda_server*")))
-    return n
-
-
-def get_dict_of_gda_barcodes(beamline):
-    out_dict = {}
-    for files in glob.glob(os.path.join("/dls_sw", beamline, "logs", "*")):
-        found_barcode_entry = False
-        gda_log = files[files.rfind("/") + 1 :]
-        if gda_log.startswith("gda_server.") and gda_log.endswith(".gz"):
-            with gzip.open(files, "r") as f:
-                print("parsing", files)
-                #    		for line in fin:
-                for line in f:
-                    if "BART SampleChanger - getBarcode() returning" in line:
-                        barcode = line.split()[len(line.split()) - 1]
-                        found_barcode_entry = True
-                    if found_barcode_entry:
-                        if "Snapshots will be saved" in line:
-                            sampleID = line.split()[len(line.split()) - 1].split("/")[
-                                -1
-                            ]
-                            out_dict[sampleID] = barcode
-                            found_barcode_entry = False
-        elif gda_log.startswith("gda_server.") and gda_log.endswith(".log"):
-            for line in files:
-                if "BART SampleChanger - getBarcode() returning" in line:
-                    barcode = line.split()[len(line.split()) - 1]
-                    found_barcode_entry = True
-                if found_barcode_entry:
-                    if "Snapshots will be saved" in line:
-                        sampleID = line.split()[len(line.split()) - 1].split("/")[-1]
-                        out_dict[sampleID] = barcode
-                        found_barcode_entry = False
-
-    return out_dict
-
-
-def append_dict_of_gda_barcodes(out_dict, files, xce_logfile):
-    Logfile = XChemLog.updateLog(xce_logfile)
-    found_barcode_entry = False
-    gda_log = files[files.rfind("/") + 1 :]
-    if (
-        gda_log.startswith("gda_server.")
-        or gda_log.startswith("gda-server.")
-        and gda_log.endswith(".gz")
-    ):
-        with gzip.open(files, "r") as f:
-            for line in f:
-                if "BART SampleChanger - getBarcode() returning" in line:
-                    barcode = line.split()[len(line.split()) - 1]
-                    found_barcode_entry = True
-                if found_barcode_entry:
-                    if "Snapshots will be saved" in line:
-                        sampleID = line.split()[len(line.split()) - 1].split("/")[-1]
-                        out_dict[sampleID] = barcode
-                        Logfile.insert(
-                            "found: sample={0!s}, barcode={1!s}, file={2!s}".format(
-                                sampleID, barcode, files
-                            )
-                        )
-                        found_barcode_entry = False
-    elif (
-        gda_log.startswith("gda_server")
-        or gda_log.startswith("gda-server")
-        and gda_log.endswith("txt")
-    ):
-        for line in open(files):
-            if "BART SampleChanger - getBarcode() returning" in line:
-                barcode = line.split()[len(line.split()) - 1]
-                found_barcode_entry = True
-            if found_barcode_entry:
-                if "Snapshots will be saved" in line:
-                    sampleID = line.split()[len(line.split()) - 1].split("/")[-1]
-                    out_dict[sampleID] = barcode
-                    Logfile.insert(
-                        "found: sample={0!s}, barcode={1!s}, file={2!s}".format(
-                            sampleID, barcode, files
-                        )
-                    )
-                    found_barcode_entry = False
-
-    return out_dict
 
 
 def get_gda_barcodes(
