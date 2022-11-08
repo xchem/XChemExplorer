@@ -8,11 +8,11 @@ class DatasetsTab:
         self.layout_funcs = layout.LayoutFuncs()
 
     def setup(self, xce_object):
-        ################################################################################################################
-        #                                                                                                              #
-        #                                                 DATASETS TAB                                                 #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                                 DATASETS TAB                                 #
+        #                                                                              #
+        ################################################################################
         # define subtab list, widget and dict
         datasets_tab_list = ["Summary", "Reprocess"]
         xce_object.datasets_tab_widget = QtGui.QTabWidget()
@@ -248,7 +248,8 @@ class DatasetsTab:
             " QComboBox { padding: 1px; margin: 1px }"
         )
 
-        # create vertical box to add labels and dropdowns to, create box and put in frame
+        # create vertical box to add labels and dropdowns to
+        # create box and put in frame
         vbox_isigma = QtGui.QVBoxLayout()
         vbox_isigma_widgets = [label, xce_object.reprocess_isigma_combobox]
         self.layout_funcs.add_to_box(vbox_isigma, vbox_isigma_widgets)
