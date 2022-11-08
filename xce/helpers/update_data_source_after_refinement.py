@@ -87,8 +87,8 @@ def check_refmac_logfile(refinement_directory, db_dict):
     if os.path.isfile(logFile):
         for line in open(logFile):
             if (
-                "Your coordinate file has a ligand which has either minimum or no description in the library"
-                in line
+                "Your coordinate file has a ligand which has either minimum"
+                " or no description in the library" in line
             ):
                 db_dict["RefinementStatus"] = "CIF problem"
     return db_dict
@@ -156,9 +156,11 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
                         residue_chain, residue_number
                     )
                     event = db.execute_statement(
-                        "select PANDDA_site_x,PANDDA_site_y,PANDDA_site_z,PANDDA_site_index from panddaTable where CrystalName='{0!s}'".format(
-                            xtal
-                        )
+                        "select PANDDA_site_x,"
+                        "PANDDA_site_y,"
+                        "PANDDA_site_z,"
+                        "PANDDA_site_index"
+                        " from panddaTable where CrystalName='{0!s}'".format(xtal)
                     )
                     for coord in event:
                         db_pandda_dict = {}
@@ -175,7 +177,8 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
                             event_z,
                         )
                         print("distance", distance)
-                        # if coordinate of ligand and event are closer than 7A, then we assume they belong together
+                        # if coordinate of ligand and event are closer than 7A
+                        # then we assume they belong together
                         if distance < 7:
                             db_pandda_dict["PANDDA_site_ligand_id"] = residue
                             db_pandda_dict["PANDDA_site_occupancy"] = line["Occupancy"]
@@ -213,15 +216,10 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
 
 def update_ligand_information_in_panddaTable(inital_model_directory, xtal):
     if os.path.isfile(os.path.join(inital_model_directory, xtal, "refine.pdb")):
-        #        ligands_in_file=pdbtools(os.path.join(inital_model_directory, xtal, 'refine.pdb')).find_xce_ligand_details()
         ligands_in_file = pdbtools(
             os.path.join(inital_model_directory, xtal, "refine.pdb")
         ).get_residues_with_resname("LIG")
         for ligand in ligands_in_file:
-            #            residue_name=   ligand[0]
-            #            residue_chain=  ligand[1]
-            #            residue_number= ligand[2]
-            #            residue_altLoc= ligand[3]
             residue_name = ligand[0]
             residue_chain = ligand[2]
             residue_number = ligand[1]
@@ -230,9 +228,11 @@ def update_ligand_information_in_panddaTable(inital_model_directory, xtal):
                 os.path.join(inital_model_directory, xtal, "refine.pdb")
             ).get_center_of_gravity_of_residue_ish(residue_chain, residue_number)
             event = db.execute_statement(
-                "select PANDDA_site_x,PANDDA_site_y,PANDDA_site_z,PANDDA_site_index from panddaTable where CrystalName='{0!s}'".format(
-                    xtal
-                )
+                "select PANDDA_site_x,"
+                "PANDDA_site_y,"
+                "PANDDA_site_z,"
+                "PANDDA_site_index"
+                " from panddaTable where CrystalName='{0!s}'".format(xtal)
             )
             for coord in event:
                 db_pandda_dict = {}
@@ -248,7 +248,8 @@ def update_ligand_information_in_panddaTable(inital_model_directory, xtal):
                     event_y,
                     event_z,
                 )
-                # if coordinate of ligand and event are closer than 7A, then we assume they belong together
+                # if coordinate of ligand and event are closer than 7A
+                # then we assume they belong together
                 if distance < 7:
                     db_pandda_dict["PANDDA_site_ligand_resname"] = residue_name
                     db_pandda_dict["PANDDA_site_ligand_chain"] = residue_chain
@@ -268,18 +269,20 @@ def update_data_source(db_dict):
         db.update_data_source(xtal, db_dict)
         # update refinement outcome if necessary
         sqlite = (
-            "update mainTable set RefinementOutcome = '3 - In Refinement' where CrystalName is '{0!s}' ".format(
-                xtal
-            )
-            + "and (RefinementOutcome is null or RefinementOutcome is '1 - Analysis Pending' or RefinementOutcome is '2 - PANDDA model')"
+            "update mainTable set RefinementOutcome ="
+            " '3 - In Refinement' where CrystalName is '{0!s}' ".format(xtal)
+            + "and (RefinementOutcome is null"
+            " or RefinementOutcome is '1 - Analysis Pending'"
+            " or RefinementOutcome is '2 - PANDDA model')"
         )
         db.execute_statement(sqlite)
         # now do the same for each site in the pandda table
         sqlite = (
-            "update panddaTable set RefinementOutcome = '3 - In Refinement' where CrystalName is '{0!s}' ".format(
-                xtal
-            )
-            + "and (RefinementOutcome is null or RefinementOutcome is '1 - Analysis Pending' or RefinementOutcome is '2 - PANDDA model')"
+            "update panddaTable set RefinementOutcome ="
+            " '3 - In Refinement' where CrystalName is '{0!s}' ".format(xtal)
+            + "and (RefinementOutcome is null"
+            " or RefinementOutcome is '1 - Analysis Pending'"
+            " or RefinementOutcome is '2 - PANDDA model')"
         )
         db.execute_statement(sqlite)
 
