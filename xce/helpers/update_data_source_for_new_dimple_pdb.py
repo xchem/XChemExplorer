@@ -33,18 +33,8 @@ if __name__ == "__main__":
         db_dict["DimpleRfree"] = pdb["Rfree"]
         db_dict["RefinementOutcome"] = "1 - Analysis Pending"
         db_dict["RefinementSpaceGroup"] = pdb["SpaceGroup"]
-        #        if not os.path.isfile(xtal+'.free.mtz'):
-        #            os.chdir(os.path.join(inital_model_directory,xtal))
-        #            os.system('/bin/rm '+xtal+'.free.mtz')
-        #            if os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared2.mtz')):
-        #                os.symlink(os.path.join('dimple','dimple_rerun_on_selected_file','dimple','prepared2.mtz'),xtal+'.free.mtz')
-        #                db_dict['RefinementMTZfree']=xtal+'.free.mtz'
-        #            elif os.path.isfile(os.path.join(inital_model_directory,xtal,'dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz')):
-        #                os.symlink(os.path.join('dimple','dimple_rerun_on_selected_file','dimple','prepared.mtz'),xtal+'.free.mtz')
-        #                db_dict['RefinementMTZfree']=xtal+'.free.mtz'
 
         # setting free.mtz file
-
         os.chdir(os.path.join(inital_model_directory, xtal))
         os.system("/bin/rm -f %s.free.mtz" % xtal)
         mtzFree = None
@@ -142,30 +132,13 @@ if __name__ == "__main__":
 
             db_dict["RefinementMTZfree"] = xtal + ".free.mtz"
 
-        # if no refinement was carried out yet, then we also want to link the dimple files to refine.pdb/refine.log
-        # so that we can look at them with the COOT plugin
-        # 15/11/2016: obsolete since COOT will now read dimple.pdb/dimple.mtz if no refine.pdb/refine.mtz is present
-        #        found_previous_refinement=False
-        #        os.chdir(os.path.join(inital_model_directory,xtal))
-        #        for dirs in glob.glob('*'):
-        #            if os.path.isdir(dirs) and dirs.startswith('Refine_'):
-        #                found_previous_refinement=True
-        #                break
-        #        if not found_previous_refinement:
-        #            # first delete possible old symbolic links
-        #            if os.path.isfile('refine.pdb'): os.system('/bin/rm refine.pdb')
-        #            os.symlink('dimple.pdb','refine.pdb')
-        #            if os.path.isfile('refine.mtz'): os.system('/bin/rm refine.mtz')
-        #            os.symlink('dimple.mtz','refine.mtz')
-
-        # finally, update data source
         print("==> xce: updating data source after DIMPLE run")
         db.update_data_source(xtal, db_dict)
 
     else:
-        # the actual dimple script creates symbolic links regardless if dimple was successful or not
-        # python os.path.isfile is False if symbolic link points to non existing file
-        # so we remove all of them!
+        # the actual dimple script creates symbolic links regardless if dimple was
+        # successful or not python os.path.isfile is False if symbolic link points to
+        # non existing file so we remove all of them!
         os.chdir(os.path.join(inital_model_directory, xtal))
         os.system("/bin/rm dimple.pdb")
         os.system("/bin/rm dimple.mtz")
