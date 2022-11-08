@@ -19,24 +19,6 @@ try:
 except ImportError:
     pass
 
-# def get_names_of_current_clusters(xce_logfile,panddas_directory):
-#    Logfile=XChemLog.updateLog(xce_logfile)
-#    Logfile.insert('parsing {0!s}/cluster_analysis'.format(panddas_directory))
-#    os.chdir('{0!s}/cluster_analysis'.format(panddas_directory))
-#    cluster_dict={}
-#    for out_dir in sorted(glob.glob('*')):
-#        if os.path.isdir(out_dir):
-#            cluster_dict[out_dir]=[]
-#            found_first_pdb=False
-#            for folder in glob.glob(os.path.join(out_dir,'pdbs','*')):
-#                xtal=folder[folder.rfind('/')+1:]
-#                if not found_first_pdb:
-#                    if os.path.isfile(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb') ):
-#                        cluster_dict[out_dir].append(os.path.join(panddas_directory,'cluster_analysis',out_dir,'pdbs',xtal,xtal+'.pdb'))
-#                        found_first_pdb=True
-#                cluster_dict[out_dir].append(xtal)
-#    return cluster_dict
-
 
 class export_and_refine_ligand_bound_models(QtCore.QThread):
     def __init__(
@@ -51,14 +33,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.project_directory = project_directory
         self.which_models = which_models
         self.external_software = XChemUtils.external_software(xce_logfile).check()
-
-    #        self.initial_model_directory=initial_model_directory
-    #        self.db.create_missing_columns()
-    #        self.db_list=self.db.get_empty_db_dict()
-    #        self.external_software=XChemUtils.external_software(xce_logfile).check()
-    #        self.xce_logfile=xce_logfile
-
-    #        self.already_exported_models=[]
 
     def run(self):
 
@@ -254,10 +228,12 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
     def find_new_models(self, modelsDict):
         samples_to_export = {}
         self.Logfile.hint(
-            'XCE will never export/ refine models that are "5-deposition ready" or "6-deposited"'
+            'XCE will never export/ refine models that are "5-deposition ready" or'
+            ' "6-deposited"'
         )
         self.Logfile.hint(
-            "Please change the RefinementOutcome flag in the Refinement table if you wish to re-export them"
+            "Please change the RefinementOutcome flag in the Refinement table"
+            " if you wish to re-export them"
         )
         self.Logfile.insert("checking timestamps of models in database...")
         for xtal in modelsDict:
@@ -271,8 +247,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                 timestamp_db = str(db_query[0][0])
             except IndexError:
                 self.Logfile.warning(
-                    "%s: database query gave no results for DatePanDDAModelCreated; skipping..."
-                    % xtal
+                    "%s: database query gave no results for DatePanDDAModelCreated;"
+                    " skipping..." % xtal
                 )
                 self.Logfile.warning(
                     "%s: this might be a brand new model; will continue with export!"
@@ -583,8 +559,8 @@ class refine_bound_state_with_buster(QtCore.QThread):
                     )
                 else:
                     self.Logfile.error(
-                        "%s: cannot find %s-pandda-model.pdb; cannot start refinement..."
-                        % (xtal, xtal)
+                        "%s: cannot find %s-pandda-model.pdb;"
+                        " cannot start refinement..." % (xtal, xtal)
                     )
 
             elif xtal in samples_to_export and not os.path.isfile(
@@ -626,13 +602,16 @@ class refine_bound_state_with_buster(QtCore.QThread):
 
         # now get these models from the database and compare the datestamps
         # Note: only get the models that underwent some form of refinement,
-        #       because only if the model was updated in pandda.inspect will it be exported and refined
+        #       because only if the model was updated in pandda.inspect will it be
+        #       exported and refined
         dbModelsDict = {}
         if queryModels != "":
             dbEntries = self.db.execute_statement(
-                "select CrystalName,DatePanDDAModelCreated from mainTable where CrystalName in ("
+                "select CrystalName,DatePanDDAModelCreated from mainTable where"
+                " CrystalName in ("
                 + queryModels[:-1]
-                + ") and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')"
+                + ") and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or"
+                " RefinementOutcome like '5%')"
             )
             for item in dbEntries:
                 xtal = str(item[0])
@@ -645,7 +624,8 @@ class refine_bound_state_with_buster(QtCore.QThread):
                     + str(timestamp)
                 )
 
-        # compare timestamps and only export the ones where the timestamp of the file is newer than the one in the DB
+        # compare timestamps and only export the ones where the timestamp of the file
+        # is newer than the one in the DB
         samples_to_export = {}
         self.Logfile.insert(
             "checking which PanDDA models were newly created or updated"
@@ -665,23 +645,27 @@ class refine_bound_state_with_buster(QtCore.QThread):
                         ) - datetime.strptime(dbModelsDict[sample], "%Y-%m-%d %H:%M:%S")
                         if difference.seconds != 0:
                             self.Logfile.insert(
-                                "exporting "
-                                + sample
-                                + " -> was already refined, but newer PanDDA model available"
+                                "exporting " + sample + " -> was already refined,"
+                                " but newer PanDDA model available"
                             )
                             samples_to_export[sample] = fileModelsDict[sample]
                     except ValueError:
                         # this will be raised if timestamp is not properly formatted;
-                        # which will usually be the case when respective field in database is blank
-                        # these are hopefully legacy cases which are from before this extensive check was introduced (13/01/2017)
+                        # which will usually be the case when respective field in
+                        # database is blank. these are hopefully legacy cases which are
+                        # from before this extensive check was introduced (13/01/2017)
                         advice = (
                             "The pandda model of "
                             + xtal
                             + " was changed, but it was already refined! "
-                            "This is most likely because this was done with an older version of XCE. "
-                            "If you really want to export and refine this model, you need to open the database "
-                            "with DBbroweser (sqlitebrowser.org); then change the RefinementOutcome field "
-                            'of the respective sample to "2 - PANDDA model", save the database and repeat the export prodedure.'
+                            "This is most likely because this was done with an older"
+                            " version of XCE. "
+                            "If you really want to export and refine this model,"
+                            " you need to open the database "
+                            "with DBbroweser (sqlitebrowser.org);"
+                            " then change the RefinementOutcome field "
+                            'of the respective sample to "2 - PANDDA model",'
+                            " save the database and repeat the export prodedure."
                         )
                         self.Logfile.insert(advice)
                 else:
@@ -693,7 +677,8 @@ class refine_bound_state_with_buster(QtCore.QThread):
                     samples_to_export[sample] = fileModelsDict[sample]
 
         # update the DB:
-        # set timestamp to current timestamp of file and set RefinementOutcome to '2-pandda...'
+        # set timestamp to current timestamp of file
+        # and set RefinementOutcome to '2-pandda...'
 
         if samples_to_export != {}:
             select_dir_string = ""
@@ -809,23 +794,16 @@ class run_pandda_export(QtCore.QThread):
         }
 
     def run(self):
-
-        # v1.3.8.2 - removed option to update database only
-        #        if not self.update_datasource_only:
         samples_to_export = self.export_models()
 
         self.import_samples_into_datasouce(samples_to_export)
 
-        #        if not self.update_datasource_only:
         self.refine_exported_models(samples_to_export)
 
     def refine_exported_models(self, samples_to_export):
         self.Logfile.insert("will try to refine the following crystals:")
         for xtal in samples_to_export:
             self.Logfile.insert(xtal)
-        #        sample_list=self.db.execute_statement("select CrystalName,CompoundCode from mainTable where RefinementOutcome='2 - PANDDA model';")
-        #        for item in sample_list:
-        #            xtal=str(item[0])
         for xtal in sorted(samples_to_export):
             self.Logfile.insert("%s: getting compound code from database" % xtal)
             query = self.db.execute_statement(
@@ -833,7 +811,6 @@ class run_pandda_export(QtCore.QThread):
             )
             compoundID = str(query[0][0])
             self.Logfile.insert("%s: compounds code = %s" % (xtal, compoundID))
-            #            compoundID=str(item[1])
             if os.path.isfile(
                 os.path.join(self.initial_model_directory, xtal, xtal + ".free.mtz")
             ):
@@ -874,7 +851,8 @@ class run_pandda_export(QtCore.QThread):
                             os.system("/bin/rm *-ensemble-model.pdb *restraints*")
                         except:
                             self.Logfile.error(
-                                "Restraint files didn't exist to remove. Will try to continue"
+                                "Restraint files didn't exist to remove."
+                                " Will try to continue"
                             )
                     else:
                         os.mkdir(
@@ -912,17 +890,10 @@ class run_pandda_export(QtCore.QThread):
                         "pandda_refmac",
                         None,
                     )
-
-                #            elif xtal in os.path.join(self.panddas_directory,'processed_datasets',xtal,'modelled_structures',
-                #                                      '{}-pandda-model.pdb'.format(xtal)):
-                #                self.Logfile.insert('{}: cannot start refinement because {}'.format(xtal,xtal) +
-                #                                   ' does not have a modelled structure. Check whether you expect this dataset to ' +
-                #                                   ' have a modelled structure, compare pandda.inspect and datasource,'
-                #                                   ' then tell XCHEMBB ')
                 else:
                     self.Logfile.error(
-                        "%s: cannot find %s-ensemble-model.pdb; cannot start refinement..."
-                        % (xtal, xtal)
+                        "%s: cannot find %s-ensemble-model.pdb;"
+                        " cannot start refinement..." % (xtal, xtal)
                     )
                     self.Logfile.error(
                         "Please check terminal window for any PanDDA related tracebacks"
@@ -944,9 +915,9 @@ class run_pandda_export(QtCore.QThread):
         os.chdir(os.path.join(self.panddas_directory, "processed_datasets"))
         for xtal in glob.glob("*"):
             self.db.execute_statement(
-                "update mainTable set DimplePANDDAwasRun = 'True',DimplePANDDAreject = 'False',DimplePANDDApath='{0!s}' where CrystalName is '{1!s}'".format(
-                    self.panddas_directory, xtal
-                )
+                "update mainTable set DimplePANDDAwasRun = 'True',"
+                "DimplePANDDAreject = 'False',DimplePANDDApath='{0!s}'"
+                " where CrystalName is '{1!s}'".format(self.panddas_directory, xtal)
             )
         # do the same as before, but look for rejected datasets
 
@@ -954,7 +925,9 @@ class run_pandda_export(QtCore.QThread):
             os.chdir(os.path.join(self.panddas_directory, "rejected_datasets"))
             for xtal in glob.glob("*"):
                 self.db.execute_statement(
-                    "update mainTable set DimplePANDDAwasRun = 'True',DimplePANDDAreject = 'True',DimplePANDDApath='{0!s}',DimplePANDDAhit = 'False' where CrystalName is '{1!s}'".format(
+                    "update mainTable set DimplePANDDAwasRun = 'True',"
+                    "DimplePANDDAreject = 'True',DimplePANDDApath='{0!s}',"
+                    "DimplePANDDAhit = 'False' where CrystalName is '{1!s}'".format(
                         self.panddas_directory, xtal
                     )
                 )
@@ -1102,21 +1075,21 @@ class run_pandda_export(QtCore.QThread):
 
                 self.db.update_insert_site_event_panddaTable(sampleID, db_dict)
 
-                # this is necessary, otherwise RefinementOutcome will be reset for samples that are actually already in refinement
+                # this is necessary, otherwise RefinementOutcome will be reset for
+                # samples that are actually already in refinement
                 self.db.execute_statement(
-                    "update panddaTable set RefinementOutcome = '2 - PANDDA model' where CrystalName is '{0!s}' and RefinementOutcome is null".format(
-                        sampleID
-                    )
+                    "update panddaTable set RefinementOutcome = '2 - PANDDA model'"
+                    " where CrystalName is '{0!s}'"
+                    " and RefinementOutcome is null".format(sampleID)
                 )
                 self.db.execute_statement(
-                    "update mainTable set RefinementOutcome = '2 - PANDDA model' where CrystalName is '{0!s}' and (RefinementOutcome is null or RefinementOutcome is '1 - Analysis Pending')".format(
-                        sampleID
-                    )
+                    "update mainTable set RefinementOutcome = '2 - PANDDA model'"
+                    " where CrystalName is '{0!s}' and (RefinementOutcome is null"
+                    " or RefinementOutcome is '1 - Analysis Pending')".format(sampleID)
                 )
                 self.db.execute_statement(
-                    "update mainTable set DimplePANDDAhit = 'True' where CrystalName is '{0!s}'".format(
-                        sampleID
-                    )
+                    "update mainTable set DimplePANDDAhit = 'True'"
+                    " where CrystalName is '{0!s}'".format(sampleID)
                 )
                 progress += progress_step
                 self.emit(QtCore.SIGNAL("update_progress_bar"), progress)
@@ -1127,11 +1100,6 @@ class run_pandda_export(QtCore.QThread):
         os.chdir(os.path.join(self.panddas_directory, "processed_datasets"))
         self.Logfile.insert("check which datasets are not interesting")
         # DimplePANDDAhit
-
-    #        for xtal in glob.glob('*'):
-    #            if xtal not in pandda_hit_list:
-    #                self.Logfile.insert(xtal+': not in interesting_datasets; updating database...')
-    #                self.db.execute_statement("update mainTable set DimplePANDDAhit = 'False' where CrystalName is '{0!s}'".format(xtal))
 
     def export_models(self):
 
@@ -1162,13 +1130,16 @@ class run_pandda_export(QtCore.QThread):
 
         # now get these models from the database and compare the datestamps
         # Note: only get the models that underwent some form of refinement,
-        #       because only if the model was updated in pandda.inspect will it be exported and refined
+        #       because only if the model was updated in pandda.inspect will it be
+        #       exported and refined
         dbModelsDict = {}
         if queryModels != "":
             dbEntries = self.db.execute_statement(
-                "select CrystalName,DatePanDDAModelCreated from mainTable where CrystalName in ("
+                "select CrystalName,DatePanDDAModelCreated from mainTable"
+                " where CrystalName in ("
                 + queryModels[:-1]
-                + ") and (RefinementOutcome like '3%' or RefinementOutcome like '4%' or RefinementOutcome like '5%')"
+                + ") and (RefinementOutcome like '3%' or RefinementOutcome like '4%'"
+                " or RefinementOutcome like '5%')"
             )
             for item in dbEntries:
                 xtal = str(item[0])
@@ -1181,7 +1152,8 @@ class run_pandda_export(QtCore.QThread):
                     + str(timestamp)
                 )
 
-        # compare timestamps and only export the ones where the timestamp of the file is newer than the one in the DB
+        # compare timestamps and only export the ones where the timestamp of the file
+        # is newer than the one in the DB
         samples_to_export = {}
         self.Logfile.insert(
             "checking which PanDDA models were newly created or updated"
@@ -1210,23 +1182,27 @@ class run_pandda_export(QtCore.QThread):
                         ) - datetime.strptime(dbModelsDict[sample], "%Y-%m-%d %H:%M:%S")
                         if difference.seconds != 0:
                             self.Logfile.insert(
-                                "exporting "
-                                + sample
-                                + " -> was already refined, but newer PanDDA model available"
+                                "exporting " + sample + " -> was already refined,"
+                                " but newer PanDDA model available"
                             )
                             samples_to_export[sample] = fileModelsDict[sample]
                     except ValueError:
                         # this will be raised if timestamp is not properly formatted;
-                        # which will usually be the case when respective field in database is blank
-                        # these are hopefully legacy cases which are from before this extensive check was introduced (13/01/2017)
+                        # which will usually be the case when respective field in
+                        # database is blank. these are hopefully legacy cases which are
+                        # from before this extensive check was introduced (13/01/2017)
                         advice = (
                             "The pandda model of "
                             + xtal
                             + " was changed, but it was already refined! "
-                            "This is most likely because this was done with an older version of XCE. "
-                            "If you really want to export and refine this model, you need to open the database "
-                            "with DBbroweser (sqlitebrowser.org); then change the RefinementOutcome field "
-                            'of the respective sample to "2 - PANDDA model", save the database and repeat the export prodedure.'
+                            "This is most likely because this was done with an older"
+                            " version of XCE. "
+                            "If you really want to export and refine this model,"
+                            " you need to open the database "
+                            "with DBbroweser (sqlitebrowser.org);"
+                            " then change the RefinementOutcome field "
+                            'of the respective sample to "2 - PANDDA model","" save the'
+                            " database and repeat the export prodedure."
                         )
                         self.Logfile.insert(advice)
                 else:
@@ -1238,7 +1214,8 @@ class run_pandda_export(QtCore.QThread):
                     samples_to_export[sample] = fileModelsDict[sample]
 
         # update the DB:
-        # set timestamp to current timestamp of file and set RefinementOutcome to '2-pandda...'
+        # set timestamp to current timestamp of file and set RefinementOutcome to
+        # '2-pandda...'
 
         if samples_to_export != {}:
             select_dir_string = ""
@@ -1275,8 +1252,6 @@ class run_pandda_export(QtCore.QThread):
 
                 Cmds = (
                     "module load ccp4/7.1.016\n"
-                    #                    'source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
-                    #                    'source '+os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh')+'\n'
                     "pandda.export"
                     " pandda_dir=%s" % self.panddas_directory
                     + " export_dir={0!s}".format(self.initial_model_directory)
@@ -1351,22 +1326,21 @@ class run_pandda_analyse(QtCore.QThread):
             self.make_ligand_links = ""
 
     def run(self):
-
-        # print self.reference_dir
-        # print self.filter_pdb
-
         # how to run pandda.analyse on large datasets
         #
         # 1) Run the normal pandda command, with the new setting, e.g.
         # pandda.analyse data_dirs=... max_new_datasets=500
-        # This will do the analysis on the first 500 datasets and build the statistical maps - just as normal.
+        # This will do the analysis on the first 500 datasets and build the statistical
+        # maps - just as normal.
         #
         # 2) Run pandda with the same command:
         # pandda.analyse data_dirs=... max_new_datasets=500
-        # This will add 500 new datasets, and process them using the existing statistical maps
-        # (this will be quicker than the original analysis). It will then merge the results of the two analyses.
+        # This will add 500 new datasets, and process them using the existing
+        # statistical maps (this will be quicker than the original analysis).
+        # It will then merge the results of the two analyses.
         #
-        # 3) Repeat 2) until you don't add any "new" datasets. Then you can build the models as normal.
+        # 3) Repeat 2) until you don't add any "new" datasets.
+        # Then you can build the models as normal.
 
         number_of_cyles = int(self.number_of_datasets) / int(self.max_new_datasets)
         # modulo gives remainder after integer division
@@ -1384,24 +1358,17 @@ class run_pandda_analyse(QtCore.QThread):
             msg = (
                 "there are three possibilities:\n"
                 "1.) choose another PANDDA directory\n"
-                "2.) - check if the job is really running either on the cluster (qstat) or on your local machine\n"
+                "2.) - check if the job is really running either on the cluster (qstat)"
+                " or on your local machine\n"
                 "    - if so, be patient and wait until the job has finished\n"
-                "3.) same as 2., but instead of waiting, kill the job and remove at least the pandda.running file\n"
-                "   (or all the contents in the directory if you want to start from scratch)\n"
+                "3.) same as 2., but instead of waiting, kill the job"
+                " and remove at least the pandda.running file\n"
+                "   (or all the contents in the directory"
+                " if you want to start from scratch)\n"
             )
             self.Logfile.insert(msg)
             return None
         else:
-            #            if os.getenv('SHELL') == '/bin/tcsh' or os.getenv('SHELL') == '/bin/csh':
-            #                source_file=os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-csh\n')
-            #            elif os.getenv('SHELL') == '/bin/bash' or self.use_remote:
-            #                source_file='export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
-            #                source_file+='source %s\n' %os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh\n')
-            #            else:
-            #                source_file=''
-            # v1.2.1 - pandda.setup files should be obsolete now that pandda is part of ccp4
-            # 08/10/2020 - pandda v0.2.12 installation at DLS is obsolete
-            #            source_file='source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
             source_file = ""
             source_file += (
                 'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
@@ -1549,7 +1516,8 @@ class run_pandda_analyse(QtCore.QThread):
                 + data_dir_string
                 + '"/"'
                 + self.panddas_directory
-                + '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+                + '/processed_datasets/"}| while read line2;'
+                " do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; "
                 "done; done;"
             )
 
@@ -1562,7 +1530,8 @@ class run_pandda_analyse(QtCore.QThread):
                 + data_dir_string
                 + '"/"'
                 + self.panddas_directory
-                + '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+                + '/processed_datasets/"}| while read line2;'
+                " do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; "
                 "done; done;"
             )
 
@@ -1573,9 +1542,6 @@ class run_pandda_analyse(QtCore.QThread):
             f = open("pandda.sh", "w")
             f.write(Cmds)
             f.close()
-
-            #            #>>> for testing
-            #            self.submit_mode='local machine'
 
             self.Logfile.insert(
                 "trying to run pandda.analyse on " + str(self.submit_mode)
@@ -1593,7 +1559,8 @@ class run_pandda_analyse(QtCore.QThread):
                         "cd "
                         + self.panddas_directory
                         + "; "
-                        + "qsub -P labxchem -q medium.q -N pandda 5 -l exclusive,m_mem_free=100G pandda.sh'"
+                        + "qsub -P labxchem -q medium.q -N pandda 5"
+                        " -l exclusive,m_mem_free=100G pandda.sh'"
                     ),
                 )
                 os.system(submission_string)
@@ -1603,7 +1570,8 @@ class run_pandda_analyse(QtCore.QThread):
             else:
                 self.Logfile.insert("running PANDDA on cluster, using qsub...")
                 os.system(
-                    "qsub -P labxchem -q medium.q -N pandda -l exclusive,m_mem_free=100G pandda.sh"
+                    "qsub -P labxchem -q medium.q -N pandda"
+                    " -l exclusive,m_mem_free=100G pandda.sh"
                 )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
@@ -1638,7 +1606,6 @@ class run_pandda_two_analyse(QtCore.QThread):
         self.select_ground_state_model = ""
 
     def run(self):
-
         if not self.data_directory.startswith("/dls"):
             self.Logfile.error("Sorry, you need to be at DLS for pandda2 to work!")
             return None
@@ -1650,20 +1617,25 @@ class run_pandda_two_analyse(QtCore.QThread):
             "module load ccp4\n"
             "module load phenix\n"
             "module load buster\n"
-            "__conda_setup=\"$('/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)\"\n"
+            "__conda_setup=\"$('/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/"
+            "conda' 'shell.bash' 'hook' 2> /dev/null)\"\n"
             "if [ $? -eq 0 ]; then\n"
             '    eval "$__conda_setup"\n'
             "else\n"
-            '    if [ -f "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/profile.d/conda.sh" ]; then\n'
-            '        . "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/profile.d/conda.sh"\n'
+            '    if [ -f "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/'
+            'profile.d/conda.sh" ]; then\n'
+            '        . "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/'
+            'profile.d/conda.sh"\n'
             "    else\n"
-            '        export PATH="/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin:$PATH"\n'
+            "        export"
+            ' PATH="/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin:$PATH"\n'
             "    fi\n"
             "fi\n"
             "unset __conda_setup\n"
             'export PYTHONPATH=""\n'
             "conda activate pandda2_ray\n"
-            "python -u /dls/science/groups/i04-1/conor_dev/pandda_2_gemmi/pandda_gemmi/analyse.py"
+            "python -u /dls/science/groups/i04-1/conor_dev/pandda_2_gemmi/pandda_gemmi/"
+            "analyse.py"
             " --data_dirs={0!s}".format(self.data_directory.replace("/*", ""))
             + " --out_dir={0!s}".format(self.panddas_directory)
             + ' --pdb_regex="{0!s}" '.format(self.pdb_style)
@@ -1676,7 +1648,8 @@ class run_pandda_two_analyse(QtCore.QThread):
             ' --comparison_strategy="hybrid" '
             " --min_characterisation_datasets=25 "
             " {0!s} ".format(self.keyword_arguments)
-            + ' --debug=True --memory_availability="low" | tee livelog_20220324_event_class_old_score\n'
+            + ' --debug=True --memory_availability="low"'
+            " | tee livelog_20220324_event_class_old_score\n"
         )
 
         self.Logfile.insert(
@@ -1691,7 +1664,8 @@ class run_pandda_two_analyse(QtCore.QThread):
 
         self.Logfile.insert("running PANDDA on cluster, using qsub...")
         os.system(
-            "qsub -pe smp 6 -l m_mem_free=30G -q medium.q -o log.out -e log.err pandda2.sh"
+            "qsub -pe smp 6 -l m_mem_free=30G -q medium.q -o log.out -e log.err"
+            " pandda2.sh"
         )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
@@ -1795,7 +1769,9 @@ class giant_cluster_datasets(QtCore.QThread):
 
         # 3.) giant.cluster_mtzs_and_pdbs
         self.Logfile.insert(
-            "running giant.cluster_mtzs_and_pdbs {0!s}/*/{1!s} pdb_regex='{2!s}/(.*)/{3!s}' out_dir='{4!s}/cluster_analysis'".format(
+            "running giant.cluster_mtzs_and_pdbs {0!s}/*/{1!s}"
+            " pdb_regex='{2!s}/(.*)/{3!s}'"
+            " out_dir='{4!s}/cluster_analysis'".format(
                 self.initial_model_directory,
                 self.pdb_style,
                 self.initial_model_directory,
@@ -1823,7 +1799,8 @@ class giant_cluster_datasets(QtCore.QThread):
             "#!" + os.getenv("SHELL") + "\n"
             "unset PYTHONPATH\n"
             "source " + source_file + "\n"
-            "giant.datasets.cluster %s/*/%s pdb_regex='%s/(.*)/%s' out_dir='%s/cluster_analysis'"
+            "giant.datasets.cluster %s/*/%s pdb_regex='%s/(.*)/%s'"
+            " out_dir='%s/cluster_analysis'"
             % (
                 self.initial_model_directory,
                 self.pdb_style,
@@ -1833,7 +1810,6 @@ class giant_cluster_datasets(QtCore.QThread):
             )
         )
 
-        #        os.system("giant.cluster_mtzs_and_pdbs %s/*/%s pdb_regex='%s/(.*)/%s' out_dir='%s/cluster_analysis'" %(self.initial_model_directory,self.pdb_style,self.initial_model_directory,self.pdb_style,self.panddas_directory))
         os.system(Cmds)
         self.emit(QtCore.SIGNAL("update_progress_bar"), 80)
 
@@ -1914,7 +1890,6 @@ class check_if_pandda_can_run:
     ):
         mismatched_datasets = []
         pdbtools = XChemUtils.pdbtools(refData)
-        refPDB = refData[refData.rfind("/") + 1 :]
         refPDBlist = pdbtools.get_init_pdb_as_list()
         n_atom_ref = len(refPDBlist)
         for n_datasets, dataset in enumerate(dataset_list):
@@ -1934,13 +1909,15 @@ class check_if_pandda_can_run:
                 )
                 if n_atom_ref == n_atom:
                     self.Logfile.insert(
-                        "{0!s}: atoms in PDB file ({1!s}): {2!s}; atoms in Reference file: {3!s} ===> OK".format(
+                        "{0!s}: atoms in PDB file ({1!s}): {2!s};"
+                        " atoms in Reference file: {3!s} ===> OK".format(
                             dataset, self.pdb_style, str(n_atom), str(n_atom_ref)
                         )
                     )
                 if n_atom_ref != n_atom:
                     self.Logfile.insert(
-                        "{0!s}: atoms in PDB file ({1!s}): {2!s}; atoms in Reference file: {3!s} ===> ERROR".format(
+                        "{0!s}: atoms in PDB file ({1!s}): {2!s};"
+                        " atoms in Reference file: {3!s} ===> ERROR".format(
                             dataset, self.pdb_style, str(n_atom), str(n_atom_ref)
                         )
                     )
@@ -2109,7 +2086,8 @@ class convert_all_event_maps_in_database(QtCore.QThread):
             ):
                 os.chdir(os.path.join(self.initial_model_directory, xtalID))
                 self.Logfile.insert(
-                    "extracting ligand ({0!s},{1!s},{2!s},{3!s}) from refine.pdb".format(
+                    "extracting ligand ({0!s},{1!s},{2!s},{3!s})"
+                    " from refine.pdb".format(
                         str(resname), str(chainID), str(resseq), str(altLoc)
                     )
                 )
@@ -2206,10 +2184,11 @@ class convert_event_map_to_SF:
             self.Logfile.insert("removing existing " + self.event + ".mtz")
             os.system("/bin/rm " + self.event + ".mtz")
 
-        # event maps generated with pandda v0.2 or higher have the same symmetry as the crystal
-        # but phenix.map_to_structure_facors only accepts maps in spg P1
-        # therefore map is first expanded to full unit cell and spg of map then set tp p1
-        # other conversion option like cinvfft give for whatever reason  uninterpretable maps
+        # event maps generated with pandda v0.2 or higher have the same symmetry as the
+        # crystal but phenix.map_to_structure_facors only accepts maps in spg P1
+        # therefore map is first expanded to full unit cell and spg of map then
+        # set tp p1. other conversion option like cinvfft give for whatever reason
+        # uninterpretable maps
         self.convert_map_to_p1()
 
         # run phenix.map_to_structure_factors
@@ -2275,7 +2254,8 @@ class convert_event_map_to_SF:
             + " XYZLIM CELL\n"
             "eof\n"
             "\n"
-            "maprot MAPIN onecell_event_map.map MSKIN mask_ligand.msk WRKOUT masked_event_map.map << eof\n"
+            "maprot MAPIN onecell_event_map.map MSKIN mask_ligand.msk WRKOUT"
+            " masked_event_map.map << eof\n"
             " MODE FROM\n"
             " SYMMETRY WORK %s\n" % self.space_group_numberElectronDensityMap
             + " AVERAGE\n"
@@ -2283,7 +2263,8 @@ class convert_event_map_to_SF:
             " TRANSLATE 0 0 0\n"
             "eof\n"
             "\n"
-            "mapmask MAPIN masked_event_map.map MAPOUT masked_event_map_fullcell.map << eof\n"
+            "mapmask MAPIN masked_event_map.map MAPOUT masked_event_map_fullcell.map <<"
+            " eof\n"
             " XYZLIM CELL\n"
             " PAD 0.0\n"
             "eof\n"
@@ -2323,12 +2304,14 @@ class convert_event_map_to_SF:
         ):  # program complains if resolution is 1.2 or higher
             self.resolution = "1.21"
         self.Logfile.insert(
-            "running phenix.map_to_structure_factors {0!s}_p1.map d_min={1!s} output_file_name={2!s}_tmp.mtz".format(
+            "running phenix.map_to_structure_factors {0!s}_p1.map d_min={1!s}"
+            " output_file_name={2!s}_tmp.mtz".format(
                 self.event, self.resolution, self.event
             )
         )
         os.system(
-            "phenix.map_to_structure_factors {0!s}_p1.map d_min={1!s} output_file_name={2!s}_tmp.mtz".format(
+            "phenix.map_to_structure_factors {0!s}_p1.map d_min={1!s}"
+            " output_file_name={2!s}_tmp.mtz".format(
                 self.event, self.resolution, self.event
             )
         )
@@ -2336,14 +2319,12 @@ class convert_event_map_to_SF:
     def run_cinvfft(self, mtzin):
         # mtzin is usually refine.mtz
         self.Logfile.insert(
-            "running cinvfft -mapin {0!s} -mtzin {1!s} -mtzout {2!s}_tmp.mtz -colout event".format(
-                self.event_map, mtzin, self.event
-            )
+            "running cinvfft -mapin {0!s} -mtzin {1!s} -mtzout {2!s}_tmp.mtz"
+            " -colout event".format(self.event_map, mtzin, self.event)
         )
         os.system(
-            "cinvfft -mapin {0!s} -mtzin {1!s} -mtzout {2!s}_tmp.mtz -colout event".format(
-                self.event_map, mtzin, self.event
-            )
+            "cinvfft -mapin {0!s} -mtzin {1!s} -mtzout {2!s}_tmp.mtz"
+            " -colout event".format(self.event_map, mtzin, self.event)
         )
 
     def remove_and_rename_column_labels(self):
@@ -2522,55 +2503,7 @@ class check_number_of_modelled_ligands(QtCore.QThread):
             self.errorDict[xtal] = []
         self.errorDict[xtal].append(message)
 
-    def insert_new_row_in_panddaTable(self, xtal, ligand, site, dbDict):
-        resname = site[0]
-        chain = site[1]
-        seqnum = site[2]
-        altLoc = site[3]
-        x_site = site[5][0]
-        y_site = site[5][1]
-        z_site = site[5][2]
-
-        resnameSimilarSite = ligand[0]
-        chainSimilarSite = ligand[1]
-        seqnumSimilarSite = ligand[2]
-
-        siteList = []
-        for entry in dbDict[xtal]:
-            siteList.append(str(entry[0]))
-            if (
-                entry[4] == resnameSimilarSite
-                and entry[5] == chainSimilarSite
-                and entry[6] == seqnumSimilarSite
-            ):
-                eventMap = str(entry[7])
-                eventMap_mtz = str(entry[8])
-                initialPDB = str(entry[9])
-                initialMTZ = str(entry[10])
-                event_id = str(entry[12])
-                PanDDApath = str(entry[13])
-
-        db_dict = {
-            "PANDDA_site_index": str(int(max(siteList)) + 1),
-            "PANDDApath": PanDDApath,
-            "PANDDA_site_ligand_id": resname + "-" + chain + "-" + seqnum,
-            "PANDDA_site_ligand_resname": resname,
-            "PANDDA_site_ligand_chain": chain,
-            "PANDDA_site_ligand_sequence_number": seqnum,
-            "PANDDA_site_ligand_altLoc": "D",
-            "PANDDA_site_event_index": event_id,
-            "PANDDA_site_event_map": eventMap,
-            "PANDDA_site_event_map_mtz": eventMap_mtz,
-            "PANDDA_site_initial_model": initialPDB,
-            "PANDDA_site_initial_mtz": initialMTZ,
-            "PANDDA_site_ligand_placed": "True",
-            "PANDDA_site_x": x_site,
-            "PANDDA_site_y": y_site,
-            "PANDDA_site_z": z_site,
-        }
-
     def run(self):
-
         self.Logfile.insert("reading modelled ligands from panddaTable")
         dbDict = {}
 
@@ -2657,13 +2590,11 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                     os.mkdir(os.path.join(xtal, "xceTmp"))
                 else:
                     self.Logfile.warning(
-                        "{0!s}: cannot find ligand molecule in refine.pdb; skipping...".format(
-                            xtal
-                        )
+                        "{0!s}: cannot find ligand molecule in refine.pdb;"
+                        " skipping...".format(xtal)
                     )
                     continue
 
-                made_sym_copies = False
                 ligands_not_in_panddaTable = []
                 for n, item in enumerate(ligands):
                     resnameLIG = item[0]
@@ -2674,9 +2605,8 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                     if altLocLIG.replace(" ", "") == "":
                         self.Logfile.insert(
                             xtal
-                            + ": found a ligand not modelled with pandda.inspect -> {0!s} {1!s} {2!s}".format(
-                                resnameLIG, chainLIG, seqnumLIG
-                            )
+                            + ": found a ligand not modelled with pandda.inspect ->"
+                            " {0!s} {1!s} {2!s}".format(resnameLIG, chainLIG, seqnumLIG)
                         )
                     residue_xyz = XChemUtils.pdbtools(
                         os.path.join(xtal, "refine.pdb")
@@ -2699,14 +2629,16 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                                 and seqnumLIG == seqnumTable
                             ):
                                 self.Logfile.insert(
-                                    "{0!s}: found ligand in database -> {1!s} {2!s} {3!s}".format(
+                                    "{0!s}: found ligand in database ->"
+                                    " {1!s} {2!s} {3!s}".format(
                                         xtal, resnameTable, chainTable, seqnumTable
                                     )
                                 )
                                 foundLigand = True
                         if not foundLigand:
                             self.Logfile.error(
-                                "{0!s}: did NOT find ligand in database -> {1!s} {2!s} {3!s}".format(
+                                "{0!s}: did NOT find ligand in database ->"
+                                " {1!s} {2!s} {3!s}".format(
                                     xtal, resnameLIG, chainLIG, seqnumLIG
                                 )
                             )
@@ -2722,14 +2654,16 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                             )
                     else:
                         self.Logfile.warning(
-                            "ligand in PDB file, but dataset not listed in panddaTable: {0!s} -> {1!s} {2!s} {3!s}".format(
+                            "ligand in PDB file, but dataset not listed in panddaTable:"
+                            " {0!s} -> {1!s} {2!s} {3!s}".format(
                                 xtal, item[0], item[1], item[2]
                             )
                         )
 
                 for entry in ligands_not_in_panddaTable:
                     self.Logfile.error(
-                        "{0!s}: refine.pdb contains a ligand that is not assigned in the panddaTable: {1!s} {2!s} {3!s} {4!s}".format(
+                        "{0!s}: refine.pdb contains a ligand that is not assigned in"
+                        " the panddaTable: {1!s} {2!s} {3!s} {4!s}".format(
                             xtal, entry[0], entry[1], entry[2], entry[3]
                         )
                     )
@@ -2744,7 +2678,8 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                         mol_xyz = XChemUtils.pdbtools(
                             files
                         ).get_center_of_gravity_of_molecule_ish()
-                        # now need to check if there is a unassigned entry in panddaTable that is close
+                        # now need to check if there is a unassigned entry in
+                        # panddaTable that is close
                         for entry in dbDict[xtal]:
                             distance = XChemUtils.misc().calculate_distance_between_coordinates(
                                 mol_xyz[0],
@@ -2755,7 +2690,8 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                                 entry[3],
                             )
                             self.Logfile.insert(
-                                "{0!s}: {1!s} {2!s} {3!s} <---> {4!s} {5!s} {6!s}".format(
+                                "{0!s}: {1!s} {2!s} {3!s} <--->"
+                                " {4!s} {5!s} {6!s}".format(
                                     xtal,
                                     mol_xyz[0],
                                     mol_xyz[1],
@@ -2780,7 +2716,8 @@ class check_number_of_modelled_ligands(QtCore.QThread):
         if self.errorDict != {}:
             self.update_errorDict(
                 "General",
-                "The aforementioned PDB files were automatically changed by XCE!\nPlease check and refine them!!!",
+                "The aforementioned PDB files were automatically changed by XCE!\n"
+                "Please check and refine them!!!",
             )
         self.emit(QtCore.SIGNAL("show_error_dict"), self.errorDict)
 
