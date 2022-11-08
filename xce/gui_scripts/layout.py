@@ -41,7 +41,7 @@ class LayoutObjects:
     # function containing setup for bottom boxes
     def initialise_bottom_boxes(self, xce_object):
 
-        icons_directory = os.path.join((os.getenv("XChemExplorer_DIR")), "icons")
+        icons_directory = os.path.join((os.getenv("XChemExplorer_DIR")), "xce/icons")
 
         # import all buttons
         setup().bottom_box_buttons(xce_object)
