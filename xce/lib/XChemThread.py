@@ -49,9 +49,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         XChemMain.backup_soakDB(self.datasource, self.xce_logfile)
 
-        #
         # get list of xtals
-        #
 
         self.xtal_list = []
         progress_step = 1
@@ -77,7 +75,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 try:
                     os.chdir(directory)
                 except OSError:
-                    # this could happen if the user accidentaly left a file in the project directory
+                    # this could happen if the user accidentaly left a file in the
+                    # project directory
                     continue
                 if os.listdir(directory) == []:
                     self.Logfile.warning(directory + " is empty; skipping...")
@@ -85,9 +84,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 xtal = directory[directory.rfind("/") + 1 :]
                 self.xtal_list.append(xtal)
 
-        #
         # go through list
-        #
 
         for xtal in self.xtal_list:
             self.Logfile.insert("directory name: " + xtal + " = sampleID in database")
@@ -124,7 +121,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         self.Logfile.insert("database mainTable update finished")
         self.Logfile.insert("updating panddaTable")
         self.emit(QtCore.SIGNAL("update_status_bar(QString)"), "updating panddaTable")
-        #        self.sync_pandda_table()
         self.sync_pandda_table_NEW()
         self.emit(
             QtCore.SIGNAL("update_status_bar(QString)"),
@@ -181,7 +177,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         # AIMLESS logfile
 
-        # in case the MTZ file which is used for refinement is different to the one used for refinement
+        # in case the MTZ file which is used for refinement is different to the one
+        # used for refinement
         if os.path.isfile("refine.mtz"):
             if os.path.isfile(xtal + ".free.mtz"):
                 freeMTZ = mtztools(xtal + ".free.mtz")
@@ -196,7 +193,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                         xtal + ".mtz"
                     )
                     self.Logfile.insert(
-                        "%s: calculating CC between %s.free.mtz (%s refl) and %s.mtz (%s refl): %s"
+                        "%s: calculating CC between %s.free.mtz"
+                        " (%s refl) and %s.mtz (%s refl): %s"
                         % (xtal, xtal, str(nREFfree), xtal, str(nREF), str(CC))
                     )
                     if errorMessage != "":
@@ -208,7 +206,9 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                     try:
                         if float(CC) < 0.999:
                             self.Logfile.insert(
-                                "correlation coefficient between the two files is below 0.999; will try to understand from dimple.log which one was used for initial map calculation"
+                                "correlation coefficient between the two files is below"
+                                " 0.999; will try to understand from dimple.log which"
+                                " one was used for initial map calculation"
                             )
                             if os.path.isfile(
                                 "dimple/dimple_rerun_on_selected_file/dimple/dimple.log"
@@ -216,7 +216,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                                 foundLine = False
                                 mtzin = ""
                                 for line in open(
-                                    "dimple/dimple_rerun_on_selected_file/dimple/dimple.log"
+                                    "dimple/dimple_rerun_on_selected_file/dimple/"
+                                    "dimple.log"
                                 ):
                                     if foundLine:
                                         mtzin = (
@@ -234,7 +235,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
                                 if os.path.isfile(mtzin):
                                     self.Logfile.insert(
-                                        "%s: mtzfile used for refinement is not the same as the one chosen from autoprocessing"
+                                        "%s: mtzfile used for refinement is not the"
+                                        " same as the one chosen from autoprocessing"
                                         % xtal
                                     )
                                     self.Logfile.insert(
@@ -266,13 +268,13 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
                     except ValueError:
                         self.Logfile.insert(
-                            "something went wrong: calculated CC value does not seem to be a floating point number"
+                            "something went wrong: calculated CC value"
+                            " does not seem to be a floating point number"
                         )
 
         found_logfile = False
         if os.path.isfile(xtal + ".log"):
             found_logfile = True
-            #            db_dict['DataProcessingPathToLogfile']=os.path.realpath(xtal+'.log').replace(os.getcwd()+'/','')
             db_dict["DataProcessingPathToLogfile"] = os.path.realpath(xtal + ".log")
             db_dict["DataProcessingLOGfileName"] = xtal + ".log"
             if (
@@ -280,7 +282,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 or db_dict["DataCollectionOutcome"] == ""
             ):
                 db_dict["DataCollectionOutcome"] = "success"
-            #            aimless_results=parse().read_aimless_logfile(xtal+'.log')
             aimless_results = parse().read_aimless_logfile(
                 db_dict["DataProcessingPathToLogfile"]
             )
@@ -291,11 +292,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         # MTZ file
 
-        #        found_mtzfile=self.find_file(xtal+'.mtz',xtal)
-        #        if found_mtzfile:
         if os.path.isfile(xtal + ".mtz"):
             db_dict["DataProcessingPathToMTZfile"] = os.path.realpath(xtal + ".mtz")
-            #            db_dict['DataProcessingPathToMTZfile']=os.path.realpath(xtal+'.mtz').replace(os.getcwd()+'/','')
             db_dict["DataProcessingMTZfileName"] = xtal + ".mtz"
             if not found_logfile:
                 mtz_info = mtztools(xtal + ".mtz").get_information_for_datasource()
@@ -311,10 +309,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         # DIMPLE pdb
 
-        #        found_dimple_pdb=self.find_file('dimple.pdb',xtal)
-        #        if found_dimple_pdb:
         if os.path.isfile("dimple.pdb"):
-            #            db_dict['DimplePathToPDB']=os.path.realpath('dimple.pdb').replace(os.getcwd()+'/','')
             db_dict["DimplePathToPDB"] = os.path.realpath("dimple.pdb")
             pdb_info = parse().PDBheader("dimple.pdb")
             db_dict["DimpleRcryst"] = pdb_info["Rcryst"]
@@ -327,13 +322,11 @@ class synchronise_db_and_filesystem(QtCore.QThread):
             db_dict["DimpleRfree"] = ""
             db_dict["DimpleResolutionHigh"] = ""
             db_dict["DimpleStatus"] = "pending"
+
         # DIMPLE mtz
 
         dimple_path = ""
-        #        found_dimple_mtz=self.find_file('dimple.mtz',xtal)
-        #        if found_dimple_mtz:
         if os.path.isfile("dimple.mtz"):
-            #            db_dict['DimplePathToMTZ']=os.path.realpath('dimple.mtz').replace(os.getcwd()+'/','')
             db_dict["DimplePathToMTZ"] = os.path.realpath("dimple.mtz")
             dimple_mtz = db_dict["DimplePathToMTZ"]
             dimple_path = dimple_mtz[: dimple_mtz.rfind("/")]
@@ -353,11 +346,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         # MTZ free file
 
-        #        found_free_mtz=self.find_file(xtal+'.free.mtz',xtal)
-        #        if found_free_mtz:
         if os.path.isfile(xtal + ".free.mtz"):
             db_dict["RefinementMTZfree"] = os.path.realpath(xtal + ".free.mtz")
-        #            db_dict['RefinementMTZfree']=os.path.realpath(xtal+'.free.mtz').replace(os.getcwd()+'/','')
         else:
             db_dict["RefinementMTZfree"] = ""
             os.system("/bin/rm %s.free.mtz 2> /dev/null" % xtal)
@@ -366,17 +356,13 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                     os.path.relpath(os.path.join(dimple_path, "prepared2.mtz")),
                     xtal + ".free.mtz",
                 )
-                #                db_dict['RefinementMTZfree']=os.path.realpath(xtal+'.free.mtz').replace(os.getcwd()+'/','')
                 db_dict["RefinementMTZfree"] = os.path.realpath(xtal + ".free.mtz")
-            #                db_dict['RefinementMTZfree']=xtal+'.free.mtz'
             elif os.path.isfile(os.path.join(dimple_path, "prepared.mtz")):
                 os.symlink(
                     os.path.relpath(os.path.join(dimple_path, "prepared.mtz")),
                     xtal + ".free.mtz",
                 )
                 db_dict["RefinementMTZfree"] = os.path.realpath(xtal + ".free.mtz")
-            #                db_dict['RefinementMTZfree']=os.path.realpath(xtal+'.free.mtz').replace(os.getcwd()+'/','')
-            #               db_dict['RefinementMTZfree']=xtal+'.free.mtz'
             elif os.path.isfile(os.path.join(dimple_path, "free.mtz")):
                 os.symlink(
                     os.path.relpath(os.path.join(dimple_path, "free.mtz")),
@@ -451,17 +437,10 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
     def sync_refinement_results(self, xtal, db_dict):
 
-        #
         # REFINE pdb
-        #
 
-        #        found_refine_pdb=self.find_file('refine.pdb',xtal)
-        #        if found_refine_pdb and not 'dimple' in os.path.realpath('refine.pdb'):
-
-        #        if os.path.isfile('refine.pdb') and not 'dimple' in os.path.realpath('refine.pdb'):
         if os.path.isfile("refine.pdb"):
             db_dict["RefinementPDB_latest"] = os.path.realpath("refine.pdb")
-            #            db_dict['RefinementPDB_latest']=os.path.realpath('refine.pdb').replace(os.getcwd()+'/','')
             db_dict["RefinementStatus"] = "finished"
             pdb_info = parse().dict_for_datasource_update("refine.pdb")
             db_dict.update(pdb_info)
@@ -483,36 +462,19 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         if os.path.isfile("REFINEMENT_IN_PROGRESS"):
             db_dict["RefinementStatus"] = "running"
 
-        #
         # REFINE bound pdb
-        #
 
         if os.path.isfile("refine.split.bound-state.pdb"):
             db_dict["RefinementBoundConformation"] = os.path.realpath(
                 "refine.split.bound-state.pdb"
             )
-        #            db_dict['RefinementBoundConformation']='refine.bound.pdb'
         else:
-            #            if os.path.isfile('refine.pdb'):
-            #                os.system("giant.strip_conformations pdb=refine.pdb suffix='.bound.pdb'")
-            #                if os.path.isfile('refine.bound.pdb'):
-            #                    db_dict['RefinementBoundConformation']=os.path.realpath('refine.bound.pdb')
-            #                else:
-            #                    db_dict['RefinementBoundConformation']=''
-            #            else:
-            #                db_dict['RefinementBoundConformation']=''
             db_dict["RefinementBoundConformation"] = ""
 
-        #
         # REFINE mtz
-        #
 
-        #        found_refine_mtz=self.find_file('refine.mtz',xtal)
-        #        if found_refine_mtz and not 'dimple' in os.path.realpath('refine.mtz'):
-        #        if os.path.isfile('refine.mtz') and not 'dimple' in os.path.realpath('refine.mtz'):
         if os.path.isfile("refine.mtz"):
             db_dict["RefinementMTZ_latest"] = os.path.realpath("refine.mtz")
-        #            db_dict['RefinementMTZ_latest']=os.path.realpath('refine.mtz').replace(os.getcwd()+'/','')
         else:
             db_dict["RefinementMTZ_latest"] = ""
             os.system("/bin/rm refine.mtz 2> /dev/null")
@@ -525,7 +487,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         # information concur
 
         # need to update pandda directory for every exported structure so that
-        # we know where to look for the pandda.log file that contains the relevant information
+        # we know where to look for the pandda.log file that contains the relevant
+        # information
 
         # update CrystalName_of_pandda_input in DB
 
@@ -536,22 +499,21 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         panddaLog = glob.glob(os.path.join(panddaPATH, "pandda*log"))
         panddaLog.sort(key=os.path.getmtime)
 
-        panddaVersion = "unknown"
         readindApoStructures = False
         apoStructures = []
         apoStructureDict = {}
         apoString = ""
         for files in panddaLog:
             for line in open(files):
-                if line.startswith("-  Pandda Version"):
-                    if len(line.split()) >= 4:
-                        panddaVersion = line.split()[3]
                 if "No Statistical Maps Found:" in line:
                     readindApoStructures = True
                 if readindApoStructures:
                     if "Pickling Object: processed_datasets" in line:
                         if line.split() >= 2:
-                            # e.g. line.split() -> ['Pickling', 'Object:', 'processed_datasets/NUDT22A-x0055/pickles/dataset.pickle']
+                            # e.g. line.split() ->
+                            # ['Pickling',
+                            # 'Object:',
+                            # 'processed_datasets/NUDT22A-x0055/pickles/dataset.pickle']
                             xtal = line.split()[2].split("/")[1]
                             if os.path.isfile(
                                 os.path.join(
@@ -564,146 +526,13 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                                 apoStructures.append(xtal)
                                 apoString += xtal + ";"
                 if (
-                    "Pre-existing statistical maps (from previous runs) have been found and will be reused:"
-                    in line
+                    "Pre-existing statistical maps (from previous runs) have been found"
+                    " and will be reused:" in line
                 ):
                     readindApoStructures = False
             apoStructureDict[panddaPATH] = apoStructures
 
         return apoString[:-1]
-
-    #    def sync_pandda_table(self):
-    #        progress_step=1
-    #        progress=0
-    #        self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-    #
-    #        # also need to update PANDDA table...
-    #        pandda_models=self.db.execute_statement("select CrystalName,PANDDA_site_index,PANDDA_site_event_index,PANDDA_site_x,PANDDA_site_y,PANDDA_site_z,PANDDApath,ApoStructures from panddaTable")
-    #        if len(pandda_models) > 0:
-    #            progress_step=100/float(len(pandda_models))
-    #
-    #        if pandda_models != []:
-    #            for entry in pandda_models:
-    #                db_pandda_dict={}
-    #                xtal=entry[0]
-    #                site_index=entry[1]
-    #                event_index=entry[2]
-    #                panddaPATH=entry[6]
-    #                apoStructures=entry[7]
-    #                self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'checking %s -> site %s -> event %s ' %(xtal,site_index,event_index))
-    #                try:
-    #                    event_x = float(str(entry[3]))
-    #                    event_y = float(str(entry[4]))
-    #                    event_z = float(str(entry[5]))
-    #                except ValueError:
-    #                    pass
-    #
-    #                # do not update pandda path since this one is updated during pandda export!
-    #                # instead try to get apo semi-colon separated list of apo structures that were used to
-    #                # calculate event maps; but only if field is blank!
-    # db_pandda_dict['PANDDApath']=self.panddas_directory
-    #                if str(apoStructures)=='None' or apoStructures=='':
-    #                    if panddaPATH != 'None' or panddaPATH != '':
-    #                        self.Logfile.insert('trying to find which apo structures were used to calculate the event maps in '+panddaPATH)
-    #                        db_pandda_dict['ApoStructures']=self.find_apo_structures_for_PanDDA(panddaPATH)
-    #                    else:
-    #                        self.Logfile.insert('pandda path for '+xtal+' is empty in database')
-    #
-    #                # event map
-    #
-    #                found_event_map=False
-    #                db_pandda_dict['PANDDA_site_event_map']=''
-    #                for file in glob.glob(os.path.join(self.initial_model_directory,xtal,'*ccp4')):
-    #                    filename=file[file.rfind('/')+1:]
-    #                    if filename.startswith(xtal+'-event_'+event_index) and filename.endswith('map.native.ccp4'):
-    #                        event_map=file
-    #                        db_pandda_dict['PANDDA_site_event_map']=os.path.realpath(event_map)
-    # db_pandda_dict['PANDDA_site_event_map']=os.path.realpath(event_map).replace(os.getcwd()+'/','')
-    #                        found_event_map=True
-    #                        break
-    #                if not found_event_map:
-    #                    db_pandda_dict['PANDDA_site_event_map']=''
-    #
-    #                db_pandda_dict['PANDDA_site_initial_model']=''
-    #                for file in glob.glob(os.path.join(self.initial_model_directory,xtal,'*pdb')):
-    #                    filename=file[file.rfind('/')+1:]
-    #                    if filename.endswith('-ensemble-model.pdb'):
-    #                        db_pandda_dict['PANDDA_site_initial_model']=os.path.realpath(file).replace(os.getcwd()+'/','')
-    #                        break
-    #
-    #                db_pandda_dict['PANDDA_site_initial_mtz']=''
-    #                for file in glob.glob(os.path.join(self.initial_model_directory,xtal,'*mtz')):
-    #                    filename=file[file.rfind('/')+1:]
-    #                    if filename.endswith('pandda-input.mtz'):
-    #                        db_pandda_dict['PANDDA_site_initial_mtz']=os.path.realpath(file).replace(os.getcwd()+'/','')
-    #                        break
-    #
-    #
-    #                db_pandda_dict['PANDDA_site_ligand_resname'] = ''
-    #                db_pandda_dict['PANDDA_site_ligand_chain'] = ''
-    #                db_pandda_dict['PANDDA_site_ligand_sequence_number'] = ''
-    #                db_pandda_dict['PANDDA_site_ligand_altLoc'] = ''
-    #                db_pandda_dict['PANDDA_site_ligand_placed'] = 'False'
-    #                db_pandda_dict['PANDDA_site_spider_plot'] = ''
-    #                db_pandda_dict['PANDDA_site_ligand_id'] = ''
-    #
-    #                db_pandda_dict['PANDDA_site_occupancy'] = ''
-    #                db_pandda_dict['PANDDA_site_B_average'] = ''
-    #                db_pandda_dict['PANDDA_site_B_ratio_residue_surroundings'] = ''
-    #                db_pandda_dict['PANDDA_site_rmsd'] = ''
-    #                db_pandda_dict['PANDDA_site_RSCC'] = ''
-    #                db_pandda_dict['PANDDA_site_RSR'] = ''
-    #                db_pandda_dict['PANDDA_site_RSZD'] = ''
-    #
-    #                if os.path.isfile(os.path.join(self.initial_model_directory,xtal,'refine.pdb')):
-    #                    ligands_in_file=pdbtools(os.path.join(self.initial_model_directory,xtal,'refine.pdb')).find_xce_ligand_details()
-    #
-    #                    for ligand in ligands_in_file:
-    #                        residue_name=   ligand[0]
-    #                        residue_chain=  ligand[1]
-    #                        residue_number= ligand[2]
-    #                        residue_altLoc= ligand[3]
-    #                        residue_xyz = pdbtools(os.path.join(self.initial_model_directory,xtal,'refine.pdb')).get_center_of_gravity_of_residue_ish(residue_chain, residue_number)
-    #                        distance = misc().calculate_distance_between_coordinates(residue_xyz[0], residue_xyz[1],residue_xyz[2],event_x, event_y,event_z)
-    #                        # if coordinate of ligand and event are closer than 7A, then we assume they belong together
-    #                        if distance < 7:
-    #                            db_pandda_dict['PANDDA_site_ligand_resname'] = residue_name
-    #                            db_pandda_dict['PANDDA_site_ligand_chain'] = residue_chain
-    #                            db_pandda_dict['PANDDA_site_ligand_sequence_number'] = residue_number
-    #                            db_pandda_dict['PANDDA_site_ligand_altLoc'] = residue_altLoc
-    #                            db_pandda_dict['PANDDA_site_ligand_placed'] = 'True'
-    #                            db_pandda_dict['PANDDA_site_ligand_id']=residue_name+'-'+residue_chain+'-'+residue_number
-    #
-    #                            if xtal+'/Refine_' in os.path.realpath(os.path.join(self.initial_model_directory,xtal,'refine.pdb')):
-    #                                tmp=os.path.realpath(os.path.join(self.initial_model_directory,xtal,'refine.pdb'))
-    #                                spider_plot=os.path.join(tmp[:tmp.rfind('/')],'residue_plots',residue_name+'-'+residue_chain+'-'+residue_number+'.png')
-    #                                if os.path.isfile(spider_plot):
-    #                                    db_pandda_dict['PANDDA_site_spider_plot']=os.path.realpath(spider_plot)
-    # db_pandda_dict['PANDDA_site_spider_plot']=os.path.realpath(spider_plot).replace(os.getcwd()+'/','')
-    #                                if os.path.isfile(os.path.join(tmp[:tmp.rfind('/')],'residue_scores.csv')):
-    #
-    #                                    with open(os.path.join(tmp[:tmp.rfind('/')],'residue_scores.csv'), 'rb') as csv_import:
-    #                                        csv_dict = csv.DictReader(csv_import)
-    #                                        for i, line in enumerate(csv_dict):
-    #                                            residueNameChainNumber = line['']
-    #                                            if residueNameChainNumber == residue_name+'-'+residue_chain+'-'+residue_number:
-    #                                                db_pandda_dict['PANDDA_site_occupancy'] = line['Occupancy']
-    #                                                db_pandda_dict['PANDDA_site_B_average'] = line['Average B-factor (Residue)']
-    #                                                db_pandda_dict['PANDDA_site_B_ratio_residue_surroundings'] = line['Surroundings B-factor Ratio']
-    #                                                db_pandda_dict['PANDDA_site_rmsd'] = line['Model RMSD']
-    #                                                db_pandda_dict['PANDDA_site_RSCC'] = line['RSCC']
-    #                                                db_pandda_dict['PANDDA_site_RSR'] = line['RSR']
-    #                                                db_pandda_dict['PANDDA_site_RSZD'] = line['RSZD']
-    #                            break
-    #
-    #                if db_pandda_dict != {}:
-    ##                    self.db.update_panddaTable(xtal, site_index, db_pandda_dict)
-    #                    self.db.update_site_event_panddaTable(xtal, site_index, event_index, db_pandda_dict)
-    #                    self.Logfile.insert('updating panddaTable for xtal: %s, site: %s' %(xtal,site_index))
-    #
-    #                progress += progress_step
-    #                self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-    #
 
     def sync_pandda_table_NEW(self):
         progress_step = 1
@@ -712,7 +541,9 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         # also need to update PANDDA table...
         pandda_models = self.db.execute_statement(
-            "select CrystalName,PANDDA_site_index,PANDDA_site_event_index,PANDDA_site_x,PANDDA_site_y,PANDDA_site_z,PANDDApath,ApoStructures from panddaTable"
+            "select CrystalName,PANDDA_site_index,PANDDA_site_event_index,"
+            "PANDDA_site_x,PANDDA_site_y,PANDDA_site_z,PANDDApath,ApoStructures"
+            " from panddaTable"
         )
         if len(pandda_models) > 0:
             progress_step = 100 / float(len(pandda_models))
@@ -743,15 +574,15 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 except ValueError:
                     pass
 
-                # do not update pandda path since this one is updated during pandda export!
-                # instead try to get apo semi-colon separated list of apo structures that were used to
-                # calculate event maps; but only if field is blank!
-                #                db_pandda_dict['PANDDApath']=self.panddas_directory
+                # do not update pandda path since this one is updated during pandda
+                # export! instead try to get apo semi-colon separated list of apo
+                # structures that were used to calculate event maps; but only if field
+                # is blank!
                 if str(apoStructures) == "None" or apoStructures == "":
                     if panddaPATH != "None" or panddaPATH != "":
                         self.Logfile.insert(
-                            "trying to find which apo structures were used to calculate the event maps in "
-                            + panddaPATH
+                            "trying to find which apo structures were used to calculate"
+                            " the event maps in " + panddaPATH
                         )
                         db_pandda_dict[
                             "ApoStructures"
@@ -776,7 +607,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                         db_pandda_dict["PANDDA_site_event_map"] = os.path.realpath(
                             event_map
                         )
-                        #                        db_pandda_dict['PANDDA_site_event_map']=os.path.realpath(event_map).replace(os.getcwd()+'/','')
                         found_event_map = True
                         break
                 if not found_event_map:
@@ -835,9 +665,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                         continue
                     else:
                         self.Logfile.insert(
-                            "{0!s}: found the following ligands in refine.pdb: {1!s}".format(
-                                xtal, str(ligands_in_file)
-                            )
+                            "{0!s}: found the following ligands in"
+                            " refine.pdb: {1!s}".format(xtal, str(ligands_in_file))
                         )
 
                     distanceList = []
@@ -871,7 +700,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                             ]
                         )
                         self.Logfile.insert(
-                            "{0!s}: calculating distance between event and ligand ({1!s} {2!s} {3!s}): {4!s}".format(
+                            "{0!s}: calculating distance between event and ligand"
+                            " ({1!s} {2!s} {3!s}): {4!s}".format(
                                 xtal,
                                 residue_name,
                                 residue_chain,
@@ -885,7 +715,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                         smallestDistance = min(distanceList, key=lambda x: x[0])
                     except ValueError:
                         self.Logfile.error(
-                            "could not determine smallest distance between current ligand pandda events"
+                            "could not determine smallest distance between current"
+                            " ligand pandda events"
                         )
                         continue
                     distance = smallestDistance[0]
@@ -894,7 +725,8 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                     residue_number = smallestDistance[3]
                     residue_altLoc = smallestDistance[4]
                     self.Logfile.insert(
-                        "{0!s}: ligand with the shorted distance ({1!s}A) to the current event (id: {2!s}): {3!s} {4!s} {5!s} {6!s}".format(
+                        "{0!s}: ligand with the shorted distance ({1!s}A) to the"
+                        " current event (id: {2!s}): {3!s} {4!s} {5!s} {6!s}".format(
                             xtal,
                             str(distance),
                             event_index,
@@ -967,23 +799,17 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                                         db_pandda_dict["PANDDA_site_RSZD"] = line[
                                             "RSZD"
                                         ]
-                #                    break
-
                 if db_pandda_dict != {}:
-                    #            self.db.update_panddaTable(xtal, site_index, db_pandda_dict)
                     self.db.update_site_event_panddaTable(
                         xtal, site_index, event_index, db_pandda_dict
                     )
                     self.Logfile.insert(
-                        "updating panddaTable for xtal: {0!s}, site: {1!s}, event: {2!s}".format(
+                        "updating panddaTable for"
+                        " xtal: {0!s}, site: {1!s}, event: {2!s}".format(
                             xtal, site_index, event_index
                         )
                     )
                     self.Logfile.insert("-> panddaDict: " + str(db_pandda_dict))
-
-
-#                progress += progress_step
-#                self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
 
 
 class create_png_and_cif_of_compound(QtCore.QThread):
@@ -1060,13 +886,6 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                             compoundID.replace(" ", "") + ".pdb",
                         )
                     )
-                #               commented this out since people found the presence of the old.cif file interfering with pandda.inspect
-                #                if os.path.isfile(os.path.join(self.initial_model_directory,sampleID,compoundID.replace(' ','')+'.cif')):
-                #                    # copy existing CIF file to old.cif so that it can be used as input in
-                #                    # restraints generating program
-                #                    os.chdir(os.path.join(self.initial_model_directory,sampleID))
-                #                    os.system('/bin/cp %s old.cif' %(compoundID.replace(' ','')+'.cif'))
-                #                    os.system('/bin/rm '+os.path.join(self.initial_model_directory,sampleID,compoundID.replace(' ','')+'.cif'))
                 if os.path.isfile(
                     os.path.join(
                         self.initial_model_directory,
@@ -1183,7 +1002,6 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
-            #            if os.getcwd().startswith('/dls'):
             if os.path.isdir("/dls"):
                 if self.external_software["qsub_array"]:
                     Cmds = (
@@ -1198,12 +1016,14 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                     )
                     self.Logfile.insert("using the following command:")
                     self.Logfile.insert(
-                        "         qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh".format(
+                        "         qsub -P labxchem -q medium.q -t 1:{0!s}"
+                        " -tc {1!s} {2!s}_master.sh".format(
                             str(counter), self.max_queue_jobs, self.restraints_program
                         )
                     )
                     os.system(
-                        "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} -N {2!s} {3!s}_master.sh".format(
+                        "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
+                        " -N {2!s} {3!s}_master.sh".format(
                             str(counter),
                             self.max_queue_jobs,
                             self.restraints_program,
@@ -1212,7 +1032,9 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                     )
                 else:
                     self.Logfile.insert(
-                        "cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file"
+                        "cannot start ARRAY job: make sure that"
+                        " 'module load global/cluster'"
+                        " is in your .bashrc or .cshrc file"
                     )
             elif self.external_software["qsub"]:
                 self.Logfile.insert(
@@ -1253,7 +1075,6 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                         )
                     )
 
-        #        self.emit(QtCore.SIGNAL("finished()"))
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
 
 
@@ -1288,21 +1109,16 @@ class fit_ligands(QtCore.QThread):
     def prepareInput(self, cmd, ligList):
         for cif in ligList:
             cmd += (
-                "rhofit -m ../init.mtz -p ../init.pdb -l ../compound/%s.cif -scanchirals -d %s_rhofit\n"
-                % (cif, cif)
+                "rhofit -m ../init.mtz -p ../init.pdb -l ../compound/%s.cif"
+                " -scanchirals -d %s_rhofit\n" % (cif, cif)
             )
             cmd += (
-                "phenix.ligandfit data=../init.mtz model=../init.pdb ligand=../compound/%s.cif clean_up=True\n"
-                % cif
+                "phenix.ligandfit data=../init.mtz"
+                " model=../init.pdb ligand=../compound/%s.cif clean_up=True\n" % cif
             )
             cmd += "/bin/mv LigandFit_run_1_ %s_phenix\n" % cif
             cmd += "/bin/rm -fr PDS\n\n"
         return cmd
-
-    # rhofit -m refine.mtz -p refine.pdb -l ../compound/NU074105a.cif -d NU074105a_rhofit
-    # phenix.ligandfit data=refine.mtz model=refine.pdb ligand=../compound/NU074105a.cif
-    # phenix.get_cc_mtz_pdb LigandFit_run_1_/ligand_fit_1_1.pdb refine.mtz > log
-    # grep 'local CC:' log
 
     def get_header(self, sampleID):
         if self.queueing_system_available:
@@ -1328,10 +1144,14 @@ class fit_ligands(QtCore.QThread):
         return cmd
 
     def get_footer(self, cmd, sampleID, compoundID):
-        cmd += "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/find_best_fitting_ligand.py {0!s} {1!s} {2!s}".format(
-            compoundID.replace(" ", ""),
-            os.path.join(self.initial_model_directory, sampleID),
-            os.path.join(self.database_directory, self.data_source_file),
+        cmd += (
+            "$CCP4/bin/ccp4-python"
+            " $XChemExplorer_DIR/helpers/"
+            "find_best_fitting_ligand.py {0!s} {1!s} {2!s}".format(
+                compoundID.replace(" ", ""),
+                os.path.join(self.initial_model_directory, sampleID),
+                os.path.join(self.database_directory, self.data_source_file),
+            )
         )
         return cmd
 
@@ -1345,7 +1165,6 @@ class fit_ligands(QtCore.QThread):
 
         progress_step = 100 / float(len(self.compound_list))
         progress = 0
-        counter = 1
         for item in self.compound_list:
             sampleID = item[0]
             compoundID = item[1]
@@ -1390,7 +1209,6 @@ class fit_ligands(QtCore.QThread):
             progress += progress_step
             self.emit(QtCore.SIGNAL("update_progress_bar"), progress)
 
-        #        self.emit(QtCore.SIGNAL("finished()"))
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
 
     def write_script(self, cmd):
@@ -1423,18 +1241,19 @@ class fit_ligands(QtCore.QThread):
                 )
                 self.Logfile.insert("using the following command:")
                 self.Logfile.insert(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} autofit_ligand_master.sh".format(
-                        str(self.n), self.max_queue_jobs
-                    )
+                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
+                    " autofit_ligand_master.sh".format(str(self.n), self.max_queue_jobs)
                 )
                 os.system(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} autofit_ligand_master.sh".format(
+                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
+                    " autofit_ligand_master.sh".format(
                         str(self.n - 1), self.max_queue_jobs
                     )
                 )
             else:
                 self.Logfile.insert(
-                    "cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file"
+                    "cannot start ARRAY job: make sure that"
+                    " 'module load global/cluster' is in your .bashrc or .cshrc file"
                 )
         elif self.external_software["qsub"]:
             self.Logfile.insert(
@@ -1448,9 +1267,8 @@ class fit_ligands(QtCore.QThread):
                 os.system("qsub -q medium.q xce_autofit_ligand_{0!s}.sh".format(str(i)))
         else:
             self.Logfile.insert(
-                "running {0!s} consecutive autofit_ligand jobs on your local machine".format(
-                    str(self.n - 1)
-                )
+                "running {0!s} consecutive autofit_ligand jobs on your"
+                " local machine".format(str(self.n - 1))
             )
             for i in range(1, self.n + 1):
                 self.Logfile.insert(
@@ -1474,7 +1292,6 @@ class merge_cif_files(QtCore.QThread):
     def run(self):
         progress_step = 100 / float(len(self.compound_list))
         progress = 0
-        counter = 1
 
         for item in self.compound_list:
             sampleID = item[0]
@@ -1494,8 +1311,8 @@ class merge_cif_files(QtCore.QThread):
                 )
             else:
                 self.Logfile.error(
-                    "%s: %s.cif file does not exist in compound sub-directory; skipping..."
-                    % (sampleID, compoundID)
+                    "%s: %s.cif file does not exist in compound sub-directory;"
+                    " skipping..." % (sampleID, compoundID)
                 )
                 continue
 
@@ -1506,8 +1323,8 @@ class merge_cif_files(QtCore.QThread):
                 )
             ):
                 self.Logfile.warning(
-                    "%s: removing symbolic link to (or file) %s.cif from sample directory"
-                    % (sampleID, compoundID)
+                    "%s: removing symbolic link to (or file) %s.cif"
+                    " from sample directory" % (sampleID, compoundID)
                 )
             os.system("/bin/rm %s.cif 2> /dev/null" % compoundID)
 
@@ -1563,270 +1380,6 @@ class merge_cif_files(QtCore.QThread):
                 % sampleID
             )
             os.system("ln -s compound/%s.cif ." % compoundID)
-
-
-# class run_dimple_on_all_autoprocessing_files(QtCore.QThread):
-#    def __init__(self,sample_list,initial_model_directory,external_software,ccp4_scratch_directory,database_directory,
-#                 data_source_file,max_queue_jobs,xce_logfile, remote_submission, remote_submission_string,
-#                 dimple_twin_mode,pipeline):
-#        QtCore.QThread.__init__(self)
-#        self.sample_list=sample_list
-#        self.initial_model_directory=initial_model_directory
-#        self.external_software=external_software
-#        self.queueing_system_available=external_software['qsub']
-#        self.ccp4_scratch_directory=ccp4_scratch_directory
-#        self.database_directory=database_directory
-#        self.data_source_file=data_source_file
-#        self.max_queue_jobs=max_queue_jobs
-#        self.xce_logfile=xce_logfile
-#        self.Logfile=XChemLog.updateLog(xce_logfile)
-#        self.pipeline=pipeline
-#        self.using_remote_qsub_submission = remote_submission
-#        self.remote_qsub_submission = remote_submission_string
-#        self.dimple_twin_mode = dimple_twin_mode
-#
-#
-#    def run(self):
-#        progress_step=1
-#        if len(self.sample_list) != 0:
-#            progress_step=100/float(len(self.sample_list))
-#        progress=0
-#        self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-#
-#        os.chdir(self.ccp4_scratch_directory)
-#        os.system('/bin/rm -f xce_dimple*sh')
-#
-#        db=XChemDB.data_source(os.path.join(self.database_directory,self.data_source_file))
-#        database=os.path.join(self.database_directory,self.data_source_file)
-#
-# print(self.sample_list)
-#
-#        for n,item in enumerate(self.sample_list):
-#
-#            xtal =                  item[0]
-#            visit_run_autoproc =    item[1]
-#            mtzin =                 item[2]
-#            ref_pdb =               item[3]
-#            ref_mtz =               item[4]
-#            ref_cif =               item[5]
-#
-#            # check if reference mtzfile has an Rfree column; if not, then ignore
-#            # DIMPLE assumes an Rfree column and barfs if it is not present
-#            # note: ref_mtz looks like this: ref mtz  -R reference.mtz
-# if os.path.isfile(ref_mtz.split()[len(ref_mtz.split())-1]):
-# mtz_column_dict=mtztools(ref_mtz.split()[len(ref_mtz.split())-1]).get_all_columns_as_dict()
-#            if os.path.isfile(ref_mtz):
-#                if 'FreeR_flag' not in mtz.object(ref_mtz).column_labels():
-# mtz_column_dict=mtztools(ref_mtz).get_all_columns_as_dict()
-# if 'FreeR_flag' not in mtz_column_dict['RFREE']:
-#                    self.Logfile.insert('cannot find FreeR_flag in reference mtz file: {0!s} -> ignoring reference mtzfile!!!'.format(ref_mtz))
-#                    ref_mtz = ''
-# if mtz_column_dict['RFREE'] != []:
-##                        self.Logfile.insert('found Rfree set with other column name though: {0!s}'.format(str(mtz_column_dict['RFREE'])))
-##                        self.Logfile.insert('try renaming Rfree column to FreeR_flag with CAD!')
-#
-##            uniqueify = ''
-# if 'FreeR_flag' in mtz.object(mtzin).column_labels():
-##                uniqueify = 'uniqueify -f FreeR_flag ' + mtzin + ' ' + xtal + '-unique.mtz' + '\n'
-# else:
-##                uniqueify = 'uniqueify ' + mtzin + ' ' + xtal + '-unique.mtz' + '\n'
-#
-#            db_dict= {'DimpleReferencePDB': ref_pdb}
-#            db.update_data_source(xtal,db_dict)
-#
-#            self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'creating input script for '+xtal+' in '+visit_run_autoproc)
-#
-#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
-#                os.mkdir(os.path.join(self.initial_model_directory,xtal))
-#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple')):
-#                os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple'))
-#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc)):
-#                os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
-#            os.chdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
-#            os.system('touch dimple_run_in_progress')
-#            os.system('/bin/rm final.mtz 2> /dev/null')
-#            os.system('/bin/rm final.pdb 2> /dev/null')
-#
-#            if self.queueing_system_available:
-#                top_line='#PBS -joe -N XCE_dimple\n'
-#            else:
-#                top_line='#!'+os.getenv('SHELL')+'\n'
-#
-#            if 'csh' in os.getenv('SHELL'):
-#                ccp4_scratch='setenv CCP4_SCR '+self.ccp4_scratch_directory+'\n'
-#            elif 'bash' in os.getenv('SHELL'):
-#                ccp4_scratch='export CCP4_SCR='+self.ccp4_scratch_directory+'\n'
-#            else:
-#                ccp4_scratch=''
-#
-#            if 'dimple_rerun_on_selected_file' in visit_run_autoproc:
-#                additional_cmds = (
-#                            'cd {0!s}\n'.format(os.path.join(self.initial_model_directory,xtal)) +
-#                            '/bin/rm dimple.pdb\n'
-#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.pdb dimple.pdb\n'
-#                            '/bin/rm dimple.mtz\n'
-#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/final.mtz dimple.mtz\n'
-#                            '/bin/rm 2fofc.map\n'
-#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/2fofc.map .\n'
-#                            '/bin/rm fofc.map\n'
-#                            'ln -s dimple/dimple_rerun_on_selected_file/dimple/fofc.map .\n'
-#                            '\n'
-#                            '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_dimple_pdb.py')+
-#                            ' {0!s} {1!s} {2!s}\n'.format(os.path.join(self.database_directory,self.data_source_file), xtal, self.initial_model_directory)  )
-#
-#            else:
-#                additional_cmds=''
-#
-##            resolution_high = 0.1
-##            o = iotbx.mtz.object(mtzin)
-##            low, high = o.max_min_resolution()
-#            hkl = any_reflection_file(file_name=mtzin)
-#            miller_arrays = hkl.as_miller_arrays()
-#            mtzFile = miller_arrays[0]
-#
-#            if mtzFile.space_group_info().symbol_and_number() ==  'R 3 :H (No. 146)':
-#                symNoAbsence = 'H3'
-#            elif mtzFile.space_group_info().symbol_and_number() == 'R 3 2 :H (No. 155)':
-#                symNoAbsence = 'H32'
-#            else:
-#                symNoAbsence = str([x[0] for x in str(mtzFile.space_group_info().symbol_and_number().split('(')[0]).split()]).replace('[','').replace(']','').replace("'","").replace(',','').replace(' ','')
-#            if symNoAbsence.replace(' ','') == "R32:":
-#                symNoAbsence = 'H32'
-#
-#            dls_stuff = ''
-#            if os.path.isdir('/dls'):
-#                dls_stuff = (
-#                    'module unload ccp4\n'
-#                    'source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n'
-#                )
-#
-#            twin = ''
-#            if self.dimple_twin_mode:
-#                twin = "--refmac-key 'TWIN'"
-#
-#            Cmds = (
-#                    '{0!s}\n'.format(top_line)+
-#                    '\n'
-#                    'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
-#                    '\n'
-#                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
-#                    '\n'
-#                    'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
-#                    '\n'
-#                    + dls_stuff +
-#                    '\n'
-#                    + ccp4_scratch +
-#                    '\n'
-#                    '$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n' %(database,xtal,'DimpleStatus','running') +
-#                    '\n'
-#                    'unique hklout unique.mtz << eof\n'
-#                    ' cell %s\n' %str([round(float(i),2) for i in mtzFile.unit_cell().parameters()]).replace('[','').replace(']','')+
-#                    ' symmetry %s\n' %symNoAbsence+
-#                    ' resolution %s\n' %str(round(float(mtzFile.d_min()),3))+
-#                    'eof\n'
-#                    '\n'
-##                    'freerflag hklin unique.mtz hklout free.mtz > freerflag.log\n'
-#                    '\n'
-#                    'sftools << eof > sftools.log\n'
-#                    ' read unique.mtz\n'
-#                    ' calc col F = 10.0\n'
-#                    ' calc col SIGF = 1.0\n'
-#                    ' write sftools.mtz\n'
-#                    'eof\n'
-#                    '\n'
-#                    'cad hklin1 sftools.mtz hklin2 %s hklout %s.999A.mtz << eof\n' %(mtzin,xtal) +
-#                    ' monitor BRIEF\n'
-#                    ' labin file 1 E1=F E2=SIGF\n'
-#                    ' labout file 1 E1=F_unique E2=SIGF_unique\n'
-#                    ' labin file 2 ALL\n'
-#                    ' resolution file 1 999.0 %s\n' %str(round(float(mtzFile.d_min()),2))+
-#                    'eof\n'
-#                    '\n'
-#                    "dimple --no-cleanup %s.999A.mtz %s %s %s %s dimple\n" %(xtal,ref_pdb,ref_mtz,ref_cif,twin) +
-#                    '\n'
-#                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc,'dimple') +
-# + uniqueify +
-# '\n'
-# 'cad hklin1 %s hklout %s <<eof\n' %(str(xtal + '-unique.mtz'), str(xtal + '-unique-2.mtz')) +
-##                    'monitor BRIEF\n'
-##                    'labin file 1 -\n'
-##                    '    ALL\n'
-# 'resolution file 1 999.0 %s\n' %(high) +
-# 'eof\n'
-# 'dimple --no-cleanup %s-unique-2.mtz %s %s %s dimple\n' %(xtal,ref_pdb,ref_mtz,ref_cif) +
-# '\n'
-# 'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc,'dimple') +
-#                    '\n'
-#                    'fft hklin final.mtz mapout 2fofc.map << EOF\n'
-#                    ' labin F1=FWT PHI=PHWT\n'
-#                    'EOF\n'
-#                    '\n'
-#                    'fft hklin final.mtz mapout fofc.map << EOF\n'
-#                    ' labin F1=DELFWT PHI=PHDELWT\n'
-#                    'EOF\n'
-#                    '\n'
-#                    +additional_cmds+
-#                    '\n'
-#                    'cd %s\n' %os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc) +
-#                    '\n'
-#                    '/bin/rm dimple_run_in_progress\n'
-#                    '\n'
-#                    'ln -s dimple/final.pdb .\n'
-#                    'ln -s dimple/final.mtz .\n'
-#                    )
-#
-#            # print(Cmds)
-#
-#            os.chdir(self.ccp4_scratch_directory)
-#            f = open('xce_dimple_{0!s}.sh'.format(str(n+1)),'w')
-#            f.write(Cmds)
-#            f.close()
-#            os.system('chmod +x xce_dimple_{0!s}.sh'.format(str(n+1)))
-#            db_dict= {'DimpleStatus': 'started'}
-#            self.Logfile.insert('{0!s}: setting DataProcessingStatus flag to started'.format(xtal))
-#            db.update_data_source(xtal,db_dict)
-#
-#
-#            progress += progress_step
-#            self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-#
-#        # submit job
-#        self.Logfile.insert('created input scripts for '+str(n+1)+' in '+self.ccp4_scratch_directory)
-#        os.chdir(self.ccp4_scratch_directory)
-#        if os.path.isdir('/dls'):
-#            if self.external_software['qsub_array']:
-#                Cmds = (
-#                        '#PBS -joe -N xce_dimple_master\n'
-#                        './xce_dimple_$SGE_TASK_ID.sh\n'
-#                        )
-#                f = open('dimple_master.sh','w')
-#                f.write(Cmds)
-#                f.close()
-#                print(os.getcwd())
-#                self.Logfile.insert('submitting array job with maximal 100 jobs running on cluster')
-#                self.Logfile.insert('using the following command:')
-#                self.Logfile.insert('qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} dimple_master.sh'.format(str(n+1), self.max_queue_jobs))
-#                if self.using_remote_qsub_submission:
-#                    os.system(str(self.remote_qsub_submission).replace("qsub'", str('cd ' + str(os.getcwd()) + '; ' + 'qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} dimple_master.sh'
-#                                                                  .format(str(n+1), self.max_queue_jobs))) + "'")
-#
-#                else:
-#                    os.system('qsub -P labxchem -t 1:{0!s} -tc {1!s} -N dimple-master dimple_master.sh'.format(str(n+1), self.max_queue_jobs))
-#            else:
-#                self.Logfile.insert("cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file")
-#        elif self.external_software['qsub']:
-#            self.Logfile.insert('submitting {0!s} individual jobs to cluster'.format((str(n+1))))
-#            self.Logfile.insert('WARNING: this could potentially lead to a crash...')
-#            for i in range(n+1):
-#                self.Logfile.insert('qsub -q medium.q -N dimple xce_dimple_{0!s}.sh'.format((str(i+1))))
-#                os.system('qsub -N dimple xce_dimple_{0!s}.sh'.format((str(i+1))))
-#        else:
-#            self.Logfile.insert('running %s consecutive DIMPLE jobs on your local machine')
-#            for i in range(n+1):
-#                self.Logfile.insert('starting xce_dimple_{0!s}.sh'.format((str(i+1))))
-#                os.system('./xce_dimple_{0!s}.sh'.format((str(i+1))))
-#
-#        self.emit(QtCore.SIGNAL('datasource_menu_reload_samples'))
 
 
 class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
@@ -1921,21 +1474,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         # check if reference mtzfile has an Rfree column; if not, then ignore
         # DIMPLE assumes an Rfree column and barfs if it is not present
         # note: ref_mtz looks like this: ref mtz  -R reference.mtz
-        #        if os.path.isfile(ref_mtz):
-        #            mtz_column_dict=mtztools(ref_mtz).get_all_columns_as_dict()
-        #            if 'FreeR_flag' not in mtz_column_dict['RFREE']:
-        #                self.Logfile.insert('cannot find FreeR_flag in reference mtz file: %s -> ignoring reference mtzfile!!!' %ref_mtz)
-        #                ref_mtz = ''
-        #                if mtz_column_dict['RFREE'] != []:
-        #                    self.Logfile.insert('found Rfree set with other column name though: %s' %str(mtz_column_dict['RFREE']))
-        #                    self.Logfile.insert('try renaming Rfree column to FreeR_flag with CAD!')
-        #
-        #        db_dict={}
-        #        db_dict['DimpleReferencePDB']=ref_pdb
-        #        self.db.update_data_source(xtal,db_dict)
-        #
-        #        self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'creating input script for '+xtal+' in '+visit_run_autoproc)
-        #
 
         if not os.path.isdir(os.path.join(self.initial_model_directory, xtal)):
             os.mkdir(os.path.join(self.initial_model_directory, xtal))
@@ -1979,7 +1517,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
             "\n" + ccp4_scratch + "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n"
+            "$CCP4/bin/ccp4-python"
+            " $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n"
             % (
                 os.path.join(self.database_directory, self.data_source_file),
                 xtal,
@@ -2007,8 +1546,10 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "/bin/rm phenix.ligand_pipeline.pdb\n"
             "/bin/rm phenix.ligand_pipeline.mtz\n"
             "\n"
-            "ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb phenix.ligand_pipeline.pdb\n"
-            "ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz phenix.ligand_pipeline.mtz\n"
+            "ln -s phenix.ligand_pipeline/pipeline_1/refine_final.pdb"
+            " phenix.ligand_pipeline.pdb\n"
+            "ln -s phenix.ligand_pipeline/pipeline_1/refine_final.mtz"
+            " phenix.ligand_pipeline.mtz\n"
             "\n"
             "/bin/rm init.pdb\n"
             "/bin/rm init.mtz\n"
@@ -2092,7 +1633,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
             "\n" + ccp4_scratch + "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n"
+            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py"
+            " %s %s %s %s\n"
             % (
                 os.path.join(self.database_directory, self.data_source_file),
                 xtal,
@@ -2100,10 +1642,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 "running",
             )
             + "\n"
-            "pointless hklin {0!s} xyzin {1!s} hklout pointless.mtz > pointless.log\n".format(
-                mtzin, ref_pdb
-            )
-            + "\n"
+            "pointless hklin {0!s} xyzin {1!s} hklout pointless.mtz >"
+            " pointless.log\n".format(mtzin, ref_pdb) + "\n"
             "pipedream "
             " -d pipedreamDir"
             " -xyzin %s" % ref_pdb + hklref_line + " -hklin pointless.mtz"
@@ -2165,8 +1705,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         twin = ""
         return twin
 
-    # pipedream -d pipedreamDir -xyzin $reference.pdb -hklref $referenceDataset.mtz -hklin $mtzFileUnique.mtz -rhofit $inhib.cif  -target $reference.pdb -keepwater -nthreads 12 -postquick -allclusters |tee -a pipedream.log
-
     def prepare_dimple_shell_script(
         self, xtal, visit_run_autoproc, mtzin, ref_pdb, ref_mtz, ref_cif
     ):
@@ -2178,9 +1716,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             mtz_column_dict = mtztools(ref_mtz).get_all_columns_as_dict()
             if "FreeR_flag" not in mtz_column_dict["RFREE"]:
                 self.Logfile.insert(
-                    "cannot find FreeR_flag in reference mtz file: {0!s} -> ignoring reference mtzfile!!!".format(
-                        ref_mtz
-                    )
+                    "cannot find FreeR_flag in reference mtz file: {0!s} ->"
+                    " ignoring reference mtzfile!!!".format(ref_mtz)
                 )
                 ref_mtz = ""
                 if mtz_column_dict["RFREE"]:
@@ -2275,7 +1812,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
             "\n" + ccp4_scratch + "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n"
+            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py"
+            " %s %s %s %s\n"
             % (
                 os.path.join(self.database_directory, self.data_source_file),
                 xtal,
@@ -2295,7 +1833,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + " resolution %s\n" % str(round(float(mtzFile.d_min()), 3))
             + "eof\n"
             "\n"
-            #                    'freerflag hklin unique.mtz hklout free.mtz > freerflag.log\n'
             "\n"
             "sftools << eof > sftools.log\n"
             " read unique.mtz\n"
@@ -2313,9 +1850,8 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             " resolution file 1 999.0 %s\n" % str(round(float(mtzFile.d_min()), 2))
             + "eof\n"
             "\n"
-            "pointless hklin %s.999A.mtz hklout %s.999A.reind.mtz xyzin %s << eof > pointless.reind.log\n"
-            % (xtal, xtal, ref_pdb)
-            + " tolerance 5\n"
+            "pointless hklin %s.999A.mtz hklout %s.999A.reind.mtz xyzin %s << eof >"
+            " pointless.reind.log\n" % (xtal, xtal, ref_pdb) + " tolerance 5\n"
             "eof\n"
             "\n"
             "dimple --no-cleanup %s.999A.reind.mtz %s %s %s %s dimple%s\n"
@@ -2397,18 +1933,22 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
                 )
                 self.Logfile.insert("using the following command:")
                 self.Logfile.insert(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}_master.sh".format(
+                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
+                    " {2!s}_master.sh".format(
                         str(self.n), self.max_queue_jobs, self.pipeline
                     )
                 )
                 os.system(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s} {2!s}{3!s}_master.sh".format(
+                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
+                    " {2!s}{3!s}_master.sh".format(
                         str(self.n - 1), self.max_queue_jobs, self.pipeline, twin
                     )
                 )
             else:
                 self.Logfile.insert(
-                    "cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file"
+                    "cannot start ARRAY job: make sure that"
+                    " 'module load global/cluster'"
+                    " is in your .bashrc or .cshrc file"
                 )
         elif self.external_software["qsub"]:
             self.Logfile.insert(
@@ -2481,9 +2021,8 @@ class remove_selected_dimple_files(QtCore.QThread):
                 if os.path.isfile("init.pdb"):
                     if "dimple" in os.path.realpath("init.pdb"):
                         self.Logfile.warning(
-                            "{0!s}: init.pdb & init.mtz is linked to dimple outcome".format(
-                                xtal
-                            )
+                            "{0!s}: init.pdb & init.mtz is linked to"
+                            " dimple outcome".format(xtal)
                         )
                         self.Logfile.warning(
                             "{0!s}: removing init.pdb & init.mtz & (2)fofc maps".format(
@@ -2504,9 +2043,8 @@ class remove_selected_dimple_files(QtCore.QThread):
                 if os.path.isfile("init.pdb"):
                     if "dimple" in os.path.realpath("init.pdb"):
                         self.Logfile.warning(
-                            "{0!s}: init.pdb & init.mtz is linked to pipedream outcome".format(
-                                xtal
-                            )
+                            "{0!s}: init.pdb & init.mtz is linked to"
+                            " pipedream outcome".format(xtal)
                         )
                         self.Logfile.warning(
                             "{0!s}: removing init.pdb & init.mtz & (2)fofc maps".format(
@@ -2517,9 +2055,8 @@ class remove_selected_dimple_files(QtCore.QThread):
                 else:
                     db_dict = self.remove_init(db_dict)
                 self.Logfile.warning(
-                    "{0!s}: removing pipedream folder & pipedream.pdb/pipedream.mtz".format(
-                        xtal
-                    )
+                    "{0!s}: removing pipedream folder &"
+                    " pipedream.pdb/pipedream.mtz".format(xtal)
                 )
                 os.system("/bin/rm pipedream_run_in_progress 2> /dev/null")
                 os.system("/bin/rm pipedream.pdb 2> /dev/null")
@@ -2529,9 +2066,8 @@ class remove_selected_dimple_files(QtCore.QThread):
                 if os.path.isfile("init.pdb"):
                     if "dimple" in os.path.realpath("init.pdb"):
                         self.Logfile.warning(
-                            "{0!s}: init.pdb & init.mtz is linked to phenix.ligand_pipeline outcome".format(
-                                xtal
-                            )
+                            "{0!s}: init.pdb & init.mtz is linked to"
+                            " phenix.ligand_pipeline outcome".format(xtal)
                         )
                         self.Logfile.warning(
                             "{0!s}: removing init.pdb & init.mtz & (2)fofc maps".format(
@@ -2542,7 +2078,8 @@ class remove_selected_dimple_files(QtCore.QThread):
                 else:
                     db_dict = self.remove_init(db_dict)
                 self.Logfile.warning(
-                    "{0!s}: removing phenix.ligand_pipeline folder & phenix.ligand_pipeline.pdb/phenix.ligand_pipeline.mtz".format(
+                    "{0!s}: removing phenix.ligand_pipeline folder &"
+                    " phenix.ligand_pipeline.pdb/phenix.ligand_pipeline.mtz".format(
                         xtal
                     )
                 )
@@ -2719,8 +2256,8 @@ class start_COOT(QtCore.QThread):
             self.pylib = "XChemCootTwin.py"
 
     def run(self):
-        cwd = os.getcwd()
-        # coot at Diamond always or sometimes at least open in home directory, so then it won't find the .pkl file
+        # coot at Diamond always or sometimes at least open in home directory
+        # so then it won't find the .pkl file
         pickle.dump(
             self.settings,
             open(os.path.join(os.getenv("HOME"), ".xce_settings.pkl"), "wb"),
@@ -2741,11 +2278,6 @@ class start_ICM(QtCore.QThread):
     def run(self):
         cwd = os.getcwd()
         if cwd.startswith("/dls"):
-            #            if not os.path.isfile(os.path.join('/home',getpass.getuser(),'.flexlmrc')):
-            #                os.system('touch '+os.path.join('/home',getpass.getuser(),'.flexlmrc'))
-            #                f=open(os.path.join('/home',getpass.getuser(),'.flexlmrc'),'w')
-            #                f.write('MOLSOFTD_LICENSE_FILE=@diamvicmpro.diamond.ac.uk')
-            #                f.close()
             os.system("nautilus {0!s} &".format(self.html_export_directory))
             os.system("/dls/science/groups/i04-1/software/icm-3.8-5/icm64 -g")
 
@@ -2753,7 +2285,6 @@ class start_ICM(QtCore.QThread):
 class start_pandda_inspect(QtCore.QThread):
     def __init__(self, settings, xce_logfile):
         QtCore.QThread.__init__(self)
-        #        self.settings=settings
         self.panddas_directory = settings["panddas_directory"]
         self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
@@ -2784,17 +2315,6 @@ class start_pandda_inspect(QtCore.QThread):
         os.system(Cmds)
 
 
-#        Cmds = (
-#                'source '+os.path.join(os.getenv('XChemExplorer_DIR'),'setup-scripts','pandda.setup-sh')+'\n'
-#                'cd '+self.panddas_directory+'\n'
-#                'pandda.inspect\n'
-#            )
-#
-#        self.Logfile.insert('starting pandda.inspect with the following command:\n/bin/bash\n'+Cmds)
-#        # need to do this because we're having all sorts of csh bash issues at SGC
-#        os.system('/bin/bash\n'+Cmds)
-
-
 class start_dials_image_viewer(QtCore.QThread):
     def __init__(self, diffraction_image):
         QtCore.QThread.__init__(self)
@@ -2804,9 +2324,7 @@ class start_dials_image_viewer(QtCore.QThread):
         os.system("dials.image_viewer " + self.diffraction_image)
 
 
-#
-# --- new module from hell -------------------------------------------------------------------------------------------
-#
+# --- new module from hell -------------------------------------------------------------
 
 
 class read_pinIDs_from_gda_logs(QtCore.QThread):
@@ -2868,7 +2386,6 @@ class read_pinIDs_from_gda_logs(QtCore.QThread):
             )
             dbDict = {}
             dbDict["DataCollectionPinBarcode"] = pinDict[sample]
-            #            self.db.update_data_source(sample,dbDict)
             self.db.update_specified_table(sample, dbDict, "collectionTable")
             progress += progress_step
             self.emit(QtCore.SIGNAL("update_progress_bar"), progress)
@@ -2915,9 +2432,6 @@ class choose_autoprocessing_outcome(QtCore.QThread):
         else:
             self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit)
 
-    #        print 'here', self.allSamples
-    #        self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit,rescore)
-
     def run(self):
 
         progress = 0
@@ -2929,16 +2443,14 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                     os.path.join(self.projectDir, sample, sample + ".mtz")
                 ):
                     self.Logfile.warning(
-                        "{0!s}: user has manually selected auto-processing result; will NOT auto-select!".format(
-                            sample
-                        )
+                        "{0!s}: user has manually selected auto-processing result;"
+                        " will NOT auto-select!".format(sample)
                     )
                     continue
                 else:
                     self.Logfile.warning(
-                        "{0!s}: user has manually selected auto-processing result before, but {1!s}.mtz does not exist".format(
-                            sample, sample
-                        )
+                        "{0!s}: user has manually selected auto-processing result"
+                        " before, but {1!s}.mtz does not exist".format(sample, sample)
                     )
                     self.Logfile.insert("%s: selecting autoprocessing result" % sample)
             elif self.rescore:
@@ -2964,11 +2476,12 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                 )
                 continue
 
-            # 1.) if posssible, only carry forward samples with similar UCvolume and same point group
+            # 1.) if posssible, only carry forward samples with similar UCvolume
+            # and same point group
             dbList = self.selectResultsSimilarToReference(dbList)
 
-            # 2.) if possible, only carry forward samples with low resolution Rmerge smaller than
-            #     specified in perferences
+            # 2.) if possible, only carry forward samples with low resolution Rmerge
+            # smaller than specified in perferences
             dbList = self.selectResultsWithAcceptableLowResoRmerge(dbList)
 
             # 3.) Make selection based on speified selection mechanism
@@ -3006,11 +2519,13 @@ class choose_autoprocessing_outcome(QtCore.QThread):
         if not dbListOut:
             dbListOut = dbList
             self.Logfile.warning(
-                "none of the MTZ files fulfilled criteria; will carry forward all results:"
+                "none of the MTZ files fulfilled criteria;"
+                " will carry forward all results:"
             )
         else:
             self.Logfile.insert(
-                "will carry forward the MTZ files from the following auto-processing pipelines:"
+                "will carry forward the MTZ files from the following auto-processing"
+                " pipelines:"
             )
         self.Logfile.insert(
             "{0:30} {1:10} {2:10} {3:10}".format(
@@ -3131,12 +2646,14 @@ class choose_autoprocessing_outcome(QtCore.QThread):
                                 == resultDict["DataProcessingPointGroup"]
                             ):
                                 self.Logfile.insert(
-                                    "=> passed -> mtz file has same point group as reference file and similar unit cell volume"
+                                    "=> passed -> mtz file has same point group"
+                                    " as reference file and similar unit cell volume"
                                 )
                                 dbListOut.append(resultDict)
                             else:
                                 self.Logfile.warning(
-                                    "mtz file has different point group/ unit cell volume as reference file"
+                                    "mtz file has different point group/"
+                                    " unit cell volume as reference file"
                                 )
             except ValueError:
                 pass
@@ -3145,8 +2662,8 @@ class choose_autoprocessing_outcome(QtCore.QThread):
 
     def selectResultsWithAcceptableLowResoRmerge(self, dbList):
         self.Logfile.insert(
-            "checking if MTZ files have acceptable low resolution Rmerge values (currently set to %s)"
-            % str(self.acceptable_low_resolution_Rmerge)
+            "checking if MTZ files have acceptable low resolution Rmerge values"
+            " (currently set to %s)" % str(self.acceptable_low_resolution_Rmerge)
         )
         dbListOut = []
         for resultDict in dbList:
@@ -3217,7 +2734,7 @@ class choose_autoprocessing_outcome(QtCore.QThread):
             if (
                 self.selection_mechanism == "autoProc - only"
                 and "autoPROC" in resultDict["DataProcessingProgram"]
-                and not "staraniso" in resultDict["DataProcessingProgram"]
+                and "staraniso" not in resultDict["DataProcessingProgram"]
             ):
                 tmp.append(resultDict)
             if (
@@ -3258,14 +2775,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
     - results for every autoprocessing result is recorded in new DB table
     - crystal centring images are copied into project directory
     - beamline directory in project directory will not be used anymore
-    - users need to actively select the actual data collection visit as Data Collection Directory in the
-      settings tab (e.g. /dls/i04-1/data/2017/mx15433-50
+    - users need to actively select the actual data collection visit as Data Collection
+      Directory in the settings tab (e.g. /dls/i04-1/data/2017/mx15433-50
     - results from fast_dp are not copied over and included in analysis
 
     - DB mainTable gets flag if user updated autoprocessing selection
     - checking of reprocessed files needs to be explicit
     - all dictionaries used to store information are retired
-    - at the moment one can only review/ rescore crystals collected during the selected visit
+    - at the moment one can only review/ rescore crystals collected during the selected
+      visit
     - parsing of pinIDs in gda logfiles is still missing
     """
 
@@ -3273,28 +2791,15 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self, processedDir, database, projectDir, xce_logfile, target, agamemnon
     ):
         QtCore.QThread.__init__(self)
-        #        self.target = target
         self.processedDir = processedDir
         self.visit, self.beamline = XChemMain.getVisitAndBeamline(self.processedDir)
-        #        print 'visit'
         self.projectDir = projectDir
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.target = target
         self.agamemnon = agamemnon
-        #        if self.agamemnon:
-        ##            print 'procDir',self.processedDir
-        # if len(procDir.split('/')) >= 8:
-        # if procDir.split('/')[7] == 'agamemnon'
-        # quit()
-        #            self.visit = 'agamemnon'        # this is for trouble-shooting only
 
         self.db = XChemDB.data_source(os.path.join(database))
         self.exisitingSamples = self.getExistingSamples()
-
-        #        for xtal in self.exisitingSamples:
-        #            print self.exisitingSamples[xtal]
-        #            break
-        #        quit()
 
         self.toParse = [
             [
@@ -3312,12 +2817,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 os.path.join("LogFiles", "*aimless.log"),
                 os.path.join("DataFiles", "*free.mtz"),
             ],
-            #                [   os.path.join('autoPROC', '*'),
-            #                    '*aimless.log',
-            #                    '*truncate-unique.mtz'],
-            #                [   os.path.join('autoPROC', '*'),
-            #                    '*staraniso_alldata-unique.table1',
-            #                    '*staraniso_alldata-unique.mtz'],
             [os.path.join("autoPROC"), "*aimless.log", "*truncate-unique.mtz"],
             [
                 os.path.join("autoPROC"),
@@ -3331,92 +2830,18 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 "*summary.tar.gz",
                 "*staraniso_alldata-unique.mtz",
             ],
-            #                [   os.path.join('*'),
-            #                    os.path.join('LogFiles', '*aimless.log'),
-            #                    os.path.join('DataFiles', '*free.mtz')]
         ]
 
-    #        self.toParse = [
-    #                [   os.path.join('*'),
-    #                    os.path.join('LogFiles', '*aimless.log'),
-    #                    os.path.join('DataFiles', '*free.mtz')],
-    #                [   os.path.join('*'),
-    #                    os.path.join('LogFiles', '*merging-statistics.json'),
-    #                    os.path.join('DataFiles', '*free.mtz')],
-    #                [   os.path.join('multi-xia2', '*'),
-    #                    os.path.join('LogFiles', '*aimless.log'),
-    #                    os.path.join('DataFiles', '*free.mtz')],
-    #                [   os.path.join('autoPROC', '*'),
-    #                    '*aimless.log',
-    #                    '*truncate-unique.mtz'],
-    #                [   os.path.join('autoPROC', '*'),
-    #                    '*staraniso_alldata-unique.table1',
-    #                    '*staraniso_alldata-unique.mtz'],
-    #                [   os.path.join('autoPROC'),
-    #                    '*aimless.log',
-    #                    '*truncate-unique.mtz'],
-    #                [   os.path.join('autoPROC'),
-    #                    '*summary.tar.gz',                  # staraniso_alldata-unique.table1 only available in tar archive
-    #                    '*staraniso_alldata-unique.mtz'],
-    #                [   os.path.join('autoPROC-*'),
-    #                    '*aimless.log',
-    #                    '*truncate-unique.mtz'],
-    #                [   os.path.join('autoPROC-*'),
-    #                    '*summary.tar.gz',
-    #                    '*staraniso_alldata-unique.mtz'],
-    #                [   os.path.join('*'),
-    #                    os.path.join('LogFiles', '*aimless.log'),
-    #                    os.path.join('DataFiles', '*free.mtz')]
-    #                        ]
-
-    #        self.toParse = [
-    #                [   os.path.join('xia2', '*'),
-    #                    os.path.join('LogFiles', '*aimless.log'),
-    #                    os.path.join('DataFiles', '*free.mtz')],
-    #                [   os.path.join('xia2-3*'),
-    #                    os.path.join('LogFiles', '*aimless.log'),
-    #                    os.path.join('DataFiles', '*free.mtz')],
-    #                [   os.path.join('xia2-dials*'),
-    #                    os.path.join('LogFiles', '*merging-statistics.json'),
-    #                    os.path.join('DataFiles', '*free.mtz')],
-    #                [   os.path.join('multi-xia2', '*'),
-    #                    os.path.join('LogFiles', '*aimless.log'),
-    #                    os.path.join('DataFiles', '*free.mtz')],
-    #                [   os.path.join('autoPROC', '*'),
-    #                    '*aimless.log',
-    #                    '*truncate-unique.mtz'],
-    #                [   os.path.join('autoPROC', '*'),
-    #                    '*staraniso_alldata-unique.table1',
-    #                    '*staraniso_alldata-unique.mtz'],
-    #                [   os.path.join('autoPROC'),
-    #                    '*aimless.log',
-    #                    '*truncate-unique.mtz'],
-    #                [   os.path.join('autoPROC'),
-    #                    '*summary.tar.gz',                  # staraniso_alldata-unique.table1 only available in tar archive
-    #                    '*staraniso_alldata-unique.mtz'],
-    #                [   os.path.join('autoPROC-*'),
-    #                    '*aimless.log',
-    #                    '*truncate-unique.mtz'],
-    #                [   os.path.join('autoPROC-*'),
-    #                    '*summary.tar.gz',
-    #                    '*staraniso_alldata-unique.mtz'],
-    #                [   os.path.join('*'),
-    #                    os.path.join('LogFiles', '*aimless.log'),
-    #                    os.path.join('DataFiles', '*free.mtz')]
-    #                        ]
-
     def run(self):
-        #        if self.agamemnon:
-        #            self.parse_agamemnon_file_system()
-        #        else:
-        #            self.parse_file_system()
         self.parse_file_system()
 
     def getExistingSamples(self):
         existingSamples = {}
         self.Logfile.insert("reading existing samples from collectionTable")
         allEntries = self.db.execute_statement(
-            'select CrystalName,DataCollectionVisit,DataCollectionRun,DataProcessingProgram, DataCollectionSubdir from collectionTable where DataCollectionOutcome = "success"'
+            "select CrystalName,DataCollectionVisit,DataCollectionRun,"
+            "DataProcessingProgram, DataCollectionSubdir from collectionTable where"
+            ' DataCollectionOutcome = "success"'
         )
         for item in allEntries:
             if str(item[0]) not in existingSamples:
@@ -3572,8 +2997,9 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 self.visit + "-" + run + autoproc + "_" + proc_code,
                 logfile[logfile.rfind("/") + 1 :],
             )
-        # September 2021: xia2 does not also output a xia2.mmcif and json merging statistics file, even if aimless was used
-        # for scaling, however, the xia2.mmcif file is differently formatted than the one from dials
+        # September 2021: xia2 does not also output a xia2.mmcif and json merging
+        # statistics file, even if aimless was used for scaling, however,
+        # the xia2.mmcif file is differently formatted than the one from dials
         # hence, if xtal.log file already exists, use this one
         if "aimless" in os.readlink(xtal + ".log"):
             logNew = os.path.join(
@@ -3595,8 +3021,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             os.mkdir(os.path.join(self.projectDir, xtal, "jpg", self.visit + "-" + run))
 
     def copyJPGs(self, xtal, run, auto):
-        #        for img in glob.glob(os.path.join(self.processedDir.replace('processed','jpegs'),xtal,run+'*t.png')):
-        #        for img in glob.glob(os.path.join(self.processedDir.replace('processed', 'jpegs'), run + '*t.png')):
         self.Logfile.insert("%s: trying to copy crystal snapshots..." % xtal)
         found = False
         if self.agamemnon:
@@ -3700,7 +3124,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
 
     def findJPGs(self, xtal, run):
         jpgDict = {}
-        #        for n,img in enumerate(glob.glob(os.path.join(self.projectDir,xtal,'jpg', self.visit +'-'+ run,'*t.png'))):
         for n, img in enumerate(
             glob.glob(
                 os.path.join(
@@ -3748,8 +3171,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 self.update_data_collection_table(
                     xtal, current_run, autoproc, db_dict, proc_code
                 )
-
-    #        return db_dict
 
     def getAutoProc(self, folder_rel, staraniso):
         self.Logfile.insert("checking name of auto-processing pipeline...")
@@ -3815,9 +3236,8 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             stuff.append(x)
         if not stuff:
             self.Logfile.warning(
-                "{0!s}: {1!s} is empty; probably waiting for autoprocessing to finish; try later!".format(
-                    xtal, folder
-                )
+                "{0!s}: {1!s} is empty; probably waiting for autoprocessing to finish;"
+                " try later!".format(xtal, folder)
             )
         else:
             empty = False
@@ -3846,7 +3266,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         )
 
         runList = []
-        #        for auto in autoDir:
         self.Logfile.insert("--> " + os.path.join(autoDir, "*"))
         for nx, collected_xtals in enumerate(
             sorted(glob.glob(os.path.join(autoDir, "*")))
@@ -3862,9 +3281,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
             if not os.path.isdir(collected_xtals):
                 continue
 
-            #        for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir,'*'))):
-            # why is this here? self.visit is derived in init function through XChemMain.getVisitAndBeamline
-            #            self.visit = collected_xtals.split('/')[5]
             if (
                 "tmp" in collected_xtals
                 or "results" in collected_xtals
@@ -3876,18 +3292,12 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 continue
 
             xtal = collected_xtals[collected_xtals.rfind("/") + 1 :]
-            #            if self.agamemnon:
-            #                tmp = xtal[:xtal.rfind('_')]
-            #                xtal = tmp[:tmp.rfind('_')]
 
             self.Logfile.insert("%s: checking auto-processing results" % xtal)
             self.createSampleDir(xtal)
 
             if self.target == "=== project directory ===":
                 runDir = os.path.join(collected_xtals, "processed", "*")
-            #                elif self.agamemnon:
-            #                    tmpDir = collected_xtals[:collected_xtals.rfind('/')]
-            #                    runDir = os.path.join(tmpDir,xtal+'_*_')
             else:
                 runDir = os.path.join(collected_xtals, "*")
             self.Logfile.insert("current runDir: " + runDir)
@@ -3897,8 +3307,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                 for code in glob.glob(os.path.join(run, "*")):
                     if os.path.islink(code):
                         continue
-                    #                    else:
-                    #                    proc_code = code[code.rfind('/')+1:]
                     proc_code = code.split("/")[len(code.split("/")) - 1]
                     self.Logfile.insert(xtal + ": processed directory -> " + proc_code)
                     if current_run + proc_code in runList:
@@ -3951,8 +3359,6 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                                 proc_code,
                             )
                     runList.append(current_run + proc_code)
-
-            #            quit()
             progress += progress_step
             self.emit(
                 QtCore.SIGNAL("update_status_bar(QString)"),
@@ -3963,103 +3369,3 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
         self.Logfile.insert("====== finished parsing beamline directory ======")
         self.emit(QtCore.SIGNAL("read_pinIDs_from_gda_logs"))
         self.emit(QtCore.SIGNAL("finished()"))
-
-
-#    def parse_agamemnon_file_system(self):
-#        self.Logfile.insert('checking for new data processing results in '+self.processedDir)
-#        progress = 0
-#        progress_step = 1
-#
-#        autoDir = ['auto','agamemnon']
-#
-#        c = 0
-#        for auto in autoDir:
-#            for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir+'-*','processed',auto,self.target,'*'))):
-#                if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
-#                    continue
-#                c += 1
-#
-#        if c > 0:
-#            progress_step = 100/float(c)
-#            self.Logfile.insert('found %s samples of target %s' %(str(c),self.target))
-#        else:
-#            self.Logfile.warning('found %s samples of target %s' %(str(c),self.target))
-#
-#        runList = []
-#
-#        autoDir = ['auto','agamemnon','recollect']
-#
-#        for auto in autoDir:
-#            for collected_xtals in sorted(glob.glob(os.path.join(self.processedDir+'-*','processed',auto,self.target,'*'))):
-#                self.visit = collected_xtals.split('/')[5]
-#                if 'tmp' in collected_xtals or 'results' in collected_xtals or 'scre' in collected_xtals:
-#                    continue
-#                if not os.path.isdir(collected_xtals):
-#                    continue
-#
-#                xtal = collected_xtals[collected_xtals.rfind('/')+1:]
-#                if xtal.endswith('_'):
-#                    continue    # happened sometime during testing, but should not happen anymore
-#
-#                self.Logfile.insert('%s: checking auto-processing results in %s %s' %(xtal,self.visit,auto))
-#                self.createSampleDir(xtal)
-#
-#                foundRun = False
-#                self.Logfile.insert('%s: checking for runs in %s' %(xtal,os.path.join(collected_xtals,'*')))
-#                for run in sorted(glob.glob(os.path.join(collected_xtals,'*'))):
-#                    foundRun = True
-#                    self.Logfile.insert('%s: current run %s' %(xtal,run))
-#                    current_run=auto+'_'+run[run.rfind('/')+1:]
-#                    if current_run not in runList:
-#                        self.Logfile.insert('%s: found new run -> %s' %(xtal,current_run))
-#                        runList.append(self.visit+'_'+auto+'_'+current_run)
-#                    else:
-#                        continue
-#                    self.Logfile.insert('%s -> run: %s -> current run: %s' %(xtal,run,current_run))
-#                    timestamp=datetime.fromtimestamp(os.path.getmtime(run)).strftime('%Y-%m-%d %H:%M:%S')
-#
-#                    # create directory for crystal aligment images in projectDir
-#                    self.makeJPGdir(xtal,current_run)
-#                    self.copyJPGs(xtal, run[run.rfind('/')+1:], auto)
-#
-#                    for item in self.toParse:
-#                        procDir = os.path.join(run,item[0])
-#                        logfile = item[1]
-#                        mtzfile = item[2]
-#
-#                        self.Logfile.insert('%s: search template: procDir - logfile - mtzfile' % xtal)
-#                        self.Logfile.insert('%s: procDir = %s' % (xtal, procDir))
-#                        self.Logfile.insert('%s: logfile = %s' % (xtal, logfile))
-#                        self.Logfile.insert('%s: mtzfile = %s' % (xtal, mtzfile))
-#
-# for folder in glob.glob(procDir):
-# for mtz in glob.glob(os.path.join(procDir,mtzfile)):
-##                                print mtz
-#
-#                        for folder in glob.glob(procDir):
-#                            staraniso = ''
-#                            self.Logfile.insert('%s: searching %s' % (xtal, folder))
-#                            if self.junk(folder):
-#                                continue
-#                            if self.empty_folder(xtal,folder):
-#                                continue
-#                            if 'staraniso' in logfile or 'summary.tar.gz' in logfile:
-#                                staraniso = '_staraniso'
-#                            autoproc = self.getAutoProc(folder, staraniso)
-#                            if self.alreadyParsed(xtal,current_run,autoproc):
-#                                continue
-#                            self.readProcessingUpdateResults(xtal,folder,logfile,mtzfile,timestamp,current_run,autoproc)
-#
-#
-#
-#
-#                    progress += progress_step
-#                    self.emit(QtCore.SIGNAL('update_status_bar(QString)'), 'parsing auto-processing results for '+collected_xtals)
-#                    self.emit(QtCore.SIGNAL('update_progress_bar'), progress)
-#
-#                if not foundRun:
-#                    self.Logfile.error('%s: could not find run' %xtal)
-#
-#        self.Logfile.insert('====== finished parsing beamline directory ======')
-#        self.emit(QtCore.SIGNAL('read_pinIDs_from_gda_logs'))
-#        self.emit(QtCore.SIGNAL("finished()"))
