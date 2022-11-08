@@ -17,7 +17,7 @@ def set_stylesheet(xce_object):
     }
     QMenuBar {
     background-color: rgb(236, 236, 236);
-    } 
+    }
     QMenuBar::item {
     background-color: rgb(236, 236, 236);
     }
