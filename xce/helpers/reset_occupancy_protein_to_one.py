@@ -13,12 +13,8 @@ def reset_residues(projectDir):
                     os.system("/bin/cp %s %s" % (mol, mol + "_original"))
                 print("%s: found %s" % (xtal, mol))
                 out = ""
-                changeResi = None
                 for line in open(mol):
                     if line.startswith("ATOM"):
-                        chainID = str(line[21:23]).replace(" ", "")
-                        resseq = str(line[23:26]).replace(" ", "")
-                        occupancy = str(line[56:60]).replace(" ", "")
                         altLoc = str(line[16:17]).replace(" ", "")
                         if altLoc != "":
                             out += line
