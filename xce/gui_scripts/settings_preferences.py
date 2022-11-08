@@ -52,7 +52,9 @@ class setup:
                 )  # need splat operator: *
                 xce_object.labxchem_directory_current = "/" + os.path.join(
                     *xce_object.current_directory.split("/")[1:9]
-                )  # labxchem_directory_current is where they actually have write permission
+                )
+                # labxchem_directory_current is where they actually have write
+                # permission
             else:
                 xce_object.labxchem_directory = "/" + os.path.join(
                     *xce_object.current_directory.split("/")[1:6]
@@ -60,8 +62,6 @@ class setup:
                 xce_object.labxchem_directory_current = "/" + os.path.join(
                     *xce_object.current_directory.split("/")[1:7]
                 )  # need splat operator: *
-            #            xce_object.labxchem_directory = '/' + os.path.join(
-            #                *xce_object.current_directory.split('/')[1:6])  # need splat operator: *
             xce_object.beamline_directory = os.path.join(
                 xce_object.labxchem_directory, "processing", "beamline"
             )
@@ -97,8 +97,6 @@ class setup:
             )
 
             xce_object.datasets_summary_file = None
-            #            xce_object.datasets_summary_file = os.path.join(xce_object.database_directory,
-            #                                                            str(os.getcwd().split('/')[5]) + '_summary.pkl')
             xce_object.data_source_file = ""
             xce_object.html_export_directory = os.path.join(
                 xce_object.labxchem_directory, "processing", "html"
@@ -242,7 +240,10 @@ class setup:
 
         # external software packages
         xce_object.using_remote_qsub_submission = False
-        xce_object.remote_qsub_submission = "/usr/bin/ssh <dls fed ID>@nx.diamond.ac.uk 'module load global/cluster; qsub'"
+        xce_object.remote_qsub_submission = (
+            "/usr/bin/ssh <dls fed ID>@nx.diamond.ac.uk"
+            " 'module load global/cluster; qsub'"
+        )
 
         xce_object.update_log = XChemLog.updateLog(xce_object.xce_logfile)
         xce_object.update_log.insert("new session started")
@@ -270,7 +271,8 @@ class setup:
             else:
                 xce_object.restraints_program = ""
                 xce_object.update_log.warning(
-                    "No program for generation of ligand coordinates and restraints available!"
+                    "No program for generation of ligand coordinates and restraints"
+                    " available!"
                 )
 
     def preferences(self, xce_object):
@@ -279,14 +281,12 @@ class setup:
         xce_object.preferences_data_to_copy = [
             ["aimless logiles and merged mtz only", "mtz_log_only"],
         ]
-        # ['All Files in the respective auto-processing directory','everything'],
 
         xce_object.preferences_selection_mechanism = [
             "IsigI*Comp*UniqueRefl",
             "highest_resolution",
             "lowest_Rfree",
             "dials - only",
-            #                                                      'xia2 3d - only',
             "xia2 3dii - only",
             "autoProc - only",
             "autoProc_staraniso - only",
@@ -331,7 +331,9 @@ class setup:
             ),
             "ccp4_scratch": xce_object.ccp4_scratch_directory,
             "unitcell_difference": xce_object.allowed_unitcell_difference_percent,
-            "too_low_resolution_data": xce_object.acceptable_low_resolution_limit_for_data,
+            "too_low_resolution_data": (
+                xce_object.acceptable_low_resolution_limit_for_data
+            ),
             "filename_root": xce_object.filename_root,
             "preferences": xce_object.preferences,
             "xce_logfile": xce_object.xce_logfile,
@@ -349,10 +351,13 @@ class setup:
 
         # functions that use tables.overview_datasource_table_columns:
         #
-        # - select_datasource_columns_to_display() - dropdown in datasource top menu (select columns to show)
-        # - populate_data_source_table()           - appears to be completely unused, so commented out
-        # - populate_and_update_datasource_table() - used within select_datasource_columns_to_display and
-        #                                            update_all_tables()
+        # select_datasource_columns_to_display()
+        # - dropdown in datasource top menu (select columns to show)
+        # populate_data_source_table()
+        # - appears to be completely unused, so commented out
+        # populate_and_update_datasource_table()
+        # - used within select_datasource_columns_to_display and
+        # update_all_tables()
 
         xce_object.overview_datasource_table_columns = [
             "Sample ID",
@@ -369,13 +374,13 @@ class setup:
 
         # functions that use tables.datasets_summary_table_columns:
         #
-        # - populate_datasets_summary_table() - appears in create_widgets_for_autoprocessing_results_only()
-        # - user_update_selected_autoproc_datasets_summary_table()
-        #                                            - appears in create_widgets_for_autoprocessing_results_only()
+        # populate_datasets_summary_table()
+        # - appears in create_widgets_for_autoprocessing_results_only()
+        # user_update_selected_autoproc_datasets_summary_table()
+        # - appears in create_widgets_for_autoprocessing_results_only()
 
         xce_object.datasets_summary_table_columns = [
             "Sample ID",
-            #                                                     'Resolution\n[Mn<I/sig(I)> = 2.0]',
             "Resolution\nHigh",
             "DataProcessing\nSpaceGroup",
             "DataProcessing\nRfree",
@@ -387,15 +392,13 @@ class setup:
             "img1",
             "img2",
             "img3",
-            "img4"
-            #                                                     'img5',
-            #                                                     'Show\nDetails',
-            #                                                     'Show Diffraction\nImage'
+            "img4",
         ]
 
         # functions that use tables.data_collection_table_columns:
         #
-        # - show_results_from_all_pipelines() - appears in populate_datasets_summary_table()
+        # show_results_from_all_pipelines()
+        # - appears in populate_datasets_summary_table()
 
         xce_object.data_collection_table_columns = [
             "Sample ID",
@@ -415,13 +418,13 @@ class setup:
 
         # functions that use tables.datasets_reprocess_columns:
         #
-        # - update_datasets_reprocess_table() - appears in search_for_datasets()
+        # update_datasets_reprocess_table()
+        # - appears in search_for_datasets()
 
         xce_object.datasets_reprocess_columns = [
             "Dataset ID",
             "Sample ID",
             "Run\nxia2",
-            #                                                 'Resolution\n[Mn<I/sig(I)> = 1.5]',
             "Resolution\nHigh",
             "Rmerge\nLow",
             "Dimple\nRfree",
@@ -432,14 +435,14 @@ class setup:
 
         # functions that use tables.maps_table_columns:
         #
-        # - update_datasets_reprocess_table() - appears in create_maps_table()
+        # update_datasets_reprocess_table()
+        # - appears in create_maps_table()
 
         xce_object.maps_table_columns = [
             "Sample ID",
             "Select",
             "Compound ID",
             "Smiles",
-            #                                         'Resolution\n[Mn<I/sig(I)> = 1.5]',
             "Resolution\nHigh",
             "Dimple\nRcryst",
             "Dimple\nRfree",
@@ -455,7 +458,8 @@ class setup:
 
         # functions that use tables.pandda_table_columns:
         #
-        # - populate_pandda_analyse_input_table() - appears in update_all_tables()
+        # populate_pandda_analyse_input_table()
+        # - appears in update_all_tables()
 
         xce_object.pandda_table_columns = [
             "Sample ID",
@@ -472,7 +476,8 @@ class setup:
 
         # functions that use tables.refinement_table_columns:
         #
-        # - populate_and_update_refinement_table() - appears in update_all_tables
+        # populate_and_update_refinement_table()
+        # - appears in update_all_tables
 
         xce_object.refinement_table_columns = [
             "Sample ID",
@@ -488,14 +493,6 @@ class setup:
         ]
 
     def top_menu_dict(self, xce_object):
-
-        # dictionary containing config for top menu setup
-        # menu dict = { 'order letter: menu_item_name': ["name_in_menu",
-        #                                       [
-        #                                           ['text_in_menu', 'shortcut', 'trigger function']],
-        #                                           [...],
-        #                                       ]]
-        #             }
         xce_object.menu_dict = {
             "A: file": [
                 "&File",
@@ -565,27 +562,10 @@ class setup:
                         "",
                         xce_object.export_to_html_deposition_ready,
                     ],
-                    #                                                      ['Find PanDDA apo structures', '',
-                    #                                                       xce_object.create_missing_apo_records_in_depositTable],
-                    #                                                      ['Update file info of apo structures', '',
-                    #                                                       xce_object.update_file_information_of_apo_records],
-                    #                                                      ['Prepare mmcif for apo structures', '',
-                    #                                                       xce_object.prepare_models_for_deposition_apo],
-                    #                                                      ['Prepare mmcif for ligand bound structures', '',
-                    #                                                       xce_object.prepare_models_for_deposition_ligand_bound],
-                    #                                                      ['Copy files to group deposition directory (ligand bound)', '',
-                    #                                                       xce_object.prepare_for_group_deposition_upload_ligand_bound],
-                    #                                                      ['Copy files to group deposition directory (ground state)', '',
-                    #                                                       xce_object.prepare_for_group_deposition_upload_ground_state],
                     ["Update DB with PDB codes", "", xce_object.enter_pdb_codes],
                     ["Check SMILES", "", xce_object.check_smiles_in_db_and_pdb],
                 ],
             ],
-            #                                'E: proasis': ["Proasis",
-            #                                               [
-            #                                                   ['Launch Proasis in browser', '', partial(webbrowser.open,
-            #                                                                                             url='http://cs04r-sc-vserv-137.diamond.ac.uk/Proasis4_2017/')]
-            #                                               ]],
             "F: help": [
                 "&Help",
                 [
@@ -593,7 +573,8 @@ class setup:
                         "Open XCE manual",
                         "",
                         lambda: setup().openFile(
-                            "/dls/science/groups/i04-1/software/XCE_manual_2018-11-09.pdf"
+                            "/dls/science/groups/i04-1/software/"
+                            "XCE_manual_2018-11-09.pdf"
                         ),
                     ],
                     [
@@ -769,21 +750,15 @@ class setup:
     def dropdown_items(self, xce_object):
         xce_object.dataset_tasks = [
             "Get New Results from Autoprocessing",
-            #                                    'Run DIMPLE on All Autoprocessing MTZ files',
             "Rescore Datasets",
             "Run xia2 on selected datasets",
             "Run xia2 on selected datasets - overwrite",
         ]
 
         xce_object.map_cif_file_tasks = [
-            #                                         'Run initial refinement on selected MTZ files',
-            #                                         'Remove selected initial refinement files',
             "Run DIMPLE on selected MTZ files",
             "Remove selected DIMPLE files",
             "Set DIMPLE output",
-            #                                          'Set only results from selected pipeline',
-            #                                         'Create CIF/PDB/PNG file of ALL compounds',
-            #                                         'Create CIF/PDB/PNG file of NEW compounds',
             "------------------------------------------",
             "Create CIF/PDB/PNG file of SELECTED compounds",
             "Merge ligand CIF file with selected compounds",
@@ -809,7 +784,6 @@ class setup:
             "Export SELECTED PANDDA models",
             "------------------------------------------",
             "Show HTML summary",
-            #                                         'Update datasource with results from pandda.inspect',
             "cluster datasets",
             "Event Map -> SF",
             "apo -> mmcif",
@@ -821,7 +795,6 @@ class setup:
             "refine ALL bound-state models with BUSTER (no sanity check)",
             "refine NEW bound-state models with BUSTER (no sanity check)",
             "------------------------------------------",
-            #                                         'refine NEW bound-state models with BUSTER - NEW',
             "pre-run for ground state model",
             "Build ground state model",
             "------------------------------------------",
@@ -832,13 +805,5 @@ class setup:
             "Open COOT - BUSTER refinement -",
             "Open COOT - REFMAC refinement -",
             "Open COOT - dimple_twin -",
-            #                                        '-------------------------------',
-            #                                        'Reset to last successful refinement (BUSTER or REFMAC)',
             "",
         ]
-
-
-#        xce_object.refine_file_tasks = ['Open COOT',
-#                                        'Open COOT for old PanDDA',
-#                                        'Update Deposition Table',
-#                                        'Prepare Group Deposition']
