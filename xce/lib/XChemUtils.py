@@ -5,7 +5,6 @@ import glob
 import math
 import subprocess
 import getpass
-import shutil
 import json
 import time
 
@@ -45,12 +44,8 @@ class process:
         self.fileroot_in = dimple["fileroot_in"]
         self.mtz_free = self.fileroot_in + ".free.mtz"
         self.mtz_in = self.fileroot_in + ".mtz"
-        # need to set $CCP4_SCR, because the default directory in /home/zqr16691/tmp fills up easily
-        # and then dimple will not run
-
-    #        if not os.path.isdir(self.project_directory[:self.project_directory.find('processing')+11]+'/tmp'):
-    #            os.mkdir(self.project_directory[:self.project_directory.find('processing')+11]+'/tmp')
-    #        self.ccp4_scratch=self.project_directory[:self.project_directory.find('processing')+11]+'/tmp'
+        # need to set $CCP4_SCR, because the default directory in /home/zqr16691/tmp
+        # fills up easily and then dimple will not run
 
     def get_Rfree(self):
         Cmds = ""
@@ -63,54 +58,54 @@ class process:
                 )
             ):
                 Cmds = (
-                    #                    '#!'+os.getenv('SHELL')+'\n'
                     "\n"
-                    "cd %s/%s/Dimple\n" % (self.project_directory, self.xtalID) + "\n"
-                    "pointless hklin ../%s hklref %s.mtz hklout %s.reind.mtz << EOF > pointless.log\n"
+                    + "cd %s/%s/Dimple\n" % (self.project_directory, self.xtalID)
+                    + "\n"
+                    + "pointless hklin ../%s hklref %s.mtz hklout %s.reind.mtz"
                     % (self.mtz_in, self.reference, self.xtalID)
+                    + " << EOF > pointless.log\n"
                     + " tolerance 5\n"
-                    "EOF\n"
-                    "\n"
-                    "cad hklin1 %s.reind.mtz hklin2 %s.mtz hklout cad.mtz << EOF > cad.log\n"
+                    + "EOF\n"
+                    + "\n"
+                    + "cad hklin1 %s.reind.mtz hklin2 %s.mtz hklout cad.mtz <<"
                     % (self.xtalID, self.reference)
+                    + " EOF > cad.log\n"
                     + "   labin file_number 1 E1=F E2=SIGF E3=IMEAN E4=SIGIMEAN\n"
-                    "   labout file_number 1 E1=F E2=SIGF E3=IMEAN E4=SIGIMEAN\n"
-                    "   labin file_number 2 E1=FreeR_flag\n"
-                    "   labout file_number 2 E1=FreeR_flag\n"
-                    "   END\n"
-                    "EOF\n"
-                    "\n"
-                    "freerflag hklin cad.mtz hklout ../%s << EOF > freerflag.log\n"
+                    + "   labout file_number 1 E1=F E2=SIGF E3=IMEAN E4=SIGIMEAN\n"
+                    + "   labin file_number 2 E1=FreeR_flag\n"
+                    + "   labout file_number 2 E1=FreeR_flag\n"
+                    + "   END\n"
+                    + "EOF\n"
+                    + "\n"
+                    + "freerflag hklin cad.mtz hklout ../%s << EOF > freerflag.log\n"
                     % self.mtz_free
                     + "   COMPLETE FREE=FreeR_flag\n"
-                    "   END\n"
-                    "EOF\n"
-                    "#uniqueify -f FreeR_flag cad.mtz ../%s\n" % self.mtz_free
+                    + "   END\n"
+                    + "EOF\n"
+                    + "#uniqueify -f FreeR_flag cad.mtz ../%s\n" % self.mtz_free
                 )
             else:
                 Cmds = (
-                    #                    '#!'+os.getenv('SHELL')+'\n'
                     "\n"
-                    "cd %s/%s/Dimple\n" % (self.project_directory, self.xtalID) + "\n"
-                    "pointless hklin ../%s xyzin %s.pdb hklout %s.reind.mtz << EOF > pointless.log\n"
+                    + "cd %s/%s/Dimple\n" % (self.project_directory, self.xtalID)
+                    + "\n"
+                    + "pointless hklin ../%s xyzin %s.pdb hklout %s.reind.mtz"
                     % (self.mtz_in, self.reference, self.xtalID)
+                    + " << EOF > pointless.log\n"
                     + " tolerance 5\n"
-                    "EOF\n"
-                    "\n"
-                    "cad hklin1 %s.reind.mtz hklout cad.mtz << EOF > cad.log\n"
+                    + "EOF\n"
+                    + "\n"
+                    + "cad hklin1 %s.reind.mtz hklout cad.mtz << EOF > cad.log\n"
                     % self.xtalID
                     + "   labin file_number 1 E1=F E2=SIGF E3=IMEAN E4=SIGIMEAN\n"
-                    "   labout file_number 1 E1=F E2=SIGF E3=IMEAN E4=SIGIMEAN\n"
-                    "   END\n"
-                    "EOF\n"
-                    "\n"
-                    "freerflag hklin cad.mtz hklout ../%s > freerflag.log\n"
+                    + "   labout file_number 1 E1=F E2=SIGF E3=IMEAN E4=SIGIMEAN\n"
+                    + "   END\n"
+                    + "EOF\n"
+                    + "\n"
+                    + "freerflag hklin cad.mtz hklout ../%s > freerflag.log\n"
                     % self.mtz_free
                     + "#uniqueify cad.mtz ../{0!s}\n".format(self.mtz_free)
                 )
-            #            os.chdir(os.path.join(self.project_directory,self.xtalID))
-            #            os.system(Cmds)
-            # os.symlink(os.path.join('Dimple',self.xtalID+'.free.mtz'),self.xtalID+'.free.mtz')
             return Cmds
 
     def dimple(self):
@@ -119,7 +114,8 @@ class process:
         if os.path.isdir(
             "{0!s}/{1!s}/Dimple".format(self.project_directory, self.xtalID)
         ):
-            # this 'if not' step is usually not necessary; only if process was stopped in an odd way
+            # this 'if not' step is usually not necessary
+            # only if process was stopped in an odd way
             if not os.path.isfile(
                 self.project_directory + "/" + self.xtalID + "/" + self.mtz_free
             ):
@@ -152,7 +148,8 @@ class process:
         # in case additional ligands are present in the reference.pdb file,
         # the user needs to provide the following files:
         # - <my_file_1>.pdb
-        # - <my_file_1>.cif     # this file contains restraints for all the ligands in the respective pdb file
+        # - <my_file_1>.cif - this file contains restraints for all the ligands in the
+        #                     respective pdb file
 
         if os.path.isfile(self.reference + ".cif"):
             ref_lib = " --libin " + self.reference + ".cif"
@@ -231,7 +228,6 @@ class helpers:
     ):
         Logfile = XChemLog.updateLog(xce_logfile)
 
-        #        if not os.path.isfile(os.path.join(initial_model_directory,sample,'compound','ACEDRG_IN_PROGRESS')):
         os.system("touch RESTRAINTS_IN_PROGRESS")
 
         header = "#!" + os.getenv("SHELL") + "\n"
@@ -243,7 +239,8 @@ class helpers:
         # note: compoundIDs and smiles are semi-colon separated
         if len(compoundID.split(";")) > 1:
             Logfile.insert(
-                "looks like you are working with cocktails; found the following IDs and smiles:"
+                "looks like you are working with cocktails;"
+                " found the following IDs and smiles:"
             )
             if len(compoundID.split(";")) != len(smiles.split(";")):
                 Logfile.error("Number of compoundIDs and SMILES does not match:")
@@ -272,7 +269,10 @@ class helpers:
                     if os.getcwd().startswith("/dls"):
                         software += "module load ccp4/7.1.018\n"
                         software += "module load buster\n"
-                        software += "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
+                        software += (
+                            "export BDG_TOOL_MOGUL="
+                            "/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
+                        )
                     software += "export BDG_TOOL_OBABEL='none'\n"
 
                 for i in range(len(compoundID.split(";"))):
@@ -289,27 +289,34 @@ class helpers:
                             compoundID.split(";")[i].replace(" ", ""),
                         )
                     elif restraints_program == "phenix.elbow":
-                        software += 'phenix.elbow --smiles="{0!s}" --id {1!s}} --output {2!s}\n'.format(
-                            smiles.split(";")[i],
-                            cID,
-                            compoundID.split(";")[i].replace(" ", ""),
+                        software += (
+                            "phenix.elbow"
+                            + '--smiles="{0!s}" --id {1!s} --output {2!s}\n'.format(
+                                smiles.split(";")[i],
+                                cID,
+                                compoundID.split(";")[i].replace(" ", ""),
+                            )
                         )
                     elif restraints_program == "grade":
                         if external_software["mogul"]:
                             mogul = ""
                         else:
                             mogul = "-nomogul"
-                        software += 'grade -resname {0!s} {1!s} "{2!s}" -ocif {3!s}.cif -opdb {4!s}.pdb\n'.format(
-                            cID,
-                            mogul,
-                            smiles.split(";")[i],
-                            compoundID.split(";")[i].replace(" ", ""),
-                            compoundID.split(";")[i].replace(" ", ""),
+                        software += (
+                            "grade"
+                            + ' -resname {0!s} {1!s} "{2!s}"'.format(
+                                cID, mogul, smiles.split(";")[i]
+                            )
+                            + " -ocif {0!s}.cif -opdb {1!s}.pdb\n".format(
+                                compoundID.split(";")[i].replace(" ", ""),
+                                compoundID.split(";")[i].replace(" ", ""),
+                            )
                         )
 
         else:
             # check if CompoundSMILEScovalent field is not Null
-            # CompoundSMILESproduct can be used to create only a CIF file for the product to make fitting easier
+            # CompoundSMILESproduct can be used to create only a CIF file
+            # for the product to make fitting easier
             # however, the complete smiles string will be used to make the png file
             productSmiles = None
             db = XChemDB.data_source(os.path.join(database_directory, data_source_file))
@@ -349,12 +356,16 @@ class helpers:
                 if os.path.isfile(
                     os.path.join(initial_model_directory, sample, "old.cif")
                 ):
-                    software += "phenix.elbow --file=../old.cif --id LIG --output {0!s}\n".format(
-                        (compoundID.replace(" ", ""))
+                    software += (
+                        "phenix.elbow --file=../old.cif --id LIG"
+                        + " --output {0!s}\n".format((compoundID.replace(" ", "")))
                     )
                 else:
-                    software += 'phenix.elbow --smiles="{0!s}" --id LIG --output {1!s}\n'.format(
-                        productSmiles, compoundID.replace(" ", "")
+                    software += (
+                        "phenix.elbow"
+                        + ' --smiles="{0!s}" --id LIG --output {1!s}\n'.format(
+                            productSmiles, compoundID.replace(" ", "")
+                        )
                     )
             elif restraints_program == "grade":
                 if os.getcwd().startswith("/dls"):
@@ -371,32 +382,36 @@ class helpers:
                 if os.path.isfile(
                     os.path.join(initial_model_directory, sample, "old.cif")
                 ):
-                    software += "grade -resname LIG {0!s} -in ../old.cif -ocif {1!s}.cif -opdb {2!s}.pdb\n".format(
-                        mogul, compoundID.replace(" ", ""), compoundID.replace(" ", "")
+                    software += "grade -resname LIG {0!s}".format(
+                        mogul
+                    ) + " -in ../old.cif -ocif {0!s}.cif -opdb {1!s}.pdb\n".format(
+                        compoundID.replace(" ", ""), compoundID.replace(" ", "")
                     )
                 else:
-                    software += 'grade -resname LIG {0!s} "{1!s}" -ocif {2!s}.cif -opdb {3!s}.pdb\n'.format(
-                        mogul,
-                        productSmiles,
+                    software += 'grade -resname LIG {0!s} "{1!s}"'.format(
+                        mogul, productSmiles
+                    ) + " -ocif {0!s}.cif -opdb {1!s}.pdb\n".format(
                         compoundID.replace(" ", ""),
                         compoundID.replace(" ", ""),
                     )
 
             # merge all compound CIFs into 1 file called merged.cif
-            software += "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/merge_ligand_cif_files.py {0!s}\n".format(
-                os.path.join(initial_model_directory, sample, "compound")
+            software += (
+                "$CCP4/bin/ccp4-python"
+                "$XChemExplorer_DIR/helpers/merge_ligand_cif_files.py {0!s}\n".format(
+                    os.path.join(initial_model_directory, sample, "compound")
+                )
             )
 
-        # Removal of the hydrogen atoms in PDB files is required for REFMAC 5 run. With hydrogens some ligands fail to
-        # pass the external restraints in pandda.giant.make_restraints.
+        # Removal of the hydrogen atoms in PDB files is required for REFMAC 5 run.
+        # With hydrogens some ligands fail to pass the external restraints in
+        # pandda.giant.make_restraints.
         # Copy the file with hydrogens to retain in case needed
-
-        check_stereochemistry = ""
-
         Cmds = (
             header + "\n"
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"' + "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py {0!s} {1!s} {2!s} {3!s}".format(
+            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py"
+            " {0!s} {1!s} {2!s} {3!s}".format(
                 os.path.join(database_directory, data_source_file),
                 sample,
                 "RefinementCIFStatus",
@@ -447,8 +462,6 @@ class helpers:
                 sample, compoundID, ccp4_scratch_directory
             )
         )
-        #        print Cmds
-        #        print 'ccp4_scratch',ccp4_scratch_directory
         f = open("xce_{0!s}_{1!s}.sh".format(restraints_program, str(counter)), "w")
         f.write(Cmds)
         f.close()
@@ -457,29 +470,10 @@ class helpers:
         )
 
 
-#                if queueing_system_available:
-#                    os.system('qsub acedrg.sh')
-#                else:
-#                    os.system('chmod +x acedrg.sh')
-#                    os.system('./acedrg.sh')
-
-#        os.chdir(os.path.join(initial_model_directory,sample))
-#        if os.path.isfile(os.path.join(initial_model_directory,sample,'compound',compoundID.replace(' ','')+'.pdb'))\
-#                and not os.path.isfile(os.path.join(initial_model_directory,sample,compoundID.replace(' ','')+'.pdb')):
-#            os.symlink(os.path.join(initial_model_directory,sample,'compound',compoundID.replace(' ','')+'.pdb'),compoundID.replace(' ','')+'.pdb')
-#        if os.path.isfile(os.path.join(initial_model_directory,sample,'compound',compoundID.replace(' ','')+'.cif'))\
-#                and not os.path.isfile(os.path.join(initial_model_directory,sample,compoundID.replace(' ','')+'.cif')):
-#            os.symlink(os.path.join(initial_model_directory,sample,'compound',compoundID.replace(' ','')+'.cif'),compoundID.replace(' ','')+'.cif')
-#        if os.path.isfile(os.path.join(initial_model_directory,sample,'compound',compoundID.replace(' ','')+'.png'))\
-#                and not os.path.isfile(os.path.join(initial_model_directory,sample,compoundID.replace(' ','')+'.png')):
-#            os.symlink(os.path.join(initial_model_directory,sample,'compound',compoundID.replace(' ','')+'.png'),compoundID.replace(' ','')+'.png')
-
-
 class parse:
     def __init__(self):
         self.space_group_dict = {
             "triclinic": ["P1"],
-            #                                    'monoclinic':   ['P2','P21','C121','P1211','P121'],
             "monoclinic_P": ["P2", "P21", "P1211", "P121"],
             "monoclinic_C": ["C2", "C121"],
             "orthorhombic": [
@@ -620,7 +614,6 @@ class parse:
 
         self.aimless = {
             "DataProcessingProgram": "n/a",
-            #                            'DataCollectionRun':                            'n/a',
             "DataProcessingSpaceGroup": "n/a",
             "DataProcessingUnitCell": "n/a",
             "DataProcessingA": "n/a",
@@ -690,7 +683,6 @@ class parse:
             "Alert": "#FF0000",
         }
 
-        spg = "n/a"
         a = "n/a"
         b = "n/a"
         c = "n/a"
@@ -710,9 +702,8 @@ class parse:
             Aimless["AutoProc"] = "autoPROC"
 
         # get run number from logfile
-        # Note: only works if file is in original directory, but not once it lifes in 'inital_model'
-        #        print self.Logfile.split('/')[9].split('_')[1]
-        #        if len(self.Logfile.split('/'))>8 and len(self.Logfile.split('/')[9].split('_'))==1:
+        # only works if file is in original directory, but not once it lifes in
+        # 'inital_model'
         try:
             Aimless["Run"] = self.Logfile.split("/")[9].split("_")[1]
         except IndexError:
@@ -788,12 +779,6 @@ class parse:
             + str(gamma)
         )
 
-        # Hex Color code:
-        # red:      #FF0000
-        # orange:   #FF9900
-        # green:    #00FF00
-        # gray:     #E0E0E0
-
         if Aimless["ResolutionHigh"] == "n/a" or Aimless["RmergeLow"] == "n/a":
             Aimless["Alert"] = "#FF0000"
         else:
@@ -821,7 +806,6 @@ class parse:
         # essentially same as above, but compatible with datasource
         # will hopefully supersede function above
 
-        spg = "n/a"
         a = "n/a"
         b = "n/a"
         c = "n/a"
@@ -847,24 +831,13 @@ class parse:
             self.aimless["DataProcessingProgram"] = "aP_staraniso"
 
         # get run number from logfile
-        # Note: only works if file is in original directory, but not once it moved to 'inital_model' folder#
-        ##        print self.Logfile.split('/')[9].split('_')[1]
-        # if len(self.Logfile.split('/'))>8 and len(self.Logfile.split('/')[9].split('_'))==1:
-        #        try:
-        #            self.aimless['DataCollectionRun']=logfile.split('/')[9].split('_')[1]
-        #        except IndexError:
-        #            pass
+        # only works if file is in original directory, but not once it moved to
+        # 'inital_model' folder
 
         if logfile.endswith(".log") or logfile.endswith(".table1"):
             self.aimless_logile(logfile)
         elif logfile.endswith(".json"):
             self.json_logfile(logfile)
-
-        # Hex Color code:
-        # red:      #FF0000
-        # orange:   #FF9900
-        # green:    #00FF00
-        # gray:     #E0E0E0
 
         if (
             self.aimless["DataProcessingA"] != "n/a"
@@ -902,7 +875,8 @@ class parse:
                     * high_symmetry_boost
                     * float(self.aimless["DataProcessingIsigOverall"])
                 ) / float(self.aimless["DataProcessingUnitCellVolume"])
-            # When P-6 was accidentally used self.aimless['DataProcessingPointGroup'] through a KeyError, so handling this
+            # When P-6 was accidentally used self.aimless['DataProcessingPointGroup']
+            # through a KeyError, so handling this
             except (ValueError, KeyError):
                 self.aimless["DataProcessingScore"] = 0.0
         self.aimless["DataProcessingUnitCell"] = (
@@ -950,11 +924,7 @@ class parse:
     def aimless_logile(self, logfile):
         resolution_at_15_sigma_line_overall_found = False
         resolution_at_20_sigma_line_overall_found = False
-        resolution_at_sigma_line_overall_found = False
         for line_number, line in enumerate(open(logfile)):
-            #            if 'Wavelength' in line:
-            #                print 'here'
-            #                print line.split()
             if "Wavelength" in line and len(line.split()) >= 2:
                 self.aimless["DataCollectionWavelength"] = line.split()[1]
             if "Low resolution limit" in line and len(line.split()) == 6:
@@ -1059,29 +1029,6 @@ class parse:
                 ] = self.get_pointgroup_from_space_group(
                     self.aimless["DataProcessingSpaceGroup"]
                 )
-            #                print a,b,c,alpha,beta,gamma,self.aimless['DataProcessingLattice']
-
-    #            if a != 'n/a' and b != 'n/a' and c != 'n/a' and \
-    #                    alpha != 'n/a' and beta != 'n/a' and gamma != 'n/a' and self.aimless[
-    #                'DataProcessingLattice'] != 'n/a':
-    #                self.aimless['DataProcessingUnitCellVolume'] = str(
-    #                    self.calc_unitcell_volume_from_logfile(float(a), float(b), float(c),
-    #                                                           math.radians(float(alpha)),
-    #                                                           math.radians(float(beta)),
-    #                                                           math.radians(float(gamma)),
-    #                                                           self.aimless['DataProcessingLattice']))
-    #                try:
-    #                    high_symmetry_boost = self.nr_asu_in_unitcell_for_point_group[
-    #                        self.aimless['DataProcessingPointGroup']]
-    #                    self.aimless['DataProcessingScore'] = (float(
-    #                        self.aimless['DataProcessingUniqueReflectionsOverall']) * float(self.aimless['DataProcessingCompletenessOverall']) * high_symmetry_boost * float(self.aimless['DataProcessingIsigOverall'])) / float(
-    #                        self.aimless['DataProcessingUnitCellVolume'])
-    #                except ValueError:
-    #                    self.aimless['DataProcessingScore'] = 0.0
-    #        self.aimless['DataProcessingUnitCell'] = str(a) + ' ' + str(b) + ' ' + str(c) + ' ' + str(alpha) + ' ' + str(
-    #            beta) + ' ' + str(gamma)
-    #        self.aimless['DataProcessingResolutionOverall'] = str(
-    #            self.aimless['DataProcessingResolutionLow']) + ' - ' + str(self.aimless['DataProcessingResolutionHigh'])
 
     def json_logfile(self, logfile):
         with open(logfile, "r") as log:
@@ -1155,7 +1102,6 @@ class parse:
         self.aimless["DataProcessingCChalfHigh"] = str(
             round(obj["cc_one_half"][len(obj["cc_one_half"]) - 1], 2)
         )
-        #        self.aimless['DataProcessingResolutionHigh15sigma'] =
 
         self.aimless["DataProcessingUniqueReflectionsLow"] = str(obj["n_uniq"][0])
         self.aimless["DataProcessingUniqueReflectionsHigh"] = str(
@@ -1165,10 +1111,6 @@ class parse:
         self.aimless["DataProcessingUniqueReflectionsOverall"] = str(
             obj["overall"]["n_obs"]
         )
-        #        self.aimless['DataProcessingPointGroup'] =
-        #        self.aimless['DataProcessingUnitCellVolume'] =
-        #        self.aimless['DataProcessingAlert'] =
-        #        self.aimless['DataProcessingScore'] =
         json_name = logfile[logfile.rfind("/") + 1 :]
         mmcif_file = logfile.replace("LogFiles", "DataFiles").replace(
             json_name, "xia2.mmcif"
@@ -1184,26 +1126,34 @@ class parse:
             "==============================================================\n"
             "\n"
             "<!--SUMMARY_BEGIN--> $TEXT:Result: $$ $$\n"
-            "Summary data for        Project: nt11175v63 Crystal: xPHIPAx17245 Dataset: SAD\n"
+            "Summary data for"
+            "        Project: nt11175v63"
+            " Crystal: xPHIPAx17245"
+            " Dataset: SAD\n"
             "\n"
-            "                                           Overall  InnerShell  OuterShell\n"
-            "Low resolution limit                       {0!s}     {1!s}     {2!s}\n".format(
+            "                                           "
+            "Overall  InnerShell  OuterShell\n"
+            "Low resolution limit"
+            "                       {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingResolutionLow"],
                 self.aimless["DataProcessingResolutionLow"],
                 self.aimless["DataProcessingResolutionHighOuterShell"],
             )
-            + "High resolution limit                      {0!s}     {1!s}     {2!s}\n".format(
+            + "High resolution limit"
+            "                      {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingResolutionHigh"],
                 self.aimless["DataProcessingResolutionLowInnerShell"],
                 self.aimless["DataProcessingResolutionHigh"],
             )
             + "\n"
-            "Rmerge  (within I+/I-)                     {0!s}     {1!s}     {2!s}\n".format(
+            "Rmerge  (within I+/I-)"
+            "                     {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingRmergeOverall"],
                 self.aimless["DataProcessingRmergeLow"],
                 self.aimless["DataProcessingRmergeHigh"],
             )
-            + "Rmerge  (all I+ and I-)                    {0!s}     {1!s}     {2!s}\n".format(
+            + "Rmerge  (all I+ and I-)"
+            "                    {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingRmergeOverall"],
                 self.aimless["DataProcessingRmergeLow"],
                 self.aimless["DataProcessingRmergeHigh"],
@@ -1214,27 +1164,32 @@ class parse:
             "Rpim (all I+ & I-)                            -         -         - \n"
             "Rmerge in top intensity bin                   -         -         - \n"
             "Total number of observations                  -         -         - \n"
-            "Total number unique                        {0!s}     {1!s}     {2!s}\n".format(
+            "Total number unique"
+            "                        {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingUniqueReflectionsOverall"],
                 self.aimless["DataProcessingUniqueReflectionsLow"],
                 self.aimless["DataProcessingUniqueReflectionsHigh"],
             )
-            + "Mean((I)/sd(I))                            {0!s}     {1!s}     {2!s}\n".format(
+            + "Mean((I)/sd(I))"
+            "                            {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingIsigOverall"],
                 self.aimless["DataProcessingIsigLow"],
                 self.aimless["DataProcessingIsigHigh"],
             )
-            + "Mn(I) half-set correlation CC(1/2)         {0!s}     {1!s}     {2!s}\n".format(
+            + "Mn(I) half-set correlation CC(1/2)"
+            "         {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingCChalfOverall"],
                 self.aimless["DataProcessingCChalfLow"],
                 self.aimless["DataProcessingCChalfHigh"],
             )
-            + "Completeness                               {0!s}     {1!s}     {2!s}\n".format(
+            + "Completeness"
+            "                               {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingCompletenessOverall"],
                 self.aimless["DataProcessingCompletenessLow"],
                 self.aimless["DataProcessingCompletenessHigh"],
             )
-            + "Multiplicity                               {0!s}     {1!s}     {2!s}\n".format(
+            + "Multiplicity"
+            "                               {0!s}     {1!s}     {2!s}\n".format(
                 self.aimless["DataProcessingMultiplicityOverall"],
                 self.aimless["DataProcessingMultiplicityLow"],
                 self.aimless["DataProcessingMultiplicityHigh"],
@@ -1310,7 +1265,6 @@ class parse:
         return pointgroup
 
     def calc_unitcell_volume_from_logfile(self, a, b, c, alpha, beta, gamma, lattice):
-        #        print '>>>',a,b,c,alpha,beta,gamma,lattice
         unitcell_volume = 0
         if lattice == "triclinic":
             unitcell_volume = (
@@ -1327,8 +1281,6 @@ class parse:
                     + 2 * (math.cos(alpha) * math.cos(beta) * math.cos(gamma))
                 )
             )
-        #            print 'unit cell volume',unitcell_volume
-        #        if lattice=='monoclinic':
         if "monoclinic" in lattice:
             unitcell_volume = round(a * b * c * math.sin(beta), 1)
         if lattice == "orthorhombic" or lattice == "tetragonal" or lattice == "cubic":
@@ -1336,12 +1288,6 @@ class parse:
         if lattice == "hexagonal" or lattice == "rhombohedral":
             unitcell_volume = round(a * b * c * (math.sin(math.radians(60))), 1)
         return unitcell_volume
-
-    #    def get_all_values_as_dict(self):
-    #        info = {    'unitcell':         'n/a',
-    #                    'spacegroup':       'n/a',
-    #                    'unitcell_volume':  'n/a',
-    #                    'bravais_lattice':  'n/a'   }
 
     def PDBheader(self, pdbfile):
         PDBinfo = {
@@ -1468,7 +1414,7 @@ class parse:
                         + " "
                         + line.split()[6]
                     )
-                    #                    PDBinfo['SpaceGroup']=line[55:len(line)-1].replace(' ','').rstrip('\r')
+
                     PDBinfo["SpaceGroup"] = str(line[55:65]).rstrip()
 
                     PDBinfo["Lattice"] = self.get_lattice_from_space_group(
@@ -1594,7 +1540,6 @@ class mtztools:
 
         self.space_group_dict = {
             "triclinic": [1],
-            #                                    'monoclinic':   [3,4,5],
             "monoclinic_P": [3, 4],
             "monoclinic_C": [5],
             "orthorhombic": [16, 17, 18, 19, 20, 21, 22, 23, 24],
@@ -1750,7 +1695,6 @@ class mtztools:
 
         self.aimless = {
             "DataProcessingProgram": "n/a",
-            #                            'DataCollectionRun':                            'n/a',
             "DataProcessingSpaceGroup": "n/a",
             "DataProcessingUnitCell": "n/a",
             "DataProcessingA": "n/a",
@@ -1832,7 +1776,6 @@ class mtztools:
         return pointgroup
 
     def get_unit_cell_from_mtz(self):
-        unitcell = []
         cell_line = 100000
         a = 0
         b = 0
@@ -1941,12 +1884,12 @@ class mtztools:
         missing_reflections = "0"
         all_reflections = "0"
         meassured_reflections = "0"
-        resolution_line = 1000000
         mtzdmp = subprocess.Popen(["mtzdmp", self.mtzfile], stdout=subprocess.PIPE)
         foundTable = False
         for n, line in enumerate(iter(mtzdmp.stdout.readline, "")):
             if line.startswith(
-                " Col Sort    Min    Max    Num      %     Mean     Mean   Resolution   Type Column"
+                " Col Sort    Min    Max    Num      %"
+                "     Mean     Mean   Resolution   Type Column"
             ):
                 foundTable = True
             if foundTable and len(line.split()) == 12:
@@ -1965,10 +1908,6 @@ class mtztools:
     def calculate_correlaton_between_intensities_in_mtzfiles(self, mtzin):
         CC = "0.0"
         errorMessage = ""
-        #        cmd = ( 'pointless hklin %s hklref %s << eof\n' %(mtzin,self.mtzfile)+
-        #                'labref F=F\n'
-        #                'labin F=F\n'
-        #                'eof\n' )
         cmd = (
             "pointless hklin %s hklref %s << eof\n" % (mtzin, self.mtzfile)
             + "labref I=IMEAN\n"
@@ -1988,8 +1927,8 @@ class mtztools:
                 errorMessage = "**** Incompatible symmetries ****"
                 break
             if (
-                "Merged test dataset (HKLIN) has different Laue symmetry to reference set"
-                in line
+                "Merged test dataset (HKLIN)"
+                " has different Laue symmetry to reference set" in line
             ):
                 errorMessage = "%s has different Laue symmetry to %s" % (
                     mtzin,
@@ -2068,7 +2007,6 @@ class mtztools:
                     * (math.cos(alpha_rad) * math.cos(beta_rad) * math.cos(gamma_rad))
                 )
             )
-        #        elif mtz['bravais_lattice']=='monoclinic':
         elif "monoclinic" in mtz["bravais_lattice"]:
             mtz["unitcell_volume"] = round(a * b * c * math.sin(beta_rad), 1)
         elif (
@@ -2144,204 +2082,93 @@ class external_software:
         self.available_programs = {}
         self.Logfile = XChemLog.updateLog(xce_logfile)
 
-    def check(self):
+    @staticmethod
+    def is_available(program):
+        try:
+            devnull = open(os.devnull, "w")
+            subprocess.Popen(program, stdout=devnull, stderr=devnull).communicate()
+            return True
+        except OSError as e:
+            if e.errno == os.errno.ENOENT:
+                return False
 
+    def log_found_status(self, program_name):
+        self.Logfile.insert(
+            "{0:50} {1:10}".format(
+                "checking for {}:".format(program_name),
+                "found" if self.available_programs[program_name] else "not found",
+            )
+        )
+
+    def check(self):
         self.Logfile.insert("Searching for external software...")
 
         # default is False; user needs to explicitely set this
-        self.available_programs["qsub_remote"] = ""
+        self.available_programs["qsub_remote"] = False
 
-        FNULL = open(os.devnull, "w")
-
-        try:
-            #            subprocess.call(['qstat'], stdout=FNULL, stderr=subprocess.STDOUT)
-            p = subprocess.Popen(
-                "qstat",
-                shell=True,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                close_fds=True,
-            )
-            status = "found"
-            try:
-                for line in p.stdout:
-                    if (
-                        "symbol lookup error:" in line
-                        or "command not found" in line
-                        or "error" in line
-                    ):
-                        self.available_programs["qsub"] = False
-                        self.available_programs["qsub_array"] = False
-                        status = "not found"
-                        array_status = "not found"
-            except IOError:
-                self.available_programs["qsub"] = False
-                self.available_programs["qsub_array"] = False
-                status = "not found"
-                array_status = "not found"
-
-            if status == "found":
-                self.available_programs["qsub"] = True
-                #                if os.getcwd().startswith('/dls'):
-                if os.path.isdir("/dls"):
-                    self.available_programs["qsub_array"] = True
-                    array_status = "found"
-                else:
-                    self.available_programs["qsub_array"] = False
-                    array_status = "not found"
-        except OSError:
-            self.available_programs["qsub"] = False
-            self.available_programs["qsub_array"] = False
-            status = "not found"
-            array_status = "not found"
-        self.Logfile.insert("{0:50} {1:10}".format("checking for qsub:", status))
-        #        print '{0:50} {1:10}'.format('-checking for qsub:', status)
-        #        if os.getcwd().startswith('/dls'):
-        if os.path.isdir("/dls"):
-            self.Logfile.insert(
-                "{0:50} {1:10}".format("checking for array qsub:", array_status)
-            )
-
-        try:
-            subprocess.call(["refmac5", "end"], stdout=FNULL, stderr=subprocess.STDOUT)
-            self.available_programs["refmac5"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["refmac5"] = False
-            status = "not found"
-        self.Logfile.insert("{0:50} {1:10}".format("checking for refmac5:", status))
-
-        try:
-            subprocess.call(
-                ["phenix.molprobity"], stdout=FNULL, stderr=subprocess.STDOUT
-            )
-            self.available_programs["phenix.molprobity"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["phenix.molprobity"] = False
-            status = "not found"
-        self.Logfile.insert(
-            "{0:50} {1:10}".format("checking for phenix.molprobity:", status)
+        self.available_programs["qsub"] = True if self.is_available("qsub") else False
+        self.available_programs["qsub_array"] = (
+            True if self.is_available("qsub") else False
         )
+        self.log_found_status("qsub")
+        self.log_found_status("qsub_array")
 
-        try:
-            subprocess.call(
-                ["phenix.find_tls_groups"], stdout=FNULL, stderr=subprocess.STDOUT
-            )
-            self.available_programs["phenix.find_tls_groups"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["phenix.find_tls_groups"] = False
-            status = "not found"
-        self.Logfile.insert(
-            "{0:50} {1:10}".format("checking for phenix.find_tls_groups:", status)
+        self.available_programs["refmac5"] = (
+            True if self.is_available(["refmac5", "end"]) else False
         )
+        self.log_found_status("refmac5")
 
-        try:
-            subprocess.call(
-                ["mmtbx.validate_ligands"], stdout=FNULL, stderr=subprocess.STDOUT
-            )
-            self.available_programs["mmtbx.validate_ligands"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["mmtbx.validate_ligands"] = False
-            status = "not found"
-        self.Logfile.insert(
-            "{0:50} {1:10}".format("checking for mmtbx.validate_ligands:", status)
+        self.available_programs["phenix.molprobity"] = (
+            True if self.is_available("phenix.molprobity") else False
         )
+        self.log_found_status("phenix.molprobity")
 
-        try:
-            subprocess.call(["acedrg"], stdout=FNULL, stderr=subprocess.STDOUT)
-            self.available_programs["acedrg"] = True
-            shutil.rmtree("AcedrgOut_TMP")
-            status = "found"
-        except OSError:
-            self.available_programs["acedrg"] = False
-            status = "not found"
-        self.Logfile.insert("{0:50} {1:10}".format("checking for acedrg:", status))
-
-        try:
-            subprocess.call(["phenix.elbow"], stdout=FNULL, stderr=subprocess.STDOUT)
-            self.available_programs["phenix.elbow"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["phenix.elbow"] = False
-            status = "not found"
-        self.Logfile.insert(
-            "{0:50} {1:10}".format("checking for phenix.elbow:", status)
+        self.available_programs["phenix.find_tls_groups"] = (
+            True if self.is_available("phenix.find_tls_groups") else False
         )
+        self.log_found_status("phenix.find_tls_groups")
 
-        try:
-            subprocess.call(["grade"], stdout=FNULL, stderr=subprocess.STDOUT)
-            self.available_programs["grade"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["grade"] = False
-            status = "not found"
-        self.Logfile.insert("{0:50} {1:10}".format("checking for grade:", status))
-
-        try:
-            subprocess.call(
-                ["giant.create_occupancy_params"],
-                stdout=FNULL,
-                stderr=subprocess.STDOUT,
-            )
-            self.available_programs["giant.create_occupancy_params"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["giant.create_occupancy_params"] = False
-            status = "not found"
-        self.Logfile.insert(
-            "{0:50} {1:10}".format(
-                "checking for giant.create_occupancy_params:", status
-            )
+        self.available_programs["mmtbx.validate_ligands"] = (
+            True if self.is_available("mmtbx.validate_ligands") else False
         )
+        self.log_found_status("mmtbx.validate_ligands")
 
-        self.Logfile.insert("checking if MOGUL is configured...")
-        self.available_programs["mogul"] = False
-        if "BDG_TOOL_MOGUL" in os.environ:
-            self.Logfile.insert(
-                "BDG_TOOL_MOGUL is set to " + os.environ["BDG_TOOL_MOGUL"]
-            )
-            if str(os.environ["BDG_TOOL_MOGUL"]).lower() == "none":
-                self.Logfile.warning("BDG_TOOL_MOGUL is not properly configured!")
-                self.Logfile.hint(
-                    'try adding "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul" to your .bashrc file'
-                )
-            else:
-                if os.path.isfile(os.getenv("BDG_TOOL_MOGUL")):
-                    self.available_programs["mogul"] = True
-                    status = "found"
-                else:
-                    status = "not found"
-                    self.Logfile.hint(
-                        'try adding "export PATH=/dls_sw/apps/ccdc/CSD_2020/bin:$PATH" to your .bashrc file'
-                    )
-        else:
-            self.Logfile.warning("BDG_TOOL_MOGUL is not set!")
-            self.Logfile.hint(
-                'try adding "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul" to your .bashrc file'
-            )
-            status = "not found"
-        self.Logfile.insert("{0:50} {1:10}".format("checking for mogul:", status))
+        self.available_programs["acedrg"] = (
+            True if self.is_available(["acedrg", "-h"]) else False
+        )
+        self.log_found_status("acedrg")
 
-        try:
-            subprocess.call(["gemmi"], stdout=FNULL, stderr=subprocess.STDOUT)
-            self.available_programs["gemmi"] = True
-            status = "found"
-        except OSError:
-            self.available_programs["gemmi"] = False
-            status = "not found"
-        self.Logfile.insert("{0:50} {1:10}".format("checking for gemmi:", status))
+        self.available_programs["phenix.elbow"] = (
+            True if self.is_available("phenix.elbow") else False
+        )
+        self.log_found_status("phenix.elbow")
+
+        self.available_programs["grade"] = True if self.is_available("grade") else False
+        self.log_found_status("grade")
+
+        self.available_programs["giant.create_occupancy_params"] = (
+            True if self.is_available("giant.create_occupancy_params") else False
+        )
+        self.log_found_status("giant.create_occupancy_params")
+
+        self.available_programs["mogul"] = (
+            True
+            if "BDG_TOOL_MOGUL" in os.environ
+            and self.is_available(os.environ["BDG_TOOL_MOGUL"])
+            else False
+        )
+        self.log_found_status("mogul")
+
+        self.available_programs["gemmi"] = True if self.is_available("gemmi") else False
+        self.log_found_status("gemmi")
 
         return self.available_programs
 
 
 class ParseFiles:
     def __init__(self, DataPath, xtalID):
-        # probably need to read in compoundID, because for custom projects, need to take newest pdb file
-        # that has not same root as compoundID
+        # probably need to read in compoundID, because for custom projects
+        # need to take newest pdb file that has not same root as compoundID
         self.DataPath = DataPath
         self.xtalID = xtalID
 
@@ -2426,8 +2253,6 @@ class ParseFiles:
             for line in open(
                 self.DataPath + "/" + self.xtalID + "/validation_summary.txt"
             ):
-                #                if line.startswith('  Molprobity score      ='):
-                #                if line.lower().startswith('  molprobity score'):
                 if "molprobity score" in line.lower():
                     if len(line.split()) >= 4:
                         QualityIndicators["MolprobityScore"] = line.split()[3]
@@ -2440,7 +2265,6 @@ class ParseFiles:
                                 QualityIndicators["MolprobityScoreColor"] = "red"
                         except ValueError:
                             pass
-                #                if line.lower().startswith('  ramachandran outliers ='):
                 if "ramachandran outliers" in line.lower():
                     if len(line.split()) >= 4:
                         QualityIndicators["RamachandranOutliers"] = line.split()[3]
@@ -2455,7 +2279,6 @@ class ParseFiles:
                                 QualityIndicators["RamachandranOutliersColor"] = "red"
                         except ValueError:
                             pass
-                #                if line.startswith('               favored  ='):
                 if "favored" in line.lower():
                     if len(line.split()) >= 3:
                         QualityIndicators["RamachandranFavored"] = line.split()[2]
@@ -2474,7 +2297,6 @@ class ParseFiles:
             for line in open(
                 self.DataPath + "/" + self.xtalID + "/validate_ligands.txt"
             ):
-                #                if line.startswith('|  LIG'):
                 if "LIG" in line:
                     QualityIndicators["LigandCC"] = line.split()[6]
                     if float(line.split()[6]) < 0.8:
@@ -2571,7 +2393,6 @@ class pdbtools(object):
 
         self.space_group_dict = {
             "triclinic": [1],
-            #                                    'monoclinic':   [3,4,5],
             "monoclinic_P": [3, 4],
             "monoclinic_C": [5],
             "orthorhombic": [16, 17, 18, 19, 20, 21, 22, 23, 24],
@@ -2757,7 +2578,6 @@ class pdbtools(object):
                                 )
         return ligands
 
-    #    def get_centre_of_gravity_of_residue(self,resname_resseq_chain):
     def get_centre_of_gravity_of_residue(self, resname_chain_resseq):
         resname_x = resname_chain_resseq.split("-")[0]
         chain_x = resname_chain_resseq.split("-")[1]
@@ -2789,15 +2609,16 @@ class pdbtools(object):
     def save_residues_with_resname(self, outDir, resname):
         ligands = self.get_residues_with_resname(resname)
         ligList = []
-        for l in ligands:
+        for ligand in ligands:
             sel_cache = self.hierarchy.atom_selection_cache()
             lig_sel = sel_cache.selection(
-                "(resname %s and resseq %s and chain %s)" % (l[0], l[1], l[2])
+                "(resname %s and resseq %s and chain %s)"
+                % (ligand[0], ligand[1], ligand[2])
             )
             hierarchy_lig = self.hierarchy.select(lig_sel)
-
-            #            ligName = (l[0] + '-' + l[1] + '-' + l[2] + '.pdb').replace(' ', '')
-            ligName = (l[0] + "-" + l[2] + "-" + l[1] + ".pdb").replace(" ", "")
+            ligName = (ligand[0] + "-" + ligand[2] + "-" + ligand[1] + ".pdb").replace(
+                " ", ""
+            )
             ligList.append(ligName)
 
             try:
@@ -2854,7 +2675,6 @@ class pdbtools(object):
         return chain
 
     def GetSymm(self):
-        unitcell = []
         a = ""
         b = ""
         c = ""
@@ -2870,7 +2690,6 @@ class pdbtools(object):
                 alpha = line.split()[4]
                 beta = line.split()[5]
                 gamma = line.split()[6]
-                #                spg=line[55:len(line)-1]
                 spg = line[55:65]
         return [a, b, c, alpha, beta, gamma, spg]
 
@@ -2944,7 +2763,6 @@ class pdbtools(object):
                     + 2 * (math.cos(alpha) * math.cos(beta) * math.cos(gamma))
                 )
             )
-        #        if lattice=='monoclinic':
         if "monoclinic" in lattice:
             unitcell_volume = round(a * b * c * math.sin(beta), 1)
         if lattice == "orthorhombic" or lattice == "tetragonal" or lattice == "cubic":
@@ -3001,8 +2819,6 @@ class pdbtools(object):
 
     def find_ligands(self):
         Ligands = []
-        # need to count residue numbers in case of alternative conformations
-        ResiNum = []
         for line in open(self.pdb):
             if (line.startswith("ATOM") or line.startswith("HETATM")) and line[
                 17:20
@@ -3214,7 +3030,8 @@ class pdbtools(object):
                 errorText += (
                     "ERROR: "
                     + item
-                    + " -> summarised occupanies of alternative conformations are > 1.0 ("
+                    + " -> summarised occupanies of alternative conformations"
+                    + "are > 1.0 ("
                     + str(occupancySumList)
                     + ")\n"
                 )
@@ -3225,7 +3042,8 @@ class pdbtools(object):
         X = 0.0
         Y = 0.0
         Z = 0.0
-        # pdb definition see: http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
+        # pdb definition see:
+        # http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
         for line in open(self.pdb):
             if (
                 (line.startswith("ATOM") or line.startswith("HETATM"))
@@ -3247,9 +3065,9 @@ class pdbtools(object):
         x_list = []
         y_list = []
         z_list = []
-        # pdb definition see: http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
+        # pdb definition see:
+        # http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
         for line in open(self.pdb):
-            #            print line[21:22],line[22:26]
             if (
                 (line.startswith("ATOM") or line.startswith("HETATM"))
                 and line[21:22].replace(" ", "") == chain.replace(" ", "")
@@ -3261,7 +3079,8 @@ class pdbtools(object):
                 y_list.append(Y)
                 Z = float(line[46:54])
                 z_list.append(Z)
-        # 'ish' because it's not really the centre of gravity, but the the middle of the min/max of each x,y,z
+        # 'ish' because it's not really the centre of gravity
+        # but the the middle of the min/max of each x,y,z
         X = ((max(x_list) - min(x_list)) / 2) + min(x_list)
         Y = ((max(y_list) - min(y_list)) / 2) + min(y_list)
         Z = ((max(z_list) - min(z_list)) / 2) + min(z_list)
@@ -3274,7 +3093,8 @@ class pdbtools(object):
         x_list = []
         y_list = []
         z_list = []
-        # pdb definition see: http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
+        # pdb definition see:
+        # http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
         for line in open(self.pdb):
             if line.startswith("ATOM") or line.startswith("HETATM"):
                 X = float(line[30:38])
@@ -3283,7 +3103,8 @@ class pdbtools(object):
                 y_list.append(Y)
                 Z = float(line[46:54])
                 z_list.append(Z)
-        # 'ish' because it's not really the centre of gravity, but the the middle of the min/max of each x,y,z
+        # 'ish' because it's not really the centre of gravity
+        # but the the middle of the min/max of each x,y,z
         X = ((max(x_list) - min(x_list)) / 2) + min(x_list)
         Y = ((max(y_list) - min(y_list)) / 2) + min(y_list)
         Z = ((max(z_list) - min(z_list)) / 2) + min(z_list)
@@ -3322,7 +3143,6 @@ class pdbtools(object):
 
         for line in open(self.pdb):
             if line.startswith("ATOM") or line.startswith("HETATM"):
-                atom_line = str(line[12:16]).replace(" ", "")
                 resname_line = str(line[17:20]).replace(" ", "")
                 chainID_line = str(line[21:23]).replace(" ", "")
                 resseq_line = str(line[23:26]).replace(" ", "")
@@ -3429,7 +3249,8 @@ class pdbtools(object):
     def merge_pdb_file(self, pdbin):
         outPDB = ""
 
-        # only merge if residue with same resname, chain and resnumber not already in self.pdb!!!
+        # only merge if residue with same resname
+        # chain and resnumber not already in self.pdb!!!
         residueListReference = self.residue_details_as_list(self.pdb)
         residueListPDBin = self.residue_details_as_list(pdbin)
         DuplicateResidue = False
@@ -3459,14 +3280,11 @@ class pdbtools(object):
     def get_symmetry_operators(self):
         symop = []
         spg_number = str(self.get_spg_number_from_pdb())
-        #        print 'spg',spg_number
         foundSPG = False
         if os.path.isfile(os.path.join(os.getenv("CCP4"), "lib", "data", "symop.lib")):
-            #            print 'a',os.path.join(os.getenv('CCP4'),'lib','data','symop.lib')
             for line in open(
                 os.path.join(os.getenv("CCP4"), "lib", "data", "symop.lib")
             ):
-                #                print line.split()[0]
                 if foundSPG:
                     if line.startswith(" "):
                         tmp = line.replace("\n", "")
@@ -3660,7 +3478,6 @@ class logtools:
                                 QualityIndicators["MolprobityScoreColor"] = "red"
                         except ValueError:
                             pass
-                #                if line.lower().startswith('  ramachandran outliers ='):
                 if "ramachandran outliers" in line.lower():
                     if len(line.split()) >= 4:
                         QualityIndicators["RamachandranOutliers"] = line.split()[3]
@@ -3675,7 +3492,6 @@ class logtools:
                                 QualityIndicators["RamachandranOutliersColor"] = "red"
                         except ValueError:
                             pass
-                #                if line.startswith('               favored  ='):
                 if "favored" in line.lower():
                     if len(line.split()) == 4:
                         QualityIndicators["RamachandranFavored"] = line.split()[2]
@@ -3708,8 +3524,6 @@ class reference:
         self.sample_mtz = sample_mtz
         self.reference_file_list = reference_file_list
 
-    #        print reference_file_list
-
     def find_suitable_reference(self, allowed_unitcell_difference_percent):
         found_suitable_reference = False
         unitcell_reference = "n/a"
@@ -3728,7 +3542,6 @@ class reference:
             unitcell_volume_autoproc = mtz_autoproc["unitcell_volume"]
             # check which reference file is most similar
             for o, reference_file in enumerate(self.reference_file_list):
-                #                print reference_file
                 try:
                     if not reference_file[4] == 0:
                         unitcell_difference = round(
@@ -3739,7 +3552,7 @@ class reference:
                             * 100,
                             1,
                         )
-                        # reference file is accepted when different in unitcell volume < 5%
+                        # reference file accepted when diff in unitcell volume < 5%
                         # and both files have the same lattice type
                         if (
                             unitcell_difference < allowed_unitcell_difference_percent
@@ -3766,7 +3579,6 @@ class reference:
 
 class misc:
     def calculate_distance_between_coordinates(self, x1, y1, z1, x2, y2, z2):
-        #        print '==> XCE: calculating distance between two coordinates'
         distance = 0.0
         distance = math.sqrt(
             math.pow(float(x1) - float(x2), 2)
@@ -3810,8 +3622,6 @@ class maptools(object):
         )
         os.system(cmd)
 
-    #        print(cmd)
-
     def cut_map_around_ligand(self, map, ligPDB, border):
         if map.endswith(".map"):
             map_extension = ".map"
@@ -3830,69 +3640,14 @@ class maptools(object):
         os.system(cmd)
 
 
-#        print(cmd)
-
-#        self.translate_spg_to_number_dict = {
-#            'p1': 1, 'p2': 3, 'p121': 4, 'c2': 5, 'c121': 5, 'p222': 16,
-#            'p2122': 17, 'p2212': 17, 'p2221': 17, 'p21212': 18, 'p21221': 18, 'p22121': 18,
-#            'p212121': 19, 'c2221': 20, 'c222': 21, 'f222': 22, 'i222': 23, 'i212121': 24,
-#            'p4': 75, 'p41': 76, 'p42': 77, 'p43': 78, 'i4': 79, 'i41': 80,
-#            'p422': 89, 'p4212': 90, 'p4122': 91, 'p41212': 92, 'p4222': 93, 'p42212': 94,
-#            'p4322': 95, 'p43212': 96, 'i422': 97, 'i4122': 98,
-#            'p3': 143, 'p31': 144, 'p32': 145, 'p312': 149, 'p321': 150, 'p3112': 151, 'p3121': 152,
-#            'p3212': 153, 'p3221': 154, 'p6': 168, 'p61': 169, 'p65': 170, 'p62': 171, 'p64': 172, 'p63': 173,
-#            'p622': 177, 'p6122': 178, 'p6522': 179, 'p6222': 180, 'p6422': 181, 'p6322': 182,
-#            'r3': 146, 'h3': 146, 'r32': 155, 'h32': 155,
-#            'p23': 195, 'f23': 196, 'i23': 197, 'p213': 198, 'i213': 199,
-#            'p432': 207, 'p4232': 208, 'f432': 209, 'f4132': 210, 'i432': 211, 'p4332': 212,
-#            'p4132': 213, 'i4132': 214        }
-#
-#        self.map=map
-#        cmd = ( 'mapdump mapin {0!s} << eof\n'.format(self.map)+
-#                'end\n'
-#                'eof'   )
-#        mapdump=subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE)
-#        self.grid_sampling=[0,0,0]
-#        self.cell_dimensions=[]
-#        self.space_group_number=0
-#        for line in iter(mapdump.stdout.readline,''):
-#            if 'Grid sampling on x, y, z' in line:
-#                if len(line.split()) == 10:
-#                    self.grid_sampling=[line.split()[7],line.split()[8],line.split()[9]]
-#            if 'Cell dimensions' in line:
-#                if len(line.split()) == 9:
-#                    self.cell_dimensions=[line.split()[3],line.split()[4],line.split()[5],line.split()[6],line.split()[7],line.split()[8]]
-#            if 'Space-group' in line:
-#                if len(line.split()) == 3:
-#                    self.space_group_number=line.split()[2]
-#
-#    def grid_sampling(self):
-#        return self.grid_sampling
-#
-#    def cell_dimensions(self):
-#        return self.cell_dimensions
-#
-#    def space_group_number(self):
-#        return self.space_group_number
-#
-#    def space_group(self):
-#        space_group=''
-#        space_group_number=self.space_group_number
-#        for spg in self.translate_spg_to_number_dict:
-#            if str(self.translate_spg_to_number_dict[spg]) == str(space_group_number):
-#                space_group=str(spg)
-#        return space_group
-#
-
-
 class mtztools_gemmi:
     def __init__(self, mtz):
         self.mtz = gemmi.read_mtz_file(mtz)
 
     def get_map_labels(self):
         labelList = []
-        for l in self.mtz.columns:
-            labelList.append(l.label)
+        for column in self.mtz.columns:
+            labelList.append(column.label)
         FWT = None
         PHWT = None
         DELFWT = None
@@ -3954,7 +3709,6 @@ class maptools_gemmi:
                         + self.emap[self.emap.find("BDC") + 4 :].find("_")
                     ]
                 ]
-        #            mtz.write_to_file(self.emtz)
         else:
             print("failed to convert event map to SF")
 
