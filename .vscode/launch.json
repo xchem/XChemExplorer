@@ -8,7 +8,7 @@
             "name": "XCE",
             "type": "python",
             "request": "launch",
-            "module": "XChemExplorer",
+            "module": "xce",
             "justMyCode": true
         }
     ]
