@@ -70,13 +70,6 @@ class run_xia2(QtCore.QThread):
             if os.getcwd().startswith("/dls"):
                 script += "module load ccp4/7.1.018\n"
                 script += "module load XDS\n"
-            #                script += 'module load phenix\n'
-
-            # 2018-09-19 - removed this for Joe's test
-            #                script += 'module load ccp4\n'
-            #                script += 'module load XDS\n'
-            #                script += 'module load ccp4 xia2\n'
-            #                print 'hallo'
 
             if not self.spg:
                 spg_option = ""
@@ -114,10 +107,6 @@ class run_xia2(QtCore.QThread):
                 os.path.join(self.initial_model_directory, xtal, "processed")
             ):
                 os.mkdir(os.path.join(self.initial_model_directory, xtal, "processed"))
-            # 2018-09-19 - disabled this for Joe's test
-            #            if os.path.isfile(os.path.join(self.initial_model_directory,xtal,'processed','run_in_progress')):
-            #                self.Logfile.insert('data processing is in progress; skipping...')
-            #                continue
             f = True
             if f:
                 print("hallo")
@@ -238,8 +227,6 @@ class run_xia2(QtCore.QThread):
                         )
                     )
 
-                    # 2018-09-19 - changed this for Joe's test
-                    #                    script+='$CCP4/bin/xia2 pipeline='+pipeline+' '+ref_option+' '+spg_option+' '+reso_limit_option+' '+cc_half_option+' '+image_dir+'\n'
                     script += (
                         "xia2 pipeline="
                         + pipeline
@@ -307,13 +294,14 @@ class run_xia2(QtCore.QThread):
                     )
                 )
                 os.system(
-                    "qsub -P labxchem -q medium.q -N xia2 -t 1:{0!s} -tc {1!s} xia2_master.sh".format(
-                        str(i + 1), self.max_queue_jobs
-                    )
+                    "qsub -P labxchem -q medium.q -N xia2 -t 1:{0!s} -tc {1!s}"
+                    " xia2_master.sh".format(str(i + 1), self.max_queue_jobs)
                 )
             else:
                 self.Logfile.insert(
-                    "cannot start ARRAY job: make sure that 'module load global/cluster' is in your .bashrc or .cshrc file"
+                    "cannot start ARRAY job: make sure that"
+                    " 'module load global/cluster'"
+                    " is in your .bashrc or .cshrc file"
                 )
         elif self.external_software["qsub"]:
             self.Logfile.insert(
@@ -332,48 +320,3 @@ class run_xia2(QtCore.QThread):
             for n in range(i + 1):
                 self.Logfile.insert("starting xce_xia2_{0!s}.sh".format((str(n + 1))))
                 os.system("./xce_xia2_{0!s}.sh".format((str(n + 1))))
-
-
-#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal)):
-#                os.mkdir(os.path.join(self.initial_model_directory,xtal))
-#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'autoprocessing')):
-#                os.mkdir(os.path.join(self.initial_model_directory,xtal,'autoprocessing'))
-#
-#
-#
-#
-#            if not os.path.isdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc)):
-#                os.mkdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
-#            os.chdir(os.path.join(self.initial_model_directory,xtal,'dimple',visit_run_autoproc))
-#            os.system('touch dimple_run_in_progress')
-
-
-#        header='#!'+os.getenv('SHELL')+'\n'
-#        if external_software['qsub']:
-#            if not external_software['qsub_array']:
-#                header='#PBS -joe -N xce_acedrg\n'
-#
-#        Cmds = (
-#                    header+
-#                    '\n'
-#                    'export XChemExplorer_DIR="'+os.getenv('XChemExplorer_DIR')+'"\n'
-#                    '\n'
-#                    'source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n'
-#                    '\n'
-#                    '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','create_png_of_compound.py')+
-#                    ' "%s" %s %s %s\n' %(smiles,compoundID.replace(' ',''),sample,initial_model_directory)+
-#                    '\n'
-#                    'cd '+os.path.join(initial_model_directory,sample,'compound')+'\n'
-#                    '\n'
-#                    'acedrg --res LIG -i "%s" -o %s\n' %(smiles,compoundID.replace(' ',''))+
-#                    '\n'
-#                    'cd '+os.path.join(initial_model_directory,sample)+'\n'
-#                    '\n'
-#                    'ln -s compound/%s.cif .\n' %compoundID.replace(' ','')+
-#                    'ln -s compound/%s.pdb .\n' %compoundID.replace(' ','')+
-#                    'ln -s compound/%s.png .\n' %compoundID.replace(' ','')+
-#                    '\n'
-#                    '$CCP4/bin/ccp4-python '+os.path.join(os.getenv('XChemExplorer_DIR'),'helpers','update_data_source_for_new_cif_files.py')+
-#                    ' %s %s %s %s\n' %(os.path.join(database_directory,data_source_file),sample,initial_model_directory,compoundID.replace(' ','') )+
-#                    '\n'
-#                    '/bin/rm compound/ACEDRG_IN_PROGRESS\n'
