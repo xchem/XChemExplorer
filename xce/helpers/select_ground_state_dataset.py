@@ -19,7 +19,6 @@ def find_highest_resolution_datasets(panddaDir):
                 line.startswith("Statistical Electron Density Characterisation")
                 and len(line.split()) == 6
             ):
-                resolution = line.split()[5]
                 found = True
                 foundLine = n
             if found and n >= foundLine + 3:
