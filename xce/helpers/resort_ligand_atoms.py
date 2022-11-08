@@ -49,7 +49,6 @@ def resort_ligand_atoms_in_refined_model(refinedModel, ensembleLIGdir):
     out = ""
     refineLIGDir = {}
     LIGlineAdditional = ""
-    LIGlist = []
     for line in open(refinedModel):
         if line.startswith("ATOM") or line.startswith("HETATM"):
             altLoc_line = str(line[16:17])
@@ -83,7 +82,7 @@ def resort_ligand_atoms_in_refined_model(refinedModel, ensembleLIGdir):
             atomName = atomLine[0]
             for line in refineLIGDir[ligand]:
                 atomName_line = str(line[11:16])
-                if atomName_line == atom:
+                if atomName_line == atomName:
                     LIGline += line
                     break
 
