@@ -17,11 +17,11 @@ class LayoutObjects:
 
     # function to initialise the top menu bar
     def initialise_menu_bar(self, xce_object):
-        ################################################################################################################
-        #                                                                                                              #
-        #                                              MENU BAR - TOP OF GUI                                           #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                             MENU BAR - TOP OF GUI                            #
+        #                                                                              #
+        ################################################################################
 
         # initiate menu widget
         menu_bar = QtGui.QMenuBar()
@@ -34,13 +34,8 @@ class LayoutObjects:
             xce_object, menu_bar, xce_object.menu_dict
         )
 
-        # END OF MENU BAR - CODE BELOW: stuff removed from apo structure stuff that appears might have a funky
-        # consequence - work out later.
-
-        # xce_object.prepare_mmcif_files_dict = {}
-        # xce_object.prepare_mmcif_files_dict['apo'] = prepare_mmcif_files_for_apo_structures
-        # xce_object.prepare_mmcif_files_dict['ligand_bound'] = prepare_mmcif_files_for_ligand_bound_structures
-
+        # END OF MENU BAR - CODE BELOW: stuff removed from apo structure stuff that
+        # appears might have a funky consequence - work out later.
         return menu_bar
 
     # function containing setup for bottom boxes
@@ -56,11 +51,11 @@ class LayoutObjects:
             xce_object, xce_object.datasource_button_dict
         )
 
-        ################################################################################################################
-        #                                                                                                              #
-        #                                               DATASETS BOX                                                   #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                                 DATASETS BOX                                 #
+        #                                                                              #
+        ################################################################################
 
         # setup the run button with push button function
         xce_object.dataset_task_run_button = self.layout_funcs.setup_push_button(
@@ -105,11 +100,11 @@ class LayoutObjects:
             xce_object.dataset_task_status_button,
         ]
 
-        ################################################################################################################
-        #                                                                                                              #
-        #                                            MAPS & RESTRAINTS BOX                                             #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                             MAPS & RESTRAINTS BOX                            #
+        #                                                                              #
+        ################################################################################
         # settings for the run button
 
         # setup the run button with push button function
@@ -157,11 +152,11 @@ class LayoutObjects:
             xce_object.map_cif_file_task_status_button,
         ]
 
-        ################################################################################################################
-        #                                                                                                              #
-        #                                               HIT IDENTIFICATION BOX                                         #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                            HIT IDENTIFICATION BOX                            #
+        #                                                                              #
+        ################################################################################
         # settings for the run button
 
         # setup the run button with push button function
@@ -209,11 +204,11 @@ class LayoutObjects:
             xce_object.panddas_file_task_status_button,
         ]
 
-        ################################################################################################################
-        #                                                                                                              #
-        #                                                      REFINEMENT BOX                                          #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                                REFINEMENT BOX                                #
+        #                                                                              #
+        ################################################################################
         # settings for the run button
 
         # setup the run button with push button function
@@ -315,11 +310,11 @@ class LayoutObjects:
         DepositionTab().setup(xce_object)
         SettingsTab().setup(xce_object)
 
-        ################################################################################################################
-        #                                                                                                              #
-        #                                                  STATUS BAR                                                  #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                                  STATUS BAR                                  #
+        #                                                                              #
+        ################################################################################
         xce_object.status_bar = QtGui.QStatusBar()
         xce_object.progress_bar = QtGui.QProgressBar()
         xce_object.progress_bar.setMaximum(100)
@@ -360,11 +355,11 @@ class LayoutObjects:
                 xce_object.data_source_set = False
 
     def workflow(self, xce_object):
-        ################################################################################################################
-        #                                                                                                              #
-        # ========================================== WORKFLOW TASK CONTAINER ========================================= #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        # ========================== WORKFLOW TASK CONTAINER ========================= #
+        #                                                                              #
+        ################################################################################
 
         # workflow task container - order of tabs as they appear for the main window
         xce_object.workflow = [
@@ -424,10 +419,12 @@ class LayoutFuncs:
     def pandda_html(self, xce_object):
         if os.path.exists(str(xce_object.panddas_directory + "/interesting_datasets")):
             print(
-                "WARNING: USING RESULTS FROM OLD PANDDA ANALYSE! THIS IS NOT FULLY SUPPORTED IN XCE2"
+                "WARNING: USING RESULTS FROM OLD PANDDA ANALYSE!"
+                " THIS IS NOT FULLY SUPPORTED IN XCE2"
             )
             print(
-                "PLEASE CHANGE YOUR PANDDA DIRECTORY TO A NEW RUN, OR USE THE OLD VERSION OF XCE!"
+                "PLEASE CHANGE YOUR PANDDA DIRECTORY TO A NEW RUN,"
+                " OR USE THE OLD VERSION OF XCE!"
             )
             xce_object.pandda_initial_html_file = str(
                 xce_object.panddas_directory + "/results_summareis/pandda_initial.html"
@@ -476,13 +473,13 @@ class LayoutFuncs:
         frame.setFrameShape(QtGui.QFrame.StyledPanel)
         frame.setStyleSheet(
             "QFrame {  "
-            "border-radius: 1px; padding: 0px; margin: 0px; background-color: rgb(255, 255, 255); }"
+            "border-radius: 1px; padding: 0px; margin: 0px;"
+            " background-color: rgb(255, 255, 255); }"
         )
 
         vbox = QtGui.QVBoxLayout()
         label = QtGui.QLabel(label)
         label.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
-        # label.setFont(xce_object.headlineLabelfont)
         label.setStyleSheet(
             str(
                 " QLabel { border: 1px solid rgb(184, 192, 210); border-radius: 1px;"
