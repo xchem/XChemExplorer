@@ -9,11 +9,11 @@ class PanddaTab:
         self.layout_funcs = layout.LayoutFuncs()
 
     def setup(self, xce_object):
-        ################################################################################################################
-        #                                                                                                              #
-        #                                                   PANDDA TAB                                                 #
-        #                                                                                                              #
-        ################################################################################################################
+        ################################################################################
+        #                                                                              #
+        #                                  PANDDA TAB                                  #
+        #                                                                              #
+        ################################################################################
         # list of subtabs in PanDDA tab
         pandda_tab_list = [
             "pandda.analyse",
@@ -132,7 +132,8 @@ class PanddaTab:
                     + data_dir_string
                     + '"/"'
                     + xce_object.panddas_directory
-                    + '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+                    + '/processed_datasets/"}| while read line2;+'
+                    " do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; "
                     "done; done;"
                 )
             )
@@ -145,7 +146,8 @@ class PanddaTab:
                     + data_dir_string
                     + '"/"'
                     + xce_object.panddas_directory
-                    + '/processed_datasets/"}| while read line2; do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; '
+                    + '/processed_datasets/"}| while read line2;'
+                    + " do cp $line ${line2//compound/ligand_files} > /dev/null 2>&1; "
                     "done; done;"
                 )
             )
@@ -213,7 +215,11 @@ class PanddaTab:
         label.setFont(header_font)
         params_hbox.addWidget(label)
 
-        url_html = '<a href="https://pandda.bitbucket.io/pandda/manual.html">For docs: click here</a>'
+        url_html = (
+            '<a href="https://pandda.bitbucket.io/pandda/manual.html">'
+            "For docs: click here"
+            "</a>"
+        )
         label = QtGui.QLabel()
         label.setText(url_html)
         label.setOpenExternalLinks(True)
@@ -293,7 +299,8 @@ class PanddaTab:
 
         # grid spacing
         label = QtGui.QLabel(
-            "grid_spacing (default=0.5)\nNote: higher values speed up calculations, but maps might be less pretty)"
+            "grid_spacing (default=0.5)\n"
+            "Note: higher values speed up calculations, but maps might be less pretty)"
         )
         xce_object.pandda_analyse_input_params_vbox.addWidget(label)
         xce_object.pandda_grid_spacing_entry = QtGui.QLineEdit()
