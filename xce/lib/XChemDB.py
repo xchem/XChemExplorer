@@ -1,7 +1,5 @@
 import XChemLog
 import sqlite3
-import os
-import glob
 import csv
 from datetime import datetime
 import getpass
@@ -15,9 +13,9 @@ class data_source:
 
         self.data_source_file = data_source_file
 
-        #   [column_name in DB, column_name shown in XCE, SQLite column type (Integer,Text,PKEY...)]
+        #   [column_name in DB, column_name shown in XCE, SQLite column type]
         self.column_list = [
-            # SQLite column name                    XCE column name                             SQLite type             display in overview tab
+            # SQLite column name | XCE column name | SQLite type | in overview tab
             # from Lab36
             ["ID", "ID", "INTEGER PRIMARY KEY", 0],
             ["LabVisit", "LabVisit", "TEXT", 1],
@@ -105,8 +103,6 @@ class data_source:
             ["DataProcessingAlpha", "DataProcessing\nAlpha", "TEXT", 0],
             ["DataProcessingBeta", "DataProcessing\nBeta", "TEXT", 0],
             ["DataProcessingGamma", "DataProcessing\nGamma", "TEXT", 0],
-            # True or False depending on whether user changed automatic selection
-            #            ['DataProcessingUserSelected',                  'DataProcessingUserSelected',                   'TEXT', 0],
             ["DataProcessingResolutionOverall", "Resolution\nOverall", "TEXT", 0],
             ["DataProcessingResolutionLow", "Resolution\nLow", "TEXT", 0],
             [
@@ -150,7 +146,8 @@ class data_source:
             ["DataProcessingCChalfLow", "CC(1/2)\nLow", "TEXT", 1],
             ["DataProcessingCChalfHigh", "CC(1/2)\nHigh", "TEXT", 1],
             # the data source is a bit exploding with entries like the ones below,
-            # but the many different filenames and folder structures of Diamond autoprocessing makes it necessary
+            # but the many different filenames and folder structures of Diamond
+            # autoprocessing makes it necessary
             ["DataProcessingPathToLogfile", "DataProcessingPathToLogfile", "TEXT", 1],
             ["DataProcessingPathToMTZfile", "DataProcessingPathToMTZfile", "TEXT", 1],
             ["DataProcessingLOGfileName", "DataProcessingLOGfileName", "TEXT", 0],
@@ -783,38 +780,6 @@ class data_source:
                             "insert into labelTable (ID) Values (%s)" % str(idx + 1)
                         )
 
-    #        existing_columns=[]
-    #        connect=sqlite3.connect(self.data_source_file)
-    #        connect.row_factory = sqlite3.Row
-    #        cursor = connect.cursor()
-    #        cursor.execute("SELECT * FROM mainTable")
-    #        for column in cursor.description:
-    #            existing_columns.append(column[0])
-    #        for column in self.column_list:
-    #            if column[0] not in existing_columns:
-    #                cursor.execute("alter table mainTable add column '"+column[0]+"' '"+column[2]+"'")
-    #                connect.commit()
-    #        # create PANDDA table if not exists
-    #        cursor.execute("create table if not exists panddaTable (ID INTEGER);")
-    #        existing_columns=[]
-    #        cursor.execute("SELECT * FROM panddaTable")
-    #        for column in cursor.description:
-    #            existing_columns.append(column[0])
-    #        for column in self.pandda_table_columns:
-    #            if column[0] not in existing_columns:
-    #                cursor.execute("alter table panddaTable add column '"+column[0]+"' '"+column[2]+"'")
-    #                connect.commit()
-    #        # create DEPOSIT table if not exists
-    #        cursor.execute("create table if not exists depositTable (ID INTEGER);")
-    #        existing_columns=[]
-    #        cursor.execute("SELECT * FROM depositTable")
-    #        for column in cursor.description:
-    #            existing_columns.append(column[0])
-    #        for column in self.deposition_table_columns:
-    #            if column[0] not in existing_columns:
-    #                cursor.execute("alter table depositTable add column '"+column[0]+"' '"+column[2]+"'")
-    #                connect.commit()
-
     def return_column_list(self):
         return self.column_list
 
@@ -840,15 +805,9 @@ class data_source:
                     + "'"
                 )
             connect.commit()
-        # Don't need to create panddaTable at this point, because table will be created by create_missing_columns
-        # which is called the first time a data source in specified in XCE
-
-    #        with connect:
-    #            cursor = connect.cursor()
-    #            cursor.execute("CREATE TABLE panddaTable("+self.pandda_table_columns[0][0]+' '+self.pandda_table_columns[0][2]+")")
-    #            for i in range(1,len(self.pandda_table_columns)):
-    #                cursor.execute("alter table mainTable add column '"+self.pandda_table_columns[i][0]+"' '"+self.pandda_table_columns[i][2]+"'")
-    #            connect.commit()
+        # Don't need to create panddaTable at this point, because table will be created
+        # by create_missing_columns which is called the first time a data source in
+        # specified in XCE
 
     def get_all_samples_in_data_source_as_list(self):
         # creates sqlite file if non existent
@@ -902,10 +861,6 @@ class data_source:
         # creates sqlite file if non existent
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
-        #        if sampleID == 'ground-state':      # just select first row in depositTable
-        #            cursor.execute("SELECT * FROM depositTable ORDER BY ROWID ASC LIMIT 1;")
-        #        else:
-        #            cursor.execute("select * from depositTable where CrystalName='{0!s}';".format(sampleID))
         cursor.execute(
             "select * from depositTable where CrystalName='{0!s}';".format(sampleID)
         )
@@ -927,9 +882,8 @@ class data_source:
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
         cursor.execute(
-            "select * from panddaTable where CrystalName='{0!s}' and PANDDA_site_index='{1!s}';".format(
-                sampleID, site_index
-            )
+            "select * from panddaTable where CrystalName='{0!s}'"
+            " and PANDDA_site_index='{1!s}';".format(sampleID, site_index)
         )
         for column in cursor.description:
             header.append(column[0])
@@ -948,7 +902,10 @@ class data_source:
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
         cursor.execute(
-            "select * from panddaTable where CrystalName='{0!s}' and PANDDA_site_index='{1!s}' and PANDDA_site_event_index='{2!s}' and PANDDA_site_ligand_placed='True';".format(
+            "select * from panddaTable where CrystalName='{0!s}'"
+            " and PANDDA_site_index='{1!s}'"
+            " and PANDDA_site_event_index='{2!s}'"
+            " and PANDDA_site_ligand_placed='True';".format(
                 sampleID, site_index, event_index
             )
         )
@@ -988,16 +945,12 @@ class data_source:
                             continue
                         if key not in available_columns:
                             continue
-                        # this is how I had it originally, so it would ignore empty fields
-                        # the problem is that if the user wants to set all values to Null,
-                        # if will ignore it and leave the inital value in the datasource
-                        #                        if not str(value).replace(' ','')=='':  # ignore if nothing in csv field
-                        #                            update_string+=str(key)+'='+"'"+str(value)+"'"+','
-                        #                            print "UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"';"
-                        #                            cursor.execute("UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"';")
-                        # now try this instead; not sure what will break now...
+                        # this is how I had it originally, so it would ignore empty
+                        # fields. the problem is that if the user wants to set all
+                        # values to Null.  if will ignore it and leave the inital value
+                        # in the datasource. now try this instead; not sure what will
+                        # break now...
                         update_string += str(key) + "=" + "'" + str(value) + "'" + ","
-                        #                        print "UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"';"
                         cursor.execute(
                             "UPDATE mainTable SET "
                             + update_string[:-1]
@@ -1018,8 +971,6 @@ class data_source:
                         if not str(value).replace(" ", "") == "":
                             value_string += "'" + value + "'" + ","
                             column_string += key + ","
-                    #                    print sampleID
-                    #                    print          "INSERT INTO mainTable ("+column_string[:-1]+") VALUES ("+value_string[:-1]+");"
                     cursor.execute(
                         "INSERT INTO mainTable ("
                         + column_string[:-1]
@@ -1058,7 +1009,6 @@ class data_source:
             else:
                 update_string += str(key) + " = null,"
         if update_string != "":
-            #            print "UPDATE mainTable SET "+update_string[:-1]+" WHERE CrystalName="+"'"+sampleID+"'"
             cursor.execute(
                 "UPDATE mainTable SET "
                 + update_string[:-1]
@@ -1118,7 +1068,8 @@ class data_source:
             cursor.execute(
                 "UPDATE panddaTable SET "
                 + update_string[:-1]
-                + " WHERE CrystalName='{0!s}' and PANDDA_site_index='{1!s}' and PANDDA_site_event_index='{2!s}'".format(
+                + " WHERE CrystalName='{0!s}' and PANDDA_site_index='{1!s}'"
+                " and PANDDA_site_event_index='{2!s}'".format(
                     sampleID, site_index, event_index
                 )
             )
@@ -1135,8 +1086,6 @@ class data_source:
             if key == "ID" or key == "CrystalName" or key == "StructureType":
                 continue
             if not str(value).replace(" ", "") == "":  # ignore empty fields
-                #                update_string+=str(key)+'='+"'"+str(value)+"'"+','
-                #                update_string+=str(key)+'='+'"'+str(value)+'"'+','
                 update_string += (
                     str(key)
                     + "="
@@ -1148,8 +1097,6 @@ class data_source:
             else:
                 update_string += str(key) + " = null,"
         if update_string != "":
-            #            print '-->',"UPDATE depositTable SET "+update_string[:-1]+" WHERE CrystalName='{0!s}' and StructureType='{1!s}'".format(sampleID, structure_type)
-            #            cursor.execute("UPDATE depositTable SET "+update_string[:-1]+" WHERE CrystalName='{0!s}' and StructureType='{1!s}'".format(sampleID, structure_type))
             cursor.execute(
                 "UPDATE depositTable SET "
                 + update_string[:-1]
@@ -1293,12 +1240,9 @@ class data_source:
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
         cursor.execute(
-            "Select CrystalName,PANDDA_site_index,PANDDA_site_event_index FROM panddaTable"
+            "Select CrystalName,PANDDA_site_index,PANDDA_site_event_index"
+            " FROM panddaTable"
         )
-        #        available_columns=[]
-        #        cursor.execute("SELECT * FROM panddaTable")
-        #        for column in cursor.description:           # only update existing columns in data source
-        #            available_columns.append(column[0])
         samples_sites_in_table = []
         tmp = cursor.fetchall()
         for item in tmp:
@@ -1326,7 +1270,6 @@ class data_source:
                     continue
                 if not str(value).replace(" ", "") == "":  # ignore empty fields
                     update_string = str(key) + "=" + "'" + str(value) + "'"
-                    #                    print "UPDATE panddaTable SET "+update_string+" WHERE CrystalName="+"'"+sampleID+"' and PANDDA_site_index is '"+data_dict['PANDDA_site_index']+"';"
                     cursor.execute(
                         "UPDATE panddaTable SET "
                         + update_string
@@ -1346,8 +1289,6 @@ class data_source:
                 value = data_dict[key]
                 if key == "ID":
                     continue
-                #                if key not in available_columns:
-                #                    continue
                 if (
                     not str(value).replace(" ", "") == ""
                 ):  # ignore if nothing in csv field
@@ -1384,14 +1325,8 @@ class data_source:
         tmp = cursor.fetchall()
         for item in tmp:
             line = [x.encode("UTF8") for x in list(item)]
-            #            print 'a',item
-            #            print 'b',str(item)
-            #            print 'c',line
-            #            print 'd',line[0]
-            #            print 'e',str(line[0])
             if str(item) not in samples_in_table:
                 samples_in_table.append(str(line[0]))
-        #            samples_in_table.append(line)
 
         if sampleID in samples_in_table:
             for key in data_dict:
@@ -1457,17 +1392,6 @@ class data_source:
         csvWriter = csv.writer(open(csv_file, "w"))
         csvWriter.writerows([header] + rows)
 
-    #    def load_samples_from_data_source(self):
-    #        header=[]
-    #        data=[]
-    #        connect=sqlite3.connect(self.data_source_file)
-    #        cursor = connect.cursor()
-    #        cursor.execute("SELECT * FROM mainTable")
-    #        for column in cursor.description:
-    #            header.append(column[0])
-    #        data = cursor.fetchall()
-    #        return ([header,data])
-
     def load_samples_from_data_source(self):
         header = []
         data = []
@@ -1478,68 +1402,6 @@ class data_source:
             header.append(column[0])
         data = cursor.fetchall()
         return header, data
-
-    #    def get_samples_for_coot(self,RefinementOutcome,pandda_site):
-    #        sample_list_for_coot=[]
-    #        connect=sqlite3.connect(self.data_source_file)
-    #        cursor = connect.cursor()
-    #
-    #        if RefinementOutcome=='0 - All Datasets':
-    #            outcome = " not null "
-    #        else:
-    #            outcome = " '%s' " %RefinementOutcome
-    #
-    #        if int(pandda_site) > 0:
-    #            sqlite = (
-    #                "select"
-    #                " mainTable.CrystalName,"
-    #                " mainTable.CompoundCode,"
-    #                " mainTable.RefinementCIF,"
-    #                " mainTable.RefinementMTZfree,"
-    #                " mainTable.RefinementPathToRefinementFolder,"
-    #                " panddaTable.RefinementOutcome, "
-    #                " panddaTable.PANDDA_site_event_map,"
-    #                " panddaTable.PANDDA_site_confidence,"
-    #                " panddaTable.PANDDA_site_x,"
-    #                " panddaTable.PANDDA_site_y,"
-    #                " panddaTable.PANDDA_site_z,"
-    #                " panddaTable.PANDDA_site_initial_model,"
-    #                " panddaTable.PANDDA_site_initial_mtz,"
-    #                " panddaTable.PANDDA_site_spider_plot, "
-    #                " panddaTable.PANDDA_site_index "
-    #                "from mainTable inner join panddaTable on mainTable.CrystalName = panddaTable.CrystalName "
-    #                "where panddaTable.PANDDA_site_index is '%s'" %pandda_site+
-    #                " and panddaTable.PANDDA_site_ligand_placed is 'True'"
-    #                " and panddaTable.RefinementOutcome is %s;" %outcome
-    #                )
-    #
-    #        else:
-    #            sqlite = (
-    #                "select"
-    #                " CrystalName,"
-    #                " CompoundCode,"
-    #                " RefinementCIF,"
-    #                " RefinementMTZfree,"
-    #                " RefinementPathToRefinementFolder,"
-    #                " RefinementOutcome "
-    #                "from mainTable "
-    #                "where RefinementOutcome is %s;" %outcome
-    #                )
-    #
-    #        cursor.execute(sqlite)
-    #
-    #        tmp = cursor.fetchall()
-    #        for item in tmp:
-    #            tmpx=[]
-    #            for i in list(item):
-    #                if i==None:
-    #                    tmpx.append('None')
-    #                else:
-    #                    tmpx.append(i)
-    #            line=[x.encode('UTF8') for x in tmpx]
-    #            sample_list_for_coot.append(line)
-    #
-    #        return sample_list_for_coot
 
     def get_todoList_for_coot(self, RefinementOutcome):
         sample_list_for_coot = []
@@ -1561,8 +1423,9 @@ class data_source:
             " RefinementOutcome,"
             " RefinementLigandConfidence "
             "from mainTable "
-            "where RefinementOutcome is %s and (DimpleRfree is not Null or RefinementRfree is not Null) order by CrystalName ASC;"
-            % outcome
+            "where RefinementOutcome is %s"
+            " and (DimpleRfree is not Null or RefinementRfree is not Null)"
+            " order by CrystalName ASC;" % outcome
         )
 
         cursor.execute(sqlite)
@@ -1647,11 +1510,7 @@ class data_source:
                 out_list.append(["Exclude"])
             if item.startswith("Ignore"):
                 out_list.append(["Ignore"])
-            #            if item.startswith('img'):
-            #                out_list.append([item,item])
-            #                continue
             if item.startswith("Export"):
-                #                out_list.append('Export')
                 out_list.append(["Export", item])
                 continue
             if item.startswith("Show"):
@@ -1703,10 +1562,6 @@ class data_source:
         cursor.execute(sqlite)
         tmp = cursor.fetchall()
         for item in tmp:
-            #            print item
-            #            print str(item[0])
-            #            print str(item[1])
-            #            line=[x.encode('UTF8') for x in list(item)]
             site_list.append([str(item[0]), str(item[1])])
 
         return site_list
@@ -1725,9 +1580,11 @@ class data_source:
             " panddaTable.CrystalName,"
             " mainTable.CompoundCode "
             "from"
-            " mainTable inner join panddaTable on mainTable.CrystalName = panddaTable.CrystalName "
-            "where"
-            " (panddaTable.RefinementOutcome like '3%' or panddaTable.RefinementOutcome like '4%' or panddaTable.RefinementOutcome like '5%')"
+            " mainTable inner join panddaTable"
+            " on mainTable.CrystalName = panddaTable.CrystalName "
+            "where (panddaTable.RefinementOutcome like '3%'"
+            " or panddaTable.RefinementOutcome like '4%'"
+            " or panddaTable.RefinementOutcome like '5%')"
         )
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
@@ -1748,9 +1605,8 @@ class data_source:
         oldRefiStage = ""
         if type == "ligand_bound":
             cursor.execute(
-                "select RefinementOutcome from mainTable where CrystalName is '{0!s}'".format(
-                    xtal
-                )
+                "select RefinementOutcome"
+                " from mainTable where CrystalName is '{0!s}'".format(xtal)
             )
             tmp = cursor.fetchall()
             oldRefiStage = str(tmp[0][0])
@@ -1763,7 +1619,9 @@ class data_source:
             self.update_insert_data_source(xtal, db_dict)
         elif type == "ground_state":
             cursor.execute(
-                "select DimplePANDDApath from depositTable where StructureType is '{0!s}' and DimplePANDDApath is '{1!s}'".format(
+                "select DimplePANDDApath from depositTable"
+                " where StructureType is '{0!s}'"
+                " and DimplePANDDApath is '{1!s}'".format(
                     type, db_dict["DimplePANDDApath"]
                 )
             )
@@ -1780,7 +1638,8 @@ class data_source:
                     "updating PDB, MTZ and DimplePANDDApath for ground-state entry"
                 )
                 cursor.execute(
-                    "update depositTable set PDB_file='%s', MTZ_file='%s', DimplePANDDApath='%s' where StructureType='ground_state'"
+                    "update depositTable set PDB_file='%s', MTZ_file='%s',"
+                    " DimplePANDDApath='%s' where StructureType='ground_state'"
                     % (
                         db_dict["PDB_file"],
                         db_dict["MTZ_file"],
@@ -1791,15 +1650,17 @@ class data_source:
                 return
 
         cursor.execute(
-            "select CrystalName,StructureType from depositTable where CrystalName is '{0!s}' and StructureType is '{1!s}'".format(
+            "select CrystalName,StructureType from depositTable"
+            " where CrystalName is '{0!s}' and StructureType is '{1!s}'".format(
                 xtal, type
             )
         )
         tmp = cursor.fetchall()
         if type == "ligand_bound":
             if not tmp and int(db_dict["RefinementOutcome"].split()[0]) == 5:
-                sqlite = "insert into depositTable (CrystalName,StructureType) values ('{0!s}','{1!s}');".format(
-                    xtal, type
+                sqlite = (
+                    "insert into depositTable (CrystalName,StructureType)"
+                    " values ('{0!s}','{1!s}');".format(xtal, type)
                 )
                 Logfile.insert(
                     "creating new entry for "
@@ -1812,8 +1673,9 @@ class data_source:
                 connect.commit()
             else:
                 if int(db_dict["RefinementOutcome"].split()[0]) != 5:
-                    sqlite = "delete from depositTable where CrystalName is '{0!s}' and StructureType is '{1!s}'".format(
-                        xtal, type
+                    sqlite = (
+                        "delete from depositTable where CrystalName is '{0!s}'"
+                        " and StructureType is '{1!s}'".format(xtal, type)
                     )
                     if oldRefiStage.startswith("5"):
                         Logfile.insert(
@@ -1826,12 +1688,16 @@ class data_source:
                     cursor.execute(sqlite)
                     connect.commit()
         elif type == "ground_state":
-            sqlite = "insert into depositTable (CrystalName,StructureType,DimplePANDDApath,PDB_file,MTZ_file) values ('{0!s}','{1!s}','{2!s}','{3!s}','{4!s}');".format(
-                xtal,
-                type,
-                db_dict["DimplePANDDApath"],
-                db_dict["PDB_file"],
-                db_dict["MTZ_file"],
+            sqlite = (
+                "insert into depositTable"
+                " (CrystalName,StructureType,DimplePANDDApath,PDB_file,MTZ_file)"
+                " values ('{0!s}','{1!s}','{2!s}','{3!s}','{4!s}');".format(
+                    xtal,
+                    type,
+                    db_dict["DimplePANDDApath"],
+                    db_dict["PDB_file"],
+                    db_dict["MTZ_file"],
+                )
             )
             Logfile.insert(
                 "creating new entry for "
@@ -1848,9 +1714,8 @@ class data_source:
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
         cursor.execute(
-            "select CrystalName from collectionTable where DataCollectionVisit = '{0!s}'".format(
-                visitID
-            )
+            "select CrystalName from collectionTable"
+            " where DataCollectionVisit = '{0!s}'".format(visitID)
         )
         collectedXtals = []
         samples = cursor.fetchall()
@@ -1864,13 +1729,9 @@ class data_source:
         connect = sqlite3.connect(self.data_source_file)
         cursor = connect.cursor()
         xtalList = []
-        #        if rescore == True:
-        #            cursor.execute("select CrystalName from mainTable where DataCollectionVisit = '%s'" %visit)
-        #        else:
-        #            cursor.execute("select CrystalName from mainTable where DataProcessingAutoAssigned = 'True' and DataCollectionVisit = '%s'" %visit)
         cursor.execute(
-            "select distinct CrystalName from collectionTable where DataCollectionVisit = '%s'"
-            % visit
+            "select distinct CrystalName from collectionTable"
+            " where DataCollectionVisit = '%s'" % visit
         )
         samples = cursor.fetchall()
         for sample in samples:
@@ -1961,8 +1822,7 @@ class data_source:
             collectedXtals = self.collected_xtals_during_visit(visitID)
         xtalDict = {}
         # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
+        sqlite3.connect(self.data_source_file).cursor()
         for xtal in sorted(collectedXtals):
             db_dict = self.get_db_dict_for_sample(xtal)
             xtalDict[xtal] = db_dict
@@ -1974,17 +1834,20 @@ class data_source:
         cursor = connect.cursor()
         if whichSamples.startswith("4"):
             cursor.execute(
-                "select CrystalName from mainTable where RefinementOutcome like '4%' order by CrystalName ASC"
+                "select CrystalName from mainTable"
+                " where RefinementOutcome like '4%' order by CrystalName ASC"
             )
         elif whichSamples.startswith("5"):
             cursor.execute(
-                "select CrystalName from mainTable where RefinementOutcome like '5%' order by CrystalName ASC"
+                "select CrystalName from mainTable"
+                " where RefinementOutcome like '5%' order by CrystalName ASC"
             )
         else:
             cursor.execute(
-                "select CrystalName from mainTable where RefinementOutcome like '4%' or "
-                "RefinementOutcome like '5%' or "
-                "RefinementOutcome like '6%' order by CrystalName ASC"
+                "select CrystalName from mainTable"
+                " where RefinementOutcome like '4%'"
+                " or RefinementOutcome like '5%'"
+                " or RefinementOutcome like '6%' order by CrystalName ASC"
             )
         xtalList = []
         samples = cursor.fetchall()
@@ -2026,8 +1889,8 @@ class data_source:
         cursor.execute("select Label,Description from labelTable")
         labels = cursor.fetchall()
         labelList = []
-        for l in labels:
-            labelList.append([str(l[0]), str(l[1])])
+        for label in labels:
+            labelList.append([str(label[0]), str(label[1])])
         return labelList
 
     def get_label_of_sample(self, xtalID):
@@ -2037,7 +1900,7 @@ class data_source:
         cursor.execute("select label from mainTable where CrystalName is '%s'" % xtalID)
         label = None
         lab = cursor.fetchall()
-        for l in lab:
-            label = l[0]
+        for sample in lab:
+            label = sample[0]
             break
         return label
