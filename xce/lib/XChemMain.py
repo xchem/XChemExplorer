@@ -1026,446 +1026,50 @@ def pdbx_country():
     return countries
 
 
-def html_header():
-    header = (
-        "<html>\n"
-        "<head>\n"
-        '	<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.min.css">\n'
-        '	<link rel="stylesheet" type="text/css" href="css/custom-fragment.css">\n'
-        '	<meta http-equiv="Content-type" content="text/html; charset=utf-8">\n'
-        '	<meta name="viewport" content="width=device-width,initial-scale=1">\n'
-        "	<title>Summary Fragment Hits</title>\n"
-        '	<script type="text/javascript" language="javascript" src="js/jquery-1.12.3.min.js">\n'
-        "	</script>\n"
-        '	<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js">\n'
-        "	</script>\n"
-        '	<script type="text/javascript" class="init">\n'
-        "	$(document).ready(function() {\n"
-        "			$('#example').DataTable( {\n"
-        "			scrollY:        '800px',\n"
-        "			scrollCollapse: true,\n"
-        "			paging:         false,\n"
-        "			'bautoWidth': false,\n"
-        "			'columns': [\n"
-        "			{ 'width': '12%' },\n"
-        "			{ 'width': '10%' },\n"
-        "			{ 'width': '9%' },\n"
-        "			{ 'width': '14%' },\n"
-        "			{ 'width': '14%' },\n"
-        "			{ 'width': '9%' },\n"
-        "			{ 'width': '7%' },\n"
-        "			{ 'width': '17%' },\n"
-        "			{ 'width': '8%' },\n"
-        "			{ 'width': '8%' },\n"
-        "			{ 'width': '8%' },\n"
-        "			]\n"
-        "			} )\n"
-        "	});\n"
-        "	stage = undefined;\n"
-        "	</script>\n"
-        '	<script src="js/ngl.js"></script>\n'
-        "</head>\n"
-        "\n"
+def read_html(file_name):
+    source_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "html_fragments",
+        file_name + ".html",
     )
+    with open(source_path) as file:
+        return file.read()
 
-    return header
+
+def html_header():
+    return read_html("header")
 
 
 def html_ngl(firstPDB, firstEvent, firstMap, firstDiffMap, ligID):
-
     ligChain = ligID.split("-")[1]
     ligResid = ligID.split("-")[2]
 
-    ngl = (
-        "<body class='xchem' onload='load()'>\n"
-        "    <script >\n"
-        "        function load(){\n"
-        "            create_view('viewport','files/%s','files/%s','files/%s','files/%s','%s','%s');\n"
-        % (firstPDB, firstEvent, firstMap, firstDiffMap, ligChain, ligResid)
-        + "        }\n"
-        "    \n"
-        "        function create_stage(){// Create NGL Stage object\n"
-        '            stage = new NGL.Stage("viewport");\n'
-        "\n"
-        "            stage.setParameters({\n"
-        "                cameraType: 'orthographic',\n"
-        "                mousePreset: 'coot'\n"
-        "            });\n"
-        "\n"
-        "            // Handle window resizing\n"
-        '            window.addEventListener( "resize", function( event ){\n'
-        "                stage.handleResize();\n"
-        "            }, false );        \n"
-        "        }\n"
-        "\n"
-        "		function addElement (el) {\n"
-        "            Object.assign(el.style, {\n"
-        "                //position: 'absolute',\n"
-        "                zIndex: 10\n"
-        "            });\n"
-        "            \n"
-        "            document.getElementById('ngl_controls').appendChild(el);\n"
-        "            document.getElementById('ngl_controls').appendChild(document.createElement('br'));\n"
-        "		}\n"
-        "\n"
-        "		function createElement (name, properties, style) {\n"
-        "            var el = document.createElement(name);\n"
-        "            \n"
-        "            Object.assign(el, properties);\n"
-        "            Object.assign(el.style, style);\n"
-        "            \n"
-        "            return el;\n"
-        "		}\n"
-        "\n"
-        "\n"
-        "        function create_view(div_name,pdb_bound,event_name,FWT,DELFWT,ligChain,ligResid) {\n"
-        "            window.parent.scrollTo(0,0);\n"
-        "        \n"
-        "            // Code for example: test/map-shift\n"
-        "            if (stage==undefined){\n"
-        "                create_stage();\n"
-        "            }else{\n"
-        "                var components = stage.getComponentsByName();\n"
-        "                \n"
-        "                for (var component in components.list) {\n"
-        "                    stage.removeComponent(components.list[component]);\n"
-        "                } \n"
-        "                \n"
-        "                var control_container = document.getElementById('ngl_controls');\n"
-        "                \n"
-        "                while(control_container.firstChild){\n"
-        "                    control_container.removeChild(control_container.firstChild);\n"
-        "                }\n"
-        "            }\n"
-        "            \n"
-        "            var parts = event_name.split('/')[1].split('_');\n"
-        "            \n"
-        "            document.getElementById('data_set_id').innerHTML = 'Crystal ID / Ligand ID:  ' + parts[0] + '/' + parts[1];\n"
-        "            \n"
-        "            Promise.all([\n"
-        '                stage.loadFile( window.location.href.replace("index.html",event_name)),\n'
-        '                stage.loadFile( window.location.href.replace("index.html",pdb_bound)),\n'
-        '                stage.loadFile( window.location.href.replace("index.html",FWT)),\n'
-        '                stage.loadFile( window.location.href.replace("index.html",DELFWT))\n'
-        "            ]).then(function( ol ){\n"
-        "                var map = ol[ 0 ];\n"
-        "                var struc = ol[ 1 ];\n"
-        "                var fwt = ol[ 2 ];\n"
-        "                var delfwt = ol[ 3 ];\n"
-        "                var strucSurf = ol[1];\n"
-        "                \n"
-        '                var eventMap = map.addRepresentation( "surface", {\n'
-        "                    boxSize: 10,\n"
-        "                    useWorker: false,\n"
-        "                    wrap: false,\n"
-        '                    color: "purple",\n'
-        "                    isolevel: 1.0,\n"
-        "                    contour: true\n"
-        "                } );\n"
-        "                \n"
-        '                var fwtMap = fwt.addRepresentation( "surface", {\n'
-        "                    boxSize: 10,\n"
-        "                    useWorker: false,\n"
-        "                    wrap: false,\n"
-        '                    color: "skyblue",\n'
-        "                    isolevel: 0.9,\n"
-        "                    contour: true\n"
-        "                } );\n"
-        "                \n"
-        "                fwtMap.toggleVisibility()\n"
-        "\n"
-        "                var surfFofc = delfwt.addRepresentation('surface', {\n"
-        "                    boxSize: 10,\n"
-        "                    useWorker: false,\n"
-        "                    wrap: false,\n"
-        '                    color: "green",\n'
-        "                    isolevel: 3.0,\n"
-        "                    contour: true\n"
-        "                });\n"
-        "                \n"
-        "                surfFofc.toggleVisibility()\n"
-        "\n"
-        "                var surfFofcNeg = delfwt.addRepresentation('surface', {\n"
-        "                    boxSize: 10,\n"
-        "                    useWorker: false,\n"
-        "                    wrap: true,\n"
-        '                    color: "red",\n'
-        "                    isolevel: 3.0,\n"
-        "                    negateIsolevel: true,\n"
-        "                    contour: true\n"
-        "                });\n"
-        "                \n"
-        "                surfFofcNeg.toggleVisibility()\n"
-        "\n"
-        '                var strucSurfdispay = strucSurf.addRepresentation("surface", {\n'
-        '                    sele: "polymer",\n'
-        '                    colorScheme: "electrostatic",\n'
-        "                    colorDomain: [ -0.3, 0.3 ],\n"
-        '                    surfaceType: "av"\n'
-        "                });\n"
-        "                \n"
-        "                strucSurfdispay.toggleVisibility()\n"
-        "                \n"
-        '                struc.addRepresentation( "licorice" );\n'
-        '                struc.addRepresentation( "licorice", { sele: "hetero" } );\n'
-        "\n"
-        '                var selection = new NGL.Selection("(( not polymer or hetero ) and not ( water or ion ))");\n'
-        "                var radius = 5;\n"
-        "                var atomSet = struc.structure.getAtomSetWithinSelection( selection, radius );\n"
-        "                var atomSet2 = struc.structure.getAtomSetWithinGroup( atomSet );\n"
-        "                var sele2 = atomSet2.toSeleString();            \n"
-        "\n"
-        "                var interaction = struc.addRepresentation('contact', {masterModelIndex: 0,\n"
-        "                    maxHbondDonPlaneAngle: 35,\n"
-        "                    linewidth: 1,\n"
-        '                    sele: sele2 + " or LIG"\n'
-        "                });\n"
-        "\n"
-        '                struc.autoView("ligand and " + ligResid + " and " + ":" + ligChain)\n'
-        "                stage.setFocus( 95 );\n"
-        "\n"
-        'stage.mouseControls.remove("scroll-shift")\n'
-        "\n"
-        "stage.mouseControls.add('scroll-shift', function (stage, delta) {\n"
-        "  if (eventMap) {\n"
-        "    var d = Math.sign(delta) / 5\n"
-        "    var l = eventMap.getParameters().isolevel\n"
-        "eventMap.setParameters({ isolevel: l + d })\n"
-        " }\n"
-        "  if (fwtMap) {\n"
-        "    var d = Math.sign(delta) / 5\n"
-        "    var l = eventMap.getParameters().isolevel\n"
-        "fwtMap.setParameters({ isolevel: l + d })\n"
-        " }\n"
-        "});\n"
-        "\n"
-        'stage.mouseControls.remove("scroll-alt")\n'
-        'stage.mouseControls.add("scroll-alt", NGL.MouseActions.focusScroll);\n'
-        "\n"
-        "                stage.mouseControls.add('scroll', function () {\n"
-        "                    if (fwtMap) {\n"
-        "                        var level2fofc = fwtMap.getParameters().isolevel.toFixed(1);\n"
-        "                        isolevel2fofcText.innerText = '2fofc level: ' + level2fofc + '\\u03C3';\n"
-        "                    }\n"
-        "                    \n"
-        "                    if (surfFofc) {\n"
-        "                        var levelFofc = surfFofc.getParameters().isolevel.toFixed(1);\n"
-        "                        isolevelFofcText.innerText = 'fofc level: ' + levelFofc + '\\u03C3';\n"
-        "                    }\n"
-        "                });\n"
-        "                \n"
-        "                var toggleEventButton = createElement('input', {\n"
-        "                    type: 'button',\n"
-        "                    value: 'Toggle Event map',\n"
-        "                    onclick: function (e) {\n"
-        "                        eventMap.toggleVisibility()\n"
-        "                    }\n"
-        "                }, {'margin-right':'5px', 'margin-bottom':'5px', 'width':'200px'});\n"
-        "                \n"
-        "                addElement(toggleEventButton)\n"
-        "\n"
-        "                var toggleFWTButton = createElement('input', {\n"
-        "                    type: 'button',\n"
-        "                    value: 'Toggle 2fofc Map',\n"
-        "                    onclick: function (e) {\n"
-        "                        fwtMap.toggleVisibility()\n"
-        "                    }\n"
-        "                }, {'margin-right':'5px', 'margin-bottom':'5px', 'width':'200px'});\n"
-        "                \n"
-        "                addElement(toggleFWTButton)\n"
-        "\n"
-        "                var toggleFofcButton = createElement('input', {\n"
-        "                    type: 'button',\n"
-        "                    value: 'Toggle fofc map',\n"
-        "                    onclick: function (e) {\n"
-        "                    surfFofc.toggleVisibility()\n"
-        "                    surfFofcNeg.toggleVisibility()\n"
-        "                    }\n"
-        "                }, {'margin-right':'5px', 'margin-bottom':'5px', 'width':'200px'});\n"
-        "                \n"
-        "                addElement(toggleFofcButton)\n"
-        "\n"
-        "                var toggleInteractionButton = createElement('input', {\n"
-        "                    type: 'button',\n"
-        "                    value: 'Toggle Interactions',\n"
-        "                    onclick: function (e) {\n"
-        "                    interaction.toggleVisibility()\n"
-        "                    }\n"
-        "                }, {'margin-right':'5px', 'margin-bottom':'5px', 'width':'200px'});\n"
-        "                \n"
-        "                addElement(toggleInteractionButton);\n"
-        "\n"
-        "                var surfaceButton = createElement('input', {\n"
-        "                    type: 'button',\n"
-        "                    value: 'Toggle surface',\n"
-        "                    onclick: function (e) {\n"
-        "                    strucSurfdispay.toggleVisibility()\n"
-        "                    }\n"
-        "                }, {'margin-right':'5px', 'margin-bottom':'5px', 'width':'200px'});\n"
-        "                \n"
-        "                addElement(surfaceButton)\n"
-        "\n"
-        "                var screenshotButton = createElement('input', {\n"
-        "                    type: 'button',\n"
-        "                    value: 'Screenshot',\n"
-        "                    onclick: function () {\n"
-        "                    stage.makeImage({\n"
-        "                        factor: 1,\n"
-        "                        antialias: false,\n"
-        "                        trim: false,\n"
-        "                        transparent: false\n"
-        "                    }).then(function (blob) {\n"
-        "                        NGL.download(blob, 'ngl-xray-viewer-screenshot.png')\n"
-        "                    })\n"
-        "                    }\n"
-        "                },{ 'width':'200px'});\n"
-        "                \n"
-        "                addElement(screenshotButton)\n"
-        "            } );\n"
-        "        }\n"
-        "        \n"
-        "        function toggleGuide(){\n"
-        "            var guide = document.getElementById('guide');\n"
-        "            \n"
-        "            if(guide.style.display === 'block'){\n"
-        "                guide.style.display = 'none';\n"
-        "            }else{\n"
-        "                guide.style.display = 'block';\n"
-        "            }\n"
-        "        }\n"
-        "        \n"
-        "        function toggleViewer(){\n"
-        "            var viewer = document.getElementById('viewer_container');\n"
-        "            \n"
-        "            if(viewer.style.display === 'block' || viewer.style.display === ''){\n"
-        "                viewer.style.display = 'none';\n"
-        "            }else{\n"
-        "                viewer.style.display = 'block';\n"
-        "            }\n"
-        "        }\n"
-        "        \n"
-        "        function toggleTable(){\n"
-        "            var table = document.getElementById('example');\n"
-        "            \n"
-        "            if(table.style.display === 'table'){\n"
-        "                table.style.display = 'none';\n"
-        "            }else{\n"
-        "                table.style.display = 'table';\n"
-        "            }\n"
-        "            \n"
-        "            table = document.getElementById('example_wrapper');\n"
-        "            \n"
-        "            if(table.style.display === 'block' || table.style.display === '' ){\n"
-        "                table.style.display = 'none';\n"
-        "            }else{\n"
-        "                table.style.display = 'block';\n"
-        "            }\n"
-        "        }\n"
-        "        \n"
-        "    </script>\n"
-        "\n"
+    return read_html("ngl") % (
+        firstPDB,
+        firstEvent,
+        firstMap,
+        firstDiffMap,
+        ligChain,
+        ligResid,
     )
-
-    return ngl
 
 
 def html_download(protein_name):
-
-    download = (
-        '    <div class="viewport-wrapper">\n'
-        "        <h1>%s - XChem results</h1>\n" % protein_name
-        + "        <button id='viewer_toggle' onclick='toggleViewer()'>Viewer</button>\n"
-        '        <div id="viewer_container">\n'
-        '            <h2 id="data_set_id"></h2>\n'
-        '            <h3 style="color:red">Click event map in table to view a different crystal / compound pair (press SHIFT and scroll mouse wheel to change contour level of event map)</h3>\n'
-        '            <div style="position:relative;margin-left:auto;margin-right:auto">\n'
-        '                <div id="viewport" style="width:800px;height:600px;display:inline-block"></div>\n'
-        '                <div style="display:inline-block;position:absolute;top:0;margin-left:5px">\n'
-        '                    <div id="download_links" style="display:block">\n'
-        '                        <h1 style="margin:0px;border:0px;padding:0px">\n'
-        "                            Download Data\n"
-        "                        </h1>\n"
-        "                        <ul>\n"
-        "                            <li><a href='files/%s_allPDBs.zip'>Download all PDB model files<a></li>\n"
-        % protein_name
-        + "                            <li><a href='files/%s_allEVENTmaps.zip'>Download all EVENT map files<a></li>\n"
-        % protein_name
-        + "                            <li><a href='files/%s_allMTZs.zip'>Download all MTZ files files<a></li>\n"
-        % protein_name
-        + "                            <li><a href='files/%s_allCIFs.zip'>Download all CIF files<a></li>\n"
-        % protein_name
-        + "                        </ul>\n"
-        "                    </div>\n"
-        "                    <div>\n"
-        "                        <h1>\n"
-        "                            Controls\n"
-        "                        </h1>\n"
-        '                        <div id="ngl_controls" style="display:block">\n'
-        "                \n"
-        "                        </div>\n"
-        "                    </div>\n"
-        "                </div>\n"
-        "             </div>\n"
-        "        </div>\n"
-        "\n"
+    return read_html("download") % (
+        protein_name,
+        protein_name,
+        protein_name,
+        protein_name,
+        protein_name,
     )
-
-    return download
 
 
 def html_guide():
-
-    guide = (
-        "        <button id='guide_toggle' onclick='toggleGuide()'>Analysis Guide / Help</button>\n"
-        "        <div id='guide' style='display:block'>\n"
-        "            <H3>Ligand-bound models for Summary</h3><h4>Interpreting 'Ligand confidence'</h4>\n"
-        "            <p><u>4 - High Confidence:</u>  The expected ligand was easily interpretable from clear density, and subsequent refinement was well-behaved.  This ligand can be trusted.\n"
-        "            <br><u>3 - Clear density, unexpected ligand:</u>  Density very clearly showed a well-defined ligand, but that ligand was unexpected in that crystal/dataset.  The observed ligand was modelled anyway, because its presence could be explained in some way.\n"
-        "            <br><u>2 - Correct ligand, weak density:</u>  Though density was weak, it was possible to model the expected ligand, possibly including other circumstantial evidence (e.g. similar ligand in another model).\n"
-        "            <br><u>1 - Low Confidence:</u>  The ligand model is to be treated with scepticism, because the evidence (density, identity, pose) were not convincing.\n"
-        "            <h4>Interpreting 'Model status':</h4>\n"
-        "            <p><u>6 - Deposited:</u>  The model has been deposited in the PDB.\n"
-        "            <br><u>5 - Deposition ready:</u>  The model is fully error-free, in every residue, and is ready for deposition.\n"
-        "            <br><u>4 - CompChem ready:</u>  The model is complete and correct in the region of the bound ligand.  There may be remaining small errors elsewhere in the structure, but they are far away and unlikely to be relevant to any computational analysis or compound design.\n"
-        "            <h4>Interpreting 'Ligand validation' spider plots:</h4>  Each axis represents one of the values described below; small is better, and large values on any axis implies that further investigation is warranted.\n"
-        "            <p><u>Quality (RSCC)</u> reflects the fit of the atoms to the experimental density, and should typically be greater than 0.7.\n"
-        "            <br><u>Accuracy (RSZD)</u> measures the amount of difference density that is found around these atoms, and should be below 3.\n"
-        "            <br><u>B-factor ratio</u> measures the consistency of the model with surrounding protein, and is calculated from the B factors of respectively the changed atoms and all side-chain atoms within 4&#8491;.  Large values (>3) reflect poor evidence for the model, and intermediate values (1.5+) indicate errors in refinement or modelling; for weakly-binding ligands, systematically large ratios may be justifiable.\n"
-        "            <br><u>RMSD</u> compares the positions of all atoms built into event density, with their positions after final refinement, and should be below 1&#8491;.\n"
-        "            <br><u>Precision (RSZO/OCC)</u> measures how clear the density is after refinement.  (This is not a quality indicator, but is related to strength of binding but not in a straightforward way.)\n"
-        "        </div>\n"
-        "        <p></p>\n"
-        "\n"
-    )
-
-    return guide
+    return read_html("guide")
 
 
 def html_table_header():
-
-    table = (
-        "<button id='table_toggle' onclick='toggleTable()'>Fragment Table</button>\n"
-        "\n"
-        '<table id="example" class="display" cellspacing="0">\n'
-        "	<thead>\n"
-        "		<tr>\n"
-        "			<th>Crystal ID</th>\n"
-        "			<th>PDB ID</th>\n"
-        "			<th>Ligand ID</th>\n"
-        "			<th>Ligand confidence</th>\n"
-        "			<th>Model status</th>\n"
-        "			<th>Compound</th>\n"
-        "			<th>Ligand Validation</th>\n"
-        "			<th>Event Map 3D</th>\n"
-        "			<th>Resol</th>\n"
-        "			<th>SPG/ Cell</th>\n"
-        "			<th>Files</th>\n"
-        "		</tr>\n"
-        "	</thead>\n"
-        "	<tbody>\n"
-    )
-
-    return table
+    return read_html("table_header")
 
 
 def html_table_row(
@@ -1485,37 +1089,36 @@ def html_table_row(
     ligConfidence,
     modelStatus,
 ):
-
     ligChain = ligID.split("-")[1]
     ligResid = ligID.split("-")[2]
 
-    row = (
-        "		<tr>\n"
-        "		<td>%s</td>\n" % xtalID
-        + '		<td><a target="_blank" href="http://www.rcsb.org/structure/%s">%s</a></td>\n'
-        % (pdbID, pdbID)
-        + "		<td>%s</td>\n" % ligID
-        + "		<td>%s</td>\n" % ligConfidence
-        + "		<td>%s</td>\n" % modelStatus
-        + "		<td><img src='png/%s' height=130px></td>\n" % compoundImage
-        + "		<td><img src='png/%s' height=153px></td>\n" % residuePlot
-        + "       <td><div id='%s' class='map'><a onclick=create_view('viewport','files/%s','files/%s','files/%s','files/%s','%s','%s')><img src='png/%s'></a></div></td>\n"
-        % (pdbID, pdb, event, FWT, DELFWT, ligChain, ligResid, thumbNail)
-        + "		<td>%s</td>\n" % resoHigh
-        + "		<td>%s</br>%s</td>\n" % (spg, unitCell)
-        + "		<td><a href='download/%s_%s.zip'>Save</a></td>\n"
-        % (pdb.replace(".pdb", ""), ligID)
-        + "		</tr>\n"
+    return read_html("table_row") % (
+        xtalID,
+        pdbID,
+        pdbID,
+        ligID,
+        ligConfidence,
+        modelStatus,
+        compoundImage,
+        residuePlot,
+        pdbID,
+        pdb,
+        event,
+        FWT,
+        DELFWT,
+        ligChain,
+        ligResid,
+        thumbNail,
+        resoHigh,
+        spg,
+        unitCell,
+        pdb.replace(".pdb", ""),
+        ligID,
     )
-
-    return row
 
 
 def html_footer():
-
-    footer = "</tbody>\n" "</table>\n" "</body>\n" "</html>\n"
-
-    return footer
+    return read_html("footer")
 
 
 def coot_prepare_input(x, y, z, ligID, sampleDir, eventMap):

@@ -1,0 +1,35 @@
+<button id='guide_toggle' onclick='toggleGuide()'>Analysis Guide / Help</button>
+<div id='guide' style='display:block'>
+    <H3>Ligand-bound models for Summary</h3>
+    <h4>Interpreting 'Ligand confidence'</h4>
+    <p><u>4 - High Confidence:</u> The expected ligand was easily interpretable from clear density, and subsequent
+        refinement was well-behaved. This ligand can be trusted.
+        <br><u>3 - Clear density, unexpected ligand:</u> Density very clearly showed a well-defined ligand, but that
+        ligand was unexpected in that crystal/dataset. The observed ligand was modelled anyway, because its presence
+        could be explained in some way.
+        <br><u>2 - Correct ligand, weak density:</u> Though density was weak, it was possible to model the expected
+        ligand, possibly including other circumstantial evidence (e.g. similar ligand in another model).
+        <br><u>1 - Low Confidence:</u> The ligand model is to be treated with scepticism, because the evidence (density,
+        identity, pose) were not convincing.
+    <h4>Interpreting 'Model status':</h4>
+    <p><u>6 - Deposited:</u> The model has been deposited in the PDB.
+        <br><u>5 - Deposition ready:</u> The model is fully error-free, in every residue, and is ready for deposition.
+        <br><u>4 - CompChem ready:</u> The model is complete and correct in the region of the bound ligand. There may be
+        remaining small errors elsewhere in the structure, but they are far away and unlikely to be relevant to any
+        computational analysis or compound design.
+    <h4>Interpreting 'Ligand validation' spider plots:</h4> Each axis represents one of the values described below;
+    small is better, and large values on any axis implies that further investigation is warranted.
+    <p><u>Quality (RSCC)</u> reflects the fit of the atoms to the experimental density, and should typically be greater
+        than 0.7.
+        <br><u>Accuracy (RSZD)</u> measures the amount of difference density that is found around these atoms, and
+        should be below 3.
+        <br><u>B-factor ratio</u> measures the consistency of the model with surrounding protein, and is calculated from
+        the B factors of respectively the changed atoms and all side-chain atoms within 4&#8491;. Large values (>3)
+        reflect poor evidence for the model, and intermediate values (1.5+) indicate errors in refinement or modelling;
+        for weakly-binding ligands, systematically large ratios may be justifiable.
+        <br><u>RMSD</u> compares the positions of all atoms built into event density, with their positions after final
+        refinement, and should be below 1&#8491;.
+        <br><u>Precision (RSZO/OCC)</u> measures how clear the density is after refinement. (This is not a quality
+        indicator, but is related to strength of binding but not in a straightforward way.)
+</div>
+<p></p>
