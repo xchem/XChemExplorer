@@ -17,7 +17,6 @@ import math
 import pickle
 import sys
 import os
-import webbrowser
 from datetime import datetime
 from PyQt4 import QtGui, QtCore
 
