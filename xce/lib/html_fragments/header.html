@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="css/custom-fragment.css">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Summary Fragment Hits</title>
+    <script type="text/javascript" language="javascript" src="js/jquery-1.12.3.min.js">
+    </script>
+    <script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js">
+    </script>
+    <script type="text/javascript" class="init">
+        $(document).ready(function () {
+            $('#example').DataTable({
+                scrollY: '800px',
+                scrollCollapse: true,
+                paging: false,
+                'bautoWidth': false,
+                'columns': [
+                    { 'width': '12%' },
+                    { 'width': '10%' },
+                    { 'width': '9%' },
+                    { 'width': '14%' },
+                    { 'width': '14%' },
+                    { 'width': '9%' },
+                    { 'width': '7%' },
+                    { 'width': '17%' },
+                    { 'width': '8%' },
+                    { 'width': '8%' },
+                    { 'width': '8%' },
+                ]
+            })
+        });
+        stage = undefined;
+    </script>
+    <script src="js/ngl.js"></script>
+</head>

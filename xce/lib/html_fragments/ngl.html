@@ -1,0 +1,286 @@
+<body class='xchem' onload='load()'>
+    <script>
+        function load() {
+            create_view('viewport', 'files/%s', 'files/%s', 'files/%s', 'files/%s', '%s', '%s');
+        }
+
+        function create_stage() { // Create NGL Stage object
+            stage = new NGL.Stage("viewport");
+
+            stage.setParameters({
+                cameraType: 'orthographic',
+                mousePreset: 'coot'
+            });
+
+            // Handle window resizing
+            window.addEventListener("resize", function (event) {
+                stage.handleResize();
+            }, false);
+        }
+
+        function addElement(el) {
+            Object.assign(el.style, {
+                //position: 'absolute',
+                zIndex: 10
+            });
+
+            document.getElementById('ngl_controls').appendChild(el);
+            document.getElementById('ngl_controls').appendChild(document.createElement('br'));
+        }
+
+        function createElement(name, properties, style) {
+            var el = document.createElement(name);
+
+            Object.assign(el, properties);
+            Object.assign(el.style, style);
+
+            return el;
+        }
+
+
+        function create_view(div_name, pdb_bound, event_name, FWT, DELFWT, ligChain, ligResid) {
+            window.parent.scrollTo(0, 0);
+
+            // Code for example: test/map-shift
+            if (stage == undefined) {
+                create_stage();
+            } else {
+                var components = stage.getComponentsByName();
+
+                for (var component in components.list) {
+                    stage.removeComponent(components.list[component]);
+                }
+
+                var control_container = document.getElementById('ngl_controls');
+
+                while (control_container.firstChild) {
+                    control_container.removeChild(control_container.firstChild);
+                }
+            }
+
+            var parts = event_name.split('/')[1].split('_');
+
+            document.getElementById('data_set_id').innerHTML = 'Crystal ID / Ligand ID:  ' + parts[0] + '/' + parts[1];
+
+            Promise.all([
+                stage.loadFile(window.location.href.replace("index.html", event_name)),
+                stage.loadFile(window.location.href.replace("index.html", pdb_bound)),
+                stage.loadFile(window.location.href.replace("index.html", FWT)),
+                stage.loadFile(window.location.href.replace("index.html", DELFWT))
+            ]).then(function (ol) {
+                var map = ol[0];
+                var struc = ol[1];
+                var fwt = ol[2];
+                var delfwt = ol[3];
+                var strucSurf = ol[1];
+
+                var eventMap = map.addRepresentation("surface", {
+                    boxSize: 10,
+                    useWorker: false,
+                    wrap: false,
+                    color: "purple",
+                    isolevel: 1.0,
+                    contour: true
+                });
+
+                var fwtMap = fwt.addRepresentation("surface", {
+                    boxSize: 10,
+                    useWorker: false,
+                    wrap: false,
+                    color: "skyblue",
+                    isolevel: 0.9,
+                    contour: true
+                });
+
+                fwtMap.toggleVisibility()
+
+                var surfFofc = delfwt.addRepresentation('surface', {
+                    boxSize: 10,
+                    useWorker: false,
+                    wrap: false,
+                    color: "green",
+                    isolevel: 3.0,
+                    contour: true
+                });
+
+                surfFofc.toggleVisibility()
+
+                var surfFofcNeg = delfwt.addRepresentation('surface', {
+                    boxSize: 10,
+                    useWorker: false,
+                    wrap: true,
+                    color: "red",
+                    isolevel: 3.0,
+                    negateIsolevel: true,
+                    contour: true
+                });
+
+                surfFofcNeg.toggleVisibility()
+
+                var strucSurfdispay = strucSurf.addRepresentation("surface", {
+                    sele: "polymer",
+                    colorScheme: "electrostatic",
+                    colorDomain: [-0.3, 0.3],
+                    surfaceType: "av"
+                });
+
+                strucSurfdispay.toggleVisibility()
+
+                struc.addRepresentation("licorice");
+                struc.addRepresentation("licorice", { sele: "hetero" });
+
+                var selection = new NGL.Selection("(( not polymer or hetero ) and not ( water or ion ))");
+                var radius = 5;
+                var atomSet = struc.structure.getAtomSetWithinSelection(selection, radius);
+                var atomSet2 = struc.structure.getAtomSetWithinGroup(atomSet);
+                var sele2 = atomSet2.toSeleString();
+
+                var interaction = struc.addRepresentation('contact', {
+                    masterModelIndex: 0,
+                    maxHbondDonPlaneAngle: 35,
+                    linewidth: 1,
+                    sele: sele2 + " or LIG"
+                });
+
+                struc.autoView("ligand and " + ligResid + " and " + ":" + ligChain)
+                stage.setFocus(95);
+
+                stage.mouseControls.remove("scroll-shift")
+
+                stage.mouseControls.add('scroll-shift', function (stage, delta) {
+                    if (eventMap) {
+                        var d = Math.sign(delta) / 5
+                        var l = eventMap.getParameters().isolevel
+                        eventMap.setParameters({ isolevel: l + d })
+                    }
+                    if (fwtMap) {
+                        var d = Math.sign(delta) / 5
+                        var l = eventMap.getParameters().isolevel
+                        fwtMap.setParameters({ isolevel: l + d })
+                    }
+                });
+
+                stage.mouseControls.remove("scroll-alt")
+                stage.mouseControls.add("scroll-alt", NGL.MouseActions.focusScroll);
+
+                stage.mouseControls.add('scroll', function () {
+                    if (fwtMap) {
+                        var level2fofc = fwtMap.getParameters().isolevel.toFixed(1);
+                        isolevel2fofcText.innerText = '2fofc level: ' + level2fofc + '\\u03C3';
+                    }
+
+                    if (surfFofc) {
+                        var levelFofc = surfFofc.getParameters().isolevel.toFixed(1);
+                        isolevelFofcText.innerText = 'fofc level: ' + levelFofc + '\\u03C3';
+                    }
+                });
+
+                var toggleEventButton = createElement('input', {
+                    type: 'button',
+                    value: 'Toggle Event map',
+                    onclick: function (e) {
+                        eventMap.toggleVisibility()
+                    }
+                }, { 'margin-right': '5px', 'margin-bottom': '5px', 'width': '200px' });
+
+                addElement(toggleEventButton)
+
+                var toggleFWTButton = createElement('input', {
+                    type: 'button',
+                    value: 'Toggle 2fofc Map',
+                    onclick: function (e) {
+                        fwtMap.toggleVisibility()
+                    }
+                }, { 'margin-right': '5px', 'margin-bottom': '5px', 'width': '200px' });
+
+                addElement(toggleFWTButton)
+
+                var toggleFofcButton = createElement('input', {
+                    type: 'button',
+                    value: 'Toggle fofc map',
+                    onclick: function (e) {
+                        surfFofc.toggleVisibility()
+                        surfFofcNeg.toggleVisibility()
+                    }
+                }, { 'margin-right': '5px', 'margin-bottom': '5px', 'width': '200px' });
+
+                addElement(toggleFofcButton)
+
+                var toggleInteractionButton = createElement('input', {
+                    type: 'button',
+                    value: 'Toggle Interactions',
+                    onclick: function (e) {
+                        interaction.toggleVisibility()
+                    }
+                }, { 'margin-right': '5px', 'margin-bottom': '5px', 'width': '200px' });
+
+                addElement(toggleInteractionButton);
+
+                var surfaceButton = createElement('input', {
+                    type: 'button',
+                    value: 'Toggle surface',
+                    onclick: function (e) {
+                        strucSurfdispay.toggleVisibility()
+                    }
+                }, { 'margin-right': '5px', 'margin-bottom': '5px', 'width': '200px' });
+
+                addElement(surfaceButton)
+
+                var screenshotButton = createElement('input', {
+                    type: 'button',
+                    value: 'Screenshot',
+                    onclick: function () {
+                        stage.makeImage({
+                            factor: 1,
+                            antialias: false,
+                            trim: false,
+                            transparent: false
+                        }).then(function (blob) {
+                            NGL.download(blob, 'ngl-xray-viewer-screenshot.png')
+                        })
+                    }
+                }, { 'width': '200px' });
+
+                addElement(screenshotButton)
+            });
+        }
+
+        function toggleGuide() {
+            var guide = document.getElementById('guide');
+
+            if (guide.style.display === 'block') {
+                guide.style.display = 'none';
+            } else {
+                guide.style.display = 'block';
+            }
+        }
+
+        function toggleViewer() {
+            var viewer = document.getElementById('viewer_container');
+
+            if (viewer.style.display === 'block' || viewer.style.display === '') {
+                viewer.style.display = 'none';
+            } else {
+                viewer.style.display = 'block';
+            }
+        }
+
+        function toggleTable() {
+            var table = document.getElementById('example');
+
+            if (table.style.display === 'table') {
+                table.style.display = 'none';
+            } else {
+                table.style.display = 'table';
+            }
+
+            table = document.getElementById('example_wrapper');
+
+            if (table.style.display === 'block' || table.style.display === '') {
+                table.style.display = 'none';
+            } else {
+                table.style.display = 'block';
+            }
+        }
+
+    </script>

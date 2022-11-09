@@ -1,0 +1,32 @@
+<div class="viewport-wrapper">
+    <h1>%s - XChem results</h1>
+    <button id='viewer_toggle' onclick='toggleViewer()'>Viewer</button>
+    <div id="viewer_container">
+        <h2 id="data_set_id"></h2>
+        <h3 style="color:red">Click event map in table to view a different crystal / compound pair (press SHIFT and
+            scroll mouse wheel to change contour level of event map)</h3>
+        <div style="position:relative;margin-left:auto;margin-right:auto">
+            <div id="viewport" style="width:800px;height:600px;display:inline-block"></div>
+            <div style="display:inline-block;position:absolute;top:0;margin-left:5px">
+                <div id="download_links" style="display:block">
+                    <h1 style="margin:0px;border:0px;padding:0px">
+                        Download Data
+                    </h1>
+                    <ul>
+                        <li><a href='files/%s_allPDBs.zip'>Download all PDB model files<a></li>
+                        <li><a href='files/%s_allEVENTmaps.zip'>Download all EVENT map files<a></li>
+                        <li><a href='files/%s_allMTZs.zip'>Download all MTZ files files<a></li>
+                        <li><a href='files/%s_allCIFs.zip'>Download all CIF files<a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h1>
+                        Controls
+                    </h1>
+                    <div id="ngl_controls" style="display:block">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
