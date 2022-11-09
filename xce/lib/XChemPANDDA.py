@@ -3,7 +3,6 @@ import glob
 import subprocess
 from datetime import datetime
 from PyQt4 import QtCore
-import math
 
 # from XChemUtils import mtztools
 import XChemDB
