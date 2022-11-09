@@ -8,7 +8,7 @@ def set_stylesheet(xce_object):
     palette.setColor(QtGui.QPalette.Background, QtGui.QColor("#ececec"))
     xce_object.setPalette(palette)
 
-    icons_directory = os.path.join((os.getenv("XChemExplorer_DIR")), "icons")
+    icons_directory = os.path.join((os.getenv("XChemExplorer_DIR")), "xce/icons")
 
     xce_object.setStyleSheet(
         """

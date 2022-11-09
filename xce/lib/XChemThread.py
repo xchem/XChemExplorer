@@ -1103,7 +1103,7 @@ class fit_ligands(QtCore.QThread):
     def get_footer(self, cmd, sampleID, compoundID):
         cmd += (
             "$CCP4/bin/ccp4-python"
-            " $XChemExplorer_DIR/helpers/"
+            " $XChemExplorer_DIR/xce/helpers/"
             "find_best_fitting_ligand.py {0!s} {1!s} {2!s}".format(
                 compoundID.replace(" ", ""),
                 os.path.join(self.initial_model_directory, sampleID),
@@ -1475,7 +1475,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
             "\n" + ccp4_scratch + "\n"
             "$CCP4/bin/ccp4-python"
-            " $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n"
+            " $XChemExplorer_DIR/xce/helpers/update_status_flag.py %s %s %s %s\n"
             % (
                 os.path.join(self.database_directory, self.data_source_file),
                 xtal,
@@ -1523,6 +1523,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "$CCP4/bin/ccp4-python "
             + os.path.join(
                 os.getenv("XChemExplorer_DIR"),
+                "xce",
                 "helpers",
                 "update_data_source_for_new_dimple_pdb.py",
             )
@@ -1590,7 +1591,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
             "\n" + ccp4_scratch + "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py"
+            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " %s %s %s %s\n"
             % (
                 os.path.join(self.database_directory, self.data_source_file),
@@ -1636,6 +1637,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "$CCP4/libexec/python "
             + os.path.join(
                 os.getenv("XChemExplorer_DIR"),
+                "xce",
                 "helpers",
                 "update_data_source_for_new_dimple_pdb.py",
             )
@@ -1769,7 +1771,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
             "\n" + ccp4_scratch + "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py"
+            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " %s %s %s %s\n"
             % (
                 os.path.join(self.database_directory, self.data_source_file),
@@ -1838,6 +1840,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "$CCP4/bin/ccp4-python "
             + os.path.join(
                 os.getenv("XChemExplorer_DIR"),
+                "xce",
                 "helpers",
                 "update_data_source_for_new_dimple%s_pdb.py" % twin,
             )
@@ -2222,7 +2225,7 @@ class start_COOT(QtCore.QThread):
         os.system(
             "cd {0!s}\ncoot --no-guano --no-state-script --script {1!s}".format(
                 os.getenv("HOME"),
-                os.path.join(os.getenv("XChemExplorer_DIR"), "lib", self.pylib),
+                os.path.join(os.getenv("XChemExplorer_DIR"), "xce", "lib", self.pylib),
             )
         )
 

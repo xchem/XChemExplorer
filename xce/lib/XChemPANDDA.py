@@ -1296,6 +1296,7 @@ class run_pandda_analyse(QtCore.QThread):
         self.make_ligand_links = "$CCP4/bin/ccp4-python %s %s %s\n" % (
             os.path.join(
                 os.getenv("XChemExplorer_DIR"),
+                "xce",
                 "helpers",
                 "make_ligand_links_after_pandda.py",
             ),
@@ -1317,6 +1318,7 @@ class run_pandda_analyse(QtCore.QThread):
             self.select_ground_state_model += "$CCP4/bin/ccp4-python %s %s\n" % (
                 os.path.join(
                     os.getenv("XChemExplorer_DIR"),
+                    "xce",
                     "helpers",
                     "select_ground_state_dataset.py",
                 ),

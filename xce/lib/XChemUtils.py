@@ -223,7 +223,7 @@ class helpers:
             # merge all compound CIFs into 1 file called merged.cif
             software += (
                 "$CCP4/bin/ccp4-python"
-                "$XChemExplorer_DIR/helpers/merge_ligand_cif_files.py {0!s}\n".format(
+                "$XChemExplorer_DIR/xce/helpers/merge_ligand_cif_files.py {0!s}\n".format(
                     os.path.join(initial_model_directory, sample, "compound")
                 )
             )
@@ -235,7 +235,7 @@ class helpers:
         Cmds = (
             header + "\n"
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"' + "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py"
+            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " {0!s} {1!s} {2!s} {3!s}".format(
                 os.path.join(database_directory, data_source_file),
                 sample,
@@ -246,6 +246,7 @@ class helpers:
             '$CCP4/bin/ccp4-python {0!s} "{1!s}" {2!s} {3!s} {4!s}\n'.format(
                 os.path.join(
                     os.getenv("XChemExplorer_DIR"),
+                    "xce",
                     "helpers",
                     "create_png_of_compound.py",
                 ),
@@ -268,6 +269,7 @@ class helpers:
             "$CCP4/bin/ccp4-python "
             + os.path.join(
                 os.getenv("XChemExplorer_DIR"),
+                "xce",
                 "helpers",
                 "update_data_source_for_new_cif_files.py",
             )

@@ -219,6 +219,7 @@ class run_xia2(QtCore.QThread):
                         "$CCP4/bin/ccp4-python "
                         + os.path.join(
                             os.getenv("XChemExplorer_DIR"),
+                            "xce",
                             "helpers",
                             "update_status_flag.py",
                         )
@@ -246,7 +247,10 @@ class run_xia2(QtCore.QThread):
             script += (
                 "$CCP4/bin/ccp4-python "
                 + os.path.join(
-                    os.getenv("XChemExplorer_DIR"), "helpers", "update_status_flag.py"
+                    os.getenv("XChemExplorer_DIR"),
+                    "xce",
+                    "helpers",
+                    "update_status_flag.py",
                 )
                 + " {0!s} {1!s} {2!s} {3!s}\n".format(
                     self.database, xtal, "DataProcessingStatus", "finished"

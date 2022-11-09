@@ -542,7 +542,7 @@ class Refine(object):
     def set_refinement_status(self, cmd):
         cmd += (
             "$CCP4/bin/ccp4-python "
-            " $XChemExplorer_DIR/helpers/update_status_flag.py "
+            " $XChemExplorer_DIR/xce/helpers/update_status_flag.py "
             + self.datasource
             + " "
             + self.xtalID
@@ -701,6 +701,7 @@ class Refine(object):
             ccp4_module = "module load ccp4/7.1.018"
         cmd += "\n" + ccp4_module + "\n" "$CCP4/bin/ccp4-python " + os.path.join(
             os.getenv("XChemExplorer_DIR"),
+            "xce",
             "helpers",
             "update_data_source_after_refinement.py",
         ) + " %s %s %s %s %s %s\n" % (
@@ -977,6 +978,7 @@ class Refine(object):
                 findTLS = (
                     os.path.join(
                         os.getenv("XChemExplorer_DIR"),
+                        "xce",
                         "helpers",
                         "phenix_find_TLS_groups.py",
                     )
@@ -1020,13 +1022,14 @@ class Refine(object):
         user = getpass.getuser()
         if os.path.isfile(self.datasource):
             refinementStatus = (
-                "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n"
+                "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py %s %s %s %s\n"
                 % (self.datasource, self.xtalID, "RefinementStatus", "running")
             )
             updateDB = (
                 "$CCP4/bin/ccp4-python "
                 + os.path.join(
                     os.getenv("XChemExplorer_DIR"),
+                    "xce",
                     "helpers",
                     "update_data_source_after_refinement.py",
                 )
@@ -2134,7 +2137,7 @@ class panddaRefine(object):
             + self.xtalID
             + "\n"
             "\n"
-            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/helpers/update_status_flag.py %s %s %s %s\n"
+            "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py %s %s %s %s\n"
             % (self.datasource, self.xtalID, "RefinementStatus", "running")
             + "\n"
             "giant.quick_refine"
@@ -2218,6 +2221,7 @@ class panddaRefine(object):
             "$CCP4/bin/ccp4-python "
             + os.path.join(
                 os.getenv("XChemExplorer_DIR"),
+                "xce",
                 "helpers",
                 "update_data_source_after_refinement.py",
             )
