@@ -4,9 +4,10 @@ import os
 import glob
 import math
 import subprocess
-import getpass
 import json
 import time
+
+from distutils.spawn import find_executable
 
 import gzip
 import bz2
@@ -223,7 +224,8 @@ class helpers:
             # merge all compound CIFs into 1 file called merged.cif
             software += (
                 "$CCP4/bin/ccp4-python"
-                "$XChemExplorer_DIR/xce/helpers/merge_ligand_cif_files.py {0!s}\n".format(
+                "$XChemExplorer_DIR/xce/helpers/"
+                "merge_ligand_cif_files.py {0!s}\n".format(
                     os.path.join(initial_model_directory, sample, "compound")
                 )
             )
@@ -1656,16 +1658,6 @@ class external_software:
         self.available_programs = {}
         self.Logfile = XChemLog.updateLog(xce_logfile)
 
-    @staticmethod
-    def is_available(program):
-        try:
-            devnull = open(os.devnull, "w")
-            subprocess.Popen(program, stdout=devnull, stderr=devnull).communicate()
-            return True
-        except OSError as e:
-            if e.errno == os.errno.ENOENT:
-                return False
-
     def log_found_status(self, program_name):
         self.Logfile.insert(
             "{0:50} {1:10}".format(
@@ -1680,60 +1672,53 @@ class external_software:
         # default is False; user needs to explicitely set this
         self.available_programs["qsub_remote"] = False
 
-        self.available_programs["qsub"] = True if self.is_available("qsub") else False
-        self.available_programs["qsub_array"] = (
-            True if self.is_available("qsub") else False
+        self.available_programs["qsub"] = self.available_programs["qsub_array"] = (
+            find_executable("qsub") is not None
         )
         self.log_found_status("qsub")
         self.log_found_status("qsub_array")
 
-        self.available_programs["refmac5"] = (
-            True if self.is_available(["refmac5", "end"]) else False
-        )
+        self.available_programs["refmac5"] = find_executable("refmac5") is not None
         self.log_found_status("refmac5")
 
         self.available_programs["phenix.molprobity"] = (
-            True if self.is_available("phenix.molprobity") else False
+            find_executable("phenix.molprobity") is not None
         )
         self.log_found_status("phenix.molprobity")
 
         self.available_programs["phenix.find_tls_groups"] = (
-            True if self.is_available("phenix.find_tls_groups") else False
+            find_executable("phenix.find_tls_groups") is not None
         )
         self.log_found_status("phenix.find_tls_groups")
 
         self.available_programs["mmtbx.validate_ligands"] = (
-            True if self.is_available("mmtbx.validate_ligands") else False
+            find_executable("mmtbx.validate_ligands") is not None
         )
         self.log_found_status("mmtbx.validate_ligands")
 
-        self.available_programs["acedrg"] = (
-            True if self.is_available(["acedrg", "-h"]) else False
-        )
+        self.available_programs["acedrg"] = find_executable("acedrg") is not None
         self.log_found_status("acedrg")
 
         self.available_programs["phenix.elbow"] = (
-            True if self.is_available("phenix.elbow") else False
+            find_executable("phenix.elbow") is not None
         )
         self.log_found_status("phenix.elbow")
 
-        self.available_programs["grade"] = True if self.is_available("grade") else False
+        self.available_programs["grade"] = find_executable("grade") is not None
         self.log_found_status("grade")
 
         self.available_programs["giant.create_occupancy_params"] = (
-            True if self.is_available("giant.create_occupancy_params") else False
+            find_executable("giant.create_occupancy_params") is not None
         )
         self.log_found_status("giant.create_occupancy_params")
 
         self.available_programs["mogul"] = (
-            True
-            if "BDG_TOOL_MOGUL" in os.environ
-            and self.is_available(os.environ["BDG_TOOL_MOGUL"])
-            else False
+            "BDG_TOOL_MOGUL" in os.environ
+            and find_executable(os.environ["BDG_TOOL_MOGUL"]) is not None
         )
         self.log_found_status("mogul")
 
-        self.available_programs["gemmi"] = True if self.is_available("gemmi") else False
+        self.available_programs["gemmi"] = find_executable("gemmi") is not None
         self.log_found_status("gemmi")
 
         return self.available_programs
