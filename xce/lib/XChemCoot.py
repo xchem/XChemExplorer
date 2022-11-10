@@ -1566,29 +1566,6 @@ class GUI(object):
             self.NEXTbuttonSite.set_sensitive(False)
         print(self.refinementProtocol)
 
-    def refinementProgramCallback(self, widget):
-        if widget.get_active():
-            if self.refinementProtocolcheckbox.get_active():
-                self.refinementProtocol = "pandda_phenix"
-                self.RefinementParamsButton.set_sensitive(False)
-            else:
-                self.refinementProgramcheckbox.set_active(False)
-                self.refinementProtocol = "refmac"
-        else:
-            self.RefinementParamsButton.set_sensitive(True)
-            if self.refinementProtocolcheckbox.get_active():
-                self.refinementProtocol = "pandda_refmac"
-            else:
-                self.refinementProtocol = "refmac"
-        if int(self.refinement_outcome.split()[0]) > 3:
-            print(
-                "==> XCE: sorry cannot change refinement protocol since you are at a"
-                " stage when we refine the ligand bound state only"
-            )
-            self.refinementProtocol = "refmac"
-            self.refinementProtocolcheckbox.set_active(False)
-        print(self.refinementProtocol)
-
     def show_ground_state_mean_map(self, widget):
         if widget.get_label().startswith("Show"):
             loaded = False

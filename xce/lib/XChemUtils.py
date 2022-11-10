@@ -1,7 +1,6 @@
 import XChemLog
 import XChemDB
 import os
-import glob
 import math
 import subprocess
 import json
@@ -1470,17 +1469,6 @@ class mtztools:
         pointgroup = self.get_point_group_from_spg_number(spg_number)
         return pointgroup
 
-    def get_high_resolution_from_mtz(self):
-        resolution_high = "n/a"
-        resolution_line = 1000000
-        mtzdmp = subprocess.Popen(["mtzdmp", self.mtzfile], stdout=subprocess.PIPE)
-        for n, line in enumerate(iter(mtzdmp.stdout.readline, "")):
-            if line.startswith(" *  Resolution Range :"):
-                resolution_line = n + 2
-            if n == resolution_line and len(line.split()) == 8:
-                resolution_high = line.split()[5]
-        return resolution_high
-
     def get_number_measured_reflections(self):
         missing_reflections = "0"
         all_reflections = "0"
@@ -1722,22 +1710,6 @@ class external_software:
         self.log_found_status("gemmi")
 
         return self.available_programs
-
-
-class ParseFiles:
-    def __init__(self, DataPath, xtalID):
-        # probably need to read in compoundID, because for custom projects
-        # need to take newest pdb file that has not same root as compoundID
-        self.DataPath = DataPath
-        self.xtalID = xtalID
-
-        if "<samplename>" in DataPath:
-            self.newestPDB = max(
-                glob.iglob(self.DataPath.replace("<samplename>", xtalID) + "/*.pdb"),
-                key=os.path.getctime,
-            )
-        else:
-            self.newestPDB = self.DataPath + "/" + self.xtalID + "/refine.pdb"
 
 
 class pdbtools(object):
@@ -2057,33 +2029,6 @@ class pdbtools(object):
                 f.write(pdb)
                 f.close()
         return Ligands
-
-    def save_specific_ligands_to_pdb(self, resname, chainID, resseq, altLoc):
-        pdb = ""
-        outDir = self.pdb[: self.pdb.rfind("/")]
-        for line in open(self.pdb):
-            if line.startswith("ATOM") or line.startswith("HETATM"):
-                resname_line = str(line[17:20]).replace(" ", "")
-                chainID_line = str(line[21:23]).replace(" ", "")
-                resseq_line = str(line[23:26]).replace(" ", "")
-                altLoc_line = str(line[16:17]).replace(" ", "")
-                if (
-                    resname_line == str(resname)
-                    and chainID_line == str(chainID)
-                    and resseq_line == str(resseq)
-                    and altLoc_line == str(altLoc)
-                ):
-                    pdb = pdb + line
-
-        if pdb != "":
-            f = open(
-                "{0!s}/ligand_{1!s}_{2!s}_{3!s}_{4!s}.pdb".format(
-                    outDir, str(resname), str(chainID), str(resseq), str(altLoc)
-                ),
-                "w",
-            )
-            f.write(pdb)
-            f.close()
 
     def find_xce_ligand_details(self):
         Ligands = []
