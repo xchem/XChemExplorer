@@ -1,9 +1,3 @@
-#!/usr/local/anaconda/sgc_default/envs/sgc_default/bin/python
-
-# Author: Brian Marsden
-#
-# handover date: 16/12/2016
-
 from rdkit.Chem import Draw
 from rdkit import Chem
 import shutil
@@ -45,14 +39,14 @@ def writeTableRow(row, htmlfile):
         + row["CompoundCode"]
         + "_small.png'></a></div></td>\n"
     )
-    #  htmlfile.write("<td><div id='"+row['ModelName']+"'><a href='icbs/"+row['ModelName']+".html'><img src='mapImages/"+row['ModelName']+"_small.png'></a></div></td>\n")
     htmlfile.write("<td>" + row["PANDDA_site_comment"] + "</td>\n")
-    #  htmlfile.write("<td>TBD</td>\n")
-    #  htmlfile.write("<td>http://www.rcsb.org/pdb/explore/explore.do?structureId=%s</td>\n" %row['Deposition_PDB_ID'])
     htmlfile.write(
-        '<td><a target="_blank" href="http://www.rcsb.org/pdb/explore/explore.do?structureId={0!s}">{1!s}</a></td>\n'.format(
-            row["Deposition_PDB_ID"], row["Deposition_PDB_ID"]
-        )
+        "<td>"
+        '<a target="_blank" '
+        'href="http://www.rcsb.org/pdb/explore/explore.do?structureId={0!s}">'
+        "{1!s}"
+        "</a>"
+        "</td>\n".format(row["Deposition_PDB_ID"], row["Deposition_PDB_ID"])
     )
     htmlfile.write("<td>" + row["DataProcessingResolutionHigh"] + "</td>\n")
     htmlfile.write("<td>" + row["DataProcessingSpaceGroup"] + "</td>\n")
@@ -83,10 +77,15 @@ def writeICBPage(row, panddadir):
         "<h2>" + row["CrystalName"] + " " + row["CompoundCode"] + " event</h2>\n"
     )
     icbhtmlfile.write(
-        '<div id="wait"><h3 style="color:red;">Please wait whilst the interactive viewer is loaded!</h3></div>\n'
+        '<div id="wait">'
+        '<h3 style="color:red;">'
+        "Please wait whilst the interactive viewer is loaded!"
+        "</h3>"
+        "</div>\n"
     )
     icbhtmlfile.write(
-        '<div id="con" style="width: 800px; height: 600px; border: 2px solid #ABABAB">\n'
+        '<div id="con"'
+        ' style="width: 800px; height: 600px; border: 2px solid #ABABAB">\n'
     )
     icbhtmlfile.write(
         '<img id="pdbloader" src="../mapImages/'
@@ -95,7 +94,6 @@ def writeICBPage(row, panddadir):
         + row["CompoundCode"]
         + '_large.png" />\n'
     )
-    #  icbhtmlfile.write('<img id="pdbloader" src="../mapImages/'+row['ModelName']+'_large.png" />\n')
     icbhtmlfile.write("</div>\n")
     icbhtmlfile.write('<div id="details">\n')
     icbhtmlfile.write("<table>\n")
@@ -123,7 +121,6 @@ def writeICBPage(row, panddadir):
         + row["CompoundCode"]
         + '.icb";\n'
     )
-    #  icbhtmlfile.write('  act.projectFile = "'+row['ModelName']+'_'+row['CompoundCode']+'.icb.gz";\n')
     icbhtmlfile.write("  act.searchBarVisible = false;\n")
     icbhtmlfile.write("  act.sequenceViewVisibleAuto = false;\n")
     icbhtmlfile.write("  act.tableViewVisibleAuto = false;\n")
@@ -193,11 +190,13 @@ def main(argv):
     )
     htmlfile.write("<title>" + targetID + " Fragment Hits</title>\n")
     htmlfile.write(
-        '<script type="text/javascript" language="javascript" src="js/jquery-1.12.3.min.js">\n'
+        '<script type="text/javascript" language="javascript" '
+        'src="js/jquery-1.12.3.min.js">\n'
     )
     htmlfile.write("</script>\n")
     htmlfile.write(
-        '<script type="text/javascript" language="javascript" src="js/jquery.dataTables.min.js">\n'
+        '<script type="text/javascript" language="javascript" '
+        'src="js/jquery.dataTables.min.js">\n'
     )
     htmlfile.write("</script>\n")
     htmlfile.write('<script type="text/javascript" class="init">\n')
@@ -229,22 +228,47 @@ def main(argv):
     htmlfile.write("<body>\n")
     htmlfile.write("<H3>Ligand-bound models for " + targetID + "</h3>")
     htmlfile.write(
-        """<h4>Interpreting 'Ligand confidence'</h4>
-<p><u>4 - High Confidence:</u>  The expected ligand was easily interpretable from clear density, and subsequent refinement was well-behaved.  This ligand can be trusted.
-<br><u>3 - Clear density, unexpected ligand:</u>  Density very clearly showed a well-defined ligand, but that ligand was unexpected in that crystal/dataset.  The observed ligand was modelled anyway, because its presence could be explained in some way.
-<br><u>2 - Correct ligand, weak density:</u>  Though density was weak, it was possible to model the expected ligand, possibly including other circumstantial evidence (e.g. similar ligand in another model).
-<br><u>1 - Low Confidence:</u>  The ligand model is to be treated with scepticism, because the evidence (density, identity, pose) were not convincing.
-<h4>Interpreting 'Model status':</h4>
-<p><u>6 - Deposited:</u>  The model has been deposited in the PDB.
-<br><u>5 - Deposition ready:</u>  The model is fully error-free, in every residue, and is ready for deposition.
-<br><u>4 - CompChem ready:</u>  The model is complete and correct in the region of the bound ligand.  There may be remaining small errors elsewhere in the structure, but they are far away and unlikely to be relevant to any computational analysis or compound design.
-<h4>Interpreting 'Ligand validation' spider plots:</h4>  Each axis represents one of the values described below; small is better, and large values on any axis implies that further investigation is warranted.
-<p><u>Quality (RSCC)</u> reflects the fit of the atoms to the experimental density, and should typically be greater than 0.7.
-<br><u>Accuracy (RSZD)</u> measures the amount of difference density that is found around these atoms, and should be below 3.
-<br><u>B-factor ratio</u> measures the consistency of the model with surrounding protein, and is calculated from the B factors of respectively the changed atoms and all side-chain atoms within 4&#8491;.  Large values (>3) reflect poor evidence for the model, and intermediate values (1.5+) indicate errors in refinement or modelling; for weakly-binding ligands, systematically large ratios may be justifiable.
-<br><u>RMSD</u> compares the positions of all atoms built into event density, with their positions after final refinement, and should be below 1&#8491;.
-<br><u>Precision (RSZO/OCC)</u> measures how clear the density is after refinement.  (This is not a quality indicator, but is related to strength of binding but not in a straightforward way.)
-<p></p>\n"""
+        "<h4>Interpreting 'Ligand confidence'</h4>\n"
+        "<p><u>4 - High Confidence:</u>  The expected ligand was easily interpretable"
+        " from clear density, and subsequent refinement was well-behaved.  This ligand"
+        " can be trusted.\n"
+        "<br><u>3 - Clear density, unexpected ligand:</u>  Density very clearly showed"
+        " a well-defined ligand, but that ligand was unexpected in that"
+        " crystal/dataset.  The observed ligand was modelled anyway, because its"
+        " presence could be explained in some way.\n"
+        "<br><u>2 - Correct ligand, weak density:</u>  Though density was weak, it was"
+        " possible to model the expected ligand, possibly including other"
+        " circumstantial evidence (e.g. similar ligand in another model).\n"
+        "<br><u>1 - Low Confidence:</u>  The ligand model is to be treated with"
+        " scepticism, because the evidence (density, identity, pose) were not"
+        " convincing.\n"
+        "<h4>Interpreting 'Model status':</h4>\n"
+        "<p><u>6 - Deposited:</u>  The model has been deposited in the PDB.\n"
+        "<br><u>5 - Deposition ready:</u>  The model is fully error-free, in every"
+        " residue, and is ready for deposition.\n"
+        "<br><u>4 - CompChem ready:</u>  The model is complete and correct in the"
+        " region of the bound ligand.  There may be remaining small errors elsewhere in"
+        " the structure, but they are far away and unlikely to be relevant to any"
+        " computational analysis or compound design.\n"
+        "<h4>Interpreting 'Ligand validation' spider plots:</h4>  Each axis represents"
+        " one of the values described below; small is better, and large values on any"
+        " axis implies that further investigation is warranted.\n"
+        "<p><u>Quality (RSCC)</u> reflects the fit of the atoms to the experimental"
+        " density, and should typically be greater than 0.7.\n"
+        "<br><u>Accuracy (RSZD)</u> measures the amount of difference density that is"
+        " found around these atoms, and should be below 3.\n"
+        "<br><u>B-factor ratio</u> measures the consistency of the model with"
+        " surrounding protein, and is calculated from the B factors of respectively the"
+        " changed atoms and all side-chain atoms within 4&#8491;.  Large values (>3)"
+        " reflect poor evidence for the model, and intermediate values (1.5+) indicate"
+        " errors in refinement or modelling; for weakly-binding ligands, systematically"
+        " large ratios may be justifiable.\n"
+        "<br><u>RMSD</u> compares the positions of all atoms built into event density,"
+        " with their positions after final refinement, and should be below 1&#8491;.\n"
+        "<br><u>Precision (RSZO/OCC)</u> measures how clear the density is after"
+        " refinement.  (This is not a quality indicator, but is related to strength of"
+        " binding but not in a straightforward way.)\n"
+        "<p></p>\n\n"
     )
     htmlfile.write("<h4>Download data</h4>\n")
     htmlfile.write("<ul>\n")
@@ -304,49 +328,76 @@ def main(argv):
             c.row_factory = sqlite3.Row
             cur = c.cursor()
 
-            #      sql = ( "select p.ID,p.CrystalName,p.PANDDA_site_event_index,p.CrystalName || '_event'|| p.PANDDA_site_event_index "
-            #              " as ModelName,m.CompoundCode,m.CompoundSMILES,p.PANDDA_site_name,p.PANDDA_site_confidence "
-            #              " as LigandConfidence,p.RefinementOutcome "
-            #              " as ModelStatus,p.PANDDA_site_comment,p.PANDDA_site_x,p.PANDDA_site_y,p.PANDDA_site_z, "
-            #              "                p.PANDDA_site_spider_plot,m.DataProcessingResolutionHigh,m.DataProcessingSpaceGroup,"
-            #              "                m.DataProcessingUnitCell,m.RefinementPDB_latest,m.RefinementMTZ_latest,p.PANDDA_site_event_map "
-            #              " from panddaTable as p, mainTable as m "
-            #              " where p.CrystalName=m.CrystalName and p.PANDDA_site_ligand_placed='True' and "
-            #              "       (LigandConfidence like '1%' or LigandConfidence like '2%' or LigandConfidence like '3%' or LigandConfidence like '4%') "
-            #              " order by p.CrystalName,ModelStatus desc,PANDDA_site_event_index"
-            #      )
-
-            # query below is without the LigandConfidence being constrained; this is because some older DBs don't have a starting digit
-            # here we constrain RefinementOutcome of site
-            #      cur.execute("select p.ID,p.CrystalName,p.PANDDA_site_event_index,p.CrystalName || '_event'|| p.PANDDA_site_event_index as ModelName,m.CompoundCode,m.CompoundSMILES,m.Deposition_PDB_ID,p.PANDDA_site_name,p.PANDDA_site_confidence as LigandConfidence,p.RefinementOutcome as ModelStatus,p.PANDDA_site_comment,p.PANDDA_site_x,p.PANDDA_site_y,p.PANDDA_site_z, p.PANDDA_site_spider_plot,m.DataProcessingResolutionHigh,m.DataProcessingSpaceGroup,m.DataProcessingUnitCell,m.RefinementBoundConformation,m.RefinementMTZ_latest,p.PANDDA_site_event_map from panddaTable as p, mainTable as m where p.CrystalName=m.CrystalName and p.PANDDA_site_ligand_placed='True' and (p.RefinementOutcome like '4%' or p.RefinementOutcome like '5%' or p.RefinementOutcome like '6%')  order by p.CrystalName,ModelStatus desc,PANDDA_site_event_index")
-
             sql = (
-                "select p.ID,p.CrystalName,p.PANDDA_site_event_index,p.CrystalName || '_event'|| p.PANDDA_site_event_index "
-                " as ModelName,m.CompoundCode,m.CompoundSMILES,m.Deposition_PDB_ID,p.PANDDA_site_name,"
+                "select p.ID,"
+                "p.CrystalName,"
+                "p.PANDDA_site_event_index,"
+                "p.CrystalName || '_event'|| p.PANDDA_site_event_index "
+                " as ModelName,"
+                "m.CompoundCode,"
+                "m.CompoundSMILES,"
+                "m.Deposition_PDB_ID,"
+                "p.PANDDA_site_name,"
                 " p.PANDDA_site_confidence as LigandConfidence,"
                 " p.RefinementOutcome as ModelStatus,"
-                " p.PANDDA_site_comment,p.PANDDA_site_x,p.PANDDA_site_y,p.PANDDA_site_z, p.PANDDA_site_spider_plot,"
-                " m.DataProcessingResolutionHigh,m.DataProcessingSpaceGroup,m.DataProcessingUnitCell,"
-                " m.RefinementBoundConformation,m.RefinementMTZ_latest,"
+                " p.PANDDA_site_comment,"
+                "p.PANDDA_site_x,"
+                "p.PANDDA_site_y,"
+                "p.PANDDA_site_z,"
+                " p.PANDDA_site_spider_plot,"
+                " m.DataProcessingResolutionHigh,"
+                "m.DataProcessingSpaceGroup,"
+                "m.DataProcessingUnitCell,"
+                " m.RefinementBoundConformation,"
+                "m.RefinementMTZ_latest,"
                 " p.PANDDA_site_event_map from panddaTable as p, "
-                " mainTable as m where p.CrystalName=m.CrystalName and p.PANDDA_site_ligand_placed='True' "
-                " and (p.RefinementOutcome like '4%' or p.RefinementOutcome like '5%' or p.RefinementOutcome like '6%')  "
-                " and (LigandConfidence like '1%' or LigandConfidence like '2%' or LigandConfidence like '3%' or LigandConfidence like '4%')"
+                " mainTable as m"
+                " where p.CrystalName=m.CrystalName"
+                " and p.PANDDA_site_ligand_placed='True' "
+                " and (p.RefinementOutcome like '4%'"
+                " or p.RefinementOutcome like '5%'"
+                " or p.RefinementOutcome like '6%')  "
+                " and (LigandConfidence like '1%'"
+                " or LigandConfidence like '2%'"
+                " or LigandConfidence like '3%'"
+                " or LigandConfidence like '4%')"
                 " order by p.CrystalName,ModelStatus desc,PANDDA_site_event_index"
             )
 
             sql = (
-                "select p.ID,p.CrystalName,p.PANDDA_site_event_index,p.CrystalName || '_event'|| p.PANDDA_site_event_index "
-                " as ModelName,m.CompoundCode,m.CompoundSMILES,m.Deposition_PDB_ID,p.PANDDA_site_name,"
+                "select p.ID,"
+                "p.CrystalName,"
+                "p.PANDDA_site_event_index,"
+                "p.CrystalName || '_event'|| p.PANDDA_site_event_index "
+                " as ModelName,"
+                "m.CompoundCode,"
+                "m.CompoundSMILES,"
+                "m.Deposition_PDB_ID,"
+                "p.PANDDA_site_name,"
                 " p.PANDDA_site_confidence as LigandConfidence,"
                 " p.RefinementOutcome as ModelStatus,"
-                " p.PANDDA_site_comment,p.PANDDA_site_x,p.PANDDA_site_y,p.PANDDA_site_z, p.PANDDA_site_spider_plot,"
-                " m.DataProcessingResolutionHigh,m.DataProcessingSpaceGroup,m.DataProcessingUnitCell,"
-                " m.RefinementBoundConformation,m.RefinementMTZ_latest,"
-                " p.PANDDA_site_event_map from panddaTable as p, "
-                " mainTable as m where p.CrystalName=m.CrystalName and p.PANDDA_site_ligand_placed='True' "
-                " and (m.RefinementOutcome like '4%' or m.RefinementOutcome like '5%' or m.RefinementOutcome like '6%')  "
-                " and (LigandConfidence like '1%' or LigandConfidence like '2%' or LigandConfidence like '3%' or LigandConfidence like '4%')"
+                " p.PANDDA_site_comment,"
+                "p.PANDDA_site_x,"
+                "p.PANDDA_site_y,"
+                "p.PANDDA_site_z,"
+                " p.PANDDA_site_spider_plot,"
+                " m.DataProcessingResolutionHigh,"
+                "m.DataProcessingSpaceGroup,"
+                "m.DataProcessingUnitCell,"
+                " m.RefinementBoundConformation,"
+                "m.RefinementMTZ_latest,"
+                " p.PANDDA_site_event_map"
+                " from panddaTable as p, "
+                " mainTable as m"
+                " where p.CrystalName=m.CrystalName"
+                " and p.PANDDA_site_ligand_placed='True' "
+                " and (m.RefinementOutcome like '4%'"
+                " or m.RefinementOutcome like '5%'"
+                " or m.RefinementOutcome like '6%')  "
+                " and (LigandConfidence like '1%'"
+                " or LigandConfidence like '2%'"
+                " or LigandConfidence like '3%'"
+                " or LigandConfidence like '4%')"
                 " order by p.CrystalName,ModelStatus desc,PANDDA_site_event_index"
             )
 
@@ -355,7 +406,8 @@ def main(argv):
             rows = cur.fetchall()
             if not rows:
                 print(
-                    "==> WARNING: none of your samples seems to be at least CompChem ready (4)"
+                    "==> WARNING: none of your samples seems to be at least"
+                    " CompChem ready (4)"
                 )
                 return None
             writer = csv.DictWriter(f, fieldnames=list(rows[1].keys()))
@@ -370,10 +422,6 @@ def main(argv):
                     (150, 150),
                 )
                 # Write out table information for event
-                eventID = row["ModelName"] + "_" + row["CompoundCode"]
-                actID = (row["ModelName"] + row["CompoundCode"]).replace(
-                    targetID + "-", ""
-                )
                 writeTableRow(row, htmlfile)
                 writeICBPage(row, panddadir)
                 try:
@@ -405,9 +453,6 @@ def main(argv):
                     print("event map  :", row["PANDDA_site_event_map"])
                     print("spider plot:", row["PANDDA_site_spider_plot"])
                     pass
-                #        shutil.copy(row['RefinementPDB_latest'],panddadir+"/pdbs/"+row['ModelName']+".pdb")
-                #        if row['PANDDA_site_spider_plot'] is not None:
-                #          shutil.copy(row['PANDDA_site_spider_plot'],panddadir+"/residueplots/"+row['ModelName']+".png")
                 # Write row to CSV for ICM
                 writer.writerow(dict(row))
 
