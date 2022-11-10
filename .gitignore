@@ -1,6 +1,10 @@
-**/*.pyc
 *.pyc
-XChemExplorer_dmd.sh
-.idea
-/libraries
+*.egg-info
+/build
+/dist
+
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+
 xce.log
