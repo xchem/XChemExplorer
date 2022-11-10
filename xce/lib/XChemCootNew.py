@@ -1852,22 +1852,6 @@ class GUI(object):
             self.NEXTbuttonSite.set_sensitive(False)
         print(self.refinementProtocol)
 
-    def refinementProgramCallback(self, widget):
-        if widget.get_active():
-            if self.refinementProtocolcheckbox.get_active():
-                self.refinementProtocol = "pandda_phenix"
-                self.RefinementParamsButton.set_sensitive(False)
-            else:
-                self.refinementProgramcheckbox.set_active(False)
-                self.refinementProtocol = "refmac"
-        else:
-            self.RefinementParamsButton.set_sensitive(True)
-            if self.refinementProtocolcheckbox.get_active():
-                self.refinementProtocol = "pandda_refmac"
-            else:
-                self.refinementProtocol = "refmac"
-        print(self.refinementProtocol)
-
     def show_ground_state_mean_map(self, widget):
         if widget.get_label().startswith("Show"):
             loaded = False

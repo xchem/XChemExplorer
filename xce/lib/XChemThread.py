@@ -2230,18 +2230,6 @@ class start_COOT(QtCore.QThread):
         )
 
 
-class start_ICM(QtCore.QThread):
-    def __init__(self, html_export_directory):
-        QtCore.QThread.__init__(self)
-        self.html_export_directory = html_export_directory
-
-    def run(self):
-        cwd = os.getcwd()
-        if cwd.startswith("/dls"):
-            os.system("nautilus {0!s} &".format(self.html_export_directory))
-            os.system("/dls/science/groups/i04-1/software/icm-3.8-5/icm64 -g")
-
-
 class start_pandda_inspect(QtCore.QThread):
     def __init__(self, settings, xce_logfile):
         QtCore.QThread.__init__(self)
@@ -2273,15 +2261,6 @@ class start_pandda_inspect(QtCore.QThread):
             "starting pandda.inspect with the following command:\n" + Cmds
         )
         os.system(Cmds)
-
-
-class start_dials_image_viewer(QtCore.QThread):
-    def __init__(self, diffraction_image):
-        QtCore.QThread.__init__(self)
-        self.diffraction_image = diffraction_image
-
-    def run(self):
-        os.system("dials.image_viewer " + self.diffraction_image)
 
 
 # --- new module from hell -------------------------------------------------------------

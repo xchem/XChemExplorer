@@ -874,24 +874,6 @@ class data_source:
             pass
         return db_dict
 
-    def get_db_pandda_dict_for_sample_and_site(self, sampleID, site_index):
-        db_dict = {}
-        header = []
-        data = []
-        # creates sqlite file if non existent
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute(
-            "select * from panddaTable where CrystalName='{0!s}'"
-            " and PANDDA_site_index='{1!s}';".format(sampleID, site_index)
-        )
-        for column in cursor.description:
-            header.append(column[0])
-        data = cursor.fetchall()
-        for n, item in enumerate(data[0]):
-            db_dict[header[n]] = str(item)
-        return db_dict
-
     def get_db_pandda_dict_for_sample_and_site_and_event(
         self, sampleID, site_index, event_index
     ):
