@@ -11,7 +11,8 @@ import pickle
 from matplotlib.figure import Figure
 
 # had to adapt the original coot_utils.py file
-# otherwise unable to import the original file without complaints about missing modules etc.
+# otherwise unable to import the original file without complaints about missing modules
+# etc.
 # modified file is now in $XChemExplorer_DIR/lib
 
 
@@ -23,13 +24,12 @@ class GUI(object):
 
     def __init__(self):
 
-        ###########################################################################################
+        ################################################################################
         # read in settings file from XChemExplorer to set the relevant paths
         print("current dir", os.getcwd())
         self.settings = pickle.load(open(".xce_settings.pkl", "rb"))
         remote_qsub_submission = self.settings["remote_qsub"]
         print("setting", self.settings)
-        #        self.refine_model_directory=self.settings['refine_model_directory']
         self.database_directory = self.settings["database_directory"]
         self.xce_logfile = self.settings["xce_logfile"]
         self.data_source = self.settings["data_source"]
@@ -69,13 +69,12 @@ class GUI(object):
 
         # this decides which samples will be looked at
         self.selection_mode = ""
-        #        self.selected_site=''
         self.pandda_index = -1  # refers to the number of sites
         self.site_index = "0"
         self.event_index = "0"
 
-        # the Folder is kind of a legacy thing because my inital idea was to have separate folders
-        # for Data Processing and Refinement
+        # the Folder is kind of a legacy thing because my inital idea was to have
+        # separate folders for Data Processing and Refinement
         self.project_directory = self.settings["initial_model_directory"]
         self.Serial = 0
         self.Refine = None
@@ -88,7 +87,6 @@ class GUI(object):
         self.spider_plot = ""
         self.ligand_confidence = ""
         self.refinement_folder = ""
-        #        self.datasetOutcome=''
 
         self.pdb_style = "refine.pdb"
         self.mtz_style = "refine.mtz"
@@ -107,7 +105,7 @@ class GUI(object):
         self.db_dict_mainTable = {}
         self.db_dict_panddaTable = {}
 
-        ###########################################################################################
+        ################################################################################
         # some COOT settings
         coot.set_map_radius(15)
         coot.set_colour_map_rotation_for_map(0)
@@ -171,13 +169,11 @@ class GUI(object):
         self.window.set_title("XChemExplorer")
         self.vbox = gtk.VBox()  # this is the main container
 
-        #################################################################################
+        ################################################################################
         # --- Sample Selection ---
-        #        self.vbox.add(gtk.Label('Select Samples'))
 
         frame = gtk.Frame(label="Select Samples")
         self.hbox_select_samples = gtk.HBox()
-        #        vbox=gtk.VBox()
 
         self.cb_select_samples = gtk.combo_box_new_text()
         self.cb_select_samples.connect("changed", self.set_selection_mode)
@@ -185,19 +181,13 @@ class GUI(object):
             self.cb_select_samples.append_text(citeria)
         self.hbox_select_samples.add(self.cb_select_samples)
 
-        #        self.cb_select_sites = gtk.combo_box_new_text()
-        #        self.cb_select_sites.connect("changed", self.set_site)
-        #        for site in self.ligand_site_information:
-        #            self.cb_select_sites.append_text(str(site[0])+' - '+str(site[1]))
-        #        self.hbox_select_samples.add(self.cb_select_sites)
-
         self.select_samples_button = gtk.Button(label="GO")
         self.select_samples_button.connect("clicked", self.get_samples_to_look_at)
         self.hbox_select_samples.add(self.select_samples_button)
         frame.add(self.hbox_select_samples)
         self.vbox.pack_start(frame)
 
-        #################################################################################
+        ################################################################################
         # --- status window ---
         frame = gtk.Frame()
         self.status_label = gtk.Label()
@@ -207,7 +197,7 @@ class GUI(object):
         # SPACER
         self.vbox.add(gtk.Label(" "))
 
-        #################################################################################
+        ################################################################################
         # --- Refinement Statistics ---
         # next comes a section which displays some global quality indicators
         # a combination of labels and textview widgets, arranged in a table
@@ -430,7 +420,7 @@ class GUI(object):
         # SPACER
         self.vbox.add(gtk.Label(" "))
 
-        #################################################################################
+        ################################################################################
         # --- hbox for compound picture & spider_plot (formerly: refinement history) ---
         frame = gtk.Frame()
         self.hbox_for_info_graphics = gtk.HBox()
@@ -450,11 +440,6 @@ class GUI(object):
         compound_frame.add(self.image)
         self.hbox_for_info_graphics.add(compound_frame)
 
-        # --- Refinement History ---
-        #        self.canvas = FigureCanvas(self.update_plot([0],[0],[0]))
-        #        self.canvas.set_size_request(190, 190)
-        #        self.hbox_for_info_graphics.add(self.canvas)
-
         # --- Spider Plot ---
         spider_plot_frame = gtk.Frame()
         spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
@@ -471,7 +456,7 @@ class GUI(object):
         frame.add(self.hbox_for_info_graphics)
         self.vbox.add(frame)
 
-        #################################################################################
+        ################################################################################
         # --- pandda.inspect user comments ---
         outer_frame = gtk.Frame(label="pandda.inspect comments")
         vbox = gtk.VBox()
@@ -533,7 +518,7 @@ class GUI(object):
         #        # SPACER
         self.vbox.add(gtk.Label(" "))
 
-        #################################################################################
+        ################################################################################
         outer_frame = gtk.Frame(label="Sample Navigator")
         hboxSample = gtk.HBox()
 
@@ -579,7 +564,7 @@ class GUI(object):
         # SPACER
         self.vbox.add(gtk.Label(" "))
 
-        #################################################################################
+        ################################################################################
         # --- current refinement stage ---
         outer_frame = gtk.Frame()
         hbox = gtk.HBox()
@@ -635,13 +620,6 @@ class GUI(object):
         frame.add(self.hbox_for_modeling)
         self.vbox.pack_start(frame)
 
-        #        # --- ligand confidence ---
-        #        self.cb_ligand_confidence = gtk.combo_box_new_text()
-        #        self.cb_ligand_confidence.connect("changed", self.set_ligand_confidence)
-        #        for citeria in self.ligand_confidence:
-        #            self.cb_ligand_confidence.append_text(citeria)
-        #        self.vbox.add(self.cb_ligand_confidence)
-
         # --- refinement & options ---
         self.hbox_for_refinement = gtk.HBox()
         self.REFINEbutton = gtk.Button(label="Refine")
@@ -651,9 +629,6 @@ class GUI(object):
         self.RefinementParamsButton.connect("clicked", self.RefinementParams)
         self.hbox_for_refinement.add(self.RefinementParamsButton)
         self.vbox.add(self.hbox_for_refinement)
-
-        #        self.VALIDATEbutton = gtk.Button(label="validate structure")
-        #        self.DEPOSITbutton = gtk.Button(label="prepare for deposition")
 
         # --- CANCEL button ---
         self.CANCELbutton = gtk.Button(label="CANCEL")
@@ -671,7 +646,6 @@ class GUI(object):
         if self.index < 0:
             self.index = 0
         if self.index >= len(self.Todo):
-            #            self.index = len(self.Todo)
             self.index = 0
         self.cb.set_active(self.index)
 
@@ -735,7 +709,8 @@ class GUI(object):
     def refresh_site_combobox(self):
         # reset self.pandda_index
         self.pandda_index = -1
-        # clear CB first, 100 is sort of arbitrary since it's unlikely there will ever be 100 sites
+        # clear CB first, 100 is sort of arbitrary since it's unlikely there will ever
+        # be 100 sites
         for n in range(-1, 100):
             self.cb_site.remove_text(0)
         self.site_index = "0"
@@ -868,14 +843,14 @@ class GUI(object):
         except ValueError:
             self.ligand_RSZDValue.set_label("-")
 
-        #########################################################################################
+        ################################################################################
         # delete old Event MAPs
         if len(coot_utils_XChem.molecule_number_list()) > 0:
             for imol in coot_utils_XChem.molecule_number_list():
                 if "map.native.ccp4" in coot.molecule_name(imol):
                     coot.close_molecule(imol)
 
-        #########################################################################################
+        ################################################################################
         # Spider plot
         # Note: refinement history was shown instead previously
         if os.path.isfile(self.spider_plot):
@@ -893,15 +868,13 @@ class GUI(object):
         )
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
 
-        #########################################################################################
+        ################################################################################
         # check for PANDDAs EVENT maps
         if os.path.isfile(self.event_map):
             coot.handle_read_ccp4_map((self.event_map), 0)
             for imol in coot_utils_XChem.molecule_number_list():
                 if self.event_map in coot.molecule_name(imol):
                     coot.set_contour_level_in_sigma(imol, 2)
-                    #                    coot.set_contour_level_absolute(imol,0.5)
-                    #                    coot.set_last_map_colour(0.4,0,0.4)
                     coot.set_last_map_colour(0.74, 0.44, 0.02)
 
     def experiment_stage_button_clicked(self, widget, data=None):
@@ -996,27 +969,20 @@ class GUI(object):
                     self.xtalID, self.data_source, ""
                 )  # '' because file does not exist
 
-        # all this information is now updated in the datasource after each refinement cycle
+        # all this information is now updated in the datasource after each refinement
+        # cycle
         self.QualityIndicators = self.db.get_db_dict_for_sample(self.xtalID)
 
-        #########################################################################################
+        ################################################################################
         # history
         # if the structure was previously refined, try to read the parameters
-        #        self.hbox_for_info_graphics.remove(self.canvas)
         if self.Serial > 1:
             self.RefmacParams = self.Refine.ParamsFromPreviousCycle(self.Serial - 1)
-        #            refinement_cycle,Rfree,Rcryst=self.Refine.GetRefinementHistory()
-        #            self.canvas = FigureCanvas(self.update_plot(refinement_cycle,Rfree,Rcryst))
-        #        else:
-        #            self.canvas = FigureCanvas(self.update_plot([0],[0],[0]))  # a gtk.DrawingArea
-        #        self.canvas.set_size_request(190, 190)
-        #        self.hbox_for_info_graphics.add(self.canvas)
-        #        self.canvas.show()
 
-        #########################################################################################
+        ################################################################################
         # update pdb & maps
 
-        #########################################################################################
+        ################################################################################
         # delete old PDB and MAP files
         # - get a list of all molecules which are currently opened in COOT
         # - remove all molecules/ maps before loading a new set
@@ -1024,7 +990,7 @@ class GUI(object):
             for item in coot_utils_XChem.molecule_number_list():
                 coot.close_molecule(item)
 
-        #########################################################################################
+        ################################################################################
         # read new PDB files
         # read protein molecule after ligand so that this one is the active molecule
         coot.set_nomenclature_errors_on_read("ignore")
@@ -1047,14 +1013,6 @@ class GUI(object):
             os.path.join(self.project_directory, self.xtalID, self.pdb_style)
         ):
             os.chdir(os.path.join(self.project_directory, self.xtalID))
-            # we want to be able to check dimple results immediately, but don't want to interfere with refinement
-        #            if not os.path.isfile('REFINEMENT_IN_PROGRESS'):
-        #                if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.xtalID+'-ensemble-model.pdb')):
-        #                    os.symlink(self.xtalID+'-ensemble-model.pdb',self.pdb_style)
-        #                elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.pdb')):
-        #                    os.symlink('dimple.pdb',self.pdb_style)
-        #                else:
-        #                    self.go_to_next_xtal()
         if os.path.isfile(
             os.path.join(self.project_directory, self.xtalID, self.pdb_style)
         ):
@@ -1078,7 +1036,7 @@ class GUI(object):
                 coot.set_show_symmetry_master(1)
                 coot.set_show_symmetry_molecule(item, 1)  # show symm for model
 
-        #########################################################################################
+        ################################################################################
         # read fofo maps
         # - read ccp4 map: 0 - 2fofc map, 1 - fofc.map
         # read 2fofc map last so that one can change its contour level
@@ -1097,13 +1055,6 @@ class GUI(object):
         else:
             # try to open mtz file with same name as pdb file
             coot.set_default_initial_contour_level_for_map(1)
-            #            if not os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.mtz_style)):
-            #                os.chdir(os.path.join(self.project_directory,self.xtalID))
-            #                if not os.path.isfile('REFINEMENT_IN_PROGRESS'):
-            #                    if os.path.isfile(os.path.join(self.project_directory,self.xtalID,self.xtalID+'-pandda-input.mtz')):
-            #                        os.symlink(self.xtalID+'-pandda-input.mtz',self.mtz_style)
-            #                    elif os.path.isfile(os.path.join(self.project_directory,self.xtalID,'dimple.mtz')):
-            #                        os.symlink('dimple.mtz',self.mtz_style)
             if os.path.isfile(
                 os.path.join(self.project_directory, self.xtalID, self.mtz_style)
             ):
@@ -1117,7 +1068,7 @@ class GUI(object):
                     os.path.join(self.project_directory, self.xtalID, "dimple.mtz")
                 )
 
-        #########################################################################################
+        ################################################################################
         # update Quality Indicator table
         try:
             self.RRfreeValue.set_label(
@@ -1270,7 +1221,6 @@ class GUI(object):
 
         self.index += 1
         if self.index >= len(self.Todo):
-            #            self.index = len(self.Todo)
             self.index = 0
         self.cb.set_active(self.index)
 
@@ -1325,13 +1275,11 @@ class GUI(object):
 
     def place_ligand_here(self, widget):
         print("===> XCE: moving ligand to pointer")
-        #        coot.move_molecule_here(<molecule_number>)
         print("LIGAND: ", self.mol_dict["ligand"])
         coot_utils_XChem.move_molecule_here(self.mol_dict["ligand"])
 
     def merge_ligand_into_protein(self, widget):
         print("===> XCE: merge ligand into protein structure")
-        # merge_molecules(list(imols), imol) e.g. merge_molecules([1],0)
         coot.merge_molecules_py([self.mol_dict["ligand"]], self.mol_dict["protein"])
         print("===> XCE: deleting ligand molecule")
         coot.close_molecule(self.mol_dict["ligand"])
@@ -1364,10 +1312,6 @@ class GUI(object):
                     "molprobity_coot.py",
                 )
             )
-
-
-#    def fit_ligand(self,widget):
-#        print 'fit'
 
 
 if __name__ == "__main__":
