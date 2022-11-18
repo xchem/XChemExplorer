@@ -324,9 +324,9 @@ def main(argv):
 
     # Now walk through the input data
     with open("foricm.csv", "wb") as f:
-        with sqlite3.connect(sqlitefile) as c:
-            c.row_factory = sqlite3.Row
-            cur = c.cursor()
+        with sqlite3.connect(sqlitefile) as connection:
+            connection.row_factory = sqlite3.Row
+            cur = connection.cursor()
 
             sql = (
                 "select p.ID,"

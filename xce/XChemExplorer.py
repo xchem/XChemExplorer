@@ -4714,7 +4714,6 @@ class XChemExplorer(QtGui.QApplication):
                 os.path.join(self.database_directory, self.data_source_file),
                 self.initial_model_directory,
                 self.xce_logfile,
-                update_datasource_only,
                 which_models,
                 pandda_params,
             )

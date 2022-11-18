@@ -456,7 +456,6 @@ class run_pandda_export(QtCore.QThread):
         datasource,
         initial_model_directory,
         xce_logfile,
-        update_datasource_only,
         which_models,
         pandda_params,
     ):
@@ -466,11 +465,9 @@ class run_pandda_export(QtCore.QThread):
         self.initial_model_directory = initial_model_directory
         self.db = XChemDB.data_source(self.datasource)
         self.db.create_missing_columns()
-        self.db_list = self.db.get_empty_db_dict()
         self.external_software = XChemUtils.external_software(xce_logfile).check()
         self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
-        self.update_datasource_only = update_datasource_only
         self.which_models = which_models
         self.already_exported_models = []
         self.pandda_analyse_data_table = pandda_params["pandda_table"]

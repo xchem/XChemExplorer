@@ -95,8 +95,6 @@ class DatasetsTab:
         xce_object.datasets_summarys_vbox_for_details = (
             QtGui.QVBoxLayout()
         )  # vbox for details
-        # switch for displaying/updating table
-        xce_object.data_collection_details_currently_on_display = None
 
         xce_object.datasets_data_collection_vbox.addWidget(
             xce_object.datasets_tab_widget

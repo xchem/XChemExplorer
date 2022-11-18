@@ -731,13 +731,6 @@ class data_source:
                 do_not_display.append(column[1])
         return do_not_display
 
-    def get_empty_db_dict(self):
-        db_dict = {}
-        for column in self.column_list:
-            if column[0] != "ID":
-                db_dict[column[0]] = ""
-        return db_dict
-
     def create_missing_columns(self):
         existing_columns = []
         connect = sqlite3.connect(self.data_source_file)

@@ -39,7 +39,6 @@ class RefineParams(object):
         self.ProjectPath = ProjectPath
         self.xtalID = xtalID
         self.compoundID = compoundID
-        self.prefix = "refine"
         self.datasource = datasource
 
     def RefmacRefinementParams(self, RefmacParams):
@@ -345,7 +344,6 @@ class Refine(object):
         self.ProjectPath = ProjectPath
         self.xtalID = xtalID
         self.compoundID = compoundID
-        self.prefix = "refine"
         self.datasource = datasource
         self.error = False
         self.Logfile = None
@@ -723,7 +721,7 @@ class Refine(object):
             )
             os.system("qsub %s.sh" % program)
         elif external_software["qsub_remote"] != "":
-            Logfile.insert("starting refinement on remote cluster")
+            self.Logfile.insert("starting refinement on remote cluster")
             remote_command = external_software["qsub_remote"].replace(
                 "qsub",
                 "cd %s; qsub"
@@ -1547,7 +1545,6 @@ class panddaRefine(object):
         self.ProjectPath = ProjectPath
         self.xtalID = xtalID
         self.compoundID = compoundID
-        self.prefix = "refine"
         self.datasource = datasource
 
     def make_covalent_link(self, covLinkAtomSpec, Logfile):
