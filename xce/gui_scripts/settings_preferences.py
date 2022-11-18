@@ -163,33 +163,25 @@ class setup:
 
         # internal lists and dictionaries
 
-        xce_object.data_collection_list = []
         xce_object.visit_list = []
         xce_object.target = ""
         xce_object.dataset_outcome_combobox_dict = {}
         xce_object.data_collection_dict = {}
         xce_object.xtal_db_dict = {}
         xce_object.pandda_analyse_input_table_dict = {}
-        xce_object.dewar_configuration_dict = {}
-        xce_object.data_collection_statistics_dict = {}
         # contains toggle button if dimple should be run
         xce_object.initial_model_dimple_dict = {}
         xce_object.reference_file_list = []
         xce_object.all_columns_in_data_source = XChemDB.data_source(
             os.path.join(xce_object.database_directory, xce_object.data_source_file)
         ).return_column_list()
-        # using dials.image_viewer instead of albula, but keep name for dictionary
-        xce_object.albula_button_dict = {}
-        xce_object.xtalform_dict = {}
 
         xce_object.dataset_outcome_dict = {}  # contains the dataset outcome buttons
         xce_object.data_collection_table_dict = {}  # contains the dataset table
         xce_object.data_collection_image_dict = {}
         xce_object.data_collection_column_three_dict = {}
-        xce_object.datasets_summary_dict = {}
         xce_object.diffraction_data_table_dict = {}
         xce_object.refinement_table_dict = {}
-        xce_object.main_data_collection_table_exists = False
         xce_object.timer_to_check_for_new_data_collection = QtCore.QTimer()
 
         xce_object.agamemnon = False
@@ -204,14 +196,7 @@ class setup:
 
         xce_object.explorer_active = 0
         xce_object.coot_running = 0
-        xce_object.progress_bar_start = 0
-        xce_object.progress_bar_step = 0
-        xce_object.albula = None
-        xce_object.albula_subframes = []
-        xce_object.show_diffraction_image = None
         xce_object.gdaLogInstructions = [0, False]
-        # can be any widget to be displayed in data collection summary tab
-        xce_object.data_collection_details_currently_on_display = None
 
         xce_object.dataset_outcome = [
             "success",
@@ -297,12 +282,6 @@ class setup:
         xce_object.filename_root = "${samplename}"
         xce_object.max_queue_jobs = 100
         xce_object.dimple_twin_mode = False
-
-        xce_object.preferences_initial_refinement_pipeline = [
-            "dimple",
-            "pipedream",
-            "phenix.ligand_pipeline",
-        ]
 
         xce_object.preferences = {
             "processed_data_to_copy": "mtz_log_only",
