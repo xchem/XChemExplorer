@@ -1,8 +1,10 @@
 FROM gcr.io/diamond-privreg/xchem/ccp4:7.1 as ccp4
+FROM gcr.io/diamond-privreg/xchem/phenix:1.20 as phenix
 
 FROM buildpack-deps:bullseye-curl as devel
 
 COPY --from=ccp4 /ccp4-7.1 /ccp4-7.1
+COPY --from=phenix /phenix-1.20 /phenix-1.20
 
 RUN apt-get update \
     && apt-get upgrade -y \
@@ -19,4 +21,4 @@ RUN apt-get update \
     && pip3 install black[python2]
 
 ENV QT_X11_NO_MITSHM=1 \
-    XChemExplorer_DIR=/workspace/
+    PATH=$PATH:/ccp4-7.1/bin:/phenix-1.20/build/bin
