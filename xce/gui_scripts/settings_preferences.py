@@ -237,23 +237,24 @@ class setup:
 
         xce_object.second_cif_file = None
 
-        software_list = ["acedrg", "phenix.elbow", "grade"]
+        restraints_program_candidates = ["acedrg", "phenix.elbow", "grade"]
 
-        for software in software_list:
-            if xce_object.external_software[software]:
-                xce_object.restraints_program = str(software)
+        xce_object.restraints_program = ""
+        for restraints_program_candidate in restraints_program_candidates:
+            if restraints_program_candidate in xce_object.external_software.keys():
+                xce_object.restraints_program = restraints_program_candidate
                 xce_object.update_log.insert(
-                    "will use "
-                    + str(software)
-                    + " for generation of ligand coordinates and"
-                    " restraints"
+                    "will use {0!s} for"
+                    " generation of ligand coordinates and restraints".format(
+                        restraints_program_candidate
+                    )
                 )
-            else:
-                xce_object.restraints_program = ""
-                xce_object.update_log.warning(
-                    "No program for generation of ligand coordinates and restraints"
-                    " available!"
-                )
+                break
+        if xce_object.restraints_program is None:
+            xce_object.update_log.warning(
+                "No program for generation of ligand coordinates and restraints"
+                " available!"
+            )
 
     def preferences(self, xce_object):
         # preferences
