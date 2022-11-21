@@ -1,6 +1,6 @@
 FROM gcr.io/diamond-privreg/xchem/ccp4:7.1 as ccp4
 
-FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
+FROM buildpack-deps:bullseye-curl as devel
 
 COPY --from=ccp4 /ccp4-7.1 /ccp4-7.1
 
