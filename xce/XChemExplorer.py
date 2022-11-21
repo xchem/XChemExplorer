@@ -980,7 +980,6 @@ class XChemExplorer(QtGui.QApplication):
 
         if self.external_software["acedrg"]:
             program_list.append("acedrg")
-            self.restraints_program = "acedrg"
         if self.external_software["phenix.elbow"]:
             program_list.append("phenix.elbow")
         if self.external_software["grade"]:
