@@ -1,28 +1,38 @@
 {
 	"name": "XChemExplorer",
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Dockerfile",
+		"target": "devel"
 	},
 	"remoteEnv": {
 		"DISPLAY": "${localEnv:DISPLAY}"
 	},
-	"features": {
-		"git": "os-provided"
+	"settings": {
+		"python.defaultInterpreterPath": "/ccp4-7.1/bin/ccp4-python"
 	},
-	"workspaceMount": "src=${localWorkspaceFolder},dst=/workspace,type=bind",
-	"workspaceFolder": "/workspace",
-	"runArgs": [
-		"--pid=host",
-		"--net=host"
-	],
-	"mounts": [
-		"src=/dls/labxchem/data/,dst=/dls/labxchem/data/,type=bind"
-	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"ms-python.python@2021.9.1246542782"
 			]
 		}
-	}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils:1": {},
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+	"initializeCommand": "bash -c 'for i in $HOME/.inputrc; do [ -f $i ] || touch $i; done'",
+	"runArgs": [
+		"--net=host",
+		"--security-opt=label=type:container_runtime_t"
+	],
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind",
+		"source=${localEnv:HOME}/.inputrc,target=/root/.inputrc,type=bind",
+		"source=/dls/labxchem/data/,target=/dls/labxchem/data/,type=bind"
+	],
+	"remoteUser": "root",
+	"containerUser": "root",
+	"workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
+	"workspaceFolder": "${localWorkspaceFolder}"
 }
