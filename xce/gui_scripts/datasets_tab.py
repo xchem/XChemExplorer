@@ -12,17 +12,6 @@ class DatasetsTab:
         #                                 DATASETS TAB                                 #
         #                                                                              #
         ################################################################################
-        # define subtab list, widget and dict
-        datasets_tab_list = ["Summary"]
-        xce_object.datasets_tab_widget = QtGui.QTabWidget()
-        xce_object.datasets_tab_dict = {}
-
-        # make subtabs
-        self.layout_funcs.make_tab_dict(
-            datasets_tab_list,
-            xce_object.datasets_tab_widget,
-            xce_object.datasets_tab_dict,
-        )
 
         # main body - things that are always displayed
         # add a container to hold everythting and add to main tab layout
@@ -32,9 +21,6 @@ class DatasetsTab:
         xce_object.autocheck_hbox = QtGui.QHBoxLayout()
 
         # checkbox for autocollect
-        xce_object.check_for_new_data_collection = QtGui.QCheckBox(
-            "Check for new data collection every two minutes"
-        )
         xce_object.check_for_new_data_collection = QtGui.QCheckBox(
             "Check for new data collection every two minutes"
         )
@@ -86,15 +72,7 @@ class DatasetsTab:
         self.layout_funcs.table_setup(
             xce_object.datasets_summary_table, xce_object.datasets_summary_table_columns
         )
-        # setup layout to hold table
-        xce_object.datasets_summarys_vbox_for_table = QtGui.QVBoxLayout()
-        xce_object.datasets_summarys_vbox_for_table.addWidget(
-            xce_object.datasets_summary_table
-        )  # add table to layout
-        xce_object.datasets_summarys_vbox_for_details = (
-            QtGui.QVBoxLayout()
-        )  # vbox for details
 
         xce_object.datasets_data_collection_vbox.addWidget(
-            xce_object.datasets_tab_widget
+            xce_object.datasets_summary_table
         )  # add subtab to main tab

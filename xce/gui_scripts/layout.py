@@ -582,7 +582,10 @@ class LayoutFuncs:
                 xce_object.overview_tab_dict["Data Source"][1],
                 xce_object.overview_datasource_table,
             ],
-            [xce_object.overview_tab_dict["Summary"][1], xce_object.overview_canvas],
+            [
+                xce_object.overview_tab_dict["Summary"][1],
+                xce_object.overview_canvas,
+            ],
             [
                 xce_object.pandda_tab_dict["Dataset Summary"][1],
                 xce_object.pandda_initial_html,
@@ -601,14 +604,6 @@ class LayoutFuncs:
             [
                 xce_object.tab_dict[xce_object.workflow_dict["Datasets"]][1],
                 xce_object.datasets_data_collection_vbox,
-            ],
-            [
-                xce_object.datasets_tab_dict["Summary"][1],
-                xce_object.datasets_summarys_vbox_for_table,
-            ],
-            [
-                xce_object.datasets_tab_dict["Summary"][1],
-                xce_object.datasets_summarys_vbox_for_details,
             ],
             [
                 xce_object.tab_dict[xce_object.workflow_dict["Maps"]][1],
