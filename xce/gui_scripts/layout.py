@@ -611,7 +611,6 @@ class LayoutFuncs:
                 xce_object.datasets_tab_dict["Summary"][1],
                 xce_object.datasets_summarys_vbox_for_details,
             ],
-            [xce_object.datasets_tab_dict["Reprocess"][1], xce_object.reprocess_vbox],
             [
                 xce_object.tab_dict[xce_object.workflow_dict["Maps"]][1],
                 xce_object.maps_checkbutton_hbox,
