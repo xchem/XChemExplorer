@@ -14,7 +14,7 @@ class DatasetsTab:
         #                                                                              #
         ################################################################################
         # define subtab list, widget and dict
-        datasets_tab_list = ["Summary", "Reprocess"]
+        datasets_tab_list = ["Summary"]
         xce_object.datasets_tab_widget = QtGui.QTabWidget()
         xce_object.datasets_tab_dict = {}
 
