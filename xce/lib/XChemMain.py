@@ -6,7 +6,6 @@ import subprocess
 import getpass
 import gzip
 from datetime import datetime
-from PyQt4 import QtCore
 
 
 def space_group_list():
@@ -1171,78 +1170,3 @@ def backup_soakDB(database, xce_logfile):
             database + "." + str(datetime.now()).replace(" ", "_").replace(":", "-"),
         )
     )
-
-
-class find_diffraction_image_directory_fast(QtCore.QThread):
-    def __init__(self, diffraction_data_directory):
-        QtCore.QThread.__init__(self)
-        self.diffraction_data_directory = diffraction_data_directory
-        self.data_dict = {}
-        self.diffraction_image_extension = [
-            ".img",
-            ".cbf",
-            ".mccd",
-            ".mar2560",
-            ".mar2300",
-        ]
-
-    def run(self):
-        print(
-            (
-                "Running diffraction image search in "
-                + str(self.diffraction_data_directory)
-            )
-        )
-        os.chdir(self.diffraction_data_directory)
-        if len(glob.glob(os.path.join(self.diffraction_data_directory, "*"))) != 0:
-            progress_step = 100 / float(
-                len(glob.glob(os.path.join(self.diffraction_data_directory, "*")))
-            )
-        else:
-            progress_step = 100
-        progress = 0
-        self.emit(QtCore.SIGNAL("update_progress_bar"), progress)
-
-        self.emit(
-            QtCore.SIGNAL("update_status_bar(QString)"),
-            "searching diffraction data directory",
-        )
-        for xtal in glob.glob("*"):
-            if "screening" in xtal:
-                continue
-            self.data_dict[xtal] = []
-            rootList = []
-            imageCounter = 0
-
-            # find image file extension; the assumption is that there is only one file
-            # type
-            imageExtension = "cbf"
-            for files in sorted(glob.glob(os.path.join(xtal, "*"))):
-                fileName = os.path.join(self.diffraction_data_directory, files)
-                file_extension = fileName[fileName.rfind(".") :]
-                if file_extension in self.diffraction_image_extension:
-                    imageExtension = file_extension
-                    break
-
-            for files in sorted(glob.glob(os.path.join(xtal, "*" + imageExtension))):
-                fileName = files[files.rfind("/") + 1 :]
-                file_root = fileName[: fileName.rfind("_")]
-
-                if file_root not in rootList:
-                    rootList.append(file_root)
-                    imageCounter = 0
-
-                if imageCounter == 20:
-                    self.data_dict[xtal].append(
-                        [os.path.join(self.diffraction_data_directory, xtal), file_root]
-                    )
-
-                imageCounter += 1
-
-            if not self.data_dict[xtal]:
-                del self.data_dict[xtal]
-
-            progress += progress_step
-            self.emit(QtCore.SIGNAL("update_progress_bar"), progress)
-
-        self.emit(QtCore.SIGNAL("update_datasets_reprocess_table"), self.data_dict)

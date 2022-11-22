@@ -284,7 +284,6 @@ class LayoutObjects:
         #
         # Datasets
         # |- summary - TABLE
-        # |- reprocess - TABLE
         #
         # Maps - TABLE
         #
