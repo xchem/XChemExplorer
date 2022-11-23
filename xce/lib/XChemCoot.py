@@ -1610,7 +1610,7 @@ class GUI(object):
                         "==> COOT: setting occupancies of all protein residues in %s"
                         " to 1.0" % coot.molecule_name(imol)
                     )
-                    chains = chain_ids(imol)
+                    chains = coot_utils_XChem.chain_ids(imol)
                     resiDict = {}
                     for chain in chains:
                         resiDict[chain] = residues_in_chain(imol, chain)
