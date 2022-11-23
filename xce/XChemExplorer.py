@@ -4202,7 +4202,7 @@ class XChemExplorer(QtGui.QApplication):
             pandda_params,
             self.xce_logfile,
             os.path.join(self.database_directory, self.data_source_file),
-            run_pandda_analyse,
+            self.run_pandda_analyse,
         )
         self.explorer_active = 1
         self.connect(
