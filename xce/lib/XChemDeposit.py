@@ -490,7 +490,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                 if not self.add_apo_sf_mmcif_to_ground_state_mmcif():
                     continue
 
-                if not self.add_data_increment_to_apo_mmcif():
+                if not self.add_data_increment_to_apo_mmcif(xtal):
                     continue
 
             else:
@@ -1597,7 +1597,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         )
         return True
 
-    def add_data_increment_to_apo_mmcif(self):
+    def add_data_increment_to_apo_mmcif(self, xtal):
         self.Logfile.insert("inrementing data_rxxxxsf in ground-state_sf.mmcif")
         x = [
             "",
