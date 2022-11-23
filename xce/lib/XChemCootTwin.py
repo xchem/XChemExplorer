@@ -470,7 +470,9 @@ class GUI(object):
                 os.getenv("XChemExplorer_DIR"), "image", "NO_SPIDER_PLOT_AVAILABLE.png"
             )
         )
-        self.spider_plot_pic = pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR
+        )
         self.spider_plot_image = gtk.Image()
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
         spider_plot_frame.add(self.spider_plot_image)
