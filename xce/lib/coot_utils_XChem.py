@@ -70,9 +70,9 @@ move_molecule_here = move_molecule_to_screen_centre
 def chain_ids(imol):
 
     chain_id_is = []
-    number_of_chains = n_chains(imol)
+    number_of_chains = coot.n_chains(imol)
     for chain_no in range(number_of_chains):
-        chain_id_is.append(chain_id(imol, chain_no))
+        chain_id_is.append(coot.chain_id_py(imol, chain_no))
     return chain_id_is
 
 
