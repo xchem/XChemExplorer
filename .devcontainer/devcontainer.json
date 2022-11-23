@@ -34,5 +34,6 @@
 	"remoteUser": "root",
 	"containerUser": "root",
 	"workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
-	"workspaceFolder": "${localWorkspaceFolder}"
+	"workspaceFolder": "${localWorkspaceFolder}",
+	"postCreateCommand": "pip install -e ."
 }
