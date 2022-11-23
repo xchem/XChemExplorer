@@ -5,6 +5,7 @@
 		"target": "devel"
 	},
 	"remoteEnv": {
+		"XChemExplorer_DIR": "${localWorkspaceFolder}",
 		"DISPLAY": "${localEnv:DISPLAY}"
 	},
 	"settings": {
