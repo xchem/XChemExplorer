@@ -1,6 +1,7 @@
 import gtk
 import coot_utils_XChem
 import coot
+from coot_gui import coot_menubar_menu, add_simple_coot_menu_menuitem
 import XChemLog
 import XChemUtils
 import XChemRefine
