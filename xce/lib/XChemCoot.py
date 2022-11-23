@@ -1463,7 +1463,8 @@ class GUI(object):
         print("===========>", self.cb_select_samples.get_active_text())
         if int(self.cb_select_samples.get_active_text().split()[0]) > 3:
             print(
-                "==> XCE: sorry cannot change refinement protocol since you are at a stage when we refine the ligand bound state only"
+                "==> XCE: sorry cannot change refinement protocol since you are at a"
+                " stage when we refine the ligand bound state only"
             )
             self.refinementProtocol = "refmac"
             self.refinementProtocolcheckbox.set_active(False)
@@ -1623,11 +1624,17 @@ class GUI(object):
                         resid_prev = -1000
                         n_res = 0
                         for resid in resiDict[chain]:
-                            if residue_name(imol, chain, resid[1], "") in amino_acids:
+                            if (
+                                coot.residue_name(imol, chain, resid[1], "")
+                                in amino_acids
+                            ):
                                 n_res += 1
                         counter = 0
                         for n, resid in enumerate(resiDict[chain]):
-                            if residue_name(imol, chain, resid[1], "") in amino_acids:
+                            if (
+                                coot.residue_name(imol, chain, resid[1], "")
+                                in amino_acids
+                            ):
                                 counter += 1
                                 if chain not in resetDict:
                                     resetDict[chain] = None
