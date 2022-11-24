@@ -1,6 +1,5 @@
 from web import XChemWeb
 from lib import XChemDeposit
-from lib import XChemProcess
 from lib import XChemLog
 from lib import XChemPlots
 from lib import XChemMain
@@ -144,120 +143,6 @@ class XChemExplorer(QtGui.QApplication):
 
     def target_selection_combobox_activated(self, text):
         self.target = str(text)
-
-    def select_diffraction_data_directory(self):
-        self.diffraction_data_directory = str(
-            QtGui.QFileDialog.getExistingDirectory(self.window, "Select Directory")
-        )
-        self.diffraction_data_dir_label.setText(self.diffraction_data_directory)
-        self.settings["diffraction_data_directory"] = self.diffraction_data_directory
-        self.update_log.insert(
-            "setting diffraction data directory to " + self.diffraction_data_directory
-        )
-
-    def search_for_datasets(self):
-        self.update_log.insert("search diffraction data directory for datasets...")
-        print(("will search " + str(self.diffraction_data_directory)))
-        self.work_thread = XChemMain.find_diffraction_image_directory_fast(
-            self.diffraction_data_directory
-        )
-        self.explorer_active = 1
-
-        self.connect(
-            self.work_thread,
-            QtCore.SIGNAL("update_datasets_reprocess_table"),
-            self.update_datasets_reprocess_table,
-        )
-        self.connect(
-            self.work_thread,
-            QtCore.SIGNAL("update_progress_bar"),
-            self.update_progress_bar,
-        )
-        self.connect(
-            self.work_thread,
-            QtCore.SIGNAL("update_status_bar(QString)"),
-            self.update_status_bar,
-        )
-        self.connect(
-            self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
-        )
-
-        self.work_thread.start()
-
-    def translate_datasetID_to_sampleID(self):
-        translate = QtGui.QMessageBox()
-        translateLayout = translate.layout()
-        self.translate_datasetID_to_sampleID_file = "-"
-        vbox = QtGui.QVBoxLayout()
-        button = QtGui.QPushButton("Open CSV")
-        button.clicked.connect(self.open_csv_file_translate_datasetID_to_sampleID)
-        vbox.addWidget(button)
-        self.translate_datasetID_to_sampleID_csv_label = QtGui.QLabel(
-            self.translate_datasetID_to_sampleID_file
-        )
-        vbox.addWidget(self.translate_datasetID_to_sampleID_csv_label)
-        translateLayout.addLayout(vbox, 0, 0)
-        translate.addButton(QtGui.QPushButton("OK"), QtGui.QMessageBox.YesRole)
-        translate.addButton(QtGui.QPushButton("Cancel"), QtGui.QMessageBox.RejectRole)
-        reply = translate.exec_()
-        if reply == 0:
-            if os.path.isfile(self.translate_datasetID_to_sampleID_file):
-                trans_dict = {}
-                for line in open(self.translate_datasetID_to_sampleID_file):
-                    if len(line.split(",")) == 2:
-                        dataset = line.split(",")[0]
-                        new_sample_id = line.split(",")[1]
-                        trans_dict[dataset] = new_sample_id
-                if len(trans_dict) >= 1:
-                    allRows = self.datasets_reprocess_table.rowCount()
-                    for row in range(0, allRows):
-                        dataset_id = str(
-                            self.datasets_reprocess_table.item(row, 0).text()
-                        )
-                        if dataset_id in trans_dict:
-                            cell_text = QtGui.QTableWidgetItem()
-                            cell_text.setText(trans_dict[dataset_id])
-                            cell_text.setTextAlignment(
-                                QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                            )
-                            self.datasets_reprocess_table.setItem(row, 1, cell_text)
-                            self.update_log.insert(
-                                "dataset: {0!s} -> changing sampleID to: {1!s}".format(
-                                    dataset_id, trans_dict[dataset_id]
-                                )
-                            )
-
-    def select_sample_for_xia2(self):
-        indexes = self.datasets_reprocess_table.selectionModel().selectedRows()
-        for index in sorted(indexes):
-            xtal = str(self.datasets_reprocess_table.item(index.row(), 1).text())
-            print((xtal, self.diffraction_data_table_dict[xtal][0]))
-            self.update_log.insert("{0!s} marked for reprocessing".format(index.row()))
-            self.diffraction_data_table_dict[xtal][0].setChecked(True)
-
-    def select_reprocess_reference_mtz(self):
-        self.update_log.insert(
-            "trying to set new reference mtz file for reprocessing with xia2"
-        )
-        file_name = str(
-            QtGui.QFileDialog.getOpenFileName(
-                self.window, "Select file", self.database_directory
-            )
-        )
-        if os.path.isfile(file_name):
-            if file_name.endswith(".mtz"):
-                self.diffraction_data_reference_mtz = file_name
-                self.update_log.insert(
-                    "new reference file for data processing with xia2: "
-                    + self.diffraction_data_reference_mtz
-                )
-                self.reprocess_reference_mtz_file_label.setText(
-                    self.diffraction_data_reference_mtz
-                )
-            else:
-                self.update_log.insert(
-                    "this does not seem to be a mtz file: " + file_name
-                )
 
     def check_for_new_autoprocessing_or_rescore(self, rescore_only):
         self.update_log.insert("checking for new data collection")
@@ -3312,12 +3197,6 @@ class XChemExplorer(QtGui.QApplication):
         self.update_log.insert("exporting CSV file for input into WONKA")
         self.db.export_csv_for_WONKA()
 
-    def on_context_menu_reprocess_data(self, point):
-        # show context menu
-        self.popMenu_for_datasets_reprocess_table.exec_(
-            self.sender().mapToGlobal(point)
-        )
-
     def populate_reference_combobox(self, combobox):
         combobox.clear()
         for reference_file in self.reference_file_list:
@@ -3802,108 +3681,6 @@ class XChemExplorer(QtGui.QApplication):
         )
         self.work_thread.start()
 
-    def run_xia2_on_selected_datasets(self, overwrite):
-
-        # check which programs should be run
-        protocol = []
-        if self.xia2_3d_checkbox.isChecked():
-            protocol.append("3d")
-        if self.xia2_3dii_checkbox.isChecked():
-            protocol.append("3dii")
-        if self.xia2_dials_checkbox.isChecked():
-            protocol.append("dials")
-
-        # space group
-        spg = []
-        if str(self.reprocess_space_group_comboxbox.currentText()) != "ignore":
-            spg.append(str(self.reprocess_space_group_comboxbox.currentText()))
-
-        # reference file
-        ref = []
-        if os.path.isfile(self.diffraction_data_reference_mtz):
-            ref.append(self.diffraction_data_reference_mtz)
-
-        # resolution limit
-        reso_limit = []
-        if str(self.reprocess_isigma_combobox.currentText()) != "default":
-            reso_limit.append(str(self.reprocess_isigma_combobox.currentText()))
-
-        # cc 1/2
-        cc_half = []
-        if str(self.reprocess_cc_half_combobox.currentText()) != "default":
-            cc_half.append(str(self.reprocess_cc_half_combobox.currentText()))
-
-        run_dict = {}
-        allRows = self.datasets_reprocess_table.rowCount()
-        for row in range(0, allRows):
-            dataset_id = str(self.datasets_reprocess_table.item(row, 0).text())
-            sample_id = str(self.datasets_reprocess_table.item(row, 1).text())
-            if self.diffraction_data_table_dict[dataset_id][0].isChecked():
-                run_dict[sample_id] = self.diffraction_data_dict[dataset_id]
-
-        if protocol != [] and run_dict != {}:
-            self.work_thread = XChemProcess.run_xia2(
-                self.initial_model_directory,
-                run_dict,
-                protocol,
-                spg,
-                ref,
-                reso_limit,
-                cc_half,
-                self.xce_logfile,
-                self.external_software,
-                self.ccp4_scratch_directory,
-                self.max_queue_jobs,
-                os.path.join(self.database_directory, self.data_source_file),
-                overwrite,
-            )
-            self.explorer_active = 1
-            self.connect(
-                self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
-            )
-            self.connect(
-                self.work_thread,
-                QtCore.SIGNAL("update_progress_bar"),
-                self.update_progress_bar,
-            )
-            self.connect(
-                self.work_thread,
-                QtCore.SIGNAL("update_status_bar(QString)"),
-                self.update_status_bar,
-            )
-            self.connect(
-                self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
-            )
-            self.work_thread.start()
-        else:
-            self.update_log.insert(
-                "please select datasets and/ or data processing protocol"
-            )
-            self.update_status_bar(
-                "please select datasets and/ or data processing protocol"
-            )
-
-    def update_reprocessing_table(self):
-        allRows = self.datasets_reprocess_table.rowCount()
-        for row in range(0, allRows):
-            sample_id = str(self.datasets_reprocess_table.item(row, 1).text())
-            if sample_id in self.xtal_db_dict:
-                db_dict = self.xtal_db_dict[sample_id]
-                cell_text = QtGui.QTableWidgetItem()
-                cell_text.setText(db_dict["DataProcessingStatus"])
-                cell_text.setTextAlignment(
-                    QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                )
-                if db_dict["DataProcessingStatus"] == "running":
-                    cell_text.setBackground(QtGui.QColor(100, 230, 150))
-                elif db_dict["DataProcessingStatus"] == "pending":
-                    cell_text.setBackground(QtGui.QColor(20, 100, 230))
-                elif db_dict["DataProcessingStatus"] == "started":
-                    cell_text.setBackground(QtGui.QColor(230, 240, 110))
-                elif db_dict["DataProcessingStatus"] == "finished":
-                    cell_text.setBackground(QtGui.QColor(255, 255, 255))
-                self.datasets_reprocess_table.setItem(row, 7, cell_text)
-
     def check_before_running_dimple(self, job_list, instruction):
 
         msgBox = QtGui.QMessageBox()
@@ -3984,74 +3761,6 @@ class XChemExplorer(QtGui.QApplication):
             )
             self.work_thread.start()
 
-    def open_csv_file_translate_datasetID_to_sampleID(self):
-        file_name_temp = QtGui.QFileDialog.getOpenFileNameAndFilter(
-            self.window, "Open file", self.current_directory, "*.csv"
-        )
-        file_name = tuple(file_name_temp)[0]
-        self.translate_datasetID_to_sampleID_csv_label.setText(file_name)
-        self.translate_datasetID_to_sampleID_file = file_name
-
-    def update_datasets_reprocess_table(self, data_dict):
-        self.update_log.insert("updating reprocess datasets table")
-        print("updating reprocess datasets table")
-        self.diffraction_data_table_dict = {}
-        self.diffraction_data_dict = data_dict
-
-        self.diffraction_data_search_info = (
-            "found " + str(len(self.diffraction_data_dict)) + " datasets"
-        )
-        self.diffraction_data_search_label.setText(self.diffraction_data_search_info)
-        self.update_log.insert(self.diffraction_data_search_info)
-        self.datasource_menu_reload_samples()
-        # update table
-        column_name = self.db.translate_xce_column_list_to_sqlite(
-            self.datasets_reprocess_columns
-        )
-        # set rows to 0
-        self.datasets_reprocess_table.setRowCount(0)
-        for entry in sorted(self.diffraction_data_dict):
-            self.update_log.insert(str(self.diffraction_data_dict[entry]))
-            if entry in self.xtal_db_dict:
-                db_dict = self.xtal_db_dict[entry]
-            else:
-                db_dict = {}
-            row = self.datasets_reprocess_table.rowCount()
-            self.datasets_reprocess_table.insertRow(row)
-            for column, header in enumerate(column_name):
-                if header[0] == "Dataset ID" or header[0] == "Sample ID":
-                    cell_text = QtGui.QTableWidgetItem()
-                    cell_text.setText(str(entry))
-                    cell_text.setTextAlignment(
-                        QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                    )
-                    self.datasets_reprocess_table.setItem(row, column, cell_text)
-                elif header[0] == "Run\nxia2":
-                    run_xia2 = QtGui.QCheckBox()
-                    run_xia2.toggle()
-                    self.datasets_reprocess_table.setCellWidget(row, column, run_xia2)
-                    run_xia2.setChecked(False)
-                    self.diffraction_data_table_dict[entry] = [run_xia2]
-                else:
-                    cell_text = QtGui.QTableWidgetItem()
-                    if db_dict != {}:
-                        if header[0] == "DataProcessing\nStatus":
-                            if str(db_dict[header[1]]) == "running":
-                                cell_text.setBackground(QtGui.QColor(100, 230, 150))
-                            elif str(db_dict[header[1]]) == "pending":
-                                cell_text.setBackground(QtGui.QColor(20, 100, 230))
-                            elif str(db_dict[header[1]]) == "started":
-                                cell_text.setBackground(QtGui.QColor(230, 240, 110))
-                            elif str(db_dict[header[1]]) == "finished":
-                                cell_text.setBackground(QtGui.QColor(255, 255, 255))
-                        cell_text.setText(str(db_dict[header[1]]))
-                    else:
-                        cell_text.setText("")
-                    cell_text.setTextAlignment(
-                        QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                    )
-                    self.datasets_reprocess_table.setItem(row, column, cell_text)
-
     def update_all_tables(self):
         self.update_log.insert("checking for new reference files")
         self.update_status_bar("checking for new reference files")
@@ -4068,9 +3777,6 @@ class XChemExplorer(QtGui.QApplication):
         self.update_log.insert("updating REFINEMENT table")
         self.update_status_bar("updating REFINEMENT table")
         self.populate_and_update_refinement_table()
-        self.update_log.insert("updating REPROCESSING table")
-        self.update_status_bar("updating REPROCESSING table")
-        self.update_reprocessing_table()
         self.update_status_bar("idle")
         self.update_summary_plot()
 
@@ -4269,12 +3975,6 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == "Rescore Datasets":
             self.rescore = True
             self.select_best_autoprocessing_result()
-
-        elif instruction == "Run xia2 on selected datasets":
-            self.run_xia2_on_selected_datasets(False)
-
-        elif instruction == "Run xia2 on selected datasets - overwrite":
-            self.run_xia2_on_selected_datasets(True)
 
         elif instruction == "Run DIMPLE on selected MTZ files":
             self.run_dimple_on_selected_autoprocessing_file(instruction)

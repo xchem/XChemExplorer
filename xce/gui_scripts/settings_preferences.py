@@ -180,7 +180,6 @@ class setup:
         xce_object.data_collection_table_dict = {}  # contains the dataset table
         xce_object.data_collection_image_dict = {}
         xce_object.data_collection_column_three_dict = {}
-        xce_object.diffraction_data_table_dict = {}
         xce_object.refinement_table_dict = {}
         xce_object.timer_to_check_for_new_data_collection = QtCore.QTimer()
 
@@ -189,8 +188,6 @@ class setup:
             xce_object.target_list,
             xce_object.visit_list,
         ) = XChemMain.get_target_and_visit_list(xce_object.beamline_directory, False)
-
-        xce_object.diffraction_data_dict = {}
 
         # internal switches and flags
 
@@ -233,8 +230,6 @@ class setup:
         xce_object.update_log = XChemLog.updateLog(xce_object.xce_logfile)
         xce_object.update_log.insert("new session started")
         xce_object.diffraction_data_directory = xce_object.current_directory
-        xce_object.diffraction_data_search_info = "n/a"
-        xce_object.diffraction_data_reference_mtz = "ignore"
         xce_object.html_export_directory = os.getcwd()
         xce_object.external_software = XChemUtils.external_software(
             xce_object.xce_logfile
@@ -396,26 +391,8 @@ class setup:
             "DataProcessing\nScore",
         ]
 
-        # functions that use tables.datasets_reprocess_columns:
-        #
-        # update_datasets_reprocess_table()
-        # - appears in search_for_datasets()
-
-        xce_object.datasets_reprocess_columns = [
-            "Dataset ID",
-            "Sample ID",
-            "Run\nxia2",
-            "Resolution\nHigh",
-            "Rmerge\nLow",
-            "Dimple\nRfree",
-            "DataProcessing\nSpaceGroup",
-            "DataProcessing\nUnitCell",
-            "DataProcessing\nStatus",
-        ]
-
         # functions that use tables.maps_table_columns:
         #
-        # update_datasets_reprocess_table()
         # - appears in create_maps_table()
 
         xce_object.maps_table_columns = [
