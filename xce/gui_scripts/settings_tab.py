@@ -102,6 +102,7 @@ class SettingsTab:
         settings_hbox_beamline_directory.addWidget(settings_button_beamline_directory)
         settings_beamline_vbox.addLayout(settings_hbox_beamline_directory)
         xce_object.read_agamemnon = QtGui.QCheckBox("Read Agamemnon data structure")
+        xce_object.read_agamemnon.setChecked(True)
         settings_beamline_vbox.addWidget(xce_object.read_agamemnon)
 
         settings_beamline_frame.setLayout(settings_beamline_vbox)
