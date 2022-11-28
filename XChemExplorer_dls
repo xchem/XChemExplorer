@@ -6,10 +6,13 @@ module load ccp4/7.1.018
 
 export BDG_TOOL_MOGUL="/dls_sw/apps/ccdc/CSD_2020/bin/mogul"
 export XChemExplorer_DIR="/dls_sw/i04-1/software/XChemExplorer"
+export PYTHONPATH="${HOME}/.local/lib/python2.7/site-packages"
 
-if [ $1 = "setup" ]; then
-    (cd $XChemExplorer_DIR; ccp4-python setup.py install --user)
+if [ "$1" = "setup" ]
+then
+    (cd $XChemExplorer_DIR; ccp4-python setup.py install --user; rm -r build dist xce.egg-info)
+else
+    ccp4-python -m xce
 fi
 
-ccp4-python -m xce
 
