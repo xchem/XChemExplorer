@@ -5419,7 +5419,7 @@ class XChemExplorer(QtGui.QApplication):
 
         self.make_data_collection_table()
         # needs to be created here, otherwise the cellClicked function
-        self.msgBox = QtGui.QMessageBox()
+        dialog = QtGui.QDialog()
         # will reference it before it exists
         for db_dict in dbList:
             if (
@@ -5449,9 +5449,9 @@ class XChemExplorer(QtGui.QApplication):
                 self.current_row = row
                 self.data_collection_table.selectRow(row)
         self.data_collection_table.cellClicked.connect(
-            self.select_different_autoprocessing_result
+            lambda: self.select_different_autoprocessing_result(dialog)
         )
-        self.data_collection_table_popup()
+        self.data_collection_table_popup(dialog)
 
     def make_data_collection_table(self):
         # this creates a new table widget every time
@@ -5473,21 +5473,15 @@ class XChemExplorer(QtGui.QApplication):
         self.data_collection_table.setSelectionBehavior(
             QtGui.QAbstractItemView.SelectRows
         )
+        self.data_collection_table.setMinimumWidth(1000)
+        self.data_collection_table.setMinimumHeight(500)
 
-    def data_collection_table_popup(self):
-        msgBoxLayout = self.msgBox.layout()
-        qWid = QtGui.QWidget()
-        qWid.setFixedWidth(3000)
-        qWid.setFixedHeight(500)
-        vbox = QtGui.QVBoxLayout()
-        vbox.addWidget(self.data_collection_table)
-        qWid.setLayout(vbox)
-        msgBoxLayout.addWidget(qWid)
-        self.msgBox.addButton(QtGui.QPushButton("Cancel"), QtGui.QMessageBox.RejectRole)
-        self.msgBox.resize(1000, 200)
-        self.msgBox.exec_()
+    def data_collection_table_popup(self, dialog):
+        dialog_layout = QtGui.QGridLayout(dialog)
+        dialog_layout.addWidget(self.data_collection_table)
+        dialog.exec_()
 
-    def select_different_autoprocessing_result(self):
+    def select_different_autoprocessing_result(self, dialog):
         selected_row = self.get_selected_row(self.data_collection_table)
         if selected_row != self.current_row:
             xtal = self.data_collection_table.item(selected_row, 0).text()
@@ -5535,7 +5529,7 @@ class XChemExplorer(QtGui.QApplication):
             )
         else:
             print("nothing to change")
-        self.msgBox.done(1)
+        dialog.done(1)
 
     # < end
     ####################################################################################
