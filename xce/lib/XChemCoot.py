@@ -1618,6 +1618,7 @@ class GUI(object):
                     resetDict = {}
                     for chain in resiDict:
                         residRange = []
+                        start = None
                         resid_prev = -1000
                         n_res = 0
                         for resid in resiDict[chain]:
@@ -1637,6 +1638,7 @@ class GUI(object):
                                     resetDict[chain] = None
                                 if resid[1] != resid_prev + 1:
                                     if resid_prev != -1000:
+                                        assert start is not None
                                         residRange.append([start, resid_prev])
                                     start = resid[1]
                                 resid_prev = resid[1]
