@@ -70,8 +70,6 @@ class GUI(object):
             "4 - High Confidence",
         ]
 
-        self.ligand_site_information = self.db.get_list_of_pandda_sites_for_coot()
-
         # this decides which samples will be looked at
         self.selection_mode = ""
         self.pandda_index = -1  # refers to the number of sites
@@ -93,12 +91,10 @@ class GUI(object):
         self.ground_state_mean_map = ""
         self.spider_plot = ""
         self.ligand_confidence = ""
-        self.refinement_folder = ""
 
         self.pdb_style = "refine.pdb"
         self.mtz_style = "refine.mtz"
 
-        self.covLink = ["X", "X", "X", "X"]
         self.covLinkObject = coot.new_generic_object_number("covalent bond")
         self.covLinkAtomSpec = None
 
@@ -629,7 +625,6 @@ class GUI(object):
         self.db_dict_panddaTable = {}
         if str(self.Todo[self.index][0]) is not None:
             self.compoundID = str(self.Todo[self.index][1])
-            self.refinement_folder = str(self.Todo[self.index][4])
             self.refinement_outcome = str(self.Todo[self.index][5])
             self.update_RefinementOutcome_radiobutton()
         if (
@@ -1027,10 +1022,6 @@ class GUI(object):
         # remove potential generic line which indicates a possible covalent link
         coot.generic_object_clear(self.covLinkObject)
         self.covLinkAtomSpec = None
-
-        ################################################################################
-        # reset covalent links
-        self.covLinks = ["X", "X", "X", "X"]
 
         ################################################################################
         # update pdb & maps

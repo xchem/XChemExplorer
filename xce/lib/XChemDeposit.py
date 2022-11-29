@@ -328,7 +328,6 @@ class update_depositTable(QtCore.QThread):
     def __init__(self, deposit_dict, database, xce_logfile):
         QtCore.QThread.__init__(self)
         self.deposit_dict = deposit_dict
-        self.database = database
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.db = XChemDB.data_source(database)
 
@@ -411,7 +410,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         ignore_event_map,
     ):
         QtCore.QThread.__init__(self)
-        self.database = database
         self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.db = XChemDB.data_source(database)
@@ -423,7 +421,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         self.eventList = []
         self.db_dict = None
         self.data_template_dict = None
-        self.zenodo_dict = None
         self.pdb = None
         self.mtz = None
         self.logDir = None
@@ -1766,7 +1763,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
 class prepare_for_group_deposition_upload(QtCore.QThread):
     def __init__(self, database, xce_logfile, depositDir, projectDir, type):
         QtCore.QThread.__init__(self)
-        self.database = database
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.db = XChemDB.data_source(database)
         self.depositDir = depositDir
@@ -1903,7 +1899,6 @@ class import_PDB_IDs(QtCore.QThread):
     def __init__(self, pdbCodes, database, xce_logfile):
         QtCore.QThread.__init__(self)
         self.pdbCodes = pdbCodes
-        self.database = database
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.db = XChemDB.data_source(database)
 
@@ -1926,7 +1921,6 @@ class compare_smiles_in_db_with_ligand_in_pdb(QtCore.QThread):
     def __init__(self, projectDir, database, xce_logfile):
         QtCore.QThread.__init__(self)
         self.projectDir = projectDir
-        self.database = database
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.db = XChemDB.data_source(database)
         self.ErrorDict = {}

@@ -72,8 +72,6 @@ class GUI(object):
             "4 - High Confidence",
         ]
 
-        self.ligand_site_information = self.db.get_list_of_pandda_sites_for_coot()
-
         # this decides which samples will be looked at
         self.selection_mode = ""
         self.pandda_index = -1  # refers to the number of sites
@@ -95,7 +93,6 @@ class GUI(object):
         self.ground_state_mean_map = ""
         self.spider_plot = ""
         self.ligand_confidence = ""
-        self.refinement_folder = ""
         self.refinementProtocol = "pandda_refmac"
 
         self.pdb_style = "refine.pdb"
@@ -636,7 +633,6 @@ class GUI(object):
         self.db_dict_panddaTable = {}
         if str(self.Todo[self.index][0]) is not None:
             self.compoundID = str(self.Todo[self.index][1])
-            self.refinement_folder = str(self.Todo[self.index][4])
             self.refinement_outcome = str(self.Todo[self.index][5])
             self.label = self.db.get_label_of_sample(self.xtalID)
             self.update_RefinementOutcome_radiobutton()
