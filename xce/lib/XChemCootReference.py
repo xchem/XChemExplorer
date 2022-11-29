@@ -5,8 +5,7 @@ import time
 
 import coot
 import gtk
-from matplotlib.backends.backend_gtkagg import \
-    FigureCanvasGTKAgg as FigureCanvas
+from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 import coot_utils_XChem
