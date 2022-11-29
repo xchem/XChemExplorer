@@ -58,6 +58,9 @@ class export_to_html:
                 ligName = ligand.split("-")[0]
                 ligChain = ligand.split("-")[1]
                 ligNumber = ligand.split("-")[2]
+                eventMap = ""
+                if os.path.isfile(xtal + "_" + ligand + "_event.ccp4"):
+                    eventMap = xtal + "_" + ligand + "_event.ccp4"
                 x = ligandDict[ligand][0]
                 y = ligandDict[ligand][1]
                 z = ligandDict[ligand][2]
