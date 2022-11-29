@@ -1,6 +1,7 @@
 import gtk
 import coot_utils_XChem
 import coot
+import coot_utils
 from coot_gui import coot_menubar_menu, add_simple_coot_menu_menuitem
 import XChemLog
 import XChemUtils
@@ -1609,7 +1610,7 @@ class GUI(object):
                     chains = coot_utils_XChem.chain_ids(imol)
                     resiDict = {}
                     for chain in chains:
-                        resiDict[chain] = residues_in_chain(imol, chain)
+                        resiDict[chain] = coot_utils.residues_in_chain(imol, chain)
                     amino_acids = XChemUtils.pdbtools(
                         coot.molecule_name(imol)
                     ).amino_acids()
