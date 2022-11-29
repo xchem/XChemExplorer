@@ -9,8 +9,16 @@ from datetime import datetime
 from PyQt4 import QtCore, QtGui
 
 from gui_scripts import layout, stylesheet
-from lib import (XChemDB, XChemDeposit, XChemLog, XChemMain, XChemPANDDA,
-                 XChemPlots, XChemThread, XChemToolTips)
+from lib import (
+    XChemDB,
+    XChemDeposit,
+    XChemLog,
+    XChemMain,
+    XChemPANDDA,
+    XChemPlots,
+    XChemThread,
+    XChemToolTips,
+)
 from lib.XChemUtils import parse
 from web import XChemWeb
 

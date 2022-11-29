@@ -4,8 +4,13 @@ import os
 import sys
 
 import XChemDB
-from XChemUtils import (calculate_distance_between_coordinates, maptools,
-                        parse, pdbtools, pdbtools_gemmi)
+from XChemUtils import (
+    calculate_distance_between_coordinates,
+    maptools,
+    parse,
+    pdbtools,
+    pdbtools_gemmi,
+)
 
 
 def parse_pdb(inital_model_directory, xtal, db_dict):
