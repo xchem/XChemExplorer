@@ -1,17 +1,18 @@
-import coot_utils_XChem
-import coot
-import XChemLog
-import XChemUtils
-import XChemRefine
 import glob
 import os
 import pickle
 import time
+
+import coot
 import gtk
-
-
+from matplotlib.backends.backend_gtkagg import \
+    FigureCanvasGTKAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
+
+import coot_utils_XChem
+import XChemLog
+import XChemRefine
+import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules

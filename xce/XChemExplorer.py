@@ -1,23 +1,18 @@
-from web import XChemWeb
-from lib import XChemDeposit
-from lib import XChemLog
-from lib import XChemPlots
-from lib import XChemMain
-from lib import XChemToolTips
-from lib import XChemPANDDA
-from lib import XChemDB
-from lib import XChemThread
-from lib.XChemUtils import parse
-from gui_scripts.stylesheet import set_stylesheet
-from gui_scripts.layout import setup, LayoutFuncs, LayoutObjects
 import getpass
 import glob
 import math
+import os
 import pickle
 import sys
-import os
 from datetime import datetime
-from PyQt4 import QtGui, QtCore
+
+from PyQt4 import QtCore, QtGui
+
+from gui_scripts import layout, stylesheet
+from lib import (XChemDB, XChemDeposit, XChemLog, XChemMain, XChemPANDDA,
+                 XChemPlots, XChemThread, XChemToolTips)
+from lib.XChemUtils import parse
+from web import XChemWeb
 
 
 class XChemExplorer(QtGui.QApplication):
@@ -30,7 +25,7 @@ class XChemExplorer(QtGui.QApplication):
         self.start_GUI()
 
         # set stylesheet - how the gui looks
-        set_stylesheet(self)
+        stylesheet.set_stylesheet(self)
 
         self.exec_()
 
@@ -40,20 +35,20 @@ class XChemExplorer(QtGui.QApplication):
         # This needs moving somewhere more appropriate...
         self.headlineLabelfont = QtGui.QFont("Arial", 20, QtGui.QFont.Bold)
 
-        setup().settings(self)
-        setup().preferences(self)
-        setup().tables(self)
+        layout.setup().settings(self)
+        layout.setup().preferences(self)
+        layout.setup().tables(self)
 
-        self.layout_funcs = LayoutFuncs()
+        self.layout_funcs = layout.LayoutFuncs()
 
         # GUI setup
         self.window = QtGui.QWidget()
         self.window.setWindowTitle("XChemExplorer")
         self.screen = QtGui.QDesktopWidget().screenGeometry()
 
-        LayoutObjects(self).workflow(self)
-        LayoutObjects(self).main_layout(self)
-        LayoutFuncs().add_widgets_layouts(self)
+        layout.LayoutObjects(self).workflow(self)
+        layout.LayoutObjects(self).main_layout(self)
+        layout.LayoutFuncs().add_widgets_layouts(self)
 
         self.checkLabXChemDir()
 

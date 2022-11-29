@@ -1,18 +1,19 @@
-import gtk
-import coot_utils_XChem
-import coot
-import coot_utils
-from coot_gui import coot_menubar_menu, add_simple_coot_menu_menuitem
-import XChemLog
-import XChemUtils
-import XChemRefine
-import XChemDB
-import gobject
+import glob
 import os
 import pickle
-import glob
 
+import coot
+import coot_gui
+import coot_utils
+import gobject
+import gtk
 from matplotlib.figure import Figure
+
+import coot_utils_XChem
+import XChemDB
+import XChemLog
+import XChemRefine
+import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
@@ -172,9 +173,9 @@ class GUI(object):
         }
 
         # XCE menu
-        menu = coot_menubar_menu("XCE")
+        menu = coot_gui.coot_menubar_menu("XCE")
 
-        add_simple_coot_menu_menuitem(
+        coot_gui.add_simple_coot_menu_menuitem(
             menu, "set all occupanicies to 1", lambda func: self.reset_occupancy()
         )
 

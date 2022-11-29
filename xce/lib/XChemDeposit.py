@@ -1,16 +1,14 @@
-from XChemUtils import parse
-from XChemUtils import smilestools
-from XChemUtils import mtztools
-from XChemUtils import pdbtools
-import XChemMain
-import XChemDB
-import XChemLog
-import sys
 import fileinput
-import os
 import glob
+import os
+import sys
 
 from PyQt4 import QtCore
+
+import XChemDB
+import XChemLog
+import XChemMain
+import XChemUtils
 
 
 class templates:
@@ -436,8 +434,8 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.panddaDir = ground_state[2]
             self.logDir = self.projectDir
             self.projectDir = self.panddaDir
-            self.pdb = pdbtools(self.ground_state_pdb)
-            self.mtz = mtztools(self.ground_state_mtz)
+            self.pdb = XChemUtils.pdbtools(self.ground_state_pdb)
+            self.mtz = XChemUtils.mtztools(self.ground_state_mtz)
 
     def run(self):
 
@@ -636,7 +634,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         fileStatus = False
         if os.path.isfile("refine.split.bound-state.pdb"):
             self.Logfile.insert("%s: found refine.split.bound-state.pdb" % xtal)
-            self.pdb = pdbtools("refine.split.bound-state.pdb")
+            self.pdb = XChemUtils.pdbtools("refine.split.bound-state.pdb")
             fileStatus = True
         else:
             self.Logfile.error(
@@ -652,7 +650,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         fileStatus = False
         if os.path.isfile("refine.mtz"):
             self.Logfile.insert("%s: found refine.mtz" % xtal)
-            self.mtz = mtztools("refine.mtz")
+            self.mtz = XChemUtils.mtztools("refine.mtz")
             fileStatus = True
         else:
             self.Logfile.error(
@@ -682,7 +680,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.Logfile.error("%s: cannot find AIMLESS logfile..." % xtal)
 
     def prepare_aimless_log(self, xtal):
-        parse().make_pseudo_aimless_log_from_json(xtal + ".log")
+        XChemUtils.parse().make_pseudo_aimless_log_from_json(xtal + ".log")
 
     def aimless_logfile_exists(self, xtal):
         self.Logfile.insert(
@@ -764,9 +762,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             % xtal
         )
         ligandStatus = False
-        ligList = pdbtools("refine.split.bound-state.pdb").get_residues_with_resname(
-            "LIG"
-        )
+        ligList = XChemUtils.pdbtools(
+            "refine.split.bound-state.pdb"
+        ).get_residues_with_resname("LIG")
         if ligList is []:
             self.Logfile.error(
                 "%s: refine.split.bound-state.pdb does not contain any modelled ligands"
@@ -975,9 +973,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
                     "%s: trying to find it from %s.free.mtz..." % (xtal, xtal)
                 )
                 if os.path.isfile("%s.free.mtz" % xtal):
-                    self.data_template_dict["radiation_wavelengths"] = mtztools(
-                        xtal + ".free.mtz"
-                    ).get_wavelength()
+                    self.data_template_dict[
+                        "radiation_wavelengths"
+                    ] = XChemUtils.mtztools(xtal + ".free.mtz").get_wavelength()
                     self.Logfile.warning(
                         "%s: found the following wavelength -> %s"
                         % (xtal, str(self.data_template_dict["radiation_wavelengths"]))
@@ -1154,7 +1152,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             if os.path.isfile("aimless_dials.log"):
                 aimless = "aimless_dials.log"
             else:
-                parse().make_pseudo_aimless_log_from_json(aimless)
+                XChemUtils.parse().make_pseudo_aimless_log_from_json(aimless)
                 aimless = "aimless_dials.log"
 
         if self.ground_state:
@@ -1951,7 +1949,9 @@ class compare_smiles_in_db_with_ligand_in_pdb(QtCore.QThread):
                 try:
                     LigandSmiles = str(smiles[0][0])
                     LigandCode = str(smiles[0][1])
-                    elementDict_smiles = smilestools(LigandSmiles).ElementDict()
+                    elementDict_smiles = XChemUtils.smilestools(
+                        LigandSmiles
+                    ).ElementDict()
                 except IndexError:
                     self.Logfile.error(
                         "{0!s}: something is seems to be wrong"
@@ -1961,7 +1961,7 @@ class compare_smiles_in_db_with_ligand_in_pdb(QtCore.QThread):
                     )
                     continue
 
-                pdb = pdbtools(os.path.join(xtal, "refine.pdb"))
+                pdb = XChemUtils.pdbtools(os.path.join(xtal, "refine.pdb"))
                 ligandList = pdb.ligand_details_as_list()
                 for ligand in ligandList:
                     resname = ligand[0]

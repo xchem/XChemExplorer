@@ -1,14 +1,14 @@
-from rdkit.Chem import Draw
-from rdkit import Chem
-import shutil
-import os
-import sys
-import getopt
-import sqlite3
 import csv
-import zipfile
+import getopt
 import glob
+import os
+import shutil
+import sqlite3
+import sys
+import zipfile
 
+from rdkit import Chem
+from rdkit.Chem import Draw
 
 targetID = ""
 panddadir = ""

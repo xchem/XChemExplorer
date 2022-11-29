@@ -1,5 +1,6 @@
+from PyQt4 import QtCore, QtGui
+
 import layout
-from PyQt4 import QtGui, QtCore
 
 
 class DatasetsTab:

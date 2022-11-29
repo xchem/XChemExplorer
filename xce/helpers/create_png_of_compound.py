@@ -1,9 +1,8 @@
-from rdkit.Chem import Draw
-from rdkit.Chem import AllChem
-from rdkit import Chem
 import os
 import sys
 
+from rdkit import Chem
+from rdkit.Chem import AllChem, Draw
 
 if __name__ == "__main__":
 

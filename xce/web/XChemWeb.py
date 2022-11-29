@@ -1,8 +1,6 @@
-from ..lib import XChemUtils
-from ..lib import XChemMain
-from ..lib import XChemDB
-from ..lib import XChemLog
 import os
+
+from ..lib import XChemDB, XChemLog, XChemMain, XChemUtils
 
 
 class export_to_html:
