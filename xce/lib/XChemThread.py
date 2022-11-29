@@ -1,11 +1,13 @@
 import XChemMain
 import XChemLog
 import XChemDB
-from XChemUtils import misc
-from XChemUtils import helpers
-from XChemUtils import pdbtools
-from XChemUtils import mtztools
-from XChemUtils import parse
+from XChemUtils import (
+    calculate_distance_between_coordinates,
+    helpers,
+    pdbtools,
+    mtztools,
+    parse,
+)
 import os
 import glob
 from datetime import datetime
@@ -639,7 +641,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                         ).get_center_of_gravity_of_residue_ish(
                             residue_chain, residue_number
                         )
-                        distance = misc().calculate_distance_between_coordinates(
+                        distance = calculate_distance_between_coordinates(
                             residue_xyz[0],
                             residue_xyz[1],
                             residue_xyz[2],
