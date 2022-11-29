@@ -5606,9 +5606,6 @@ class XChemExplorer(QtGui.QApplication):
                                     key, visit, run, program
                                 )
                             )
-                            # update datasource
-                            self.update_log.insert("updating datasource...")
-                            self.update_data_source(key, db_dict)
                             entry[8] = True
                         else:
                             entry[8] = False
@@ -5956,11 +5953,6 @@ class XChemExplorer(QtGui.QApplication):
                     columns_to_show.append(n)
                     break
         return columns_to_show
-
-    def update_data_source(self, sample, db_dict):
-        data_source = XChemDB.data_source(
-            os.path.join(self.database_directory, self.data_source_file)
-        )
 
     def quit_xce(self):
         # save pkl file
