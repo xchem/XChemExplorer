@@ -546,7 +546,7 @@ class run_pandda_export(QtCore.QThread):
                         )
                         try:
                             os.system("/bin/rm *-ensemble-model.pdb *restraints*")
-                        except:
+                        except Exception:
                             self.Logfile.error(
                                 "Restraint files didn't exist to remove."
                                 " Will try to continue"
@@ -1909,7 +1909,7 @@ class find_event_map_for_ligand(QtCore.QThread):
                 os.chdir(dirs)
                 try:
                     p = gemmi.read_structure("refine.pdb")
-                except:
+                except Exception:
                     self.Logfile.error("gemmi library not available")
                     self.external_software["gemmi"] = False
                 reso = XChemUtils.mtztools("refine.mtz").get_dmin()

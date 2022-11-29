@@ -3250,7 +3250,7 @@ class XChemExplorer(QtGui.QApplication):
 
         try:
             pickled_settings = pickle.load(open(file_name, "rb"))
-        except:
+        except Exception:
             print("==> XCE: failed to open config file...")
 
         key_list = {
@@ -3283,7 +3283,7 @@ class XChemExplorer(QtGui.QApplication):
                 )
                 exec(command)
                 print(("==> XCE: found " + key_list[current_key]))
-            except:
+            except Exception:
                 print(
                     (
                         "==> XCE: WARNING: Failed to find settings for: "
@@ -3363,9 +3363,9 @@ class XChemExplorer(QtGui.QApplication):
             self.update_status_bar("Sorry, this is not a XChemExplorer config file!")
             self.update_log.insert("Sorry, this is not a XChemExplorer config file!")
 
-        except:
+        except Exception as exception:
             print(("Unexpected error:", sys.exc_info()[0]))
-            raise
+            raise exception
 
     def save_config_file(self):
         file_name = str(
