@@ -1,15 +1,11 @@
 import csv
-import XChemDB
-from XChemUtils import (
-    calculate_distance_between_coordinates,
-    maptools,
-    pdbtools_gemmi,
-    pdbtools,
-    parse,
-)
+import glob
 import os
 import sys
-import glob
+
+import XChemDB
+from XChemUtils import (calculate_distance_between_coordinates, maptools,
+                        parse, pdbtools, pdbtools_gemmi)
 
 
 def parse_pdb(inital_model_directory, xtal, db_dict):

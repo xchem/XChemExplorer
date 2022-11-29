@@ -1,5 +1,6 @@
-import layout
 from PyQt4 import QtGui
+
+import layout
 
 
 class RefinementTab:

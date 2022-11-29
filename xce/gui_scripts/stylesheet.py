@@ -1,5 +1,6 @@
-from PyQt4 import QtGui
 import os
+
+from PyQt4 import QtGui
 
 
 def set_stylesheet(xce_object):

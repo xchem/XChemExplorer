@@ -1,9 +1,9 @@
-import XChemLog
-import sqlite3
 import csv
-from datetime import datetime
 import getpass
+import sqlite3
+from datetime import datetime
 
+import XChemLog
 
 # from XChemUtils import parse
 

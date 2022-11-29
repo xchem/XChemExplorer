@@ -1,11 +1,12 @@
-import XChemLog
-import XChemDB
-import os
-import glob
-import subprocess
 import getpass
+import glob
 import gzip
+import os
+import subprocess
 from datetime import datetime
+
+import XChemDB
+import XChemLog
 
 
 def space_group_list():

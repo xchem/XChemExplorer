@@ -1,16 +1,17 @@
-import os
+import csv
 import glob
+import os
 import subprocess
 from datetime import datetime
+
 from PyQt4 import QtCore
 
 # from XChemUtils import mtztools
 import XChemDB
-import XChemRefine
-import XChemUtils
 import XChemLog
+import XChemRefine
 import XChemToolTips
-import csv
+import XChemUtils
 
 try:
     import gemmi

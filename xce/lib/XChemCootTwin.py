@@ -1,16 +1,17 @@
-import gtk
-import coot_utils_XChem
-import coot
-import XChemLog
-import XChemUtils
-import XChemRefine
-import XChemDB
-import gobject
+import glob
 import os
 import pickle
-import glob
 
+import coot
+import gobject
+import gtk
 from matplotlib.figure import Figure
+
+import coot_utils_XChem
+import XChemDB
+import XChemLog
+import XChemRefine
+import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules

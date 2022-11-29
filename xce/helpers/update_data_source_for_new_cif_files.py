@@ -1,7 +1,7 @@
-from ..lib import XChemDB
 import os
 import sys
 
+from ..lib import XChemDB
 
 if __name__ == "__main__":
     db_file = sys.argv[1]

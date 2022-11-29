@@ -1,6 +1,8 @@
-from ..lib import XChemToolTips
-import layout
 from PyQt4 import QtGui
+
+import layout
+
+from ..lib import XChemToolTips
 
 
 class DepositionTab:

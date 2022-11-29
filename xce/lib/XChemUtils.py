@@ -1,24 +1,20 @@
-import XChemLog
-import XChemDB
-import os
-import math
-import subprocess
-import json
-import time
-
-from distutils.spawn import find_executable
-
-import gzip
 import bz2
-
-import gemmi
+import gzip
+import json
+import math
+import os
+import subprocess
+import time
+from distutils.spawn import find_executable
 
 from rdkit import Chem
 
+import gemmi
 import iotbx.pdb
-
-from iotbx.reflection_file_reader import any_reflection_file
+import XChemDB
+import XChemLog
 from iotbx import mtz
+from iotbx.reflection_file_reader import any_reflection_file
 
 
 def open_decompress_file(filename, mode="rb"):
