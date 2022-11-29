@@ -1,23 +1,26 @@
-from web import XChemWeb
-from lib import XChemDeposit
-from lib import XChemLog
-from lib import XChemPlots
-from lib import XChemMain
-from lib import XChemToolTips
-from lib import XChemPANDDA
-from lib import XChemDB
-from lib import XChemThread
-from lib.XChemUtils import parse
-from gui_scripts.stylesheet import set_stylesheet
-from gui_scripts.layout import setup, LayoutFuncs, LayoutObjects
 import getpass
 import glob
 import math
+import os
 import pickle
 import sys
-import os
 from datetime import datetime
-from PyQt4 import QtGui, QtCore
+
+from PyQt4 import QtCore, QtGui
+
+from gui_scripts import layout, stylesheet
+from lib import (
+    XChemDB,
+    XChemDeposit,
+    XChemLog,
+    XChemMain,
+    XChemPANDDA,
+    XChemPlots,
+    XChemThread,
+    XChemToolTips,
+)
+from lib.XChemUtils import parse
+from web import XChemWeb
 
 
 class XChemExplorer(QtGui.QApplication):
@@ -30,7 +33,7 @@ class XChemExplorer(QtGui.QApplication):
         self.start_GUI()
 
         # set stylesheet - how the gui looks
-        set_stylesheet(self)
+        stylesheet.set_stylesheet(self)
 
         self.exec_()
 
@@ -40,20 +43,20 @@ class XChemExplorer(QtGui.QApplication):
         # This needs moving somewhere more appropriate...
         self.headlineLabelfont = QtGui.QFont("Arial", 20, QtGui.QFont.Bold)
 
-        setup().settings(self)
-        setup().preferences(self)
-        setup().tables(self)
+        layout.setup().settings(self)
+        layout.setup().preferences(self)
+        layout.setup().tables(self)
 
-        self.layout_funcs = LayoutFuncs()
+        self.layout_funcs = layout.LayoutFuncs()
 
         # GUI setup
         self.window = QtGui.QWidget()
         self.window.setWindowTitle("XChemExplorer")
         self.screen = QtGui.QDesktopWidget().screenGeometry()
 
-        LayoutObjects(self).workflow(self)
-        LayoutObjects(self).main_layout(self)
-        LayoutFuncs().add_widgets_layouts(self)
+        layout.LayoutObjects(self).workflow(self)
+        layout.LayoutObjects(self).main_layout(self)
+        layout.LayoutFuncs().add_widgets_layouts(self)
 
         self.checkLabXChemDir()
 
@@ -3250,7 +3253,7 @@ class XChemExplorer(QtGui.QApplication):
 
         try:
             pickled_settings = pickle.load(open(file_name, "rb"))
-        except:
+        except Exception:
             print("==> XCE: failed to open config file...")
 
         key_list = {
@@ -3283,7 +3286,7 @@ class XChemExplorer(QtGui.QApplication):
                 )
                 exec(command)
                 print(("==> XCE: found " + key_list[current_key]))
-            except:
+            except Exception:
                 print(
                     (
                         "==> XCE: WARNING: Failed to find settings for: "
@@ -3363,9 +3366,9 @@ class XChemExplorer(QtGui.QApplication):
             self.update_status_bar("Sorry, this is not a XChemExplorer config file!")
             self.update_log.insert("Sorry, this is not a XChemExplorer config file!")
 
-        except:
+        except Exception as exception:
             print(("Unexpected error:", sys.exc_info()[0]))
-            raise
+            raise exception
 
     def save_config_file(self):
         file_name = str(
@@ -4202,7 +4205,7 @@ class XChemExplorer(QtGui.QApplication):
             pandda_params,
             self.xce_logfile,
             os.path.join(self.database_directory, self.data_source_file),
-            run_pandda_analyse,
+            self.run_pandda_analyse,
         )
         self.explorer_active = 1
         self.connect(
@@ -4919,6 +4922,11 @@ class XChemExplorer(QtGui.QApplication):
             # sort by aimless_index and so make sure
             for entry in sorted(logfile_list, key=lambda x: x[7]):
                 entry_already_in_table = False  # that aimless_index == row
+                cell_text = QtGui.QTableWidgetItem()
+                cell_text.setTextAlignment(
+                    QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
+                )
+                db_dict = entry[6]
                 for logfile in self.data_collection_table_dict[xtal]:
                     if (
                         entry[1] == logfile[1]
@@ -4931,11 +4939,7 @@ class XChemExplorer(QtGui.QApplication):
                         for column, header in enumerate(diffraction_data_column_name):
                             if header == "DataProcessing\nRfree":
                                 # entry[7]==aimless_index, i.e. row number
-                                cell_text = QtGui.QTableWidgetItem()
                                 cell_text.setText(str(db_dict[header[1]]))
-                                cell_text.setTextAlignment(
-                                    QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                                )
                                 data_collection_table.setItem(
                                     entry[7], column, cell_text
                                 )
@@ -4943,7 +4947,6 @@ class XChemExplorer(QtGui.QApplication):
                         break
                 if not entry_already_in_table:
                     data_collection_table.insertRow(row_position)
-                    db_dict = entry[6]
                     for column, header in enumerate(diffraction_data_column_name):
                         cell_text = QtGui.QTableWidgetItem()
                         try:
@@ -4951,9 +4954,6 @@ class XChemExplorer(QtGui.QApplication):
                         except KeyError:
                             # this may happen if not score exists
                             cell_text.setText("0")
-                        cell_text.setTextAlignment(
-                            QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                        )
                         data_collection_table.setItem(row_position, column, cell_text)
                     data_collection_table.setRowHeight(row_position, 20)
                     row_position += 1
@@ -5606,9 +5606,6 @@ class XChemExplorer(QtGui.QApplication):
                                     key, visit, run, program
                                 )
                             )
-                            # update datasource
-                            self.update_log.insert("updating datasource...")
-                            self.update_data_source(key, db_dict)
                             entry[8] = True
                         else:
                             entry[8] = False
@@ -5956,11 +5953,6 @@ class XChemExplorer(QtGui.QApplication):
                     columns_to_show.append(n)
                     break
         return columns_to_show
-
-    def update_data_source(self, sample, db_dict):
-        data_source = XChemDB.data_source(
-            os.path.join(self.database_directory, self.data_source_file)
-        )
 
     def quit_xce(self):
         # save pkl file

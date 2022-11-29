@@ -1,16 +1,17 @@
-import os
+import csv
 import glob
+import os
 import subprocess
 from datetime import datetime
+
 from PyQt4 import QtCore
 
 # from XChemUtils import mtztools
 import XChemDB
-import XChemRefine
-import XChemUtils
 import XChemLog
+import XChemRefine
 import XChemToolTips
-import csv
+import XChemUtils
 
 try:
     import gemmi
@@ -546,7 +547,7 @@ class run_pandda_export(QtCore.QThread):
                         )
                         try:
                             os.system("/bin/rm *-ensemble-model.pdb *restraints*")
-                        except:
+                        except Exception:
                             self.Logfile.error(
                                 "Restraint files didn't exist to remove."
                                 " Will try to continue"
@@ -1850,13 +1851,15 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                         # now need to check if there is a unassigned entry in
                         # panddaTable that is close
                         for entry in dbDict[xtal]:
-                            distance = XChemUtils.misc().calculate_distance_between_coordinates(
-                                mol_xyz[0],
-                                mol_xyz[1],
-                                mol_xyz[2],
-                                entry[1],
-                                entry[2],
-                                entry[3],
+                            distance = (
+                                XChemUtils.calculate_distance_between_coordinates(
+                                    mol_xyz[0],
+                                    mol_xyz[1],
+                                    mol_xyz[2],
+                                    entry[1],
+                                    entry[2],
+                                    entry[3],
+                                )
                             )
                             self.Logfile.insert(
                                 "{0!s}: {1!s} {2!s} {3!s} <--->"
@@ -1909,7 +1912,7 @@ class find_event_map_for_ligand(QtCore.QThread):
                 os.chdir(dirs)
                 try:
                     p = gemmi.read_structure("refine.pdb")
-                except:
+                except Exception:
                     self.Logfile.error("gemmi library not available")
                     self.external_software["gemmi"] = False
                 reso = XChemUtils.mtztools("refine.mtz").get_dmin()

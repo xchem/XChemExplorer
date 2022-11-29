@@ -1,11 +1,10 @@
-from ..lib import XChemLog
-from ..lib import XChemMain
-from ..lib import XChemDB
-from ..lib import XChemUtils
 import os
-import sys
 import subprocess
+import sys
+
 from PyQt4 import QtCore
+
+from ..lib import XChemDB, XChemLog, XChemMain, XChemUtils
 
 
 class setup:

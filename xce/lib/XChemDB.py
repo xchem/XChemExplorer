@@ -1,9 +1,9 @@
-import XChemLog
-import sqlite3
 import csv
-from datetime import datetime
 import getpass
+import sqlite3
+from datetime import datetime
 
+import XChemLog
 
 # from XChemUtils import parse
 
@@ -1520,26 +1520,6 @@ class data_source:
                     out_list.append([item, entry[0]])
                     break
         return out_list
-
-    def get_list_of_pandda_sites_for_coot(self):
-        site_list = [["0", "any site"]]
-        sqlite = (
-            "select distinct"
-            " panddaTable.PANDDA_site_index,"
-            " panddaTable.PANDDA_site_name "
-            "from panddaTable "
-            "order by cast (panddaTable.PANDDA_site_index as integer) ASC;"
-        )
-
-        print("data source", self.data_source_file)
-        connect = sqlite3.connect(self.data_source_file)
-        cursor = connect.cursor()
-        cursor.execute(sqlite)
-        tmp = cursor.fetchall()
-        for item in tmp:
-            site_list.append([str(item[0]), str(item[1])])
-
-        return site_list
 
     def export_csv_for_WONKA(self):
         SQLite = (

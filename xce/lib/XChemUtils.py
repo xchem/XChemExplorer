@@ -1,24 +1,20 @@
-import XChemLog
-import XChemDB
-import os
-import math
-import subprocess
-import json
-import time
-
-from distutils.spawn import find_executable
-
-import gzip
 import bz2
-
-import gemmi
+import gzip
+import json
+import math
+import os
+import subprocess
+import time
+from distutils.spawn import find_executable
 
 from rdkit import Chem
 
+import gemmi
 import iotbx.pdb
-
-from iotbx.reflection_file_reader import any_reflection_file
+import XChemDB
+import XChemLog
 from iotbx import mtz
+from iotbx.reflection_file_reader import any_reflection_file
 
 
 def open_decompress_file(filename, mode="rb"):
@@ -2035,15 +2031,14 @@ class logtools:
         return QualityIndicators
 
 
-class misc:
-    def calculate_distance_between_coordinates(self, x1, y1, z1, x2, y2, z2):
-        distance = 0.0
-        distance = math.sqrt(
-            math.pow(float(x1) - float(x2), 2)
-            + math.pow(float(y1) - float(y2), 2)
-            + math.pow(float(z1) - float(z2), 2)
-        )
-        return distance
+def calculate_distance_between_coordinates(x1, y1, z1, x2, y2, z2):
+    distance = 0.0
+    distance = math.sqrt(
+        math.pow(float(x1) - float(x2), 2)
+        + math.pow(float(y1) - float(y2), 2)
+        + math.pow(float(z1) - float(z2), 2)
+    )
+    return distance
 
 
 class smilestools(object):

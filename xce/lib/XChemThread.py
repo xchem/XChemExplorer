@@ -1,20 +1,16 @@
-import XChemMain
-import XChemLog
-import XChemDB
-from XChemUtils import misc
-from XChemUtils import helpers
-from XChemUtils import pdbtools
-from XChemUtils import mtztools
-from XChemUtils import parse
-import os
+import csv
 import glob
+import math
+import os
+import pickle
 from datetime import datetime
+
 from PyQt4 import QtCore
 
-import pickle
-import math
-import csv
-
+import XChemDB
+import XChemLog
+import XChemMain
+import XChemUtils
 from iotbx.reflection_file_reader import any_reflection_file
 
 
@@ -138,10 +134,10 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         # used for refinement
         if os.path.isfile("refine.mtz"):
             if os.path.isfile(xtal + ".free.mtz"):
-                freeMTZ = mtztools(xtal + ".free.mtz")
+                freeMTZ = XChemUtils.mtztools(xtal + ".free.mtz")
                 nREFfree = freeMTZ.get_number_measured_reflections()
                 if os.path.isfile(xtal + ".mtz"):
-                    procMTZ = mtztools(xtal + ".mtz")
+                    procMTZ = XChemUtils.mtztools(xtal + ".mtz")
                     nREF = procMTZ.get_number_measured_reflections()
                     (
                         CC,
@@ -239,7 +235,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 or db_dict["DataCollectionOutcome"] == ""
             ):
                 db_dict["DataCollectionOutcome"] = "success"
-            aimless_results = parse().read_aimless_logfile(
+            aimless_results = XChemUtils.parse().read_aimless_logfile(
                 db_dict["DataProcessingPathToLogfile"]
             )
             db_dict.update(aimless_results)
@@ -253,7 +249,9 @@ class synchronise_db_and_filesystem(QtCore.QThread):
             db_dict["DataProcessingPathToMTZfile"] = os.path.realpath(xtal + ".mtz")
             db_dict["DataProcessingMTZfileName"] = xtal + ".mtz"
             if not found_logfile:
-                mtz_info = mtztools(xtal + ".mtz").get_information_for_datasource()
+                mtz_info = XChemUtils.mtztools(
+                    xtal + ".mtz"
+                ).get_information_for_datasource()
                 db_dict.update(mtz_info)
                 db_dict["DataCollectionOutcome"] = "success"
         else:
@@ -268,7 +266,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
 
         if os.path.isfile("dimple.pdb"):
             db_dict["DimplePathToPDB"] = os.path.realpath("dimple.pdb")
-            pdb_info = parse().PDBheader("dimple.pdb")
+            pdb_info = XChemUtils.parse().PDBheader("dimple.pdb")
             db_dict["DimpleRcryst"] = pdb_info["Rcryst"]
             db_dict["DimpleRfree"] = pdb_info["Rfree"]
             db_dict["DimpleResolutionHigh"] = pdb_info["ResolutionHigh"]
@@ -399,7 +397,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         if os.path.isfile("refine.pdb"):
             db_dict["RefinementPDB_latest"] = os.path.realpath("refine.pdb")
             db_dict["RefinementStatus"] = "finished"
-            pdb_info = parse().dict_for_datasource_update("refine.pdb")
+            pdb_info = XChemUtils.parse().dict_for_datasource_update("refine.pdb")
             db_dict.update(pdb_info)
             if (
                 db_dict["RefinementOutcome"] == "None"
@@ -610,7 +608,7 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                 if os.path.isfile(
                     os.path.join(self.initial_model_directory, xtal, "refine.pdb")
                 ):
-                    ligands_in_file = pdbtools(
+                    ligands_in_file = XChemUtils.pdbtools(
                         os.path.join(self.initial_model_directory, xtal, "refine.pdb")
                     ).find_xce_ligand_details()
                     if not ligands_in_file:
@@ -632,14 +630,14 @@ class synchronise_db_and_filesystem(QtCore.QThread):
                         residue_chain = ligand[1]
                         residue_number = ligand[2]
                         residue_altLoc = ligand[3]
-                        residue_xyz = pdbtools(
+                        residue_xyz = XChemUtils.pdbtools(
                             os.path.join(
                                 self.initial_model_directory, xtal, "refine.pdb"
                             )
                         ).get_center_of_gravity_of_residue_ish(
                             residue_chain, residue_number
                         )
-                        distance = misc().calculate_distance_between_coordinates(
+                        distance = XChemUtils.calculate_distance_between_coordinates(
                             residue_xyz[0],
                             residue_xyz[1],
                             residue_xyz[2],
@@ -920,7 +918,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                     os.path.join(self.initial_model_directory, sampleID, "compound")
                 )
 
-                helpers().make_png(
+                XChemUtils.helpers().make_png(
                     self.initial_model_directory,
                     sampleID,
                     compoundID,
@@ -1460,7 +1458,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch += "module load phenix\n"
             ccp4_scratch += "module load ccp4/7.1.018\n"
 
-        mtz_column_list = mtztools(mtzin).get_all_columns_as_list()
+        mtz_column_list = XChemUtils.mtztools(mtzin).get_all_columns_as_list()
         rfree = ""
         if "FreeR_flag" in mtz_column_list:
             rfree = ' xray_data.r_free_flags.label="FreeR_flag"'
@@ -1672,7 +1670,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         # DIMPLE assumes an Rfree column and barfs if it is not present
         # note: ref_mtz looks like this: ref mtz  -R reference.mtz
         if os.path.isfile(ref_mtz):
-            mtz_column_dict = mtztools(ref_mtz).get_all_columns_as_dict()
+            mtz_column_dict = XChemUtils.mtztools(ref_mtz).get_all_columns_as_dict()
             if "FreeR_flag" not in mtz_column_dict["RFREE"]:
                 self.Logfile.insert(
                     "cannot find FreeR_flag in reference mtz file: {0!s} ->"
@@ -2135,7 +2133,7 @@ class set_results_from_selected_pipeline(QtCore.QThread):
                 if os.path.isfile("dimple.pdb"):
                     self.Logfile.insert("%s: selecting output from dimple" % xtal)
                     os.system("ln -s dimple.pdb init.pdb")
-                    pdb_info = parse().PDBheader("dimple.pdb")
+                    pdb_info = XChemUtils.parse().PDBheader("dimple.pdb")
                     db_dict["DimpleRcryst"] = pdb_info["Rcryst"]
                     db_dict["DimpleRfree"] = pdb_info["Rfree"]
                     db_dict["DimpleResolutionHigh"] = pdb_info["ResolutionHigh"]
@@ -2152,7 +2150,7 @@ class set_results_from_selected_pipeline(QtCore.QThread):
                 if os.path.isfile("pipedream.pdb"):
                     self.Logfile.insert("%s: selecting output from pipedream" % xtal)
                     os.system("ln -s pipedream.pdb init.pdb")
-                    pdb_info = parse().PDBheader("pipedream.pdb")
+                    pdb_info = XChemUtils.parse().PDBheader("pipedream.pdb")
                     db_dict["DimpleRcryst"] = pdb_info["Rcryst"]
                     db_dict["DimpleRfree"] = pdb_info["Rfree"]
                     db_dict["DimpleResolutionHigh"] = pdb_info["ResolutionHigh"]
@@ -2171,7 +2169,9 @@ class set_results_from_selected_pipeline(QtCore.QThread):
                         "%s: selecting output from phenix.ligand_pipeline" % xtal
                     )
                     os.system("ln -s phenix.ligand_pipeline.pdb init.pdb")
-                    pdb_info = parse().PDBheader("phenix.ligand_pipeline.pdb")
+                    pdb_info = XChemUtils.parse().PDBheader(
+                        "phenix.ligand_pipeline.pdb"
+                    )
                     db_dict["DimpleRcryst"] = pdb_info["Rcryst"]
                     db_dict["DimpleRfree"] = pdb_info["Rfree"]
                     db_dict["DimpleResolutionHigh"] = pdb_info["ResolutionHigh"]
@@ -3103,7 +3103,7 @@ class read_write_autoprocessing_results_from_to_disc(QtCore.QThread):
                     "DataCollectionOutcome": "success",
                     "ProteinName": target,
                 }
-                db_dict.update(parse().read_aimless_logfile(logNew))
+                db_dict.update(XChemUtils.parse().read_aimless_logfile(logNew))
                 # image exist even if data processing failed
                 db_dict.update(self.findJPGs(xtal, current_run))
                 db_dict["DataCollectionBeamline"] = self.beamline

@@ -1,14 +1,15 @@
-import gtk
-import coot_utils_XChem
-import coot
-import XChemUtils
-import XChemRefine
-import XChemDB
-import gobject
 import os
 import pickle
 
+import coot
+import gobject
+import gtk
 from matplotlib.figure import Figure
+
+import coot_utils_XChem
+import XChemDB
+import XChemRefine
+import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
@@ -65,8 +66,6 @@ class GUI(object):
             "4 - High Confidence",
         ]
 
-        self.ligand_site_information = self.db.get_list_of_pandda_sites_for_coot()
-
         # this decides which samples will be looked at
         self.selection_mode = ""
         self.pandda_index = -1  # refers to the number of sites
@@ -86,7 +85,6 @@ class GUI(object):
         self.compoundID = ""
         self.spider_plot = ""
         self.ligand_confidence = ""
-        self.refinement_folder = ""
 
         self.pdb_style = "refine.pdb"
         self.mtz_style = "refine.mtz"
@@ -447,7 +445,9 @@ class GUI(object):
                 os.getenv("XChemExplorer_DIR"), "image", "NO_SPIDER_PLOT_AVAILABLE.png"
             )
         )
-        self.spider_plot_pic = pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR
+        )
         self.spider_plot_image = gtk.Image()
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
         spider_plot_frame.add(self.spider_plot_image)
@@ -667,7 +667,6 @@ class GUI(object):
         self.db_dict_panddaTable = {}
         if str(self.Todo[self.index][0]) is not None:
             self.compoundID = str(self.Todo[self.index][1])
-            self.refinement_folder = str(self.Todo[self.index][4])
             self.refinement_outcome = str(self.Todo[self.index][5])
             self.update_RefinementOutcome_radiobutton()
         if (

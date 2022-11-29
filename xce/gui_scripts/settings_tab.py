@@ -1,6 +1,8 @@
-import layout
 import os
+
 from PyQt4 import QtGui
+
+import layout
 
 
 class SettingsTab:

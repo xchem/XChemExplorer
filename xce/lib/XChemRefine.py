@@ -1,12 +1,13 @@
-import gtk
-from XChemUtils import mtztools_gemmi
-from XChemUtils import pdbtools
-import XChemLog
-from datetime import datetime
 import getpass
 import glob
 import os
+from datetime import datetime
+
+import gtk
 import pygtk
+
+import XChemLog
+import XChemUtils
 
 pygtk.require("2.0")
 
@@ -707,7 +708,7 @@ class Refine(object):
         f.write(cmd)
         f.close()
 
-    def run_script(self, program, external_software):
+    def run_script(self, program, external_software, Serial):
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
         if external_software["qsub"] and os.path.isdir("/dls"):
             self.Logfile.insert(
@@ -780,14 +781,16 @@ class Refine(object):
 
         hklin, hklout = self.get_hklin_hklout(Serial)
 
-        resh, resl = mtztools_gemmi(hklin).get_high_low_resolution_limits()
+        resh, resl = XChemUtils.mtztools_gemmi(hklin).get_high_low_resolution_limits()
 
         xyzin, xyzout = self.get_xyzin_xyzout(Serial)
 
         refine_ligand_occupancy = ""
         if RefmacParams is not None:
             if "LIGOCC" in RefmacParams["LIGOCC"]:
-                ligand_info = pdbtools(xyzin).get_residues_with_resname("LIG")
+                ligand_info = XChemUtils.pdbtools(xyzin).get_residues_with_resname(
+                    "LIG"
+                )
                 if self.prepare_gelly_dat(ligand_info):
                     refine_ligand_occupancy = " -B user -Gelly gelly.dat "
 
@@ -838,7 +841,7 @@ class Refine(object):
             )
             self.write_refinement_script(cmd, "buster")
             self.Logfile.insert("%s: starting refinement..." % self.xtalID)
-            self.run_script("buster", external_software)
+            self.run_script("buster", external_software, Serial)
 
     def prepare_gelly_dat(self, ligand_info):
         found_ligand = False
@@ -1915,7 +1918,7 @@ class panddaRefine(object):
                     " LIG, DRG, FRG, UNK or UNL" % self.xtalID
                 )
                 knowLigandIDs = ["LIG", "DRG", "FRG", "UNK", "UNL"]
-                ligandsInFile = pdbtools(
+                ligandsInFile = XChemUtils.pdbtools(
                     self.xtalID + "-ensemble-model.pdb"
                 ).find_ligands()
                 found_lig = False

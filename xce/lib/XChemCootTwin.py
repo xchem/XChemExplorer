@@ -1,16 +1,17 @@
-import gtk
-import coot_utils_XChem
-import coot
-import XChemLog
-import XChemUtils
-import XChemRefine
-import XChemDB
-import gobject
+import glob
 import os
 import pickle
-import glob
 
+import coot
+import gobject
+import gtk
 from matplotlib.figure import Figure
+
+import coot_utils_XChem
+import XChemDB
+import XChemLog
+import XChemRefine
+import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
@@ -70,8 +71,6 @@ class GUI(object):
             "4 - High Confidence",
         ]
 
-        self.ligand_site_information = self.db.get_list_of_pandda_sites_for_coot()
-
         # this decides which samples will be looked at
         self.selection_mode = ""
         self.pandda_index = -1  # refers to the number of sites
@@ -93,12 +92,10 @@ class GUI(object):
         self.ground_state_mean_map = ""
         self.spider_plot = ""
         self.ligand_confidence = ""
-        self.refinement_folder = ""
 
         self.pdb_style = "refine.pdb"
         self.mtz_style = "refine.mtz"
 
-        self.covLink = ["X", "X", "X", "X"]
         self.covLinkObject = coot.new_generic_object_number("covalent bond")
         self.covLinkAtomSpec = None
 
@@ -470,7 +467,9 @@ class GUI(object):
                 os.getenv("XChemExplorer_DIR"), "image", "NO_SPIDER_PLOT_AVAILABLE.png"
             )
         )
-        self.spider_plot_pic = pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR
+        )
         self.spider_plot_image = gtk.Image()
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
         spider_plot_frame.add(self.spider_plot_image)
@@ -627,7 +626,6 @@ class GUI(object):
         self.db_dict_panddaTable = {}
         if str(self.Todo[self.index][0]) is not None:
             self.compoundID = str(self.Todo[self.index][1])
-            self.refinement_folder = str(self.Todo[self.index][4])
             self.refinement_outcome = str(self.Todo[self.index][5])
             self.update_RefinementOutcome_radiobutton()
         if (
@@ -1023,12 +1021,8 @@ class GUI(object):
 
         ################################################################################
         # remove potential generic line which indicates a possible covalent link
-        generic_object_clear(self.covLinkObject)
+        coot.generic_object_clear(self.covLinkObject)
         self.covLinkAtomSpec = None
-
-        ################################################################################
-        # reset covalent links
-        self.covLinks = ["X", "X", "X", "X"]
 
         ################################################################################
         # update pdb & maps
@@ -1414,7 +1408,7 @@ class GUI(object):
             if imol_1 == imol_2 and imol_1 == imol_protein:
                 print("click_1", click_1)
                 self.covLinkAtomSpec = None
-                xyz_1 = atom_info_string(
+                xyz_1 = coot.atom_info_string_py(
                     click_1[1],
                     click_1[2],
                     click_1[3],
@@ -1422,8 +1416,10 @@ class GUI(object):
                     click_1[5],
                     click_1[6],
                 )
-                residue_1 = residue_name(click_1[1], click_1[2], click_1[3], click_1[4])
-                xyz_2 = atom_info_string(
+                residue_1 = coot.residue_name(
+                    click_1[1], click_1[2], click_1[3], click_1[4]
+                )
+                xyz_2 = coot.atom_info_string_py(
                     click_2[1],
                     click_2[2],
                     click_2[3],
@@ -1431,9 +1427,11 @@ class GUI(object):
                     click_2[5],
                     click_2[6],
                 )
-                residue_2 = residue_name(click_2[1], click_2[2], click_2[3], click_2[4])
+                residue_2 = coot.residue_name(
+                    click_2[1], click_2[2], click_2[3], click_2[4]
+                )
                 thick = 4
-                to_generic_object_add_line(
+                coot.to_generic_object_add_line(
                     self.covLinkObject,
                     "yellowtint",
                     thick,
@@ -1444,7 +1442,7 @@ class GUI(object):
                     xyz_2[4],
                     xyz_2[5],
                 )
-                set_display_generic_object(self.covLinkObject, 1)
+                coot.set_display_generic_object(self.covLinkObject, 1)
                 self.covLinkAtomSpec = [
                     imol_protein,
                     click_1,
@@ -1465,8 +1463,8 @@ class GUI(object):
             atom2 = self.covLinkAtomSpec[2][1:]
             residue_1 = self.covLinkAtomSpec[3]
             residue_2 = self.covLinkAtomSpec[4]
-            make_link(imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7)
-            generic_object_clear(self.covLinkObject)
+            coot.make_link(imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7)
+            coot.generic_object_clear(self.covLinkObject)
             self.start_refinement()
         else:
             print("error: no covalent link defined")

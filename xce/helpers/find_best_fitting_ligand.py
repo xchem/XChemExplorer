@@ -1,7 +1,8 @@
-import XChemDB
-import sys
-import os
 import glob
+import os
+import sys
+
+import XChemDB
 
 
 def parse_autofit_folder(sampleDir, compoundID):

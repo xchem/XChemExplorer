@@ -1,16 +1,19 @@
-import gtk
-import coot_utils_XChem
-import coot
-import XChemLog
-import XChemUtils
-import XChemRefine
-import XChemDB
-import gobject
+import glob
 import os
 import pickle
-import glob
 
+import coot
+import coot_gui
+import coot_utils
+import gobject
+import gtk
 from matplotlib.figure import Figure
+
+import coot_utils_XChem
+import XChemDB
+import XChemLog
+import XChemRefine
+import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
@@ -71,8 +74,6 @@ class GUI(object):
             "4 - High Confidence",
         ]
 
-        self.ligand_site_information = self.db.get_list_of_pandda_sites_for_coot()
-
         # this decides which samples will be looked at
         self.selection_mode = ""
         self.pandda_index = -1  # refers to the number of sites
@@ -94,7 +95,6 @@ class GUI(object):
         self.ground_state_mean_map = ""
         self.spider_plot = ""
         self.ligand_confidence = ""
-        self.refinement_folder = ""
         self.refinementProtocol = "pandda_refmac"
 
         self.pdb_style = "refine.pdb"
@@ -173,9 +173,9 @@ class GUI(object):
         }
 
         # XCE menu
-        menu = coot_menubar_menu("XCE")
+        menu = coot_gui.coot_menubar_menu("XCE")
 
-        add_simple_coot_menu_menuitem(
+        coot_gui.add_simple_coot_menu_menuitem(
             menu, "set all occupanicies to 1", lambda func: self.reset_occupancy()
         )
 
@@ -480,7 +480,9 @@ class GUI(object):
                 os.getenv("XChemExplorer_DIR"), "image", "NO_SPIDER_PLOT_AVAILABLE.png"
             )
         )
-        self.spider_plot_pic = pic.scale_simple(190, 190, gtk.gdk.INTERP_BILINEAR)
+        self.spider_plot_pic = spider_plot_pic.scale_simple(
+            190, 190, gtk.gdk.INTERP_BILINEAR
+        )
         self.spider_plot_image = gtk.Image()
         self.spider_plot_image.set_from_pixbuf(self.spider_plot_pic)
         spider_plot_frame.add(self.spider_plot_image)
@@ -633,7 +635,6 @@ class GUI(object):
         self.db_dict_panddaTable = {}
         if str(self.Todo[self.index][0]) is not None:
             self.compoundID = str(self.Todo[self.index][1])
-            self.refinement_folder = str(self.Todo[self.index][4])
             self.refinement_outcome = str(self.Todo[self.index][5])
             self.label = self.db.get_label_of_sample(self.xtalID)
             self.update_RefinementOutcome_radiobutton()
@@ -1460,7 +1461,8 @@ class GUI(object):
         print("===========>", self.cb_select_samples.get_active_text())
         if int(self.cb_select_samples.get_active_text().split()[0]) > 3:
             print(
-                "==> XCE: sorry cannot change refinement protocol since you are at a stage when we refine the ligand bound state only"
+                "==> XCE: sorry cannot change refinement protocol since you are at a"
+                " stage when we refine the ligand bound state only"
             )
             self.refinementProtocol = "refmac"
             self.refinementProtocolcheckbox.set_active(False)
@@ -1606,10 +1608,10 @@ class GUI(object):
                         "==> COOT: setting occupancies of all protein residues in %s"
                         " to 1.0" % coot.molecule_name(imol)
                     )
-                    chains = chain_ids(imol)
+                    chains = coot_utils_XChem.chain_ids(imol)
                     resiDict = {}
                     for chain in chains:
-                        resiDict[chain] = residues_in_chain(imol, chain)
+                        resiDict[chain] = coot_utils.residues_in_chain(imol, chain)
                     amino_acids = XChemUtils.pdbtools(
                         coot.molecule_name(imol)
                     ).amino_acids()
@@ -1617,19 +1619,27 @@ class GUI(object):
                     resetDict = {}
                     for chain in resiDict:
                         residRange = []
+                        start = None
                         resid_prev = -1000
                         n_res = 0
                         for resid in resiDict[chain]:
-                            if residue_name(imol, chain, resid[1], "") in amino_acids:
+                            if (
+                                coot.residue_name(imol, chain, resid[1], "")
+                                in amino_acids
+                            ):
                                 n_res += 1
                         counter = 0
                         for n, resid in enumerate(resiDict[chain]):
-                            if residue_name(imol, chain, resid[1], "") in amino_acids:
+                            if (
+                                coot.residue_name(imol, chain, resid[1], "")
+                                in amino_acids
+                            ):
                                 counter += 1
                                 if chain not in resetDict:
                                     resetDict[chain] = None
                                 if resid[1] != resid_prev + 1:
                                     if resid_prev != -1000:
+                                        assert start is not None
                                         residRange.append([start, resid_prev])
                                     start = resid[1]
                                 resid_prev = resid[1]

@@ -1,9 +1,8 @@
-from XChemUtils import mtztools
-from XChemUtils import parse
+import glob
 import os
 import sys
-import glob
 
+from XChemUtils import mtztools, parse
 
 # - select datasets with highest resolution
 # - select only those without an event map

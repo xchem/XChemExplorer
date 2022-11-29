@@ -1,7 +1,9 @@
-import layout
-import os
 import multiprocessing
-from PyQt4 import QtGui, QtCore, QtWebKit
+import os
+
+from PyQt4 import QtCore, QtGui, QtWebKit
+
+import layout
 
 
 class PanddaTab:

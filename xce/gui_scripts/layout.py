@@ -1,13 +1,16 @@
-from settings_tab import SettingsTab
-from deposition_tab import DepositionTab
-from refinement_tab import RefinementTab
-from pandda_tab import PanddaTab
-from maps_tab import MapsTab
-from datasets_tab import DatasetsTab
-from overview_tab import OverviewTab
-from settings_preferences import setup
 import os
-from PyQt4 import QtGui, QtCore
+
+from PyQt4 import QtCore, QtGui
+
+from datasets_tab import DatasetsTab
+from deposition_tab import DepositionTab
+from maps_tab import MapsTab
+from overview_tab import OverviewTab
+from pandda_tab import PanddaTab
+from refinement_tab import RefinementTab
+from settings_preferences import setup
+from settings_tab import SettingsTab
+
 from ..lib import XChemToolTips  # noqa: F401
 
 
@@ -527,9 +530,9 @@ class LayoutFuncs:
                 try:
                     action.triggered.connect(menu_item[2])
                     menu.addAction(action)
-                except:
+                except Exception as exception:
                     print((menu_item[2]))
-                    raise
+                    raise exception
 
         return menu_bar
 

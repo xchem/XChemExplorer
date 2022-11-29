@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="xce",
@@ -8,4 +8,3 @@ setup(
     packages=find_packages(),
     install_requires=[],
 )
-

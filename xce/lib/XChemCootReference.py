@@ -1,17 +1,17 @@
-import coot_utils_XChem
-import coot
-import XChemLog
-import XChemUtils
-import XChemRefine
 import glob
 import os
 import pickle
 import time
+
+import coot
 import gtk
-
-
-from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas
+from matplotlib.figure import Figure
+
+import coot_utils_XChem
+import XChemLog
+import XChemRefine
+import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
@@ -51,7 +51,6 @@ class GUI(object):
         self.xtalID = ""
         self.compoundID = ""
         self.spider_plot = ""
-        self.refinement_folder = ""
         self.pdbFile = ""
         self.mtzFree = ""
 
@@ -67,7 +66,6 @@ class GUI(object):
             "event": -1,
         }
 
-        self.ground_state_map_List = []
         self.job_running = False
 
         ################################################################################
@@ -185,7 +183,6 @@ class GUI(object):
         frame = gtk.Frame(label="Status")
         vbox = gtk.VBox()
         self.spinnerBox = gtk.VBox()
-        self.refinementRunning = gtk.Spinner()
         vbox.add(self.spinnerBox)
         self.status_label = gtk.Label()
         vbox.add(self.status_label)
@@ -624,13 +621,9 @@ class GUI(object):
                 )
                 self.REFINEbutton.set_sensitive(False)
 
-        self.mtzRefine = ""
         if os.path.isfile(
             os.path.join(self.reference_directory, self.refinementDir, "refine.mtz")
         ):
-            self.mtzRefine = os.path.join(
-                self.reference_directory, self.refinementDir, "refine.mtz"
-            )
             mtzRefineReal = os.path.realpath(
                 os.path.join(self.reference_directory, self.refinementDir, "refine.mtz")
             )

@@ -1,5 +1,6 @@
-from ..lib import XChemDB
 import sys
+
+from ..lib import XChemDB
 
 
 def update_data_source(db_file, xtal, db_column, status):
