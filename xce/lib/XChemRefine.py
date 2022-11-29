@@ -707,7 +707,7 @@ class Refine(object):
         f.write(cmd)
         f.close()
 
-    def run_script(self, program, external_software):
+    def run_script(self, program, external_software, Serial):
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
         if external_software["qsub"] and os.path.isdir("/dls"):
             self.Logfile.insert(
@@ -838,7 +838,7 @@ class Refine(object):
             )
             self.write_refinement_script(cmd, "buster")
             self.Logfile.insert("%s: starting refinement..." % self.xtalID)
-            self.run_script("buster", external_software)
+            self.run_script("buster", external_software, Serial)
 
     def prepare_gelly_dat(self, ligand_info):
         found_ligand = False
