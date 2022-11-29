@@ -1850,13 +1850,15 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                         # now need to check if there is a unassigned entry in
                         # panddaTable that is close
                         for entry in dbDict[xtal]:
-                            distance = XChemUtils.misc().calculate_distance_between_coordinates(
-                                mol_xyz[0],
-                                mol_xyz[1],
-                                mol_xyz[2],
-                                entry[1],
-                                entry[2],
-                                entry[3],
+                            distance = (
+                                XChemUtils.calculate_distance_between_coordinates(
+                                    mol_xyz[0],
+                                    mol_xyz[1],
+                                    mol_xyz[2],
+                                    entry[1],
+                                    entry[2],
+                                    entry[3],
+                                )
                             )
                             self.Logfile.insert(
                                 "{0!s}: {1!s} {2!s} {3!s} <--->"

@@ -1,10 +1,12 @@
 import csv
 import XChemDB
-from XChemUtils import maptools
-from XChemUtils import pdbtools_gemmi
-from XChemUtils import misc
-from XChemUtils import pdbtools
-from XChemUtils import parse
+from XChemUtils import (
+    calculate_distance_between_coordinates,
+    maptools,
+    pdbtools_gemmi,
+    pdbtools,
+    parse,
+)
 import os
 import sys
 import glob
@@ -168,7 +170,7 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
                         event_y = float(str(coord[1]))
                         event_z = float(str(coord[2]))
                         site_index = str(coord[3])
-                        distance = misc().calculate_distance_between_coordinates(
+                        distance = calculate_distance_between_coordinates(
                             residue_xyz[0],
                             residue_xyz[1],
                             residue_xyz[2],
@@ -240,7 +242,7 @@ def update_ligand_information_in_panddaTable(inital_model_directory, xtal):
                 event_y = float(str(coord[1]))
                 event_z = float(str(coord[2]))
                 site_index = str(coord[3])
-                distance = misc().calculate_distance_between_coordinates(
+                distance = calculate_distance_between_coordinates(
                     residue_xyz[0],
                     residue_xyz[1],
                     residue_xyz[2],
