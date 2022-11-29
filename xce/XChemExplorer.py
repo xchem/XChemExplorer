@@ -4919,6 +4919,11 @@ class XChemExplorer(QtGui.QApplication):
             # sort by aimless_index and so make sure
             for entry in sorted(logfile_list, key=lambda x: x[7]):
                 entry_already_in_table = False  # that aimless_index == row
+                cell_text = QtGui.QTableWidgetItem()
+                cell_text.setTextAlignment(
+                    QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
+                )
+                db_dict = entry[6]
                 for logfile in self.data_collection_table_dict[xtal]:
                     if (
                         entry[1] == logfile[1]
@@ -4931,11 +4936,7 @@ class XChemExplorer(QtGui.QApplication):
                         for column, header in enumerate(diffraction_data_column_name):
                             if header == "DataProcessing\nRfree":
                                 # entry[7]==aimless_index, i.e. row number
-                                cell_text = QtGui.QTableWidgetItem()
                                 cell_text.setText(str(db_dict[header[1]]))
-                                cell_text.setTextAlignment(
-                                    QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                                )
                                 data_collection_table.setItem(
                                     entry[7], column, cell_text
                                 )
@@ -4943,7 +4944,6 @@ class XChemExplorer(QtGui.QApplication):
                         break
                 if not entry_already_in_table:
                     data_collection_table.insertRow(row_position)
-                    db_dict = entry[6]
                     for column, header in enumerate(diffraction_data_column_name):
                         cell_text = QtGui.QTableWidgetItem()
                         try:
@@ -4951,9 +4951,6 @@ class XChemExplorer(QtGui.QApplication):
                         except KeyError:
                             # this may happen if not score exists
                             cell_text.setText("0")
-                        cell_text.setTextAlignment(
-                            QtCore.Qt.AlignCenter | QtCore.Qt.AlignCenter
-                        )
                         data_collection_table.setItem(row_position, column, cell_text)
                     data_collection_table.setRowHeight(row_position, 20)
                     row_position += 1
