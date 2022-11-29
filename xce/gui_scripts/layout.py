@@ -527,9 +527,9 @@ class LayoutFuncs:
                 try:
                     action.triggered.connect(menu_item[2])
                     menu.addAction(action)
-                except:
+                except Exception as exception:
                     print((menu_item[2]))
-                    raise
+                    raise exception
 
         return menu_bar
 
