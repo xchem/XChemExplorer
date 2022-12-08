@@ -1,6 +1,6 @@
 import numpy as np
 
-import XChemMain
+from xce.lib import XChemMain
 
 
 class summary_plot(object):

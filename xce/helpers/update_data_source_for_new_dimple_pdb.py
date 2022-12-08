@@ -3,8 +3,8 @@ import sys
 
 from iotbx import mtz
 
-from ..lib import XChemDB
-from ..lib.XChemUtils import parse
+from xce.lib import XChemDB
+from xce.lib.XChemUtils import parse
 
 if __name__ == "__main__":
     db_file = sys.argv[1]

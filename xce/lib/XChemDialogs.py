@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
 
-import XChemDB
+from xce.lib import XChemDB
 
 
 class select_columns_to_show(QtGui.QDialog):

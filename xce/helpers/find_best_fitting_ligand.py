@@ -2,7 +2,7 @@ import glob
 import os
 import sys
 
-import XChemDB
+from xce.lib import XChemDB
 
 
 def parse_autofit_folder(sampleDir, compoundID):

@@ -3,7 +3,7 @@ import getpass
 import sqlite3
 from datetime import datetime
 
-import XChemLog
+from xce.lib import XChemLog
 
 # from XChemUtils import parse
 

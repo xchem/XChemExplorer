@@ -3,7 +3,7 @@ import os
 
 from PyQt4 import QtCore, QtGui, QtWebKit
 
-import layout
+from xce.gui_scripts import layout
 
 
 class PanddaTab:

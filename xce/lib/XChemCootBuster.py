@@ -9,11 +9,11 @@ import gobject
 import gtk
 from matplotlib.figure import Figure
 
-import coot_utils_XChem
-import XChemDB
-import XChemLog
-import XChemRefine
-import XChemUtils
+from xce.lib import coot_utils_XChem
+from xce.lib import XChemDB
+from xce.lib import XChemLog
+from xce.lib import XChemRefine
+from xce.lib import XChemUtils
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules

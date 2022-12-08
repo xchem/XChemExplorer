@@ -5,10 +5,10 @@ import sys
 
 from PyQt4 import QtCore
 
-import XChemDB
-import XChemLog
-import XChemMain
-import XChemUtils
+from xce.lib import XChemDB
+from xce.lib import XChemLog
+from xce.lib import XChemMain
+from xce.lib import XChemUtils
 
 
 class templates:

@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
 
-import layout
+from xce.gui_scripts import layout
 
 
 class RefinementTab:

@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
 
-import layout
+from xce.gui_scripts import layout
 
 
 class MapsTab:

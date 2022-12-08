@@ -6,8 +6,8 @@ from datetime import datetime
 import gtk
 import pygtk
 
-import XChemLog
-import XChemUtils
+from xce.lib import XChemLog
+from xce.lib import XChemUtils
 
 pygtk.require("2.0")
 

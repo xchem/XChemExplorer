@@ -7,10 +7,10 @@ from datetime import datetime
 
 from PyQt4 import QtCore
 
-import XChemDB
-import XChemLog
-import XChemMain
-import XChemUtils
+from xce.lib import XChemDB
+from xce.lib import XChemLog
+from xce.lib import XChemMain
+from xce.lib import XChemUtils
 from iotbx.reflection_file_reader import any_reflection_file
 
 

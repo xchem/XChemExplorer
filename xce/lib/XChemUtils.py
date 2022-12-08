@@ -11,8 +11,8 @@ from rdkit import Chem
 
 import gemmi
 import iotbx.pdb
-import XChemDB
-import XChemLog
+from xce.lib import XChemDB
+from xce.lib import XChemLog
 from iotbx import mtz
 from iotbx.reflection_file_reader import any_reflection_file
 

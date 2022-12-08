@@ -6,12 +6,11 @@ from datetime import datetime
 
 from PyQt4 import QtCore
 
-# from XChemUtils import mtztools
-import XChemDB
-import XChemLog
-import XChemRefine
-import XChemToolTips
-import XChemUtils
+from xce.lib import XChemDB
+from xce.lib import XChemLog
+from xce.lib import XChemRefine
+from xce.lib import XChemToolTips
+from xce.lib import XChemUtils
 
 try:
     import gemmi
