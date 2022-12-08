@@ -1,14 +1,11 @@
 from PyQt4 import QtGui
 
-from xce.gui_scripts import layout
+from xce.gui_scripts import layout_functions
 
 from xce.lib import XChemToolTips
 
 
 class DepositionTab:
-    def __init__(self):
-        self.layout_funcs = layout.LayoutFuncs()
-
     def setup(self, xce_object):
         ################################################################################
         #                                                                              #
@@ -24,7 +21,7 @@ class DepositionTab:
         scrollContent.setLayout(scrollLayout)
 
         # deposition page heading
-        deposition_page_heading = self.layout_funcs.add_depo_heading(
+        deposition_page_heading = layout_functions.add_depo_heading(
             "Group deposition of bound-state structures & ground-state model"
         )
         deposition_page_heading.setStyleSheet("font: bold 40pt Arial")
@@ -39,23 +36,23 @@ class DepositionTab:
 
         # bound-state depostion
 
-        deposition_bound_state_heading = self.layout_funcs.add_depo_heading(
+        deposition_bound_state_heading = layout_functions.add_depo_heading(
             "Group deposition of bound-state structures"
         )
         deposition_bound_state_heading.setStyleSheet("font: bold 20pt Arial")
 
-        deposition_bound_state_prerequisites = self.layout_funcs.add_depo_heading(
+        deposition_bound_state_prerequisites = layout_functions.add_depo_heading(
             "Prerequisites"
         )
         deposition_bound_state_prerequisites.setStyleSheet(
             "font: italic bold 17pt Arial"
         )
 
-        deposition_bound_state_prerequisites_text = self.layout_funcs.add_depo_text(
+        deposition_bound_state_prerequisites_text = layout_functions.add_depo_text(
             XChemToolTips.deposition_bound_state_prerequisites()
         )
 
-        deposition_bound_state_preparation = self.layout_funcs.add_depo_heading(
+        deposition_bound_state_preparation = layout_functions.add_depo_heading(
             "Procedure"
         )
         deposition_bound_state_preparation.setStyleSheet(
@@ -63,7 +60,7 @@ class DepositionTab:
         )
 
         deposition_bound_state_preparation_step_one_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_bound_state_preparation_step_one_text()
             )
         )
@@ -81,7 +78,7 @@ class DepositionTab:
         prepare_mmcif_button.setMaximumWidth(200)
 
         deposition_bound_state_preparation_step_two_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_bound_state_preparation_step_two_text()
             )
         )
@@ -92,7 +89,7 @@ class DepositionTab:
         )
         copy_mmcif_button.setMaximumWidth(200)
 
-        pdb_group_deposition_instruction_one = self.layout_funcs.add_depo_text(
+        pdb_group_deposition_instruction_one = layout_functions.add_depo_text(
             XChemToolTips.pdb_group_deposition_instruction_one()
         )
 
@@ -106,38 +103,38 @@ class DepositionTab:
         )
         pdb_group_deposition_link_two.setOpenExternalLinks(True)
 
-        pdb_group_deposition_instruction_two = self.layout_funcs.add_depo_text(
+        pdb_group_deposition_instruction_two = layout_functions.add_depo_text(
             XChemToolTips.pdb_group_deposition_instruction_two()
         )
-        pdb_group_deposition_instruction_two_two = self.layout_funcs.add_depo_text(
+        pdb_group_deposition_instruction_two_two = layout_functions.add_depo_text(
             XChemToolTips.pdb_group_deposition_instruction_two()
         )
 
         # ground-state depostion
 
-        deposition_ground_state_heading = self.layout_funcs.add_depo_heading(
+        deposition_ground_state_heading = layout_functions.add_depo_heading(
             "Group deposition of ground-state model"
         )
         deposition_ground_state_heading.setStyleSheet("font: bold 20pt Arial")
 
         deposition_ground_state_preparation_step_one_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.notification_about_changes_to_apo_deposition()
             )
         )
 
-        deposition_ground_state_prerequisites = self.layout_funcs.add_depo_heading(
+        deposition_ground_state_prerequisites = layout_functions.add_depo_heading(
             "Prerequisites"
         )
         deposition_ground_state_prerequisites.setStyleSheet(
             "font: italic bold 17pt Arial"
         )
 
-        deposition_ground_state_prerequisites_text = self.layout_funcs.add_depo_text(
+        deposition_ground_state_prerequisites_text = layout_functions.add_depo_text(
             XChemToolTips.deposition_ground_state_prerequisites()
         )
 
-        deposition_ground_state_preparation = self.layout_funcs.add_depo_heading(
+        deposition_ground_state_preparation = layout_functions.add_depo_heading(
             "Procedure"
         )
         deposition_ground_state_preparation.setStyleSheet(
@@ -145,7 +142,7 @@ class DepositionTab:
         )
 
         deposition_ground_state_preparation_step_three_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_ground_state_preparation_step_three_text()
             )
         )
@@ -155,7 +152,7 @@ class DepositionTab:
         xce_object.ground_state_pandda_directory_label.setStyleSheet("color: blue")
 
         deposition_ground_state_preparation_step_four_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_ground_state_preparation_step_four_text()
             )
         )
@@ -165,13 +162,13 @@ class DepositionTab:
         add_ground_state_db_button.setMaximumWidth(200)
 
         deposition_ground_state_preparation_step_five_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_ground_state_preparation_step_five_text()
             )
         )
 
         deposition_ground_state_preparation_step_six_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_ground_state_preparation_step_six_text()
             )
         )
@@ -183,7 +180,7 @@ class DepositionTab:
         prepare_ground_state_mmcif_button.setMaximumWidth(200)
 
         deposition_ground_state_preparation_step_seven_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_ground_state_preparation_step_seven_text()
             )
         )
@@ -195,20 +192,20 @@ class DepositionTab:
         copy_apo_mmcif_button.setMaximumWidth(200)
 
         deposition_ground_state_preparation_step_eight_text = (
-            self.layout_funcs.add_depo_text(
+            layout_functions.add_depo_text(
                 XChemToolTips.deposition_ground_state_preparation_step_eight_text()
             )
         )
 
         # after ligand_bound depostion
-        after_deposition_heading = self.layout_funcs.add_depo_heading(
+        after_deposition_heading = layout_functions.add_depo_heading(
             "After deposition of ligand-bound structures"
         )
         after_deposition_heading.setStyleSheet("font: bold 20pt Arial")
 
-        after_deposition_preparation = self.layout_funcs.add_depo_heading("Procedure")
+        after_deposition_preparation = layout_functions.add_depo_heading("Procedure")
         after_deposition_preparation.setStyleSheet("font: italic bold 17pt Arial ")
-        after_deposition_preparation_text = self.layout_funcs.add_depo_text(
+        after_deposition_preparation_text = layout_functions.add_depo_text(
             XChemToolTips.after_deposition_step_one_text()
         )
 
@@ -263,7 +260,7 @@ class DepositionTab:
             QtGui.QLabel(" \n\n\n "),
         ]
 
-        self.layout_funcs.add_to_box(scrollLayout, deposition_widget_list)
+        layout_functions.add_to_box(scrollLayout, deposition_widget_list)
 
         # container settings
         scrollLayout.addStretch(1)

@@ -3,13 +3,10 @@ import os
 
 from PyQt4 import QtCore, QtGui, QtWebKit
 
-from xce.gui_scripts import layout
+from xce.gui_scripts import layout_functions
 
 
 class PanddaTab:
-    def __init__(self):
-        self.layout_funcs = layout.LayoutFuncs()
-
     def setup(self, xce_object):
         ################################################################################
         #                                                                              #
@@ -28,7 +25,7 @@ class PanddaTab:
         # setup tab widget, set up tab dict, and make tab dict
         xce_object.pandda_tab_widget = QtGui.QTabWidget()
         xce_object.pandda_tab_dict = {}
-        self.layout_funcs.make_tab_dict(
+        layout_functions.make_tab_dict(
             pandda_tab_list, xce_object.pandda_tab_widget, xce_object.pandda_tab_dict
         )
 
@@ -40,7 +37,7 @@ class PanddaTab:
 
         # table - left
         xce_object.pandda_analyse_data_table = QtGui.QTableWidget()
-        self.layout_funcs.table_setup(
+        layout_functions.table_setup(
             xce_object.pandda_analyse_data_table, xce_object.pandda_table_columns
         )
 
@@ -232,7 +229,7 @@ class PanddaTab:
 
         # checkbox for wilson scaling
         xce_object.wilson_checkbox = QtGui.QCheckBox("Wilson B-factor Scaling")
-        self.layout_funcs.add_checkbox(
+        layout_functions.add_checkbox(
             xce_object, xce_object.wilson_checkbox, "xce_object.set_run_dimple_flag"
         )
         xce_object.pandda_analyse_input_params_vbox.addWidget(
@@ -262,7 +259,7 @@ class PanddaTab:
         xce_object.pandda_analyse_input_params_vbox.addWidget(label)
         xce_object.pandda_sort_event_combobox = QtGui.QComboBox()
         pandda_events = ["cluster_size", "z_peak"]
-        self.layout_funcs.populate_combobox(
+        layout_functions.populate_combobox(
             pandda_events, xce_object.pandda_sort_event_combobox
         )
         xce_object.pandda_analyse_input_params_vbox.addWidget(
@@ -274,7 +271,7 @@ class PanddaTab:
         xce_object.pandda_analyse_input_params_vbox.addWidget(label)
         xce_object.pandda_calc_map_combobox = QtGui.QComboBox()
         average_map = ["mean_map", "median_map"]
-        self.layout_funcs.populate_combobox(
+        layout_functions.populate_combobox(
             average_map, xce_object.pandda_calc_map_combobox
         )
         xce_object.pandda_analyse_input_params_vbox.addWidget(
@@ -335,7 +332,7 @@ class PanddaTab:
             xce_object.pandda_map_list,
             xce_object.pandda_maps_html,
         ]
-        self.layout_funcs.add_to_box(
+        layout_functions.add_to_box(
             xce_object.pandda_map_layout, pandda_map_layout_widgets
         )
         xce_object.pandda_maps_html.show()
@@ -379,7 +376,7 @@ class PanddaTab:
         )
 
         # next three blocks display html documents created by pandda.analyse
-        self.layout_funcs.pandda_html(xce_object)
+        layout_functions.pandda_html(xce_object)
 
         xce_object.pandda_initial_html = QtWebKit.QWebView()
         xce_object.pandda_initial_html.load(
