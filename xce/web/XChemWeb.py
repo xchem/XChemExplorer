@@ -409,6 +409,7 @@ class export_to_html:
                     % (
                         os.path.join(
                             os.getenv("XChemExplorer_DIR"),
+                            "xce",
                             "image",
                             "NO_SPIDER_PLOT_AVAILABLE.png",
                         ),
