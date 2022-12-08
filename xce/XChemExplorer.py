@@ -5313,6 +5313,7 @@ class XChemExplorer(QtGui.QApplication):
                     pixmap = QtGui.QPixmap(
                         os.path.join(
                             os.getenv("XChemExplorer_DIR"),
+                            "xce",
                             "image",
                             "IMAGE_NOT_AVAILABLE.png",
                         )

@@ -428,6 +428,7 @@ class GUI(object):
         pic = gtk.gdk.pixbuf_new_from_file(
             os.path.join(
                 os.getenv("XChemExplorer_DIR"),
+                "xce",
                 "image",
                 "NO_COMPOUND_IMAGE_AVAILABLE.png",
             )
@@ -442,7 +443,10 @@ class GUI(object):
         spider_plot_frame = gtk.Frame()
         spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
             os.path.join(
-                os.getenv("XChemExplorer_DIR"), "image", "NO_SPIDER_PLOT_AVAILABLE.png"
+                os.getenv("XChemExplorer_DIR"),
+                "xce",
+                "image",
+                "NO_SPIDER_PLOT_AVAILABLE.png",
             )
         )
         self.spider_plot_pic = spider_plot_pic.scale_simple(
@@ -858,6 +862,7 @@ class GUI(object):
             spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
                 os.path.join(
                     os.getenv("XChemExplorer_DIR"),
+                    "xce",
                     "image",
                     "NO_SPIDER_PLOT_AVAILABLE.png",
                 )
@@ -922,7 +927,10 @@ class GUI(object):
         # reset spider plot image
         spider_plot_pic = gtk.gdk.pixbuf_new_from_file(
             os.path.join(
-                os.getenv("XChemExplorer_DIR"), "image", "NO_SPIDER_PLOT_AVAILABLE.png"
+                os.getenv("XChemExplorer_DIR"),
+                "xce",
+                "image",
+                "NO_SPIDER_PLOT_AVAILABLE.png",
             )
         )
         self.spider_plot_pic = spider_plot_pic.scale_simple(
@@ -1161,6 +1169,7 @@ class GUI(object):
             pic = gtk.gdk.pixbuf_new_from_file(
                 os.path.join(
                     os.getenv("XChemExplorer_DIR"),
+                    "xce",
                     "image",
                     "NO_COMPOUND_IMAGE_AVAILABLE.png",
                 )
