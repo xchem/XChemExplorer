@@ -1,12 +1,9 @@
 from PyQt4 import QtCore, QtGui
 
-from xce.gui_scripts import layout
+from xce.gui_scripts import layout_functions
 
 
 class MapsTab:
-    def __init__(self):
-        self.layout_funcs = layout.LayoutFuncs()
-
     def setup(self, xce_object):
         ################################################################################
         #                                                                              #
@@ -17,7 +14,7 @@ class MapsTab:
         xce_object.select_sample_for_dimple_box = QtGui.QCheckBox(
             "(de-)select all samples for DIMPLE"
         )
-        self.layout_funcs.add_checkbox(
+        layout_functions.add_checkbox(
             xce_object,
             xce_object.select_sample_for_dimple_box,
             "xce_object.set_run_dimple_flag",
@@ -55,13 +52,13 @@ class MapsTab:
             xce_object.reference_file_selection_combobox,
         ]
 
-        self.layout_funcs.add_to_box(
+        layout_functions.add_to_box(
             xce_object.maps_checkbutton_hbox, maps_checkbutton_widgets
         )
 
         # table setup
         xce_object.maps_table = QtGui.QTableWidget()
-        self.layout_funcs.table_setup(
+        layout_functions.table_setup(
             xce_object.maps_table, xce_object.maps_table_columns
         )
 

@@ -2,13 +2,10 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt4 import QtGui
 
-from xce.gui_scripts import layout
+from xce.gui_scripts import layout_functions
 
 
 class OverviewTab:
-    def __init__(self):
-        self.layout_funcs = layout.LayoutFuncs()
-
     def setup(self, xce_object):
         ################################################################################
         #                                                                              #
@@ -21,7 +18,7 @@ class OverviewTab:
         xce_object.overview_tab_dict = {}
 
         # make subtabs
-        self.layout_funcs.make_tab_dict(
+        layout_functions.make_tab_dict(
             overview_tab_list,
             xce_object.overview_tab_widget,
             xce_object.overview_tab_dict,

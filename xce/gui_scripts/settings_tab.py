@@ -2,13 +2,10 @@ import os
 
 from PyQt4 import QtGui
 
-from xce.gui_scripts import layout
+from xce.gui_scripts import layout_functions
 
 
 class SettingsTab:
-    def __init__(self):
-        self.layout_funcs = layout.LayoutFuncs()
-
     def setup(self, xce_object):
         ################################################################################
         #                                                                              #
@@ -33,7 +30,7 @@ class SettingsTab:
         xce_object.scroll.setWidget(xce_object.buttons_etc)
 
         xce_object.initial_model_directory_label = (
-            self.layout_funcs.settings_section_setup(
+            layout_functions.settings_section_setup(
                 xce_object.data_collection_vbox_for_settings,
                 "\n\n<b>Project Directory: - REQUIRED -</b>",
                 xce_object.initial_model_directory,
@@ -42,7 +39,7 @@ class SettingsTab:
             )
         )
 
-        xce_object.reference_directory_label = self.layout_funcs.settings_section_setup(
+        xce_object.reference_directory_label = layout_functions.settings_section_setup(
             xce_object.data_collection_vbox_for_settings,
             "\n\n<b>Reference Structure Directory: - OPTIONAL -</b>",
             xce_object.reference_directory,
@@ -54,26 +51,22 @@ class SettingsTab:
             xce_object.data_source_file_label_text = os.path.join(
                 xce_object.database_directory, xce_object.data_source_file
             )
-            xce_object.data_source_file_label = (
-                self.layout_funcs.settings_section_setup(
-                    xce_object.data_collection_vbox_for_settings,
-                    "\n\n<b>Data Source: - REQUIRED -</b>",
-                    xce_object.data_source_file_label_text,
-                    "Select Data Source File",
-                    xce_object.settings_button_clicked,
-                )
+            xce_object.data_source_file_label = layout_functions.settings_section_setup(
+                xce_object.data_collection_vbox_for_settings,
+                "\n\n<b>Data Source: - REQUIRED -</b>",
+                xce_object.data_source_file_label_text,
+                "Select Data Source File",
+                xce_object.settings_button_clicked,
             )
         else:
             xce_object.data_source_file_label_text = ""
 
-            xce_object.data_source_file_label = (
-                self.layout_funcs.settings_section_setup(
-                    xce_object.data_collection_vbox_for_settings,
-                    "\n\n<b>Data Source: - REQUIRED -</b>",
-                    xce_object.data_source_file_label_text,
-                    "Select Data Source File",
-                    xce_object.settings_button_clicked,
-                )
+            xce_object.data_source_file_label = layout_functions.settings_section_setup(
+                xce_object.data_collection_vbox_for_settings,
+                "\n\n<b>Data Source: - REQUIRED -</b>",
+                xce_object.data_source_file_label_text,
+                "Select Data Source File",
+                xce_object.settings_button_clicked,
             )
 
         xce_object.data_collection_vbox_for_settings.addWidget(
@@ -111,7 +104,7 @@ class SettingsTab:
         xce_object.data_collection_vbox_for_settings.addWidget(settings_beamline_frame)
 
         xce_object.ccp4_scratch_directory_label = (
-            self.layout_funcs.settings_section_setup(
+            layout_functions.settings_section_setup(
                 xce_object.data_collection_vbox_for_settings,
                 "\n\n<b>CCP4_SCR Directory: - OPTIONAL -</b>",
                 xce_object.ccp4_scratch_directory,
@@ -120,7 +113,7 @@ class SettingsTab:
             )
         )
 
-        xce_object.panddas_directory_label = self.layout_funcs.settings_section_setup(
+        xce_object.panddas_directory_label = layout_functions.settings_section_setup(
             xce_object.data_collection_vbox_for_settings,
             "\n\n<b>PANDDAs directory: - OPTIONAL -</b>",
             xce_object.panddas_directory,
@@ -129,7 +122,7 @@ class SettingsTab:
         )
 
         xce_object.html_export_directory_label = (
-            self.layout_funcs.settings_section_setup(
+            layout_functions.settings_section_setup(
                 xce_object.data_collection_vbox_for_settings,
                 "\n\n<b>HTML export directory: - OPTIONAL -</b>",
                 xce_object.html_export_directory,
@@ -139,7 +132,7 @@ class SettingsTab:
         )
 
         xce_object.group_deposition_directory_label = (
-            self.layout_funcs.settings_section_setup(
+            layout_functions.settings_section_setup(
                 xce_object.data_collection_vbox_for_settings,
                 "\n\n<b>Group deposition directory: - OPTIONAL -</b>",
                 xce_object.group_deposit_directory,

@@ -8,8 +8,8 @@ from datetime import datetime
 
 from PyQt4 import QtCore, QtGui
 
-from gui_scripts import layout, stylesheet
-from lib import (
+from xce.gui_scripts import layout, layout_functions, stylesheet
+from xce.lib import (
     XChemDB,
     XChemDeposit,
     XChemLog,
@@ -19,8 +19,8 @@ from lib import (
     XChemThread,
     XChemToolTips,
 )
-from lib.XChemUtils import parse
-from web import XChemWeb
+from xce.lib.XChemUtils import parse
+from xce.web import XChemWeb
 
 
 class XChemExplorer(QtGui.QApplication):
@@ -47,16 +47,14 @@ class XChemExplorer(QtGui.QApplication):
         layout.setup().preferences(self)
         layout.setup().tables(self)
 
-        self.layout_funcs = layout.LayoutFuncs()
-
         # GUI setup
         self.window = QtGui.QWidget()
         self.window.setWindowTitle("XChemExplorer")
         self.screen = QtGui.QDesktopWidget().screenGeometry()
 
-        layout.LayoutObjects(self).workflow(self)
-        layout.LayoutObjects(self).main_layout(self)
-        layout.LayoutFuncs().add_widgets_layouts(self)
+        layout.LayoutObjects().workflow(self)
+        layout.LayoutObjects().main_layout(self)
+        layout_functions.add_widgets_layouts(self)
 
         self.checkLabXChemDir()
 
@@ -742,7 +740,7 @@ class XChemExplorer(QtGui.QApplication):
             print(("PANDDA", self.panddas_directory))
             self.settings["panddas_directory"] = self.panddas_directory
 
-            self.layout_funcs.pandda_html(self)
+            layout_functions.pandda_html(self)
 
         if self.sender().text() == "Select HTML Export Directory":
             self.html_export_directory = str(
@@ -1631,7 +1629,7 @@ class XChemExplorer(QtGui.QApplication):
         self.set_primary_citation_authors = QtGui.QCheckBox(
             "same as deposition authors"
         )
-        self.layout_funcs.add_checkbox(
+        layout_functions.add_checkbox(
             self,
             self.set_primary_citation_authors,
             "xce_object.set_primary_citation_as_structure_authors",
@@ -3308,7 +3306,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.settings["beamline_directory"] = self.beamline_directory
                 self.populate_target_selection_combobox(self.target_selection_combobox)
 
-            self.layout_funcs.pandda_html(self)
+            layout_functions.pandda_html(self)
             self.show_pandda_html_summary()
 
             self.html_export_directory_label.setText(self.html_export_directory)

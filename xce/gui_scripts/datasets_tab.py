@@ -1,12 +1,9 @@
 from PyQt4 import QtCore, QtGui
 
-from xce.gui_scripts import layout
+from xce.gui_scripts import layout_functions
 
 
 class DatasetsTab:
-    def __init__(self):
-        self.layout_funcs = layout.LayoutFuncs()
-
     def setup(self, xce_object):
         ################################################################################
         #                                                                              #
@@ -25,7 +22,7 @@ class DatasetsTab:
         xce_object.check_for_new_data_collection = QtGui.QCheckBox(
             "Check for new data collection every two minutes"
         )
-        self.layout_funcs.add_checkbox(
+        layout_functions.add_checkbox(
             xce_object,
             xce_object.check_for_new_data_collection,
             "xce_object.continously_check_for_new_data_collection",
@@ -50,7 +47,7 @@ class DatasetsTab:
             xce_object.target_selection_combobox,
         ]
 
-        self.layout_funcs.add_to_box(
+        layout_functions.add_to_box(
             xce_object.autocheck_hbox, xce_object.autocheck_hbox_widgets
         )  # add xce_objects in order
 
@@ -70,7 +67,7 @@ class DatasetsTab:
             xce_object.show_results_from_all_pipelines
         )
 
-        self.layout_funcs.table_setup(
+        layout_functions.table_setup(
             xce_object.datasets_summary_table, xce_object.datasets_summary_table_columns
         )
 
