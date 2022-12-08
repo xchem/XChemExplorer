@@ -11,7 +11,7 @@ from refinement_tab import RefinementTab
 from settings_preferences import setup
 from settings_tab import SettingsTab
 
-from ..lib import XChemToolTips  # noqa: F401
+from xce.lib import XChemToolTips  # noqa: F401
 
 
 class LayoutObjects:

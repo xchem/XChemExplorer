@@ -3,8 +3,8 @@ import glob
 import os
 import sys
 
-import XChemDB
-from XChemUtils import (
+from xce.lib import XChemDB
+from xce.lib.XChemUtils import (
     calculate_distance_between_coordinates,
     maptools,
     parse,

@@ -5,8 +5,8 @@ import os
 import subprocess
 from datetime import datetime
 
-import XChemDB
-import XChemLog
+from xce.lib import XChemDB
+from xce.lib import XChemLog
 
 
 def space_group_list():

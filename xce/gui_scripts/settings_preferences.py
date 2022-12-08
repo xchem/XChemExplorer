@@ -4,7 +4,7 @@ import sys
 
 from PyQt4 import QtCore
 
-from ..lib import XChemDB, XChemLog, XChemMain, XChemUtils
+from xce.lib import XChemDB, XChemLog, XChemMain, XChemUtils
 
 
 class setup:
