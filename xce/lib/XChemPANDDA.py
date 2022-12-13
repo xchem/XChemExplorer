@@ -1315,7 +1315,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             "#/bin/sh\n"
             "module load ccp4/7.1.018\n"
             "module load phenix/1.20\n"
-            "module load buster\n"
+            "module load buster/20211020\n"
             "__conda_setup=\"$('/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/"
             "conda' 'shell.bash' 'hook' 2> /dev/null)\"\n"
             "if [ $? -eq 0 ]; then\n"

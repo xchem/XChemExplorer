@@ -1,3 +1,2 @@
-# module load pymol
-module load buster
+module load buster/20211020
 source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh

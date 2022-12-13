@@ -86,7 +86,7 @@ class helpers:
                 elif restraints_program == "grade":
                     if os.getcwd().startswith("/dls"):
                         software += "module load ccp4/7.1.018\n"
-                        software += "module load buster\n"
+                        software += "module load buster/20211020\n"
                         software += (
                             "export BDG_TOOL_MOGUL="
                             "/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
@@ -188,7 +188,7 @@ class helpers:
             elif restraints_program == "grade":
                 if os.getcwd().startswith("/dls"):
                     software += "module load ccp4/7.1.018\n"
-                    software += "module load buster\n"
+                    software += "module load buster/20211020\n"
                     software += (
                         "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
                     )

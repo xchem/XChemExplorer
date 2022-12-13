@@ -1084,7 +1084,7 @@ class fit_ligands(QtCore.QThread):
         module = ""
         if os.path.isdir("/dls"):
             module = "module load mx\n"
-            module += "module load buster\n"
+            module += "module load buster/20211020\n"
 
         cmd = (
             "{0!s}\n".format(top_line) + "\n"
@@ -1573,7 +1573,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch = ""
 
         if os.path.isdir("/dls"):
-            ccp4_scratch += "module load buster\n"
+            ccp4_scratch += "module load buster/20211020\n"
             ccp4_scratch += "module load ccp4/7.1.018\n"
 
         if os.path.isfile(ref_mtz):
