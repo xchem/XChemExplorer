@@ -6,7 +6,6 @@ for dir in /*
         if [ $dir = "/dls" ]; then
             module load global/cluster
             module load phenix/1.20
-            module load coot
             module load buster/20211020
         fi
     done;
