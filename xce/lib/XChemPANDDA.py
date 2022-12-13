@@ -948,7 +948,7 @@ class run_pandda_export(QtCore.QThread):
             else:
 
                 Cmds = (
-                    "module load ccp4/7.1.016\n"
+                    "module load ccp4/7.1.018\n"
                     "pandda.export"
                     " pandda_dir=%s" % self.panddas_directory
                     + " export_dir={0!s}".format(self.initial_model_directory)
@@ -1107,7 +1107,7 @@ class run_pandda_analyse(QtCore.QThread):
                     source_file + "\n"
                     "module load pymol/1.8.2.0\n"
                     "\n"
-                    "module load ccp4/7.0.072\n"
+                    "module load ccp4/7.1.018\n"
                     "\n"
                 )
 
@@ -1313,7 +1313,7 @@ class run_pandda_two_analyse(QtCore.QThread):
 
         cmd = (
             "#/bin/sh\n"
-            "module load ccp4\n"
+            "module load ccp4/7.1.018\n"
             "module load phenix\n"
             "module load buster\n"
             "__conda_setup=\"$('/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/"
