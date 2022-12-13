@@ -186,10 +186,15 @@ def convert_mean_map_to_mtz(emap, mtz):
     print("--->", mtz)
     reso = mtztools(mtz).get_dmin()
     print("-> resolution:", reso)
-    cmd = "module load phenix\n" "phenix.map_to_structure_factors %s d_min=%s\n" % (
-        emap.replace(".ccp4", ".P1.ccp4"),
-        reso,
-    ) + "/bin/mv map_to_structure_factors.mtz %s" % emap.replace(".ccp4", ".mtz")
+    cmd = (
+        "module load phenix/1.20\n"
+        "phenix.map_to_structure_factors %s d_min=%s\n"
+        % (
+            emap.replace(".ccp4", ".P1.ccp4"),
+            reso,
+        )
+        + "/bin/mv map_to_structure_factors.mtz %s" % emap.replace(".ccp4", ".mtz")
+    )
     print(cmd)
     os.system(cmd)
 

@@ -5,7 +5,7 @@ for dir in /*
     do
         if [ $dir = "/dls" ]; then
             module load global/cluster
-            module load phenix
+            module load phenix/1.20
             module load coot
             module load buster
         fi

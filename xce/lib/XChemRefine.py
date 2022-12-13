@@ -520,7 +520,7 @@ class Refine(object):
         #######################################################
         # PHENIX stuff (if working at DLS)
         if os.getcwd().startswith("/dls"):
-            cmd += "module load phenix\n"
+            cmd += "module load phenix/1.20\n"
             cmd += "module load buster\n"
         return cmd
 
@@ -1050,7 +1050,7 @@ class Refine(object):
         # PHENIX stuff (if working at DLS)
         module_load = ""
         if os.getcwd().startswith("/dls"):
-            module_load = "module load phenix\n"
+            module_load = "module load phenix/1.20\n"
 
         source = ""
         if "bash" in os.getenv("SHELL"):
@@ -2028,7 +2028,7 @@ class panddaRefine(object):
         module_load = ""
         if os.getcwd().startswith("/dls"):
             module_load = "module load ccp4/7.1.018\n"
-            module_load += "module load phenix\n"
+            module_load += "module load phenix/1.20\n"
 
         # 2017-07-20: for the time being this will explicitly source pandda since
         # version 0.2 really only works at DLS
@@ -2066,7 +2066,7 @@ class panddaRefine(object):
         elif refinementProtocol == "pandda_phenix":
 
             if os.getcwd().startswith("/dls"):
-                module_load = "module load phenix/1.13\n"
+                module_load = "module load phenix/1.20\n"
 
             refinementProgram = "phenix"
             refinementParams = os.path.join(
@@ -2186,7 +2186,7 @@ class panddaRefine(object):
             "\n" + spider_plot + "\n"
             "phenix.molprobity refine_%s.pdb refine_%s.mtz\n" % (Serial, Serial)
             + "/bin/mv molprobity.out refine_molprobity.log\n"
-            "module load phenix\n"
+            "module load phenix/1.20\n"
             "mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG"
             " > validate_ligands.txt\n" % (Serial, Serial)
             + "cd "

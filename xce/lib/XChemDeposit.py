@@ -918,7 +918,7 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         if os.path.isfile(mtz.replace(".mtz", "_CC" + ligID + ".log")):
             self.Logfile.warning("logfile of CC analysis exists; skipping...")
             return
-        cmd = "module load phenix\n" "phenix.get_cc_mtz_pdb %s %s > %s" % (
+        cmd = "module load phenix/1.20\n" "phenix.get_cc_mtz_pdb %s %s > %s" % (
             mtz,
             lig,
             mtz.replace(".mtz", "_CC" + ligID + ".log"),
