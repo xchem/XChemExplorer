@@ -82,7 +82,7 @@ class helpers:
                 elif restraints_program == "phenix.elbow":
                     if os.getcwd().startswith("/dls"):
                         software += "module load ccp4/7.1.018\n"
-                        software += "module load phenix\n"
+                        software += "module load phenix/1.20\n"
                 elif restraints_program == "grade":
                     if os.getcwd().startswith("/dls"):
                         software += "module load ccp4/7.1.018\n"
@@ -170,7 +170,7 @@ class helpers:
             elif restraints_program == "phenix.elbow":
                 if os.getcwd().startswith("/dls"):
                     software += "module load ccp4/7.1.018\n"
-                    software += "module load phenix\n"
+                    software += "module load phenix/1.20\n"
                 if os.path.isfile(
                     os.path.join(initial_model_directory, sample, "old.cif")
                 ):

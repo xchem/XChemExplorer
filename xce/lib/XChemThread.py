@@ -1455,7 +1455,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch = ""
 
         if os.path.isdir("/dls"):
-            ccp4_scratch += "module load phenix\n"
+            ccp4_scratch += "module load phenix/1.20\n"
             ccp4_scratch += "module load ccp4/7.1.018\n"
 
         mtz_column_list = XChemUtils.mtztools(mtzin).get_all_columns_as_list()
