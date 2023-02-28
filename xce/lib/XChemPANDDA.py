@@ -34,7 +34,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.external_software = XChemUtils.external_software(xce_logfile).check()
 
     def run(self):
-
         self.Logfile.warning(
             XChemToolTips.pandda_export_ligand_bound_models_only_disclaimer()
         )
@@ -65,7 +64,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             return None
 
         for xtal in sorted(modelsDict):
-
             os.chdir(os.path.join(self.PanDDA_directory, "processed_datasets", xtal))
             pandda_model = os.path.join(
                 "modelled_structures", xtal + "-pandda-model.pdb"
@@ -343,7 +341,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         return matching_ligand
 
     def refine_exported_model(self, xtal):
-
         RefmacParams = {
             "HKLIN": "",
             "HKLOUT": "",
@@ -607,7 +604,6 @@ class run_pandda_export(QtCore.QThread):
                 self.Logfile.insert("%s: nothing to refine" % (xtal))
 
     def import_samples_into_datasouce(self, samples_to_export):
-
         # first make a note of all the datasets which were used in pandda directory
         os.chdir(os.path.join(self.panddas_directory, "processed_datasets"))
         for xtal in glob.glob("*"):
@@ -799,7 +795,6 @@ class run_pandda_export(QtCore.QThread):
         # DimplePANDDAhit
 
     def export_models(self):
-
         self.Logfile.insert("finding out which PanDDA models need to be exported")
 
         # first find which samples are in interesting datasets and have a model
@@ -935,7 +930,6 @@ class run_pandda_export(QtCore.QThread):
                 self.db.update_data_source(sample, db_dict)
 
             if os.path.isdir(os.path.join(self.panddas_directory, "rejected_datasets")):
-
                 Cmds = (
                     "pandda.export"
                     " pandda_dir=%s" % self.panddas_directory
@@ -946,7 +940,6 @@ class run_pandda_export(QtCore.QThread):
                 )
 
             else:
-
                 Cmds = (
                     "module load ccp4/7.1.018\n"
                     "pandda.export"
@@ -1103,13 +1096,7 @@ class run_pandda_analyse(QtCore.QThread):
 
             dls = ""
             if self.data_directory.startswith("/dls"):
-                dls = (
-                    source_file + "\n"
-                    "module load pymol/1.8.2.0\n"
-                    "\n"
-                    "module load ccp4/7.1.018\n"
-                    "\n"
-                )
+                dls = source_file + "\nmodule load ccp4/7.1.018\n\n"
 
             Cmds = (
                 "#!"
@@ -1387,7 +1374,6 @@ class giant_cluster_datasets(QtCore.QThread):
         self.db = XChemDB.data_source(datasource)
 
     def run(self):
-
         self.emit(QtCore.SIGNAL("update_progress_bar"), 0)
 
         if self.pdb_style.replace(" ", "") == "":
@@ -1838,7 +1824,6 @@ class check_number_of_modelled_ligands(QtCore.QThread):
                     )
 
                 for site in ligands_not_in_panddaTable:
-
                     for files in glob.glob(
                         os.path.join(
                             self.project_directory, xtal, "xceTmp", "ligand_*_*.pdb"
