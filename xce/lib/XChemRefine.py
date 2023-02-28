@@ -196,7 +196,6 @@ class RefineParams(object):
         self.window.destroy()
 
     def ParamsFromPreviousCycle(self, Serial):
-
         RefmacParams = {
             "HKLIN": "",
             "HKLOUT": "",
@@ -527,8 +526,6 @@ class Refine(object):
     def get_source_line(self, cmd):
         if "bash" in os.getenv("SHELL"):
             cmd += 'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
-        elif "csh" in os.getenv("SHELL"):
-            cmd += "setenv XChemExplorer_DIR " + os.getenv("XChemExplorer_DIR") + "\n"
         return cmd
 
     def set_refinement_status(self, cmd):
@@ -740,7 +737,6 @@ class Refine(object):
     def RunBuster(
         self, Serial, RefmacParams, external_software, xce_logfile, covLinkAtomSpec
     ):
-
         if RefmacParams is None:
             anisotropic_Bfactor = " -M ADP "
             update_water = ""
@@ -874,7 +870,6 @@ class Refine(object):
     def RunRefmac(
         self, Serial, RefmacParams, external_software, xce_logfile, covLinkAtomSpec
     ):
-
         if os.path.isfile(xce_logfile):
             Logfile = XChemLog.updateLog(xce_logfile)
         Serial = str(Serial)
@@ -1065,21 +1060,6 @@ class Refine(object):
                 "source "
                 + os.path.join(
                     os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh"
-                )
-                + "\n"
-            )
-        elif "csh" in os.getenv("SHELL"):
-            source = (
-                "setenv XChemExplorer_DIR " + os.getenv("XChemExplorer_DIR") + "\n"
-                "\n"
-                "source "
-                + os.path.join(
-                    os.getenv("XChemExplorer_DIR"), "setup-scripts", "xce.setup-csh"
-                )
-                + "\n"
-                "source "
-                + os.path.join(
-                    os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-csh"
                 )
                 + "\n"
             )
@@ -1399,7 +1379,6 @@ class Refine(object):
         self.window.destroy()
 
     def ParamsFromPreviousCycle(self, Serial):
-
         RefmacParams = {
             "HKLIN": "",
             "HKLOUT": "",
@@ -2040,10 +2019,6 @@ class panddaRefine(object):
                 'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
                 "\n"
             )
-        elif "csh" in os.getenv("SHELL"):
-            source = (
-                "setenv XChemExplorer_DIR " + os.getenv("XChemExplorer_DIR") + "\n" "\n"
-            )
 
         if refinementProtocol == "pandda_refmac":
             refinementProgram = "refmac"
@@ -2064,7 +2039,6 @@ class panddaRefine(object):
                 "EOF\n"
             )
         elif refinementProtocol == "pandda_phenix":
-
             if os.getcwd().startswith("/dls"):
                 module_load = "module load phenix/1.20\n"
 
@@ -2397,7 +2371,6 @@ class panddaRefine(object):
         self.window.destroy()
 
     def ParamsFromPreviousCycle(self, Serial):
-
         RefmacParams = {
             "HKLIN": "",
             "HKLOUT": "",
