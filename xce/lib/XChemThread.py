@@ -1441,9 +1441,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         else:
             top_line = "#!" + os.getenv("SHELL") + "\n"
 
-        if "csh" in os.getenv("SHELL"):
-            ccp4_scratch = "setenv CCP4_SCR " + self.ccp4_scratch_directory + "\n"
-        elif "bash" in os.getenv("SHELL"):
+        if "bash" in os.getenv("SHELL"):
             ccp4_scratch = "export CCP4_SCR=" + self.ccp4_scratch_directory + "\n"
         else:
             ccp4_scratch = ""
@@ -1558,9 +1556,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         else:
             top_line = "#!" + os.getenv("SHELL") + "\n"
 
-        if "csh" in os.getenv("SHELL"):
-            ccp4_scratch = "setenv CCP4_SCR " + self.ccp4_scratch_directory + "\n"
-        elif "bash" in os.getenv("SHELL"):
+        if "bash" in os.getenv("SHELL"):
             ccp4_scratch = "export CCP4_SCR=" + self.ccp4_scratch_directory + "\n"
         else:
             ccp4_scratch = ""
@@ -1717,9 +1713,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         else:
             top_line = "#!" + os.getenv("SHELL") + "\n"
 
-        if "csh" in os.getenv("SHELL"):
-            ccp4_scratch = "setenv CCP4_SCR " + self.ccp4_scratch_directory + "\n"
-        elif "bash" in os.getenv("SHELL"):
+        if "bash" in os.getenv("SHELL"):
             ccp4_scratch = "export CCP4_SCR=" + self.ccp4_scratch_directory + "\n"
         else:
             ccp4_scratch = ""
@@ -2230,11 +2224,7 @@ class start_pandda_inspect(QtCore.QThread):
         self.Logfile = XChemLog.updateLog(xce_logfile)
 
     def run(self):
-        if os.getenv("SHELL") == "/bin/tcsh" or os.getenv("SHELL") == "/bin/csh":
-            source_file = os.path.join(
-                os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-csh"
-            )
-        elif os.getenv("SHELL") == "/bin/bash":
+        if os.getenv("SHELL") == "/bin/bash":
             source_file = os.path.join(
                 os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh"
             )

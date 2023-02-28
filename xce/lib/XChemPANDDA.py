@@ -1469,11 +1469,7 @@ class giant_cluster_datasets(QtCore.QThread):
             "running giant.cluster_mtzs_and_pdbs",
         )
 
-        if os.getenv("SHELL") == "/bin/tcsh" or os.getenv("SHELL") == "/bin/csh":
-            source_file = os.path.join(
-                os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-csh"
-            )
-        elif os.getenv("SHELL") == "/bin/bash":
+        if os.getenv("SHELL") == "/bin/bash":
             source_file = os.path.join(
                 os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh"
             )
