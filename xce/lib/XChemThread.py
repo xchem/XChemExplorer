@@ -1462,7 +1462,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "cd %s\n"
             % os.path.join(self.initial_model_directory, xtal, "phenix.ligand_pipeline")
             + "\n"
-            "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
+            "module load global/cluster\n"
+            "module load phenix/1.20\n"
+            "module load buster/20211020\n"
             "\n" + ccp4_scratch + "\n"
             "$CCP4/bin/ccp4-python"
             " $XChemExplorer_DIR/xce/helpers/update_status_flag.py %s %s %s %s\n"
@@ -1576,7 +1578,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "\n"
             "cd %s\n" % os.path.join(self.initial_model_directory, xtal, "pipedream")
             + "\n"
-            "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
+            "module load global/cluster\n"
+            "module load phenix/1.20\n"
+            "module load buster/20211020\n"
             "\n" + ccp4_scratch + "\n"
             "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " %s %s %s %s\n"
@@ -1753,7 +1757,9 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "cd %s\n"
             % os.path.join(self.initial_model_directory, xtal, "dimple%s" % twin)
             + "\n"
-            "source $XChemExplorer_DIR/setup-scripts/xce.setup-sh\n"
+            "module load global/cluster\n"
+            "module load phenix/1.20\n"
+            "module load buster/20211020\n"
             "\n" + ccp4_scratch + "\n"
             "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " %s %s %s %s\n"
