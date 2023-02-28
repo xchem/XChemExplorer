@@ -1045,18 +1045,16 @@ class Refine(object):
         # PHENIX stuff (if working at DLS)
         module_load = ""
         if os.getcwd().startswith("/dls"):
-            module_load = "module load phenix/1.20\n"
-
+            module_load = (
+                "module load global/cluster\n"
+                "module load phenix/1.20\n"
+                "module load buster/20211020\n"
+            )
         source = ""
         if "bash" in os.getenv("SHELL"):
             source = (
                 'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
                 "\n"
-                "source "
-                + os.path.join(
-                    os.getenv("XChemExplorer_DIR"), "setup-scripts", "xce.setup-sh"
-                )
-                + "\n"
                 "source "
                 + os.path.join(
                     os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh"
