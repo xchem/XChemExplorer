@@ -127,7 +127,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
 
     def sync_data_processing(self, xtal, db_dict):
-
         # AIMLESS logfile
 
         # in case the MTZ file which is used for refinement is different to the one
@@ -261,7 +260,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         return db_dict
 
     def sync_dimple_results(self, xtal, db_dict):
-
         # DIMPLE pdb
 
         if os.path.isfile("dimple.pdb"):
@@ -391,7 +389,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         return db_dict
 
     def sync_refinement_results(self, xtal, db_dict):
-
         # REFINE pdb
 
         if os.path.isfile("refine.pdb"):
@@ -437,7 +434,6 @@ class synchronise_db_and_filesystem(QtCore.QThread):
         return db_dict
 
     def find_apo_structures_for_PanDDA(self, panddaPATH):
-
         # first check if structure is already present in DB and if so if all the
         # information concur
 
@@ -1083,7 +1079,7 @@ class fit_ligands(QtCore.QThread):
 
         module = ""
         if os.path.isdir("/dls"):
-            module = "module load mx\n"
+            module = "module load phenix/1.20\n"
             module += "module load buster/20211020\n"
 
         cmd = (
@@ -1389,7 +1385,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         os.system("/bin/rm -f xce_{0!s}*sh".format(self.pipeline))
 
         for item in sorted(self.sample_list):
-
             xtal = item[0]
             visit_run_autoproc = item[1]
             mtzin = item[2]
@@ -1425,7 +1420,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
     def prepare_phenix_ligand_pipeline_shell_script(
         self, xtal, visit_run_autoproc, mtzin, ref_pdb, ref_mtz, ref_cif
     ):
-
         # check if reference mtzfile has an Rfree column; if not, then ignore
         # DIMPLE assumes an Rfree column and barfs if it is not present
         # note: ref_mtz looks like this: ref mtz  -R reference.mtz
@@ -1551,7 +1545,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
     def prepare_pipedream_shell_script(
         self, xtal, visit_run_autoproc, mtzin, ref_pdb, ref_mtz, ref_cif
     ):
-
         if not os.path.isdir(os.path.join(self.initial_model_directory, xtal)):
             os.mkdir(os.path.join(self.initial_model_directory, xtal))
         if os.path.isdir(os.path.join(self.initial_model_directory, xtal, "pipedream")):
@@ -1665,7 +1658,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
     def prepare_dimple_shell_script(
         self, xtal, visit_run_autoproc, mtzin, ref_pdb, ref_mtz, ref_cif
     ):
-
         # check if reference mtzfile has an Rfree column; if not, then ignore
         # DIMPLE assumes an Rfree column and barfs if it is not present
         # note: ref_mtz looks like this: ref mtz  -R reference.mtz
@@ -2372,7 +2364,6 @@ class choose_autoprocessing_outcome(QtCore.QThread):
             self.allSamples = self.db.collected_xtals_during_visit_for_scoring(visit)
 
     def run(self):
-
         progress = 0
         progress_step = XChemMain.getProgressSteps(len(self.allSamples))
 
