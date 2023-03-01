@@ -9,7 +9,6 @@ class summary_plot(object):
         self.overview_axes = overview_axes
 
     def update_overview(self):
-
         db_dict = XChemMain.get_datasource_summary(self.datasource)
 
         category = (

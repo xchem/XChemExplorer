@@ -13,7 +13,6 @@ from xce.lib import XChemUtils
 
 class templates:
     def data_template_cif(self, depositDict):
-
         taxonomy_dict = XChemMain.NCBI_taxonomy_ID()
         for key in taxonomy_dict:
             if taxonomy_dict[key] == depositDict["Source_organism_scientific_name"]:
@@ -438,7 +437,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             self.mtz = XChemUtils.mtztools(self.ground_state_mtz)
 
     def run(self):
-
         self.Logfile.insert(
             "======= preparing mmcif files for wwPDB deposition ======="
         )
@@ -1732,7 +1730,6 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             return None
 
         for i, line in enumerate(fileinput.input(xtal + "_sf.mmcif", inplace=1)):
-
             if line.startswith("_cell.length_a"):
                 block += 1
 
@@ -1768,7 +1765,6 @@ class prepare_for_group_deposition_upload(QtCore.QThread):
         self.type = type
 
     def run(self):
-
         TextIndex = ""
         os.chdir(self.depositDir)
 
@@ -1901,7 +1897,6 @@ class import_PDB_IDs(QtCore.QThread):
         self.db = XChemDB.data_source(database)
 
     def run(self):
-
         for line in self.pdbCodes.split("\n"):
             if len(line.split("/")) == 2 and "-ligand_bound" in line:
                 xtal = line[: line.rfind("-ligand_bound")].replace(" ", "")
@@ -1929,7 +1924,6 @@ class compare_smiles_in_db_with_ligand_in_pdb(QtCore.QThread):
         self.ErrorDict[xtal].append(message)
 
     def run(self):
-
         os.chdir(self.projectDir)
 
         progress_step = 1

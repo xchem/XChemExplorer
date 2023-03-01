@@ -24,7 +24,6 @@ class GUI(object):
     """
 
     def __init__(self):
-
         ################################################################################
         # read in settings file from XChemExplorer to set the relevant paths
         print("current dir", os.getcwd())
@@ -159,7 +158,6 @@ class GUI(object):
         }
 
     def StartGUI(self):
-
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.connect("delete_event", gtk.main_quit)
         self.window.set_border_width(10)
@@ -742,7 +740,6 @@ class GUI(object):
         self.RefreshSiteData()
 
     def RefreshSiteData(self):
-
         if self.pandda_index == -1:
             self.merge_ligand_button.set_sensitive(True)
             self.place_ligand_here_button.set_sensitive(True)
@@ -1184,7 +1181,6 @@ class GUI(object):
         self.cb.set_active(self.index)
 
     def REFINE(self, widget):
-
         #######################################################
         # create folder for new refinement cycle
         os.mkdir(

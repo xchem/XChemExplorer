@@ -25,7 +25,6 @@ from xce.web import XChemWeb
 
 class XChemExplorer(QtGui.QApplication):
     def __init__(self, args):
-
         # init a QApplication object to hold XCE
         QtGui.QApplication.__init__(self, args)
 
@@ -38,7 +37,6 @@ class XChemExplorer(QtGui.QApplication):
         self.exec_()
 
     def start_GUI(self):
-
         # check http://doc.qt.io/qt-4.8/stylesheet-customizing.html#the-box-model
         # This needs moving somewhere more appropriate...
         self.headlineLabelfont = QtGui.QFont("Arial", 20, QtGui.QFont.Bold)
@@ -1113,7 +1111,6 @@ class XChemExplorer(QtGui.QApplication):
             self.work_thread.start()
 
     def prepare_for_group_deposition_upload_ligand_bound(self):
-
         self.work_thread = XChemDeposit.prepare_for_group_deposition_upload(
             os.path.join(self.database_directory, self.data_source_file),
             self.xce_logfile,
@@ -1138,7 +1135,6 @@ class XChemExplorer(QtGui.QApplication):
         self.work_thread.start()
 
     def prepare_for_group_deposition_upload_ground_state(self):
-
         self.work_thread = XChemDeposit.prepare_for_group_deposition_upload(
             os.path.join(self.database_directory, self.data_source_file),
             self.xce_logfile,
@@ -1163,7 +1159,6 @@ class XChemExplorer(QtGui.QApplication):
         self.work_thread.start()
 
     def check_smiles_in_db_and_pdb(self):
-
         self.work_thread = XChemDeposit.compare_smiles_in_db_with_ligand_in_pdb(
             self.initial_model_directory,
             os.path.join(self.database_directory, self.data_source_file),
@@ -1189,7 +1184,6 @@ class XChemExplorer(QtGui.QApplication):
         self.work_thread.start()
 
     def deposition_data(self):
-
         depositData = QtGui.QMessageBox()
         depositDataLayout = depositData.layout()
 
@@ -3421,7 +3415,6 @@ class XChemExplorer(QtGui.QApplication):
                         os.path.join(db_dict["DataProcessingPathToMTZfile"])
                     )
                 ):
-
                     if os.path.isfile(
                         os.path.join(
                             db_dict["DataProcessingPathToMTZfile"],
@@ -3683,7 +3676,6 @@ class XChemExplorer(QtGui.QApplication):
         self.work_thread.start()
 
     def check_before_running_dimple(self, job_list, instruction):
-
         msgBox = QtGui.QMessageBox()
         msgBox.setText(
             "Do you really want to run {0!s} {1!s} jobs?\nNote: we will not run more"
@@ -3968,7 +3960,6 @@ class XChemExplorer(QtGui.QApplication):
             )
 
     def prepare_and_run_task(self, instruction):
-
         if instruction == "Get New Results from Autoprocessing":
             self.rescore = False
             self.check_for_new_autoprocessing_results()
@@ -4191,7 +4182,6 @@ class XChemExplorer(QtGui.QApplication):
         self.work_thread.start()
 
     def cluster_datasets_for_pandda(self):
-
         pandda_params = {
             "out_dir": str(self.pandda_output_data_dir_entry.text()),
             "pdb_style": str(self.pandda_pdb_style_entry.text()),
@@ -4337,7 +4327,6 @@ class XChemExplorer(QtGui.QApplication):
         self.work_thread.start()
 
     def run_pandda_export(self, update_datasource_only, which_models):
-
         pandda_params = {
             "data_dir": str(self.pandda_input_data_dir_entry.text()),
             "out_dir": str(self.pandda_output_data_dir_entry.text()),
@@ -4686,7 +4675,6 @@ class XChemExplorer(QtGui.QApplication):
             start_thread = False
 
         if start_thread:
-
             self.explorer_active = 1
             self.work_thread = XChemThread.merge_cif_files(
                 self.initial_model_directory,
@@ -5282,7 +5270,6 @@ class XChemExplorer(QtGui.QApplication):
         column_name = self.db.translate_xce_column_list_to_sqlite(columns_to_show)
 
         for column, header in enumerate(column_name):
-
             if header[0] == "Sample ID":
                 cell_text = QtGui.QTableWidgetItem()
                 cell_text.setText(str(xtal))
@@ -5722,7 +5709,6 @@ class XChemExplorer(QtGui.QApplication):
                 checkbox1.setChecked(False)
 
     def populate_pandda_analyse_input_table(self):
-
         column_name = self.db.translate_xce_column_list_to_sqlite(
             self.pandda_table_columns
         )
