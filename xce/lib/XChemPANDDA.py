@@ -1565,28 +1565,10 @@ class convert_apo_structures_to_mmcif(QtCore.QThread):
         self.Logfile = XChemLog.updateLog(xce_logfile)
 
     def sf_convert_environment(self):
-        pdb_extract_init = ""
-        if os.path.isdir("/dls"):
-            pdb_extract_init = (
-                "source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n"
-            )
-            pdb_extract_init += (
-                "/dls/science/groups/i04-1/software/pdb-extract-prod/bin/sf_convert"
-            )
-        else:
-            pdb_extract_init = (
-                "source "
-                + os.path.join(
-                    os.getenv("XChemExplorer_DIR"),
-                    "pdb_extract/pdb-extract-prod/setup.sh",
-                )
-                + "\n"
-            )
-            pdb_extract_init += +os.path.join(
-                os.getenv("XChemExplorer_DIR"),
-                "pdb_extract/pdb-extract-prod/bin/sf_convert",
-            )
-        return pdb_extract_init
+        return (
+            "source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n"
+            "sf_convert"
+        )
 
     def run(self):
         self.Logfile.insert(

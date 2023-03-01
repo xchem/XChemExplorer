@@ -1082,34 +1082,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             os.chdir(os.path.join(self.projectDir, xtal))
         refSoft = self.pdb.get_refinement_program()
 
-        if os.path.isdir("/dls"):
-            pdb_extract_init = (
-                "source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n"
-            )
-            pdb_extract_init += (
-                "/dls/science/groups/i04-1/software/pdb-extract-prod/bin/pdb_extract"
-            )
-        else:
-            if os.path.isfile(
-                os.path.join(
-                    os.getenv("XChemExplorer_DIR"),
-                    "pdb_extract/pdb-extract-prod/bin/pdb_extract",
-                )
-            ):
-                pdb_extract_init = (
-                    "source "
-                    + os.path.join(
-                        os.getenv("XChemExplorer_DIR"),
-                        "pdb_extract/pdb-extract-prod/setup.sh",
-                    )
-                    + "\n"
-                )
-                pdb_extract_init += os.path.join(
-                    os.getenv("XChemExplorer_DIR"),
-                    "pdb_extract/pdb-extract-prod/bin/pdb_extract",
-                )
-            else:
-                pdb_extract_init = "pdb_extract"
+        pdb_extract_init = (
+            "source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n"
+            "pdb_extract"
+        )
 
         if self.ground_state:
             refXtal = self.ground_state_pdb.split("/")[
@@ -1387,30 +1363,11 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         os.chdir(os.path.join(self.projectDir, xtal))
         if os.path.isfile(xtal + ".mmcif") and os.path.getsize(xtal + ".mmcif") > 20000:
             self.Logfile.insert("making table_1 for %s.mmcif" % xtal)
-            if os.path.isdir("/dls"):
-                extract_table_init = (
-                    "source /dls/science/groups/i04-1/software/"
-                    "pdb-extract-prod/setup.sh\n"
-                )
-                extract_table_init += (
-                    "/dls/science/groups/i04-1/software/"
-                    "pdb-extract-prod/bin/extract_table"
-                )
-            else:
-                extract_table_init = (
-                    "source "
-                    + os.path.join(
-                        os.getenv("XChemExplorer_DIR"),
-                        "pdb_extract/pdb-extract-prod/setup.sh",
-                    )
-                    + "\n"
-                )
-                extract_table_init += os.path.join(
-                    os.getenv("XChemExplorer_DIR"),
-                    "pdb_extract/pdb-extract-prod/bin/extract_table",
-                )
 
-            Cmd = extract_table_init + " " + xtal + ".mmcif"
+            Cmd = (
+                "source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n"
+                "extract_table" + " " + xtal + ".mmcif"
+            )
 
             self.Logfile.insert(xtal + ": running sf_convert: " + Cmd)
             os.system(Cmd)
@@ -1441,34 +1398,10 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
             for event in self.eventList:
                 mtzin += event + " "
 
-        if os.path.isdir("/dls"):
-            pdb_extract_init = (
-                "source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n"
-            )
-            pdb_extract_init += (
-                "/dls/science/groups/i04-1/software/pdb-extract-prod/bin/sf_convert"
-            )
-        else:
-            if os.path.isfile(
-                os.path.join(
-                    os.getenv("XChemExplorer_DIR"),
-                    "pdb_extract/pdb-extract-prod/bin/sf_convert",
-                )
-            ):
-                pdb_extract_init = (
-                    "source "
-                    + os.path.join(
-                        os.getenv("XChemExplorer_DIR"),
-                        "pdb_extract/pdb-extract-prod/setup.sh",
-                    )
-                    + "\n"
-                )
-                pdb_extract_init += os.path.join(
-                    os.getenv("XChemExplorer_DIR"),
-                    "pdb_extract/pdb-extract-prod/bin/sf_convert",
-                )
-            else:
-                pdb_extract_init = "sf_convert"
+        pdb_extract_init = (
+            "source /dls/science/groups/i04-1/software/pdb-extract-prod/setup.sh\n"
+            "sf_convert"
+        )
 
         Cmd = (
             pdb_extract_init + " -o mmcif"
