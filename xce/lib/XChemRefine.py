@@ -566,16 +566,6 @@ class Refine(object):
         return cmd
 
     def run_giant_score_model(self, cmd, cycle):
-        old_ccp4 = ""
-        if os.path.isfile(
-            "/dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/"
-            "ccp4.setup-sh"
-        ):
-            # giant.score_model does not work with ccp4 7.1-000
-            old_ccp4 = (
-                "source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/"
-                "ccp4-7.0/bin/ccp4.setup-sh\n"
-            )
         if os.path.isfile(
             os.path.join(
                 self.ProjectPath, self.xtalID, self.xtalID + "-pandda-model.pdb"
@@ -589,7 +579,7 @@ class Refine(object):
                 + "/Refine_"
                 + cycle
                 + "\n"
-                + old_ccp4
+                + "module load ccp4/7.1.018\n"
                 + "giant.score_model "
                 " pdb1=../%s-pandda-model.pdb " % self.xtalID + " mtz1=../dimple.mtz "
                 " pdb2=refine.pdb "
@@ -1042,25 +1032,7 @@ class Refine(object):
             weight = "weight matrix " + str(RefmacParams["MATRIX_WEIGHT"]) + "\n"
 
         #######################################################
-        # PHENIX stuff (if working at DLS)
-        module_load = ""
-        if os.getcwd().startswith("/dls"):
-            module_load = (
-                "module load global/cluster\n"
-                "module load phenix/1.20\n"
-                "module load buster/20211020\n"
-            )
-        source = ""
-        if "bash" in os.getenv("SHELL"):
-            source = (
-                'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
-                "\n"
-                "source "
-                + os.path.join(
-                    os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh"
-                )
-                + "\n"
-            )
+        # PHENIX stuff
 
         spider_plot = ""
         if os.path.isfile(
@@ -1111,9 +1083,11 @@ class Refine(object):
             + "\n"
             + pbs_line
             + "\n"
-            + module_load
-            + "\n"
-            + source
+            + +'export XChemExplorer_DIR="'
+            + os.getenv("XChemExplorer_DIR")
+            + '"\n'
+            + "module load phenix/1.20\n"
+            + "module load buster/20211020\n"
             + "cd "
             + self.ProjectPath
             + "/"
@@ -1669,10 +1643,8 @@ class panddaRefine(object):
             )
             cmd = (
                 'export XChemExplorer_DIR="%s"\n' % os.getenv("XChemExplorer_DIR")
-                + "source %s\n"
-                % os.path.join(
-                    os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh\n"
-                )
+                + "module load buster/20211020\n"
+                + "module load ccp4/7.1.018\n"
                 + "giant.make_restraints %s-ensemble-model.pdb" % self.xtalID
             )
             Logfile.insert(cmd + "\n")

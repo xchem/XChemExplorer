@@ -1092,8 +1092,6 @@ class run_pandda_analyse(QtCore.QThread):
 
             os.chdir(self.panddas_directory)
 
-            # note: copied latest pandda.setup-sh from XCE2 installation (08/08/2017)
-
             dls = ""
             if self.data_directory.startswith("/dls"):
                 dls = source_file + "\nmodule load ccp4/7.1.018\n\n"
@@ -1469,17 +1467,10 @@ class giant_cluster_datasets(QtCore.QThread):
             "running giant.cluster_mtzs_and_pdbs",
         )
 
-        if os.getenv("SHELL") == "/bin/bash":
-            source_file = os.path.join(
-                os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh"
-            )
-        else:
-            source_file = ""
-
         Cmds = (
             "#!" + os.getenv("SHELL") + "\n"
             "unset PYTHONPATH\n"
-            "source " + source_file + "\n"
+            "module load ccp4/7.1.018\n"
             "giant.datasets.cluster %s/*/%s pdb_regex='%s/(.*)/%s'"
             " out_dir='%s/cluster_analysis'"
             % (
