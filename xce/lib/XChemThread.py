@@ -2230,17 +2230,11 @@ class start_pandda_inspect(QtCore.QThread):
         self.Logfile = XChemLog.updateLog(xce_logfile)
 
     def run(self):
-        if os.getenv("SHELL") == "/bin/bash":
-            source_file = os.path.join(
-                os.getenv("XChemExplorer_DIR"), "setup-scripts", "pandda.setup-sh"
-            )
-        else:
-            source_file = ""
-
         Cmds = (
             "#!" + os.getenv("SHELL") + "\n"
             "unset PYTHONPATH\n"
-            "source " + source_file + "\n"
+            "module load buster/20211020\n"
+            "module load ccp4/7.1.018\n"
             "cd " + self.panddas_directory + "\n"
             "pandda.inspect\n"
         )
