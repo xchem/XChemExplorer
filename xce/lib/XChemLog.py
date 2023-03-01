@@ -7,7 +7,6 @@ class startLog:
         self.logfile = logfile
 
     def create_logfile(self, version):
-
         pasteVersion = version
         for i in range(0, 20 - len(version)):
             pasteVersion += " "

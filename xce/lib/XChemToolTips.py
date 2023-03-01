@@ -86,7 +86,6 @@ def run_pandda_inspect_at_home(pandda_directory):
 
 
 def deposition_interface_note():
-
     note = (
         "\n\n"
         "Note: you can use this mask to save identical information for ALL structures"

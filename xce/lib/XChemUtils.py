@@ -1558,7 +1558,6 @@ class mtztools:
 
 class external_software:
     def __init__(self, xce_logfile):
-
         self.available_programs = {}
         self.Logfile = XChemLog.updateLog(xce_logfile)
 
@@ -1929,7 +1928,6 @@ class pdbtools(object):
         return X, Y, Z
 
     def ElementDict(self, resname, chainID, resseq, altLoc):
-
         ElementDict = {
             "C": 0,
             "N": 0,

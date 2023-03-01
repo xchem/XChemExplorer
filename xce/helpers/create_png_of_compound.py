@@ -5,7 +5,6 @@ from rdkit import Chem
 from rdkit.Chem import AllChem, Draw
 
 if __name__ == "__main__":
-
     smiles = sys.argv[1]
     compoundID = sys.argv[2]
     xtal = sys.argv[3]

@@ -350,7 +350,6 @@ def read_ligand_cc_from_edstats(xtal, db_dict):
 
 
 if __name__ == "__main__":
-
     db_file = sys.argv[1]
     xtal = sys.argv[2]
     inital_model_directory = sys.argv[3]

@@ -26,7 +26,6 @@ class GUI(object):
     """
 
     def __init__(self):
-
         ################################################################################
         # read in settings file from XChemExplorer to set the relevant paths
         self.settings = pickle.load(open(".xce_settings.pkl", "rb"))
@@ -112,7 +111,6 @@ class GUI(object):
         }
 
     def StartGUI(self):
-
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.connect("delete_event", gtk.main_quit)
         self.window.set_border_width(10)
@@ -331,7 +329,6 @@ class GUI(object):
         self.window.destroy()
 
     def RefreshData(self):
-
         # initialize Refinement library
         self.Refine = XChemRefine.Refine(
             self.reference_directory,
@@ -435,7 +432,6 @@ class GUI(object):
         self.MatrixWeightValue.set_label(self.QualityIndicators["MatrixWeight"])
 
     def REFINE(self, widget):
-
         if self.job_running:
             coot.info_dialog("*** refinement in progress ***")
             return None

@@ -79,7 +79,6 @@ def setup_push_button(xce_object, button_dict):
 def bottom_box_setup(
     xce_object, label, dropdown_options, dropdown_tooltip, buttons, colour
 ):
-
     frame = QtGui.QFrame()
     frame.setFrameShape(QtGui.QFrame.StyledPanel)
     frame.setStyleSheet(

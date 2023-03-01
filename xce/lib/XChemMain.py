@@ -144,7 +144,6 @@ def get_jobs_running_on_cluster():
     for n, line in enumerate(iter(out.stdout.readline, "")):
         if len(line.split()) >= 7:
             if line.split()[3] == getpass.getuser():
-
                 job_id = line.split()[0]
                 job_name = line.split()[2]
                 job_status = line.split()[4]
@@ -748,7 +747,6 @@ def getVisitAndBeamline(visitDirectory):
 
 
 def crystal_growth_methods():
-
     methods = [
         "VAPOR DIFFUSION, SITTING DROP",
         "VAPOR DIFFUSION, HANGING DROP",
@@ -762,7 +760,6 @@ def crystal_growth_methods():
 
 
 def wwBeamlines():
-
     beamlines = [
         "DIAMOND BEAMLINE I02",
         "DIAMOND BEAMLINE I03",
@@ -776,21 +773,18 @@ def wwBeamlines():
 
 
 def radiationSource():
-
     source = ["SYNCHROTRON", "ROTATING ANODE", "SEALED TUBE"]
 
     return source
 
 
 def detector():
-
     detectorPrinciple = ["PIXEL", "CCD", "IMAGE PLATE", "CMOS"]
 
     return detectorPrinciple
 
 
 def detectorType():
-
     detector = [
         "DECTRIS PILATUS 2M",
         "DECTRIS PILATUS 2M-F",
@@ -809,7 +803,6 @@ def detectorType():
 
 
 def NCBI_taxonomy_ID():
-
     taxonomy_dict = {
         "9606": "Homo sapiens",
         "10090": "Mus musculus",
@@ -825,14 +818,12 @@ def NCBI_taxonomy_ID():
 
 
 def data_integration_software():
-
     software = ["XDS", "HKL", "DENZO", "DTREK", "MOSFLM"]
 
     return software
 
 
 def phasing_software():
-
     software = [
         "REFMAC",
         "PHENIX",
@@ -854,7 +845,6 @@ def phasing_software():
 
 
 def pdbx_keywords():
-
     keywords = [
         "",
         "ALLERGEN",
@@ -945,7 +935,6 @@ def pdbx_keywords():
 
 
 def pdbx_country():
-
     countries = [
         "United Kingdom",
         "United States",
@@ -1122,7 +1111,6 @@ def html_footer():
 
 
 def coot_prepare_input(x, y, z, ligID, sampleDir, eventMap):
-
     os.chdir(sampleDir)
     cmd = (
         "# !/usr/bin/env coot\n"

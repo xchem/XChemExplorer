@@ -10,7 +10,6 @@ from xce.lib import XChemLog
 
 class data_source:
     def __init__(self, data_source_file):
-
         self.data_source_file = data_source_file
 
         #   [column_name in DB, column_name shown in XCE, SQLite column type]
@@ -777,7 +776,6 @@ class data_source:
         return self.column_list
 
     def create_empty_data_source_file(self):
-
         # creates sqlite file if non existent
         connect = sqlite3.connect(self.data_source_file)
         with connect:
