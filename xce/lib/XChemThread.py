@@ -2234,7 +2234,7 @@ class start_pandda_inspect(QtCore.QThread):
             "#!" + os.getenv("SHELL") + "\n"
             "unset PYTHONPATH\n"
             "module load buster/20211020\n"
-            "module load ccp4/7.1.018\n"
+            "source /dls/science/groups/i04-1/software/pandda_0.2.12/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n"
             "cd " + self.panddas_directory + "\n"
             "pandda.inspect\n"
         )
