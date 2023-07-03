@@ -1094,7 +1094,11 @@ class run_pandda_analyse(QtCore.QThread):
 
             dls = ""
             if self.data_directory.startswith("/dls"):
-                dls = source_file + "\nmodule load ccp4/7.1.018\n\n"
+                dls = (
+                    source_file + "\n"
+                    "module load pymol/1.8.2.0\n"
+                    "module load ccp4/7.0.078\n\n"
+                )
 
             Cmds = (
                 "#!"
