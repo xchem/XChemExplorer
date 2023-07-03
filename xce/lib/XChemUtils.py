@@ -216,7 +216,7 @@ class helpers:
             # merge all compound CIFs into 1 file called merged.cif
             software += (
                 "$CCP4/bin/ccp4-python"
-                "$XChemExplorer_DIR/xce/helpers/"
+                " $XChemExplorer_DIR/xce/helpers/"
                 "merge_ligand_cif_files.py {0!s}\n".format(
                     os.path.join(initial_model_directory, sample, "compound")
                 )
