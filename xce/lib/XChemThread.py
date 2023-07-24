@@ -1179,44 +1179,25 @@ class fit_ligands(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if os.path.isdir("/dls"):
-            if self.external_software["qsub_array"]:
-                Cmds = (
-                    "#PBS -joe -N xce_autofit_ligand_master\n"
-                    + "./xce_autofit_ligand_$SGE_TASK_ID.sh\n"
-                )
-                f = open("autofit_ligand_master.sh", "w")
-                f.write(Cmds)
-                f.close()
-                self.Logfile.insert(
-                    "submitting array job with maximal 100 jobs running on cluster"
-                )
-                self.Logfile.insert("using the following command:")
-                self.Logfile.insert(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
-                    " autofit_ligand_master.sh".format(str(self.n), self.max_queue_jobs)
-                )
-                os.system(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
-                    " autofit_ligand_master.sh".format(
-                        str(self.n - 1), self.max_queue_jobs
-                    )
-                )
-            else:
-                self.Logfile.insert(
-                    "cannot start ARRAY job: make sure that"
-                    " 'module load global/cluster' is in your .bashrc or .cshrc file"
-                )
-        elif self.external_software["qsub"]:
+        if self.external_software["qsub_array"]:
+            Cmds = "./xce_autofit_ligand_$SGE_TASK_ID.sh\n"
+            f = open("autofit_ligand_master.sh", "w")
+            f.write(Cmds)
+            f.close()
             self.Logfile.insert(
-                "submitting {0!s} individual jobs to cluster".format((str(self.n)))
+                "submitting array job with maximal 100 jobs running on cluster"
             )
-            self.Logfile.insert("WARNING: this could potentially lead to a crash...")
-            for i in range(1, self.n):
-                self.Logfile.insert(
-                    "qsub -q medium.q xce_autofit_ligand_{0!s}.sh".format(str(i))
-                )
-                os.system("qsub -q medium.q xce_autofit_ligand_{0!s}.sh".format(str(i)))
+            self.Logfile.insert("using the following command:")
+            self.Logfile.insert(
+                "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
+                " autofit_ligand_master.sh".format(str(self.n), self.max_queue_jobs)
+            )
+            submit_cluster_job(
+                "xce_autofit_ligand_master",
+                "autofit_ligand_master.sh",
+                tasks="1:{!s}".format(self.n - 1),
+                concurrent=str(self.max_queue_jobs),
+            )
         else:
             self.Logfile.insert(
                 "running {0!s} consecutive autofit_ligand jobs on your"
