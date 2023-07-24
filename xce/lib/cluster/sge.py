@@ -6,7 +6,14 @@ QUEUE = "medium.q"
 
 
 def submit_cluster_job(
-    name, file, resources=None, parallel_environment=None, logfile=None, errfile=None
+    name,
+    file,
+    resources=None,
+    parallel_environment=None,
+    logfile=None,
+    errfile=None,
+    tasks=None,
+    concurrent=None,
 ):
     base_command = "qsub -P {} -q {} -N {}".format(PROJECT_NAME, QUEUE, name)
     resource_arg = "-l {}".format(resources) if resources is not None else ""
@@ -17,6 +24,8 @@ def submit_cluster_job(
     )
     logfile_arg = "-o {}".format(logfile) if logfile is not None else ""
     errfile_arg = "-e {}".format(errfile) if errfile is not None else ""
+    tasks_arg = "-t {}".format(tasks) if tasks is not None else ""
+    concurrent_arg = "-tc {}".format(concurrent) if concurrent is not None else ""
     os.system(
         " ".join(
             [
@@ -25,6 +34,8 @@ def submit_cluster_job(
                 parallel_environment_arg,
                 logfile_arg,
                 errfile_arg,
+                tasks_arg,
+                concurrent_arg,
                 file,
             ]
         )
