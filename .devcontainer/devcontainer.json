@@ -8,19 +8,18 @@
 		"XChemExplorer_DIR": "${localWorkspaceFolder}",
 		"DISPLAY": "${localEnv:DISPLAY}"
 	},
-	"settings": {
-		"python.defaultInterpreterPath": "/ccp4-7.1/bin/ccp4-python"
-	},
 	"customizations": {
 		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/ccp4-7.1/bin/ccp4-python"
+			},
 			"extensions": [
 				"ms-python.python@2021.9.1246542782"
 			]
 		}
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/common-utils:1": {},
-		"ghcr.io/devcontainers/features/git:1": {}
+		"ghcr.io/devcontainers/features/common-utils:2": {}
 	},
 	"initializeCommand": "bash -c 'for i in $HOME/.inputrc; do [ -f $i ] || touch $i; done'",
 	"runArgs": [
