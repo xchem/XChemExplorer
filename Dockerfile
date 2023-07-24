@@ -1,4 +1,5 @@
 FROM gcr.io/diamond-privreg/xchem/ccp4:7.1 as ccp4
+FROM gcr.io/diamond-privreg/xchem/phenix:1.20 as phenix
 
 FROM registry.hub.docker.com/library/debian:bullseye as xce 
 
