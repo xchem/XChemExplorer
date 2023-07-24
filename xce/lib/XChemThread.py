@@ -1294,8 +1294,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         data_source_file,
         max_queue_jobs,
         xce_logfile,
-        remote_submission,
-        remote_submission_string,
         dimple_twin_mode,
         pipeline,
     ):
@@ -1314,8 +1312,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.pipeline = pipeline
-        self.using_remote_qsub_submission = remote_submission
-        self.remote_qsub_submission = remote_submission_string
         self.dimple_twin_mode = dimple_twin_mode
 
         self.n = 1

@@ -29,7 +29,6 @@ class GUI(object):
         ################################################################################
         # read in settings file from XChemExplorer to set the relevant paths
         self.settings = pickle.load(open(".xce_settings.pkl", "rb"))
-        remote_qsub_submission = self.settings["remote_qsub"]
         self.database_directory = self.settings["database_directory"]
         self.xce_logfile = self.settings["xce_logfile"]
         self.Logfile = XChemLog.updateLog(self.xce_logfile)
@@ -38,7 +37,6 @@ class GUI(object):
 
         # checking for external software packages
         self.external_software = XChemUtils.external_software(self.xce_logfile).check()
-        self.external_software["qsub_remote"] = remote_qsub_submission
 
         # the Folder is kind of a legacy thing because my inital idea was to have
         # separate folders for Data Processing and Refinement

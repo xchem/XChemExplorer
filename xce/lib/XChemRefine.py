@@ -708,17 +708,6 @@ class Refine(object):
                 "starting refinement with command: qsub %s.sh" % program
             )
             os.system("qsub %s.sh" % program)
-        elif external_software["qsub_remote"] != "":
-            self.Logfile.insert("starting refinement on remote cluster")
-            remote_command = external_software["qsub_remote"].replace(
-                "qsub",
-                "cd %s; qsub"
-                % os.path.join(
-                    self.ProjectPath, self.xtalID, "cootOut", "Refine_" + str(Serial)
-                ),
-            )
-            self.Logfile.insert("starting refinement with command: %s" % remote_command)
-            os.system("%s -P labxchem refmac.csh" % remote_command)
         else:
             self.Logfile.insert("starting refinement with command: ./%s.sh &" % program)
             os.system("chmod +x %s.sh" % program)
@@ -1207,18 +1196,6 @@ class Refine(object):
                 "changing directory to %s"
                 % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
             )
-        if external_software["qsub_remote"] != "":
-            print(os.getenv("LD_LIBRARY_PATH"))
-            if os.path.isfile(xce_logfile):
-                Logfile.insert("starting refinement on remote cluster")
-            remote_command = external_software["qsub_remote"].replace(
-                "qsub'",
-                "cd %s; qsub"
-                % os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial),
-            )
-            os.system("%s -P labxchem -q medium.q refmac.csh'" % remote_command)
-            print("%s -P labxchem -q medium.q refmac.csh" % remote_command)
-
         elif external_software["qsub"] and os.path.isdir("/dls"):
             Logfile.insert(
                 'starting refinement on cluster with command "qsub -P labxchem'
@@ -2209,17 +2186,6 @@ class panddaRefine(object):
         if external_software["qsub"]:
             Logfile.insert("starting refinement on cluster")
             os.system("qsub -P labxchem refmac.csh")
-        elif external_software["qsub_remote"] != "":
-            Logfile.insert("starting refinement on remote cluster")
-            remote_command = external_software["qsub_remote"].replace(
-                "qsub",
-                "cd %s; qsub"
-                % os.path.join(
-                    self.ProjectPath, self.xtalID, "cootOut", "Refine_" + str(Serial)
-                ),
-            )
-            os.system("%s -P labxchem refmac.csh" % remote_command)
-            print("%s -P labxchem refmac.csh" % remote_command)
         else:
             Logfile.insert("changing permission of refmac.csh: chmod +x refmac.csh")
             os.system("chmod +x refmac.csh")
