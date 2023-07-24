@@ -11,6 +11,7 @@ from xce.lib import XChemLog
 from xce.lib import XChemRefine
 from xce.lib import XChemToolTips
 from xce.lib import XChemUtils
+from xce.lib.cluster.sge import submit_cluster_job
 
 try:
     import gemmi
@@ -1257,9 +1258,8 @@ class run_pandda_analyse(QtCore.QThread):
                 )
             else:
                 self.Logfile.insert("running PANDDA on cluster, using qsub...")
-                os.system(
-                    "qsub -P labxchem -q medium.q -N pandda"
-                    " -l exclusive,m_mem_free=100G pandda.sh"
+                submit_cluster_job(
+                    "pandda", "pandda.sh", resources="exclusive,m_mem_free=100G"
                 )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
