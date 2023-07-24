@@ -1356,7 +1356,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             "pandda2.sh",
             resources="m_mem_free=30G",
             parallel_environment="smp 6",
-            logfile="log.out",
+            outfile="log.out",
             errfile="log.err",
         )
 

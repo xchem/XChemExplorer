@@ -10,7 +10,7 @@ def submit_cluster_job(
     file,
     resources=None,
     parallel_environment=None,
-    logfile=None,
+    outfile=None,
     errfile=None,
     tasks=None,
     concurrent=None,
@@ -22,7 +22,7 @@ def submit_cluster_job(
         if parallel_environment is not None
         else ""
     )
-    logfile_arg = "-o {}".format(logfile) if logfile is not None else ""
+    outfile_arg = "-o {}".format(outfile) if outfile is not None else ""
     errfile_arg = "-e {}".format(errfile) if errfile is not None else ""
     tasks_arg = "-t {}".format(tasks) if tasks is not None else ""
     concurrent_arg = "-tc {}".format(concurrent) if concurrent is not None else ""
@@ -32,7 +32,7 @@ def submit_cluster_job(
                 base_command,
                 resource_arg,
                 parallel_environment_arg,
-                logfile_arg,
+                outfile_arg,
                 errfile_arg,
                 tasks_arg,
                 concurrent_arg,
