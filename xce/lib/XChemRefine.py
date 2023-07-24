@@ -8,6 +8,7 @@ import pygtk
 
 from xce.lib import XChemLog
 from xce.lib import XChemUtils
+from xce.lib.cluster.sge import submit_cluster_job
 
 pygtk.require("2.0")
 
@@ -697,17 +698,12 @@ class Refine(object):
 
     def run_script(self, program, external_software, Serial):
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
-        if external_software["qsub"] and os.path.isdir("/dls"):
+        if external_software["qsub"]:
             self.Logfile.insert(
                 "starting refinement with command: qsub -P labxchem -q medium.q %s.sh"
                 % program
             )
-            os.system("qsub -P labxchem -q medium.q %s.sh" % program)
-        elif external_software["qsub"] and not os.path.isdir("/dls"):
-            self.Logfile.insert(
-                "starting refinement with command: qsub %s.sh" % program
-            )
-            os.system("qsub %s.sh" % program)
+            submit_cluster_job("xce_{!s}".format(program), "{!s}.sh".format(program))
         else:
             self.Logfile.insert("starting refinement with command: ./%s.sh &" % program)
             os.system("chmod +x %s.sh" % program)
