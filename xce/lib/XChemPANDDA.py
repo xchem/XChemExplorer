@@ -1,7 +1,6 @@
 import csv
 import glob
 import os
-import subprocess
 from datetime import datetime
 
 from PyQt4 import QtCore
@@ -995,8 +994,6 @@ class run_pandda_analyse(QtCore.QThread):
             projectDir,
             self.panddas_directory,
         )
-        self.use_remote = pandda_params["use_remote"]
-        self.remote_string = pandda_params["remote_string"]
 
         if self.appendix != "":
             self.panddas_directory = os.path.join(
@@ -1072,24 +1069,7 @@ class run_pandda_analyse(QtCore.QThread):
                 filter_pdb = " filter.pdb=" + self.filter_pdb + ".pdb"
                 print(("will use " + filter_pdb + "as a filter for pandda.analyse"))
             else:
-                if self.use_remote:
-                    stat_command = self.remote_string.replace(
-                        "qsub'", str("stat " + self.filter_pdb + "'")
-                    )
-                    output = subprocess.Popen(
-                        stat_command,
-                        shell=True,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                    )
-                    out, err = output.communicate()
-                    if "cannot stat" in out:
-                        filter_pdb = ""
-                    else:
-                        filter_pdb = " filter.pdb=" + self.filter_pdb + ".pdb"
-
-                else:
-                    filter_pdb = ""
+                filter_pdb = ""
 
             os.chdir(self.panddas_directory)
 
@@ -1240,22 +1220,6 @@ class run_pandda_analyse(QtCore.QThread):
                 self.Logfile.insert("running PANDDA on local machine")
                 os.system("chmod +x pandda.sh")
                 os.system("./pandda.sh &")
-            elif self.use_remote:
-                # handles remote submission of pandda.analyse jobs
-                submission_string = self.remote_string.replace(
-                    "qsub'",
-                    str(
-                        "cd "
-                        + self.panddas_directory
-                        + "; "
-                        + "qsub -P labxchem -q medium.q -N pandda 5"
-                        " -l exclusive,m_mem_free=100G pandda.sh'"
-                    ),
-                )
-                os.system(submission_string)
-                self.Logfile.insert(
-                    str("running PANDDA remotely, using: " + submission_string)
-                )
             else:
                 self.Logfile.insert("running PANDDA on cluster, using qsub...")
                 submit_cluster_job(

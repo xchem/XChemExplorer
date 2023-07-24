@@ -901,12 +901,6 @@ class XChemExplorer(QtGui.QApplication):
         settings_hbox_max_queue_jobs.addWidget(adjust_max_queue_jobs)
         vbox.addLayout(settings_hbox_max_queue_jobs)
 
-        settings_hbox_remote_qsub = QtGui.QHBoxLayout()
-        remote_qsub_label = QtGui.QLabel("remote qsub:")
-        settings_hbox_remote_qsub.addWidget(remote_qsub_label)
-        self.remote_qsub_checkbox = QtGui.QCheckBox("use")
-        self.remote_qsub_checkbox.toggled.connect(self.run_qsub_remotely)
-
         settings_hbox_dimple_twin_mode = QtGui.QHBoxLayout()
         self.dimple_twin_mode_label_checkbox = QtGui.QCheckBox(
             "run DIMPLE in TWIN mode"
@@ -918,15 +912,6 @@ class XChemExplorer(QtGui.QApplication):
         )
         settings_hbox_dimple_twin_mode.addWidget(self.dimple_twin_mode_label_checkbox)
         vbox.addLayout(settings_hbox_dimple_twin_mode)
-
-        if self.using_remote_qsub_submission:
-            self.remote_qsub_checkbox.setChecked(True)
-        settings_hbox_remote_qsub.addWidget(self.remote_qsub_checkbox)
-        self.remote_qsub_command = QtGui.QLineEdit()
-        self.remote_qsub_command.setFixedWidth(550)
-        self.remote_qsub_command.setText(self.remote_qsub_submission)
-        settings_hbox_remote_qsub.addWidget(self.remote_qsub_command)
-        vbox.addLayout(settings_hbox_remote_qsub)
 
         hbox = QtGui.QHBoxLayout()
         hbox.addWidget(QtGui.QLabel("Additional CIF file for non-standard ligand:"))
@@ -950,23 +935,6 @@ class XChemExplorer(QtGui.QApplication):
         else:
             self.update_log.insert("changing preferences: changing DIMPLE to TWIN mode")
             self.preferences["dimple_twin_mode"] = True
-
-    def run_qsub_remotely(self):
-        self.remote_qsub_submission = str(self.remote_qsub_command.text())
-        print((str(self.remote_qsub_submission)))
-        if self.remote_qsub_checkbox.isChecked():
-            self.update_log.insert(
-                "submitting jobs to remote machine with: %s"
-                % self.remote_qsub_submission
-            )
-            self.external_software["qsub_remote"] = self.remote_qsub_submission
-            self.using_remote_qsub_submission = True
-            self.settings["remote_qsub"] = self.remote_qsub_submission
-        else:
-            self.update_log.insert("switching off remote job submission")
-            self.external_software["qsub_remote"] = ""
-            self.settings["remote_qsub"] = ""
-            self.using_remote_qsub_submission = False
 
     def enter_pdb_codes(self):
         pdbID_entry = QtGui.QMessageBox()
@@ -1015,10 +983,6 @@ class XChemExplorer(QtGui.QApplication):
         grid = QtGui.QGridLayout()
         grid.addWidget(QtGui.QLabel("label"), 0, 0)
         grid.addWidget(QtGui.QLabel("description"), 0, 1)
-
-        self.remote_qsub_command = QtGui.QLineEdit()
-        self.remote_qsub_command.setFixedWidth(550)
-        self.remote_qsub_command.setText(self.remote_qsub_submission)
 
         self.labelList = []
         for i in range(5):
@@ -3725,8 +3689,6 @@ class XChemExplorer(QtGui.QApplication):
                 self.data_source_file,
                 self.max_queue_jobs,
                 self.xce_logfile,
-                self.using_remote_qsub_submission,
-                self.remote_qsub_submission,
                 self.preferences["dimple_twin_mode"],
                 pipeline,
             )
@@ -3878,12 +3840,6 @@ class XChemExplorer(QtGui.QApplication):
                     if self.main_tab_widget.currentIndex() == task_index:
                         if self.explorer_active == 0 and self.data_source_set is True:
                             if action == "Run":
-                                print(
-                                    (
-                                        "==> XCE: Remote submission status = "
-                                        + str(self.using_remote_qsub_submission)
-                                    )
-                                )
                                 self.prepare_and_run_task(instruction)
                             elif action == "Status":
                                 self.get_status_of_workflow_milestone(instruction)
@@ -4132,8 +4088,6 @@ class XChemExplorer(QtGui.QApplication):
             ),
             "write_mean_map": "interesting",
             "pandda_table": self.pandda_analyse_data_table,
-            "use_remote": self.using_remote_qsub_submission,
-            "remote_string": self.remote_qsub_submission,
         }
 
         if run == "pre_run":
@@ -4353,8 +4307,6 @@ class XChemExplorer(QtGui.QApplication):
             ),
             "write_mean_map": "interesting",
             "pandda_table": self.pandda_analyse_data_table,
-            "use_remote": self.using_remote_qsub_submission,
-            "remote_string": self.remote_qsub_submission,
         }
 
         self.settings["panddas_directory"] = str(

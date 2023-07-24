@@ -220,12 +220,6 @@ class setup:
         self.set_xce_logfile(xce_object)
 
         # external software packages
-        xce_object.using_remote_qsub_submission = False
-        xce_object.remote_qsub_submission = (
-            "/usr/bin/ssh <dls fed ID>@nx.diamond.ac.uk"
-            " 'module load global/cluster; qsub'"
-        )
-
         xce_object.update_log = XChemLog.updateLog(xce_object.xce_logfile)
         xce_object.update_log.insert("new session started")
         xce_object.diffraction_data_directory = xce_object.current_directory
@@ -315,7 +309,6 @@ class setup:
             "diffraction_data_directory": xce_object.diffraction_data_directory,
             "html_export_directory": xce_object.html_export_directory,
             "group_deposit_directory": xce_object.group_deposit_directory,
-            "remote_qsub": "",
             "dimple_twin_mode": False,
             "agamemnon": False,
         }

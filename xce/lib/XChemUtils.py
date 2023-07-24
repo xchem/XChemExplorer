@@ -1572,9 +1572,6 @@ class external_software:
     def check(self):
         self.Logfile.insert("Searching for external software...")
 
-        # default is False; user needs to explicitely set this
-        self.available_programs["qsub_remote"] = False
-
         self.available_programs["qsub"] = self.available_programs["qsub_array"] = (
             find_executable("qsub") is not None
         )
