@@ -1192,17 +1192,12 @@ class Refine(object):
                 "changing directory to %s"
                 % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
             )
-        elif external_software["qsub"] and os.path.isdir("/dls"):
+        elif external_software["qsub"]:
             Logfile.insert(
                 'starting refinement on cluster with command "qsub -P labxchem'
                 ' -q medium.q refmac.csh"'
             )
-            os.system("qsub -P labxchem -q medium.q refmac.csh")
-        elif external_software["qsub"] and not os.path.isdir("/dls"):
-            Logfile.insert(
-                'starting refinement on cluster with command "qsub refmac.csh"'
-            )
-            os.system("qsub refmac.csh")
+            submit_cluster_job("xce_refmac", "refmac.csh")
         else:
             os.system("chmod +x refmac.csh")
             if os.path.isfile(xce_logfile):
