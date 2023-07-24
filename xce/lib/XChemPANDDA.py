@@ -1351,9 +1351,13 @@ class run_pandda_two_analyse(QtCore.QThread):
         self.Logfile.warning("ignoring selected submission option")
 
         self.Logfile.insert("running PANDDA on cluster, using qsub...")
-        os.system(
-            "qsub -pe smp 6 -l m_mem_free=30G -q medium.q -o log.out -e log.err"
-            " pandda2.sh"
+        submit_cluster_job(
+            "pandda2",
+            "pandda2.sh",
+            resources="m_mem_free=30G",
+            parallel_environment="smp 6",
+            logfile="log.out",
+            errfile="log.err",
         )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
