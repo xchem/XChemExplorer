@@ -2176,7 +2176,7 @@ class panddaRefine(object):
 
         if external_software["qsub"]:
             Logfile.insert("starting refinement on cluster")
-            os.system("qsub -P labxchem refmac.csh")
+            submit_cluster_job("refmac", "refmac.csh")
         else:
             Logfile.insert("changing permission of refmac.csh: chmod +x refmac.csh")
             os.system("chmod +x refmac.csh")
