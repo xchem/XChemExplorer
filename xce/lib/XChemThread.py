@@ -11,6 +11,7 @@ from xce.lib import XChemDB
 from xce.lib import XChemLog
 from xce.lib import XChemMain
 from xce.lib import XChemUtils
+from xce.lib.cluster.sge import submit_cluster_job
 from iotbx.reflection_file_reader import any_reflection_file
 
 
@@ -1870,52 +1871,27 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if os.path.isdir("/dls"):
-            if self.external_software["qsub_array"]:
-                Cmds = "#PBS -joe -N xce_{0!s}{1!s}_master\n".format(
-                    self.pipeline, twin
-                ) + "./xce_{0!s}{1!s}_$SGE_TASK_ID.sh\n".format(self.pipeline, twin)
-                f = open("{0!s}{1!s}_master.sh".format(self.pipeline, twin), "w")
-                f.write(Cmds)
-                f.close()
-                self.Logfile.insert(
-                    "submitting array job with maximal 100 jobs running on cluster"
-                )
-                self.Logfile.insert("using the following command:")
-                self.Logfile.insert(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
-                    " {2!s}_master.sh".format(
-                        str(self.n), self.max_queue_jobs, self.pipeline
-                    )
-                )
-                os.system(
-                    "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
-                    " {2!s}{3!s}_master.sh".format(
-                        str(self.n - 1), self.max_queue_jobs, self.pipeline, twin
-                    )
-                )
-            else:
-                self.Logfile.insert(
-                    "cannot start ARRAY job: make sure that"
-                    " 'module load global/cluster'"
-                    " is in your .bashrc or .cshrc file"
-                )
-        elif self.external_software["qsub"]:
+        if self.external_software["qsub_array"]:
+            Cmds = "./xce_{0!s}{1!s}_$SGE_TASK_ID.sh\n".format(self.pipeline, twin)
+            f = open("{0!s}{1!s}_master.sh".format(self.pipeline, twin), "w")
+            f.write(Cmds)
+            f.close()
             self.Logfile.insert(
-                "submitting {0!s} individual jobs to cluster".format((str(self.n)))
+                "submitting array job with maximal 100 jobs running on cluster"
             )
-            self.Logfile.insert("WARNING: this could potentially lead to a crash...")
-            for i in range(1, self.n):
-                self.Logfile.insert(
-                    "qsub -q medium.q xce_{0!s}{1!s}_{2!s}.sh".format(
-                        self.pipeline, twin, str(i)
-                    )
+            self.Logfile.insert("using the following command:")
+            self.Logfile.insert(
+                "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
+                " {2!s}_master.sh".format(
+                    str(self.n), self.max_queue_jobs, self.pipeline
                 )
-                os.system(
-                    "qsub -q medium.q xce_{0!s}{1!s}_{2!s}.sh".format(
-                        self.pipeline, twin, str(i)
-                    )
-                )
+            )
+            submit_cluster_job(
+                "xce_{!s}{!s}_master".format(self.pipeline, twin),
+                "{!s}{!s}_master.sh".format(self.pipeline, twin),
+                tasks="1:{!s}".format(self.n - 1),
+                concurrent=str(self.max_queue_jobs),
+            )
         else:
             self.Logfile.insert(
                 "running {0!s} consecutive {1!s} jobs on your local machine".format(
