@@ -954,62 +954,30 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
-            if os.path.isdir("/dls"):
-                if self.external_software["qsub_array"]:
-                    Cmds = (
-                        "#PBS -joe -N xce_%s_master\n" % self.restraints_program
-                        + "./xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
-                    )
-                    f = open("%s_master.sh" % self.restraints_program, "w")
-                    f.write(Cmds)
-                    f.close()
-                    self.Logfile.insert(
-                        "submitting array job with maximal 100 jobs running on cluster"
-                    )
-                    self.Logfile.insert("using the following command:")
-                    self.Logfile.insert(
-                        "         qsub -P labxchem -q medium.q -t 1:{0!s}"
-                        " -tc {1!s} {2!s}_master.sh".format(
-                            str(counter), self.max_queue_jobs, self.restraints_program
-                        )
-                    )
-                    os.system(
-                        "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
-                        " -N {2!s} {3!s}_master.sh".format(
-                            str(counter),
-                            self.max_queue_jobs,
-                            self.restraints_program,
-                            self.restraints_program,
-                        )
-                    )
-                else:
-                    self.Logfile.insert(
-                        "cannot start ARRAY job: make sure that"
-                        " 'module load global/cluster'"
-                        " is in your .bashrc or .cshrc file"
-                    )
-            elif self.external_software["qsub"]:
-                self.Logfile.insert(
-                    "submitting {0!s} individual jobs to cluster".format((str(counter)))
+            if self.external_software["qsub_array"]:
+                Cmds = (
+                    "#PBS -joe -N xce_%s_master\n" % self.restraints_program
+                    + "./xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
                 )
+                f = open("%s_master.sh" % self.restraints_program, "w")
+                f.write(Cmds)
+                f.close()
                 self.Logfile.insert(
-                    "WARNING: this could potentially lead to a crash..."
+                    "submitting array job with maximal 100 jobs running on cluster"
                 )
-                for i in range(counter):
-                    self.Logfile.insert(
-                        "qsub -q medium.q -N {0!s} xce_{1!s}_{2!s}.sh".format(
-                            self.restraints_program,
-                            self.restraints_program,
-                            (str(i + 1)),
-                        )
+                self.Logfile.insert("using the following command:")
+                self.Logfile.insert(
+                    "         qsub -P labxchem -q medium.q -t 1:{0!s}"
+                    " -tc {1!s} {2!s}_master.sh".format(
+                        str(counter), self.max_queue_jobs, self.restraints_program
                     )
-                    os.system(
-                        "qsub -N {0!s} xce_{1!s}_{2!s}.sh".format(
-                            self.restraints_program,
-                            self.restraints_program,
-                            (str(i + 1)),
-                        )
-                    )
+                )
+                submit_cluster_job(
+                    str(self.restraints_program),
+                    "{!s}_master.sh".format(self.restraints_program),
+                    tasks="1:{!s}".format(counter),
+                    concurrent=str(self.max_queue_jobs),
+                )
             else:
                 self.Logfile.insert(
                     "running %s consecutive %s jobs on your local machine"
