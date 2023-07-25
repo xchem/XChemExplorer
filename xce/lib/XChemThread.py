@@ -955,10 +955,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
             if self.external_software["qsub_array"]:
-                Cmds = (
-                    "#PBS -joe -N xce_%s_master\n" % self.restraints_program
-                    + "./xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
-                )
+                Cmds = "xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
                 f = open("%s_master.sh" % self.restraints_program, "w")
                 f.write(Cmds)
                 f.close()
@@ -1003,7 +1000,6 @@ class fit_ligands(QtCore.QThread):
     ):
         QtCore.QThread.__init__(self)
         self.external_software = external_software
-        self.queueing_system_available = external_software["qsub"]
         self.initial_model_directory = initial_model_directory
         self.compound_list = compound_list
         self.database_directory = database_directory
@@ -1032,18 +1028,12 @@ class fit_ligands(QtCore.QThread):
         return cmd
 
     def get_header(self, sampleID):
-        if self.queueing_system_available:
-            top_line = "#PBS -joe -N XCE_dimple\n"
-        else:
-            top_line = "#!" + os.getenv("SHELL") + "\n"
-
         module = ""
         if os.path.isdir("/dls"):
             module = "module load phenix/1.20\n"
             module += "module load buster/20211020\n"
 
         cmd = (
-            "{0!s}\n".format(top_line) + "\n"
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
             "\n"
             "cd %s\n"
@@ -1285,7 +1275,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         self.sample_list = sample_list
         self.initial_model_directory = initial_model_directory
         self.external_software = external_software
-        self.queueing_system_available = external_software["qsub"]
         self.ccp4_scratch_directory = ccp4_scratch_directory
         self.database_directory = database_directory
         self.data_source_file = data_source_file
@@ -1366,11 +1355,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         )
         os.system("touch phenix.ligand_pipeline_run_in_progress")
 
-        if self.queueing_system_available:
-            top_line = "#PBS -joe -N XCE_{0!s}\n".format(self.pipeline)
-        else:
-            top_line = "#!" + os.getenv("SHELL") + "\n"
-
         if "bash" in os.getenv("SHELL"):
             ccp4_scratch = "export CCP4_SCR=" + self.ccp4_scratch_directory + "\n"
         else:
@@ -1386,7 +1370,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             rfree = ' xray_data.r_free_flags.label="FreeR_flag"'
 
         Cmds = (
-            "{0!s}\n".format(top_line) + "\n"
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
             "\n"
             "cd %s\n"
@@ -1483,11 +1466,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         os.mkdir(os.path.join(self.initial_model_directory, xtal, "pipedream"))
         os.system("touch pipedream_run_in_progress")
 
-        if self.queueing_system_available:
-            top_line = "#PBS -joe -N XCE_{0!s}\n".format(self.pipeline)
-        else:
-            top_line = "#!" + os.getenv("SHELL") + "\n"
-
         if "bash" in os.getenv("SHELL"):
             ccp4_scratch = "export CCP4_SCR=" + self.ccp4_scratch_directory + "\n"
         else:
@@ -1503,7 +1481,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             hklref_line = " -nofreeref"
 
         Cmds = (
-            "{0!s}\n".format(top_line) + "\n"
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
             "\n"
             "cd %s\n" % os.path.join(self.initial_model_directory, xtal, "pipedream")
@@ -1642,11 +1619,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         os.system("/bin/rm final.mtz 2> /dev/null")
         os.system("/bin/rm final.pdb 2> /dev/null")
 
-        if self.queueing_system_available:
-            top_line = "#PBS -joe -N XCE_dimple\n"
-        else:
-            top_line = "#!" + os.getenv("SHELL") + "\n"
-
         if "bash" in os.getenv("SHELL"):
             ccp4_scratch = "export CCP4_SCR=" + self.ccp4_scratch_directory + "\n"
         else:
@@ -1681,7 +1653,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             )
 
         Cmds = (
-            "{0!s}\n".format(top_line) + "\n"
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
             "\n"
             "cd %s\n"
