@@ -49,9 +49,6 @@ class helpers:
         os.system("touch RESTRAINTS_IN_PROGRESS")
 
         header = "#!" + os.getenv("SHELL") + "\n"
-        if external_software["qsub"]:
-            if not external_software["qsub_array"]:
-                header = "#PBS -joe -N xce_acedrg\n"
 
         # check for combisoaks/ cocktails
         # note: compoundIDs and smiles are semi-colon separated

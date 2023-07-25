@@ -511,10 +511,7 @@ class Refine(object):
         )
 
     def get_shebang(self, program, qsub):
-        cmd = "#!" + os.getenv("SHELL") + "\n"
-        if qsub:
-            cmd += "#PBS -joe -N xce_%s\n" % program
-        return cmd
+        return "#!" + os.getenv("SHELL") + "\n"
 
     def load_modules(self, cmd):
         #######################################################
@@ -1002,11 +999,6 @@ class Refine(object):
             " refine_molprobity.log"
         )
 
-        if external_software["qsub"]:
-            pbs_line = "#PBS -joe -N XCE_refmac\n"
-        else:
-            pbs_line = "\n"
-
         #######################################################
         # weight
         if str(RefmacParams["MATRIX_WEIGHT"]).lower() == "auto":
@@ -1063,8 +1055,6 @@ class Refine(object):
         refmacCmds = (
             "#!"
             + os.getenv("SHELL")
-            + "\n"
-            + pbs_line
             + "\n"
             + +'export XChemExplorer_DIR="'
             + os.getenv("XChemExplorer_DIR")
@@ -1892,11 +1882,6 @@ class panddaRefine(object):
         )
         os.system("/bin/rm %s" % files_to_remove)
 
-        if external_software["qsub"]:
-            pbs_line = "#PBS -joe -N XCE_refmac\n"
-        else:
-            pbs_line = "\n"
-
         #######################################################
         # PANDDA validation @ spider plot
         spider_plot = ""
@@ -2014,8 +1999,6 @@ class panddaRefine(object):
         refmacCmds = (
             "#!"
             + os.getenv("SHELL")
-            + "\n"
-            + pbs_line
             + "\n"
             + module_load
             + "\n"
