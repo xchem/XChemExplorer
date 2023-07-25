@@ -1,7 +1,6 @@
 import os
 from xce.lib.XChemLog import updateLog
 
-LOGDIR = os.environ["XCE_LOGDIR"]
 PROJECT_NAME = "labxchem"
 QUEUE = "medium.q"
 
