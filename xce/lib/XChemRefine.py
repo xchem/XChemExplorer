@@ -510,7 +510,7 @@ class Refine(object):
             " refine_molprobity.log"
         )
 
-    def get_shebang(self, program, qsub):
+    def get_shebang(self):
         return "#!" + os.getenv("SHELL") + "\n"
 
     def load_modules(self, cmd):
@@ -766,7 +766,7 @@ class Refine(object):
 
         self.write_refinement_in_progress()
 
-        cmd = self.get_shebang("buster", external_software["qsub"])
+        cmd = self.get_shebang()
 
         cmd = self.load_modules(cmd)
 
