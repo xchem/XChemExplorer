@@ -976,6 +976,7 @@ class run_pandda_analyse(QtCore.QThread):
         self.reference_dir = pandda_params["reference_dir"]
         self.filter_pdb = os.path.join(self.reference_dir, pandda_params["filter_pdb"])
         self.wilson_scaling = pandda_params["perform_diffraction_data_scaling"]
+        self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.datasource = datasource
         self.db = XChemDB.data_source(datasource)
@@ -1221,9 +1222,11 @@ class run_pandda_analyse(QtCore.QThread):
                 os.system("chmod +x pandda.sh")
                 os.system("./pandda.sh &")
             else:
-                self.Logfile.insert("running PANDDA on cluster, using qsub...")
                 submit_cluster_job(
-                    "pandda", "pandda.sh", resources="exclusive,m_mem_free=100G"
+                    "pandda",
+                    "pandda.sh",
+                    self.xce_logfile,
+                    resources="exclusive,m_mem_free=100G",
                 )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
@@ -1249,6 +1252,7 @@ class run_pandda_two_analyse(QtCore.QThread):
         self.reference_dir = pandda_params["reference_dir"]
         self.filter_pdb = os.path.join(self.reference_dir, pandda_params["filter_pdb"])
         self.wilson_scaling = pandda_params["perform_diffraction_data_scaling"]
+        self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.datasource = datasource
         self.db = XChemDB.data_source(datasource)
@@ -1314,10 +1318,10 @@ class run_pandda_two_analyse(QtCore.QThread):
 
         self.Logfile.warning("ignoring selected submission option")
 
-        self.Logfile.insert("running PANDDA on cluster, using qsub...")
         submit_cluster_job(
             "pandda2",
             "pandda2.sh",
+            self.xce_logfile,
             resources="m_mem_free=30G",
             parallel_environment="smp 6",
             outfile="log.out",

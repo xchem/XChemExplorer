@@ -696,14 +696,12 @@ class Refine(object):
         f.write(cmd)
         f.close()
 
-    def run_script(self, program, external_software, Serial):
+    def run_script(self, program, external_software, Serial, xce_logfile):
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
         if external_software["qsub"]:
-            self.Logfile.insert(
-                "starting refinement with command: qsub -P labxchem -q medium.q %s.sh"
-                % program
+            submit_cluster_job(
+                "xce_{!s}".format(program), "{!s}.sh".format(program), xce_logfile
             )
-            submit_cluster_job("xce_{!s}".format(program), "{!s}.sh".format(program))
         else:
             self.Logfile.insert("starting refinement with command: ./%s.sh &" % program)
             os.system("chmod +x %s.sh" % program)
@@ -812,7 +810,7 @@ class Refine(object):
             )
             self.write_refinement_script(cmd, "buster")
             self.Logfile.insert("%s: starting refinement..." % self.xtalID)
-            self.run_script("buster", external_software, Serial)
+            self.run_script("buster", external_software, Serial, xce_logfile)
 
     def prepare_gelly_dat(self, ligand_info):
         found_ligand = False
@@ -1193,11 +1191,7 @@ class Refine(object):
                 % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
             )
         elif external_software["qsub"]:
-            Logfile.insert(
-                'starting refinement on cluster with command "qsub -P labxchem'
-                ' -q medium.q refmac.csh"'
-            )
-            submit_cluster_job("xce_refmac", "refmac.csh")
+            submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
         else:
             os.system("chmod +x refmac.csh")
             if os.path.isfile(xce_logfile):
@@ -2175,8 +2169,7 @@ class panddaRefine(object):
         )
 
         if external_software["qsub"]:
-            Logfile.insert("starting refinement on cluster")
-            submit_cluster_job("refmac", "refmac.csh")
+            submit_cluster_job("refmac", "refmac.csh", xce_logfile)
         else:
             Logfile.insert("changing permission of refmac.csh: chmod +x refmac.csh")
             os.system("chmod +x refmac.csh")
