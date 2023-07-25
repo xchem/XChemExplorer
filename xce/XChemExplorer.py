@@ -3667,7 +3667,7 @@ class XChemExplorer(QtGui.QApplication):
             self.update_log.insert(
                 "preparing to run {0!s} DIMPLE jobs".format(len(job_list))
             )
-            if self.external_software["qsub_array"]:
+            if self.external_software["qsub"]:
                 self.update_log.insert(
                     "we will be running an ARRAY job on the DLS computer cluster"
                 )
@@ -4426,12 +4426,6 @@ class XChemExplorer(QtGui.QApplication):
                     + str(len(compound_list))
                     + " jobs to your computer cluster!"
                 )
-            elif self.external_software["qsub_array"]:
-                self.update_log.insert(
-                    "will try sending "
-                    + str(len(compound_list))
-                    + " jobs as part of an ARRAY job to your computer cluster!"
-                )
             else:
                 self.update_log.insert(
                     "apparently no cluster available, so will run "
@@ -4500,12 +4494,6 @@ class XChemExplorer(QtGui.QApplication):
                     "will try sending "
                     + str(len(compound_list))
                     + " jobs to your computer cluster!"
-                )
-            elif self.external_software["qsub_array"]:
-                self.update_log.insert(
-                    "will try sending "
-                    + str(len(compound_list))
-                    + " jobs as part of an ARRAY job to your computer cluster!"
                 )
             else:
                 self.update_log.insert(

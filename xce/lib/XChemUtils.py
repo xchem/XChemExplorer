@@ -1569,11 +1569,8 @@ class external_software:
     def check(self):
         self.Logfile.insert("Searching for external software...")
 
-        self.available_programs["qsub"] = self.available_programs["qsub_array"] = (
-            find_executable("qsub") is not None
-        )
+        self.available_programs["qsub"] = find_executable("qsub") is not None
         self.log_found_status("qsub")
-        self.log_found_status("qsub_array")
 
         self.available_programs["refmac5"] = find_executable("refmac5") is not None
         self.log_found_status("refmac5")

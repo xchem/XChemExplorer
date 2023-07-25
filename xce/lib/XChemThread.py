@@ -954,7 +954,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
-            if self.external_software["qsub_array"]:
+            if self.external_software["qsub"]:
                 Cmds = "xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
                 f = open("%s_master.sh" % self.restraints_program, "w")
                 f.write(Cmds)
@@ -1128,7 +1128,7 @@ class fit_ligands(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if self.external_software["qsub_array"]:
+        if self.external_software["qsub"]:
             Cmds = "./xce_autofit_ligand_$SGE_TASK_ID.sh\n"
             f = open("autofit_ligand_master.sh", "w")
             f.write(Cmds)
@@ -1771,7 +1771,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if self.external_software["qsub_array"]:
+        if self.external_software["qsub"]:
             Cmds = "./xce_{0!s}{1!s}_$SGE_TASK_ID.sh\n".format(self.pipeline, twin)
             f = open("{0!s}{1!s}_master.sh".format(self.pipeline, twin), "w")
             f.write(Cmds)
