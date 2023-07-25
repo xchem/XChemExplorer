@@ -1,4 +1,6 @@
 import os
+import subprocess
+from datetime import datetime
 from xce.lib.XChemLog import updateLog
 
 PROJECT_NAME = "labxchem"
@@ -46,3 +48,26 @@ def submit_cluster_job(
         "Submitting job, '{}', to SGE with command: {}".format(name, command)
     )
     os.system(command)
+
+
+def query_running_jobs():
+    qstat = subprocess.Popen(["qstat -u $user"], stdout=subprocess.PIPE)
+
+    jobs = []
+    for line in qstat.stdout.readlines():
+        fields = line.split()
+
+        if len(fields) < 7:
+            continue
+
+        job_id = fields[0]
+        job_name = fields[2]
+        job_status = fields[4]
+
+        start_time = datetime.strptime(
+            "{} {}".format(fields[5], fields[6]), "%m/%d/%Y %H:%M:%S"
+        )
+        run_time = datetime.now() - start_time
+        jobs.append((job_id, job_name, job_status, run_time))
+
+    return jobs

@@ -1,12 +1,11 @@
-import getpass
 import glob
 import gzip
 import os
-import subprocess
 from datetime import datetime
 
 from xce.lib import XChemDB
 from xce.lib import XChemLog
+from xce.lib.cluster.sge import query_running_jobs
 
 
 def space_group_list():
@@ -138,61 +137,23 @@ def get_jobs_running_on_cluster():
     xia2_jobs = []
     others_jobs = []
 
-    # note: each job_details list contains a list with
-    # [job_ID, status, run_time]
-    out = subprocess.Popen(["qstat"], stdout=subprocess.PIPE)
-    for n, line in enumerate(iter(out.stdout.readline, "")):
-        if len(line.split()) >= 7:
-            if line.split()[3] == getpass.getuser():
-                job_id = line.split()[0]
-                job_name = line.split()[2]
-                job_status = line.split()[4]
+    for job_id, job_name, job_status, run_time in query_running_jobs():
+        run_time_minutes = int(run_time.total_seconds() / 60)
 
-                ##########################################################
-                # determine run time of each job in minutes
-                start_date = ""
-                start_time = ""
-                run_time_minutes = ""
-                start_date = line.split()[5]
-                if len(start_date.split("/")) == 3:
-                    month_start = start_date.split("/")[0]
-                    day_start = start_date.split("/")[1]
-                    year_start = start_date.split("/")[2]
-
-                start_time = line.split()[6]
-                if len(start_time.split(":")) == 3:
-                    hour_start = start_time.split(":")[0]
-                    minute_start = start_time.split(":")[1]
-                    second_start = start_time.split(":")[2]
-
-                if start_time != "" and start_date != "":
-                    start = "{0!s}-{1!s}-{2!s} {3!s}:{4!s}:{5!s}".format(
-                        year_start,
-                        month_start,
-                        day_start,
-                        hour_start,
-                        minute_start,
-                        second_start,
-                    )
-                    run_time = datetime.now() - datetime.strptime(
-                        start, "%Y-%m-%d %H:%M:%S"
-                    )
-                    run_time_minutes = int(run_time.total_seconds() / 60)
-
-                ##########################################################
-                # determine run time of each job in minutes
-                if "dimple" in job_name:
-                    dimple_jobs.append([job_id, job_status, run_time_minutes])
-                elif "acedrg" in job_name:
-                    acedrg_jobs.append([job_id, job_status, run_time_minutes])
-                elif "pandda" in job_name:
-                    pandda_jobs.append([job_id, job_status, run_time_minutes])
-                elif "refmac" in job_name:
-                    refmac_jobs.append([job_id, job_status, run_time_minutes])
-                elif "xia2" in job_name:
-                    xia2_jobs.append([job_id, job_status, run_time_minutes])
-                else:
-                    others_jobs.append([job_id, job_status, run_time_minutes])
+        ##########################################################
+        # determine run time of each job in minutes
+        if "dimple" in job_name:
+            dimple_jobs.append([job_id, job_status, run_time_minutes])
+        elif "acedrg" in job_name:
+            acedrg_jobs.append([job_id, job_status, run_time_minutes])
+        elif "pandda" in job_name:
+            pandda_jobs.append([job_id, job_status, run_time_minutes])
+        elif "refmac" in job_name:
+            refmac_jobs.append([job_id, job_status, run_time_minutes])
+        elif "xia2" in job_name:
+            xia2_jobs.append([job_id, job_status, run_time_minutes])
+        else:
+            others_jobs.append([job_id, job_status, run_time_minutes])
 
     out_dict["dimple"] = dimple_jobs
     out_dict["acedrg"] = acedrg_jobs
