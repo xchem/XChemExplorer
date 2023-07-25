@@ -815,11 +815,11 @@ def NCBI_taxonomy_ID():
         "837": "Porphyromonas gingivalis",
         "42789": "Human Enterovirus D68",
         "103922": "Human Enterovirus A71",
-        "1335626" "MERS-CoV",
-        "64320" "Zika Virus",
-        "11060" "Dengue Virus",
-        "1968826" "West Nile Virus",
-        "37124" "Chikungunya Virus",
+        "1335626": "MERS-CoV",
+        "64320": "Zika Virus",
+        "11060": "Dengue Virus",
+        "1968826": "West Nile Virus",
+        "37124": "Chikungunya Virus",
     }
 
     return taxonomy_dict
