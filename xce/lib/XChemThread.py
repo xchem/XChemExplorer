@@ -962,19 +962,10 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                 f = open("%s_master.sh" % self.restraints_program, "w")
                 f.write(Cmds)
                 f.close()
-                self.Logfile.insert(
-                    "submitting array job with maximal 100 jobs running on cluster"
-                )
-                self.Logfile.insert("using the following command:")
-                self.Logfile.insert(
-                    "         qsub -P labxchem -q medium.q -t 1:{0!s}"
-                    " -tc {1!s} {2!s}_master.sh".format(
-                        str(counter), self.max_queue_jobs, self.restraints_program
-                    )
-                )
                 submit_cluster_job(
                     str(self.restraints_program),
                     "{!s}_master.sh".format(self.restraints_program),
+                    self.xce_logfile,
                     tasks="1:{!s}".format(counter),
                     concurrent=str(self.max_queue_jobs),
                 )
@@ -1152,17 +1143,10 @@ class fit_ligands(QtCore.QThread):
             f = open("autofit_ligand_master.sh", "w")
             f.write(Cmds)
             f.close()
-            self.Logfile.insert(
-                "submitting array job with maximal 100 jobs running on cluster"
-            )
-            self.Logfile.insert("using the following command:")
-            self.Logfile.insert(
-                "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
-                " autofit_ligand_master.sh".format(str(self.n), self.max_queue_jobs)
-            )
             submit_cluster_job(
                 "xce_autofit_ligand_master",
                 "autofit_ligand_master.sh",
+                self.xce_logfile,
                 tasks="1:{!s}".format(self.n - 1),
                 concurrent=str(self.max_queue_jobs),
             )
@@ -1821,19 +1805,10 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             f = open("{0!s}{1!s}_master.sh".format(self.pipeline, twin), "w")
             f.write(Cmds)
             f.close()
-            self.Logfile.insert(
-                "submitting array job with maximal 100 jobs running on cluster"
-            )
-            self.Logfile.insert("using the following command:")
-            self.Logfile.insert(
-                "qsub -P labxchem -q medium.q -t 1:{0!s} -tc {1!s}"
-                " {2!s}_master.sh".format(
-                    str(self.n), self.max_queue_jobs, self.pipeline
-                )
-            )
             submit_cluster_job(
                 "xce_{!s}{!s}_master".format(self.pipeline, twin),
                 "{!s}{!s}_master.sh".format(self.pipeline, twin),
+                self.xce_logfile,
                 tasks="1:{!s}".format(self.n - 1),
                 concurrent=str(self.max_queue_jobs),
             )
