@@ -1184,7 +1184,9 @@ class Refine(object):
             % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
         )
 
-        if external_software["qsub"]:
+        if external_software["slurm"]:
+            slurm.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
+        elif external_software["qsub"]:
             sge.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
         else:
             os.system("chmod +x refmac.csh")
