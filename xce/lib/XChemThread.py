@@ -1793,7 +1793,20 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if self.external_software["qsub"]:
+        if self.external_software["slurm"]:
+            Cmds = "./xce_{!s}{!s}_$SLURM_ARRAY_TASK_ID.sh\n".format(
+                self.pipeline, twin
+            )
+            f = open("{!s}{!s}_master.sh".format(self.pipeline, twin), "w")
+            f.write(Cmds)
+            f.close()
+            slurm.submit_cluster_job(
+                "xce_{!s}{!s}_master".format(self.pipeline, twin),
+                "{!s}{!s}_master.sh".format(self.pipeline, twin),
+                self.xce_logfile,
+                array="1-{!s}".format(self.n - 1),
+            )
+        elif self.external_software["qsub"]:
             Cmds = "./xce_{0!s}{1!s}_$SGE_TASK_ID.sh\n".format(self.pipeline, twin)
             f = open("{0!s}{1!s}_master.sh".format(self.pipeline, twin), "w")
             f.write(Cmds)
