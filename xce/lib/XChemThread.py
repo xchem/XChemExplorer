@@ -11,7 +11,7 @@ from xce.lib import XChemDB
 from xce.lib import XChemLog
 from xce.lib import XChemMain
 from xce.lib import XChemUtils
-from xce.lib.cluster.sge import submit_cluster_job
+from xce.lib.cluster import sge, slurm
 from iotbx.reflection_file_reader import any_reflection_file
 
 
@@ -954,12 +954,23 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
+            if self.external_software["slurm"]:
+                Cmds = "xce_$SLURM_ARRAY_TASK_ID.sh\n" % self.restraints_program
+                f = open("%s_master.sh" % self.restraints_program, "w")
+                f.write(Cmds)
+                f.close()
+                slurm.submit_cluster_job(
+                    str(self.restraints_program),
+                    "{!s}_master.sh".format(self.restraints_program),
+                    self.xce_logfile,
+                    array="0-{}".format(counter)
+                )
             if self.external_software["qsub"]:
                 Cmds = "xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
                 f = open("%s_master.sh" % self.restraints_program, "w")
                 f.write(Cmds)
                 f.close()
-                submit_cluster_job(
+                sge.submit_cluster_job(
                     str(self.restraints_program),
                     "{!s}_master.sh".format(self.restraints_program),
                     self.xce_logfile,
@@ -1133,7 +1144,7 @@ class fit_ligands(QtCore.QThread):
             f = open("autofit_ligand_master.sh", "w")
             f.write(Cmds)
             f.close()
-            submit_cluster_job(
+            sge.submit_cluster_job(
                 "xce_autofit_ligand_master",
                 "autofit_ligand_master.sh",
                 self.xce_logfile,
@@ -1776,7 +1787,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             f = open("{0!s}{1!s}_master.sh".format(self.pipeline, twin), "w")
             f.write(Cmds)
             f.close()
-            submit_cluster_job(
+            sge.submit_cluster_job(
                 "xce_{!s}{!s}_master".format(self.pipeline, twin),
                 "{!s}{!s}_master.sh".format(self.pipeline, twin),
                 self.xce_logfile,
