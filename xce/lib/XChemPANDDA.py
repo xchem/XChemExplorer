@@ -10,7 +10,7 @@ from xce.lib import XChemLog
 from xce.lib import XChemRefine
 from xce.lib import XChemToolTips
 from xce.lib import XChemUtils
-from xce.lib.cluster.sge import submit_cluster_job
+from xce.lib.cluster import sge, slurm
 
 try:
     import gemmi
@@ -958,11 +958,12 @@ class run_pandda_export(QtCore.QThread):
 
 
 class run_pandda_analyse(QtCore.QThread):
-    def __init__(self, pandda_params, xce_logfile, datasource):
+    def __init__(self, pandda_params, xce_logfile, datasource, external_software):
         QtCore.QThread.__init__(self)
         self.data_directory = pandda_params["data_dir"]
         self.panddas_directory = pandda_params["out_dir"]
         self.submit_mode = pandda_params["submit_mode"]
+        self.external_software = external_software
 
         self.pandda_analyse_data_table = pandda_params["pandda_table"]
         self.nproc = pandda_params["nproc"]
@@ -1221,8 +1222,16 @@ class run_pandda_analyse(QtCore.QThread):
                 self.Logfile.insert("running PANDDA on local machine")
                 os.system("chmod +x pandda.sh")
                 os.system("./pandda.sh &")
-            else:
-                submit_cluster_job(
+            elif self.external_software["slurm"]:
+                slurm.submit_cluster_job(
+                    "pandda",
+                    "pannda.sh",
+                    self.xce_logfile,
+                    exclusive=True,
+                    memory=100 * 1024 * 1024 * 1024,
+                )
+            elif self.external_software["qsub"]:
+                sge.submit_cluster_job(
                     "pandda",
                     "pandda.sh",
                     self.xce_logfile,
@@ -1319,7 +1328,7 @@ class run_pandda_two_analyse(QtCore.QThread):
 
         self.Logfile.warning("ignoring selected submission option")
 
-        submit_cluster_job(
+        sge.submit_cluster_job(
             "pandda2",
             "pandda2.sh",
             self.xce_logfile,
