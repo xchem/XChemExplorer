@@ -18,7 +18,7 @@ HEADERS = {
 }
 
 
-def submit_cluster_job(name, file, xce_logfile):
+def submit_cluster_job(name, file, xce_logfile, array=None):
     with open(file) as script_file:
         script = "\n".join(script_file.readlines())
     payload = dict(
@@ -32,6 +32,8 @@ def submit_cluster_job(name, file, xce_logfile):
             standard_error=os.path.join(os.getcwd(), "{}.stderr".format(name)),
         ),
     )
+    if array is not None:
+        payload["job"]["array"] = array
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
     logfile.insert(
