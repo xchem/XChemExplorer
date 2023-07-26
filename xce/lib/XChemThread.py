@@ -963,7 +963,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                     str(self.restraints_program),
                     "{!s}_master.sh".format(self.restraints_program),
                     self.xce_logfile,
-                    array="0-{}".format(counter)
+                    array="0-{}".format(counter),
                 )
             if self.external_software["qsub"]:
                 Cmds = "xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
@@ -1139,7 +1139,18 @@ class fit_ligands(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if self.external_software["qsub"]:
+        if self.external_software["slurm"]:
+            Cmds = "./xce_autofit_ligand_$SLURM_ARRAY_TASK_ID.sh\n"
+            f = open("autofit_ligand_master.sh", "w")
+            f.write(Cmds)
+            f.close()
+            slurm.submit_cluster_job(
+                "xce_autofit_ligand_master",
+                "autofit_ligand_master.sh",
+                self.xce_logfile,
+                array="1-{!s}".format(self.n - 1),
+            )
+        elif self.external_software["qsub"]:
             Cmds = "./xce_autofit_ligand_$SGE_TASK_ID.sh\n"
             f = open("autofit_ligand_master.sh", "w")
             f.write(Cmds)
