@@ -11,7 +11,8 @@ def submit_cluster_job(
     name,
     file,
     xce_logfile,
-    resources=None,
+    exclusive=False,
+    memory=None,
     parallel_environment=None,
     outfile=None,
     errfile=None,
@@ -19,7 +20,15 @@ def submit_cluster_job(
     concurrent=None,
 ):
     base_command = "qsub -P {} -q {} -N {}".format(PROJECT_NAME, QUEUE, name)
-    resource_arg = "-l {}".format(resources) if resources is not None else None
+    resource_params = ",".join(
+        resource
+        for resource in [
+            "exclusive" if exclusive else None,
+            "m_mem_free={}".format(memory) if memory is not None else None,
+        ]
+        if resource is not None
+    )
+    resource_arg = "-l {}".format(resource_params) if resource_params else None
     parallel_environment_arg = (
         "-pe {}".format(parallel_environment)
         if parallel_environment is not None

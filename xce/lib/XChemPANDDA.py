@@ -1226,7 +1226,8 @@ class run_pandda_analyse(QtCore.QThread):
                     "pandda",
                     "pandda.sh",
                     self.xce_logfile,
-                    resources="exclusive,m_mem_free=100G",
+                    exclusive=True,
+                    memory="100G",
                 )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
@@ -1322,7 +1323,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             "pandda2",
             "pandda2.sh",
             self.xce_logfile,
-            resources="m_mem_free=30G",
+            memory="30G",
             parallel_environment="smp 6",
             outfile="log.out",
             errfile="log.err",
