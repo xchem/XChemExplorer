@@ -5,7 +5,7 @@ from datetime import datetime
 from xce.lib.XChemLog import updateLog
 
 CLUSTER_USER = os.getlogin()
-CLUSTER_TOKEN = os.environ["SLURM_JWT"]
+CLUSTER_TOKEN = os.environ.get("SLURM_JWT", "")
 CLUSTER_HOST = "slurm-rest.diamond.ac.uk"
 CLUSTER_PORT = 8443
 CLUSTER_PARTITION = "cs04r"
