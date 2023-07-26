@@ -8,7 +8,7 @@ import pygtk
 
 from xce.lib import XChemLog
 from xce.lib import XChemUtils
-from xce.lib.cluster.sge import submit_cluster_job
+from xce.lib.cluster import sge, slurm
 
 pygtk.require("2.0")
 
@@ -695,8 +695,12 @@ class Refine(object):
 
     def run_script(self, program, external_software, Serial, xce_logfile):
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
-        if external_software["qsub"]:
-            submit_cluster_job(
+        if external_software["slurm"]:
+            slurm.submit_cluster_job(
+                "xce_{!s}".format(program), "{!s}.sh".format(program), xce_logfile
+            )
+        elif external_software["qsub"]:
+            sge.submit_cluster_job(
                 "xce_{!s}".format(program), "{!s}.sh".format(program), xce_logfile
             )
         else:
@@ -1181,7 +1185,7 @@ class Refine(object):
                 % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
             )
         elif external_software["qsub"]:
-            submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
+            sge.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
         else:
             os.system("chmod +x refmac.csh")
             if os.path.isfile(xce_logfile):
@@ -2152,7 +2156,7 @@ class panddaRefine(object):
         )
 
         if external_software["qsub"]:
-            submit_cluster_job("refmac", "refmac.csh", xce_logfile)
+            sge.submit_cluster_job("refmac", "refmac.csh", xce_logfile)
         else:
             Logfile.insert("changing permission of refmac.csh: chmod +x refmac.csh")
             os.system("chmod +x refmac.csh")
