@@ -127,7 +127,7 @@ def get_target_and_visit_list(beamline_directory, agamemnon):
     return target_list, visit_list
 
 
-def get_jobs_running_on_cluster(external_software):
+def get_jobs_running_on_cluster(external_software, xce_logfile):
     out_dict = {}
 
     dimple_jobs = []
@@ -138,7 +138,7 @@ def get_jobs_running_on_cluster(external_software):
     others_jobs = []
 
     if external_software["slurm"]:
-        running_jobs = slurm.query_running_jobs()
+        running_jobs = slurm.query_running_jobs(xce_logfile)
     elif external_software["qsub"]:
         running_jobs = sge.query_running_jobs()
 
