@@ -3,6 +3,7 @@ import json
 import httplib
 from datetime import datetime
 from xce.lib.XChemLog import updateLog
+from uuid import uuid4
 
 CLUSTER_USER = os.getlogin()
 CLUSTER_TOKEN = os.environ.get("SLURM_JWT", "")
@@ -18,7 +19,14 @@ HEADERS = {
 }
 
 
-def submit_cluster_job(name, file, xce_logfile, array=None):
+def submit_cluster_job(
+    name,
+    file,
+    xce_logfile,
+    array=None,
+    exclusive=False,
+    memory=None,
+):
     with open(file) as script_file:
         script = "\n".join(script_file.readlines())
     payload = dict(
@@ -34,6 +42,12 @@ def submit_cluster_job(name, file, xce_logfile, array=None):
     )
     if array is not None:
         payload["job"]["array"] = array
+    if exclusive is True:
+        payload["job"]["exclusive"] = "mcs"
+        payload["job"]["mcs_label"] = str(uuid4())
+    if memory is not None:
+        payload["job"]["memory_per_node"]["set"] = True
+        payload["job"]["memory_per_node"]["number"] = memory
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
     logfile.insert(
