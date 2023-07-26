@@ -20,12 +20,7 @@ HEADERS = {
 
 
 def submit_cluster_job(
-    name,
-    file,
-    xce_logfile,
-    array=None,
-    exclusive=False,
-    memory=None,
+    name, file, xce_logfile, array=None, exclusive=False, memory=None, tasks=None
 ):
     with open(file) as script_file:
         script = "\n".join(script_file.readlines())
@@ -48,6 +43,9 @@ def submit_cluster_job(
     if memory is not None:
         payload["job"]["memory_per_node"]["set"] = True
         payload["job"]["memory_per_node"]["number"] = memory
+    if tasks is not None:
+        payload["job"]["tasks_per_node"]["set"] = True
+        payload["job"]["tasks_per_node"]["number"] = tasks
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
     logfile.insert(
