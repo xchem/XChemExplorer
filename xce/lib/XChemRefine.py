@@ -1179,12 +1179,12 @@ class Refine(object):
         cmd.close()
 
         os.chdir(os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
-        if os.path.isfile(xce_logfile):
-            Logfile.insert(
-                "changing directory to %s"
-                % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
-            )
-        elif external_software["qsub"]:
+        Logfile.insert(
+            "changing directory to %s"
+            % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
+        )
+
+        if external_software["qsub"]:
             sge.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
         else:
             os.system("chmod +x refmac.csh")
