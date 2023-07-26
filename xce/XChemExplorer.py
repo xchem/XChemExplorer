@@ -4131,6 +4131,7 @@ class XChemExplorer(QtGui.QApplication):
                 pandda_params,
                 self.xce_logfile,
                 os.path.join(self.database_directory, self.data_source_file),
+                self.external_software,
             )
         self.connect(
             self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
