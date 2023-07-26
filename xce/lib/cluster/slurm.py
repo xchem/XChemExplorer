@@ -1,6 +1,7 @@
 import os
 import json
 import httplib
+from datetime import datetime
 from xce.lib.XChemLog import updateLog
 
 CLUSTER_USER = os.getlogin()
@@ -42,3 +43,29 @@ def submit_cluster_job(name, file, xce_logfile):
     connection.request("POST", "/slurm/v0.0.38/job/submit", body=body, headers=HEADERS)
     response = connection.getresponse().read()
     logfile.insert("Got response: {}".format(response))
+
+
+def query_running_jobs():
+    connection = httplib.HTTPSConnection(CLUSTER_HOST, CLUSTER_PORT)
+    connection.request("GET", "/slurm/v0.0.38/jobs", headers=HEADERS)
+    response = connection.getresponse()
+    response_body = response.read()
+
+    if response.status != 200:
+        print("Got response: {}".format(response_body))
+
+    jobs = []
+    for job in json.loads(response_body)["jobs"]:
+        if job["user_name"] != CLUSTER_USER:
+            continue
+
+        job_id = job["job_id"]
+        job_name = job["name"]
+        job_status = job["job_state"]
+
+        start_time = datetime.utcfromtimestamp(job["start_time"])
+        run_time = datetime.now() - start_time
+
+        jobs.append((job_id, job_name, job_status, run_time))
+
+    return jobs
