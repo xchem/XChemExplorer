@@ -2157,7 +2157,9 @@ class panddaRefine(object):
             )
         )
 
-        if external_software["qsub"]:
+        if external_software["slurm"]:
+            slurm.submit_cluster_job("refmac", "refmac.csh", xce_logfile)
+        elif external_software["qsub"]:
             sge.submit_cluster_job("refmac", "refmac.csh", xce_logfile)
         else:
             Logfile.insert("changing permission of refmac.csh: chmod +x refmac.csh")
