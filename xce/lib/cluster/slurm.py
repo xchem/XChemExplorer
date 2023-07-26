@@ -1,0 +1,44 @@
+import os
+import json
+import httplib
+from xce.lib.XChemLog import updateLog
+
+CLUSTER_USER = os.getlogin()
+CLUSTER_TOKEN = os.environ["SLURM_JWT"]
+CLUSTER_HOST = "slurm-rest.diamond.ac.uk"
+CLUSTER_PORT = 8443
+CLUSTER_PARTITION = "cs04r"
+CLUSTER_ACCOUNT = "labxchem"
+
+HEADERS = {
+    "Content-Type": "application/json",
+    "X-SLURM-USER-NAME": CLUSTER_USER,
+    "X-SLURM-USER-TOKEN": CLUSTER_TOKEN,
+}
+
+
+def submit_cluster_job(name, file, xce_logfile):
+    with open(file) as script_file:
+        script = "\n".join(script_file.readlines())
+    payload = dict(
+        script=script,
+        job=dict(
+            partition=CLUSTER_PARTITION,
+            name=str(name),
+            account=CLUSTER_ACCOUNT,
+            environment=dict(PLACE="HOLDER"),
+            standard_output=os.path.join(os.getcwd(), "{}.stdout".format(name)),
+            standard_error=os.path.join(os.getcwd(), "{}.stderr".format(name)),
+        ),
+    )
+    body = json.dumps(payload)
+    logfile = updateLog(xce_logfile)
+    logfile.insert(
+        "Submitting job, '{}', to Slurm with body: {} and headers: {}".format(
+            name, body, HEADERS
+        )
+    )
+    connection = httplib.HTTPSConnection(CLUSTER_HOST, CLUSTER_PORT)
+    connection.request("POST", "/slurm/v0.0.38/job/submit", body=body, headers=HEADERS)
+    response = connection.getresponse().read()
+    logfile.insert("Got response: {}".format(response))
