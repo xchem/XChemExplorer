@@ -5,7 +5,7 @@ from datetime import datetime
 
 from xce.lib import XChemDB
 from xce.lib import XChemLog
-from xce.lib.cluster.sge import query_running_jobs
+from xce.lib.cluster import sge, slurm
 
 
 def space_group_list():
@@ -127,7 +127,7 @@ def get_target_and_visit_list(beamline_directory, agamemnon):
     return target_list, visit_list
 
 
-def get_jobs_running_on_cluster():
+def get_jobs_running_on_cluster(external_software):
     out_dict = {}
 
     dimple_jobs = []
@@ -137,7 +137,12 @@ def get_jobs_running_on_cluster():
     xia2_jobs = []
     others_jobs = []
 
-    for job_id, job_name, job_status, run_time in query_running_jobs():
+    if external_software["slurm"]:
+        running_jobs = slurm.query_running_jobs()
+    elif external_software["qsub"]:
+        running_jobs = sge.query_running_jobs()
+
+    for job_id, job_name, job_status, run_time in running_jobs:
         run_time_minutes = int(run_time.total_seconds() / 60)
 
         ##########################################################

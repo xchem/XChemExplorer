@@ -1569,6 +1569,9 @@ class external_software:
     def check(self):
         self.Logfile.insert("Searching for external software...")
 
+        self.available_programs["slurm"] = "SLURM_JWT" in os.environ.keys()
+        self.log_found_status("slurm")
+
         self.available_programs["qsub"] = find_executable("qsub") is not None
         self.log_found_status("qsub")
 

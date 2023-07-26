@@ -3875,7 +3875,7 @@ class XChemExplorer(QtGui.QApplication):
         # first update all tables
         self.datasource_menu_reload_samples()
 
-        cluster_dict = XChemMain.get_jobs_running_on_cluster()
+        cluster_dict = XChemMain.get_jobs_running_on_cluster(self.external_software)
 
         self.update_log.insert("getting status updates...")
 
