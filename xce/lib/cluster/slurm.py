@@ -47,14 +47,15 @@ def submit_cluster_job(name, file, xce_logfile, array=None):
     logfile.insert("Got response: {}".format(response))
 
 
-def query_running_jobs():
+def query_running_jobs(xce_logfile):
     connection = httplib.HTTPSConnection(CLUSTER_HOST, CLUSTER_PORT)
     connection.request("GET", "/slurm/v0.0.38/jobs", headers=HEADERS)
     response = connection.getresponse()
     response_body = response.read()
 
     if response.status != 200:
-        print("Got response: {}".format(response_body))
+        logifle = updateLog(xce_logfile)
+        logifle.insert("Got response: {}".format(response_body))
 
     jobs = []
     for job in json.loads(response_body)["jobs"]:
