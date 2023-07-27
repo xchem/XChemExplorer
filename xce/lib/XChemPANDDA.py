@@ -1223,7 +1223,7 @@ class run_pandda_analyse(QtCore.QThread):
                 os.system("chmod +x pandda.sh")
                 os.system("./pandda.sh &")
             elif self.external_software["slurm"]:
-                slurm.submit_clusob(
+                slurm.submit_cluster_job(
                     "pandda",
                     "pannda.sh",
                     self.xce_logfile,
@@ -1335,7 +1335,7 @@ class run_pandda_two_analyse(QtCore.QThread):
                 "pandda2.sh",
                 self.xce_logfile,
                 memory=30 * 1024 * 1024 * 1024,
-                tasks=6
+                tasks=6,
             )
         elif self.external_software["qsub"]:
             sge.submit_cluster_job(
