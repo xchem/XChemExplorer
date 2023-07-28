@@ -48,11 +48,7 @@ def submit_cluster_job(
         payload["job"]["tasks_per_node"]["number"] = tasks
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
-    logfile.insert(
-        "Submitting job, '{}', to Slurm with body: {} and headers: {}".format(
-            name, body, HEADERS
-        )
-    )
+    logfile.insert("Submitting job, '{}', to Slurm with body: {}".format(name, body))
     connection = httplib.HTTPSConnection(CLUSTER_HOST, CLUSTER_PORT)
     connection.request("POST", "/slurm/v0.0.38/job/submit", body=body, headers=HEADERS)
     response = connection.getresponse().read()
