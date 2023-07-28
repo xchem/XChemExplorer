@@ -7,6 +7,7 @@ from uuid import uuid4
 
 CLUSTER_USER = os.getlogin()
 CLUSTER_TOKEN = os.environ.get("SLURM_JWT", "")
+SSL_CERT_FILE = os.environ["SSL_CERT_FILE"]
 CLUSTER_HOST = "slurm-rest.diamond.ac.uk"
 CLUSTER_PORT = 8443
 CLUSTER_PARTITION = "cs04r"
@@ -49,7 +50,9 @@ def submit_cluster_job(
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
     logfile.insert("Submitting job, '{}', to Slurm with body: {}".format(name, body))
-    connection = httplib.HTTPSConnection(CLUSTER_HOST, CLUSTER_PORT)
+    connection = httplib.HTTPSConnection(
+        CLUSTER_HOST, CLUSTER_PORT, cert_file=SSL_CERT_FILE
+    )
     connection.request("POST", "/slurm/v0.0.38/job/submit", body=body, headers=HEADERS)
     response = connection.getresponse().read()
     logfile.insert("Got response: {}".format(response))
