@@ -955,7 +955,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
             if self.external_software["slurm"]:
-                Cmds = "xce_$SLURM_ARRAY_TASK_ID.sh\n" % self.restraints_program
+                Cmds = "xce_%s_$SLURM_ARRAY_TASK_ID.sh\n" % self.restraints_program
                 f = open("%s_master.sh" % self.restraints_program, "w")
                 f.write(Cmds)
                 f.close()
