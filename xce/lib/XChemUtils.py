@@ -152,8 +152,7 @@ class helpers:
 
             software = ""
             if restraints_program == "acedrg":
-                if os.getcwd().startswith("/dls"):
-                    software += "module load ccp4/7.1.018\n"
+                software += "module load ccp4/7.1.018\n"
                 if os.path.isfile(
                     os.path.join(initial_model_directory, sample, "old.cif")
                 ):
@@ -165,9 +164,8 @@ class helpers:
                         productSmiles, compoundID.replace(" ", "")
                     )
             elif restraints_program == "phenix.elbow":
-                if os.getcwd().startswith("/dls"):
-                    software += "module load ccp4/7.1.018\n"
-                    software += "module load phenix/1.20\n"
+                software += "module load ccp4/7.1.018\n"
+                software += "module load phenix/1.20\n"
                 if os.path.isfile(
                     os.path.join(initial_model_directory, sample, "old.cif")
                 ):
@@ -183,12 +181,11 @@ class helpers:
                         )
                     )
             elif restraints_program == "grade":
-                if os.getcwd().startswith("/dls"):
-                    software += "module load ccp4/7.1.018\n"
-                    software += "module load buster/20211020\n"
-                    software += (
-                        "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
-                    )
+                software += "module load ccp4/7.1.018\n"
+                software += "module load buster/20211020\n"
+                software += (
+                    "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
+                )
                 software += "export BDG_TOOL_OBABEL='none'\n"
                 if external_software["mogul"]:
                     mogul = ""
@@ -226,6 +223,7 @@ class helpers:
         Cmds = (
             header + "\n"
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"' + "\n"
+            "module load ccp4/7.1.018\n"
             "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " {0!s} {1!s} {2!s} {3!s}".format(
                 os.path.join(database_directory, data_source_file),
