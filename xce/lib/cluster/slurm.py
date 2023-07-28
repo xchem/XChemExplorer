@@ -1,4 +1,5 @@
 import os
+import ssl
 import json
 import httplib
 from datetime import datetime
@@ -7,7 +8,6 @@ from uuid import uuid4
 
 CLUSTER_USER = os.getlogin()
 CLUSTER_TOKEN = os.environ.get("SLURM_JWT", "")
-SSL_CERT_FILE = os.environ["SSL_CERT_FILE"]
 CLUSTER_HOST = "slurm-rest.diamond.ac.uk"
 CLUSTER_PORT = 8443
 CLUSTER_PARTITION = "cs04r"
@@ -51,7 +51,7 @@ def submit_cluster_job(
     logfile = updateLog(xce_logfile)
     logfile.insert("Submitting job, '{}', to Slurm with body: {}".format(name, body))
     connection = httplib.HTTPSConnection(
-        CLUSTER_HOST, CLUSTER_PORT, cert_file=SSL_CERT_FILE
+        CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
     )
     connection.request("POST", "/slurm/v0.0.38/job/submit", body=body, headers=HEADERS)
     response = connection.getresponse().read()
@@ -59,7 +59,11 @@ def submit_cluster_job(
 
 
 def query_running_jobs(xce_logfile):
-    connection = httplib.HTTPSConnection(CLUSTER_HOST, CLUSTER_PORT)
+    connection = httplib.HTTPSConnection(
+        CLUSTER_HOST,
+        CLUSTER_PORT,
+        context=ssl._create_unverified_context(),
+    )
     connection.request("GET", "/slurm/v0.0.38/jobs", headers=HEADERS)
     response = connection.getresponse()
     response_body = response.read()
