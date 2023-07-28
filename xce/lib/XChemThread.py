@@ -974,7 +974,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                     str(self.restraints_program),
                     "{!s}_master.sh".format(self.restraints_program),
                     self.xce_logfile,
-                    tasks="1:{!s}".format(counter),
+                    tasks="1:{!s}".format(counter - 1),
                     concurrent=str(self.max_queue_jobs),
                 )
             else:
