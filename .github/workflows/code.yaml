@@ -7,21 +7,23 @@ on:
     tags:
       - "*"
   pull_request:
-  
+
 jobs:
   lint:
     runs-on: "ubuntu-latest"
+    container:
+      image: python:2.7.18-buster
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "2.7"
-        
+      - name: Install pip3
+        run: |
+          apt-get update
+          apt-get install -y python3-pip
+
       - name: Install linters
         run: |
           pip install flake8
