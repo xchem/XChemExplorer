@@ -4125,7 +4125,7 @@ class XChemExplorer(QtGui.QApplication):
                 pandda_params,
                 self.xce_logfile,
                 os.path.join(self.database_directory, self.data_source_file),
-                self.external_software
+                self.external_software,
             )
         else:
             self.work_thread = XChemPANDDA.run_pandda_analyse(
