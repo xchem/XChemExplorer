@@ -1284,39 +1284,14 @@ class run_pandda_two_analyse(QtCore.QThread):
             "module load ccp4/7.1.018\n"
             "module load phenix/1.20\n"
             "module load buster/20211020\n"
-            "__conda_setup=\"$('/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin/"
-            "conda' 'shell.bash' 'hook' 2> /dev/null)\"\n"
-            "if [ $? -eq 0 ]; then\n"
-            '    eval "$__conda_setup"\n'
-            "else\n"
-            '    if [ -f "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/'
-            'profile.d/conda.sh" ]; then\n'
-            '        . "/dls/science/groups/i04-1/conor_dev/conda/anaconda/etc/'
-            'profile.d/conda.sh"\n'
-            "    else\n"
-            "        export"
-            ' PATH="/dls/science/groups/i04-1/conor_dev/conda/anaconda/bin:$PATH"\n'
-            "    fi\n"
-            "fi\n"
-            "unset __conda_setup\n"
             'export PYTHONPATH=""\n'
-            "conda activate pandda2_ray\n"
-            "python -u /dls/science/groups/i04-1/conor_dev/pandda_2_gemmi/pandda_gemmi/"
-            "analyse.py"
+            "/dls/science/groups/i04-1/software/pandda_2_gemmi/pandda2"
             " --data_dirs={0!s}".format(self.data_directory.replace("/*", ""))
             + " --out_dir={0!s}".format(self.panddas_directory)
             + ' --pdb_regex="{0!s}" '.format(self.pdb_style)
             + ' --mtz_regex="{0!s}" '.format(self.mtz_style)
-            + " --autobuild=True "
-            ' --global_processing="serial" '
-            " --local_cpus=6 "
-            ' --local_processing="ray" '
-            " --rank_method=autobuild "
-            ' --comparison_strategy="hybrid" '
-            " --min_characterisation_datasets=25 "
-            " {0!s} ".format(self.keyword_arguments)
-            + ' --debug=True --memory_availability="low"'
-            " | tee livelog_20220324_event_class_old_score\n"
+            + " --local_cpus=36 "
+            + " {0!s} ".format(self.keyword_arguments)
         )
 
         self.Logfile.insert(
@@ -1334,16 +1309,16 @@ class run_pandda_two_analyse(QtCore.QThread):
                 "pandda2",
                 "pandda2.sh",
                 self.xce_logfile,
-                memory=30 * 1024 * 1024 * 1024,
-                tasks=6,
+                memory=5 * 1024 * 1024 * 1024,
+                tasks=36,
             )
         elif self.external_software["qsub"]:
             sge.submit_cluster_job(
                 "pandda2",
                 "pandda2.sh",
                 self.xce_logfile,
-                memory="30G",
-                parallel_environment="smp 6",
+                memory="5G",
+                parallel_environment="smp 36",
                 outfile="log.out",
                 errfile="log.err",
             )
