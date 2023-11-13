@@ -38,13 +38,6 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             XChemToolTips.pandda_export_ligand_bound_models_only_disclaimer()
         )
 
-        # find all folders with *-pandda-model.pdb
-        modelsDict = self.find_modeled_structures_and_timestamps()
-
-        # if only NEW models shall be exported, check timestamps
-        if not self.which_models.startswith("all"):
-            modelsDict = self.find_new_models(modelsDict)
-
         # find pandda_inspect_events.csv and read in as pandas dataframe
         inspect_csv = None
         if os.path.isfile(
@@ -55,6 +48,13 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     self.PanDDA_directory, "analyses", "pandda_inspect_events.csv"
                 )
             )
+
+        # find all folders with *-pandda-model.pdb
+        modelsDict = self.find_modeled_structures_and_timestamps(inspect_csv)
+
+        # if only NEW models shall be exported, check timestamps
+        if not self.which_models.startswith("all"):
+            modelsDict = self.find_new_models(modelsDict)
 
         progress = 0
         try:
@@ -196,7 +196,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         for lig in ligandDict:
             self.Logfile.insert(lig + " -> coordinates " + str(ligandDict[lig]))
 
-    def find_modeled_structures_and_timestamps(self):
+    def find_modeled_structures_and_timestamps(self, pandda_inspect_table):
         self.Logfile.insert(
             "finding out modelled structures in " + self.PanDDA_directory
         )
@@ -213,6 +213,16 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             )
         ):
             sample = model[model.rfind("/") + 1 :].replace("-pandda-model.pdb", "")
+
+            # Check if dataset has a corresponding plausible event and skip if not
+            dtag_table = pandda_inspect_table[pandda_inspect_table['dtag'] == sample]
+            non_low_confidence_table = dtag_table[dtag_table['Ligand Confidence'] != "Low"]
+            if len(non_low_confidence_table) == 0:
+                self.Logfile.insert(
+                    sample + ' has no high confidence events. Skipping!'
+                )
+                continue
+
             timestamp = datetime.fromtimestamp(os.path.getmtime(model)).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
@@ -1319,8 +1329,6 @@ class run_pandda_two_analyse(QtCore.QThread):
                 self.xce_logfile,
                 memory="5G",
                 parallel_environment="smp 36",
-                outfile="log.out",
-                errfile="log.err",
             )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
