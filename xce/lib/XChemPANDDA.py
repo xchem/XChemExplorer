@@ -215,11 +215,13 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             sample = model[model.rfind("/") + 1 :].replace("-pandda-model.pdb", "")
 
             # Check if dataset has a corresponding plausible event and skip if not
-            dtag_table = pandda_inspect_table[pandda_inspect_table['dtag'] == sample]
-            non_low_confidence_table = dtag_table[dtag_table['Ligand Confidence'] != "Low"]
+            dtag_table = pandda_inspect_table[pandda_inspect_table["dtag"] == sample]
+            non_low_confidence_table = dtag_table[
+                dtag_table["Ligand Confidence"] != "Low"
+            ]
             if len(non_low_confidence_table) == 0:
                 self.Logfile.insert(
-                    sample + ' has no high confidence events. Skipping!'
+                    sample + " has no high confidence events. Skipping!"
                 )
                 continue
 
