@@ -2,6 +2,7 @@ import csv
 import glob
 import os
 from datetime import datetime
+import subprocess
 
 from PyQt4 import QtCore
 
@@ -217,12 +218,10 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
             # Check if dataset has a corresponding plausible event and skip if not
             dtag_table = pandda_inspect_table[pandda_inspect_table["dtag"] == sample]
             non_low_confidence_table = dtag_table[
-                dtag_table["Ligand Confidence"] != "Low"
+                dtag_table["Ligand Placed"] == True  # noqa: E712
             ]
             if len(non_low_confidence_table) == 0:
-                self.Logfile.insert(
-                    sample + " has no high confidence events. Skipping!"
-                )
+                self.Logfile.insert(sample + " has no fitted events. Skipping!")
                 continue
 
             timestamp = datetime.fromtimestamp(os.path.getmtime(model)).strftime(
@@ -499,7 +498,22 @@ class run_pandda_export(QtCore.QThread):
             "TWIN": "",
         }
 
+    def update_event_map_headers(self):
+        base = "/dls/science/groups/i04-1/software/update_event_map_headers"
+        script = (
+            "#!/bin/sh\n"
+            "{}/env/bin/python "
+            "{}/update_event_map_headers.py "
+            "{}".format(base, base, self.panddas_directory)
+        )
+        p = subprocess.Popen(
+            script, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+        )
+        stdout, stderr = p.communicate()
+
     def run(self):
+        self.update_event_map_headers()
+
         samples_to_export = self.export_models()
 
         self.import_samples_into_datasouce(samples_to_export)
@@ -809,6 +823,21 @@ class run_pandda_export(QtCore.QThread):
     def export_models(self):
         self.Logfile.insert("finding out which PanDDA models need to be exported")
 
+        # find pandda_inspect_events.csv and read in as pandas dataframe
+        inspect_csv = None
+        if os.path.isfile(
+            os.path.join(
+                self.panddas_directory,
+                "analyses",
+                "pandda_inspect_events.csv",
+            )
+        ):
+            inspect_csv = pandas.read_csv(
+                os.path.join(
+                    self.panddas_directory, "analyses", "pandda_inspect_events.csv"
+                )
+            )
+
         # first find which samples are in interesting datasets and have a model
         # and determine the timestamp
         fileModelsDict = {}
@@ -823,6 +852,26 @@ class run_pandda_export(QtCore.QThread):
             )
         ):
             sample = model[model.rfind("/") + 1 :].replace("-pandda-model.pdb", "")
+
+            # Check if there are non-low confidence models
+            sample_events = inspect_csv[inspect_csv["dtag"] == sample]
+            sample_high_conf_events = sample_events[
+                sample_events["Ligand Placed"] == True  # noqa: E712
+            ]
+            if len(sample_events) == 0:
+                self.Logfile.insert(
+                    "{}: Found {} fitted events! Not Exporting!".format(
+                        sample, len(sample_high_conf_events)
+                    )
+                )
+                continue
+            else:
+                self.Logfile.insert(
+                    "{}: Found {} fitted events! Exporting!".format(
+                        sample, len(sample_high_conf_events)
+                    )
+                )
+
             timestamp = datetime.fromtimestamp(os.path.getmtime(model)).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
