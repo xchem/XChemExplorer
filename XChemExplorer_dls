@@ -1,6 +1,6 @@
 #!/bin/bash
 
-module load buster/20211020
+module load buster/20240123
 module load phenix/1.20
 module load ccp4/7.1.018
 
