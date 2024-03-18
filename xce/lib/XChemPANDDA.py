@@ -858,7 +858,7 @@ class run_pandda_export(QtCore.QThread):
             sample_high_conf_events = sample_events[
                 sample_events["Ligand Placed"] == True  # noqa: E712
             ]
-            if len(sample_events) == 0:
+            if len(sample_high_conf_events) == 0:
                 self.Logfile.insert(
                     "{}: Found {} fitted events! Not Exporting!".format(
                         sample, len(sample_high_conf_events)
@@ -1340,6 +1340,45 @@ class run_pandda_two_analyse(QtCore.QThread):
 
         os.chdir(self.panddas_directory)
 
+        # Get the datasets to ignore
+        ignore = []
+        char = []
+        zmap = []
+
+        for i in range(0, self.pandda_analyse_data_table.rowCount()):
+            ignore_all_checkbox = self.pandda_analyse_data_table.cellWidget(i, 7)
+            ignore_characterisation_checkbox = (
+                self.pandda_analyse_data_table.cellWidget(i, 8)
+            )
+            ignore_zmap_checkbox = self.pandda_analyse_data_table.cellWidget(i, 9)
+
+            if ignore_all_checkbox.isChecked():
+                ignore.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
+            if ignore_characterisation_checkbox.isChecked():
+                char.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
+            if ignore_zmap_checkbox.isChecked():
+                zmap.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
+
+        def append_to_ignore_string(datasets_list, append_string):
+            if len(datasets_list) == 0:
+                append_string = ""
+            for i in range(0, len(datasets_list)):
+                if i < len(datasets_list) - 1:
+                    append_string += str(datasets_list[i] + ",")
+                else:
+                    append_string += str(datasets_list[i] + '"')
+            print(append_string)
+            return append_string
+
+        ignore_string = 'ignore_datasets="'
+        ignore_string = append_to_ignore_string(ignore, ignore_string)
+
+        char_string = 'exclude_from_characterisation="'
+        char_string = append_to_ignore_string(char, char_string)
+
+        zmap_string = 'exclude_from_z_map_analysis="'
+        zmap_string = append_to_ignore_string(zmap, zmap_string)
+
         cmd = (
             "#/bin/sh\n"
             "module load ccp4/7.1.018\n"
@@ -1351,7 +1390,10 @@ class run_pandda_two_analyse(QtCore.QThread):
             + " --out_dir={0!s}".format(self.panddas_directory)
             + ' --pdb_regex="{0!s}" '.format(self.pdb_style)
             + ' --mtz_regex="{0!s}" '.format(self.mtz_style)
-            + " --local_cpus=36 "
+            + " --local_cpus=36"
+            + " {}".format(ignore_string)
+            + " {}".format(char_string)
+            + " {}".format(zmap_string)
             + " {0!s} ".format(self.keyword_arguments)
         )
 
