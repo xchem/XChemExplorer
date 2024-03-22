@@ -786,6 +786,7 @@ def NCBI_taxonomy_ID():
         "11060": "Dengue Virus",
         "1968826": "West Nile Virus",
         "37124": "Chikungunya Virus",
+        "31704": "Coxsackievirus A16",
     }
 
     return taxonomy_dict
