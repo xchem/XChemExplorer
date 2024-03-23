@@ -376,9 +376,9 @@ class update_depositTable(QtCore.QThread):
         dls_beamlines = ["i02", "i03", "i04", "i04-1", "i23", "i24"]
         dls_beamline_dict = {
             "i02": ["DIAMOND BEAMLINE I02", "DECTRIS PILATUS 6M"],
-            "i03": ["DIAMOND BEAMLINE I03", "DECTRIS PILATUS 6M"],
-            "i04": ["DIAMOND BEAMLINE I04", "DECTRIS PILATUS 6M"],
-            "i04-1": ["DIAMOND BEAMLINE I04-1", "DECTRIS PILATUS 6M"],
+            "i03": ["DIAMOND BEAMLINE I03", "DECTRIS EIGER2 XE 16M"],
+            "i04": ["DIAMOND BEAMLINE I04", "DECTRIS EIGER2 XE 16M"],
+            "i04-1": ["DIAMOND BEAMLINE I04-1", "DECTRIS EIGER2 XE 9M"],
             "i23": ["DIAMOND BEAMLINE I23", "DECTRIS PILATUS 12M"],
             "i24": ["DIAMOND BEAMLINE I24", "DECTRIS PILATUS 6M"],
         }
@@ -565,9 +565,9 @@ class prepare_mmcif_files_for_deposition(QtCore.QThread):
         dls_beamlines = ["i02", "i03", "i04", "i04-1", "i23", "i24"]
         dls_beamline_dict = {
             "i02": ["DIAMOND BEAMLINE I02", "DECTRIS PILATUS 6M"],
-            "i03": ["DIAMOND BEAMLINE I03", "DECTRIS PILATUS 6M"],
-            "i04": ["DIAMOND BEAMLINE I04", "DECTRIS PILATUS 6M"],
-            "i04-1": ["DIAMOND BEAMLINE I04-1", "DECTRIS PILATUS 6M"],
+            "i03": ["DIAMOND BEAMLINE I03", "DECTRIS EIGER2 XE 16M"],
+            "i04": ["DIAMOND BEAMLINE I04", "DECTRIS EIGER2 XE 16M"],
+            "i04-1": ["DIAMOND BEAMLINE I04-1", "DECTRIS EIGER2 XE 9M"],
             "i23": ["DIAMOND BEAMLINE I23", "DECTRIS PILATUS 12M"],
             "i24": ["DIAMOND BEAMLINE I24", "DECTRIS PILATUS 6M"],
         }
