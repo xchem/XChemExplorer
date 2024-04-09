@@ -1360,13 +1360,7 @@ class run_pandda_two_analyse(QtCore.QThread):
                 zmap.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
 
         def append_to_ignore_string(datasets_list, append_string):
-            if len(datasets_list) == 0:
-                append_string = ""
-            for i in range(0, len(datasets_list)):
-                if i < len(datasets_list) - 1:
-                    append_string += str(datasets_list[i] + ",")
-                else:
-                    append_string += str(datasets_list[i] + '"')
+            append_string = '{}"'.format(','.join([append_string, *datasets_list]))
             print(append_string)
             return append_string
 
