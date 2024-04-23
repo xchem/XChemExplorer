@@ -1384,7 +1384,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             "#/bin/sh\n"
             "module load ccp4/7.1.018\n"
             "module load phenix/1.20\n"
-            "module load buster/20211020\n"
+            "module load buster/20240123\n"
             'export PYTHONPATH=""\n'
             "/dls/science/groups/i04-1/software/pandda_2_gemmi/pandda2"
             " --data_dirs={0!s}".format(self.data_directory.replace("/*", ""))
