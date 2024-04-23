@@ -1042,7 +1042,7 @@ class fit_ligands(QtCore.QThread):
         module = ""
         if os.path.isdir("/dls"):
             module = "module load phenix/1.20\n"
-            module += "module load buster/20211020\n"
+            module += "module load buster/20240123\n"
 
         cmd = (
             'export XChemExplorer_DIR="' + os.getenv("XChemExplorer_DIR") + '"\n'
@@ -1399,7 +1399,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "module load global/cluster\n"
             "module load phenix/1.20\n"
-            "module load buster/20211020\n"
+            "module load buster/20240123\n"
             "\n" + ccp4_scratch + "\n"
             "$CCP4/bin/ccp4-python"
             " $XChemExplorer_DIR/xce/helpers/update_status_flag.py %s %s %s %s\n"
@@ -1494,7 +1494,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             ccp4_scratch = ""
 
         if os.path.isdir("/dls"):
-            ccp4_scratch += "module load buster/20211020\n"
+            ccp4_scratch += "module load buster/20240123\n"
             ccp4_scratch += "module load ccp4/7.1.018\n"
 
         if os.path.isfile(ref_mtz):
@@ -1509,7 +1509,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "module load global/cluster\n"
             "module load phenix/1.20\n"
-            "module load buster/20211020\n"
+            "module load buster/20240123\n"
             "\n" + ccp4_scratch + "\n"
             "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " %s %s %s %s\n"
@@ -1682,7 +1682,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + "\n"
             "module load global/cluster\n"
             "module load phenix/1.20\n"
-            "module load buster/20211020\n"
+            "module load buster/20240123\n"
             "\n" + ccp4_scratch + "\n"
             "$CCP4/bin/ccp4-python $XChemExplorer_DIR/xce/helpers/update_status_flag.py"
             " %s %s %s %s\n"
@@ -2135,7 +2135,7 @@ class start_pandda_inspect(QtCore.QThread):
         Cmds = (
             "#!" + os.getenv("SHELL") + "\n"
             "unset PYTHONPATH\n"
-            "module load buster/20211020\n"
+            "module load buster/20240123\n"
             "source /dls/science/groups/i04-1/software/pandda_0.2.12"
             "/ccp4/ccp4-7.0/bin/ccp4.setup-sh\n"
             "cd " + self.panddas_directory + "\n"
