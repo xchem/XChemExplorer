@@ -1368,7 +1368,6 @@ class run_pandda_two_analyse(QtCore.QThread):
                     + datasets_list
                 )
             )
-            print(append_string)
             return append_string
 
         ignore_string = 'ignore_datasets="'
@@ -1389,14 +1388,17 @@ class run_pandda_two_analyse(QtCore.QThread):
             "/dls/science/groups/i04-1/software/pandda_2_gemmi/pandda2"
             " --data_dirs={0!s}".format(self.data_directory.replace("/*", ""))
             + " --out_dir={0!s}".format(self.panddas_directory)
-            + ' --pdb_regex="{0!s}" '.format(self.pdb_style)
-            + ' --mtz_regex="{0!s}" '.format(self.mtz_style)
+            + ' --pdb_regex="{0!s}"'.format(self.pdb_style)
+            + ' --mtz_regex="{0!s}"'.format(self.mtz_style)
             + " --local_cpus=36"
-            + " {}".format(ignore_string)
-            + " {}".format(char_string)
-            + " {}".format(zmap_string)
-            + " {0!s} ".format(self.keyword_arguments)
+            + " {0!s}".format(self.keyword_arguments)
         )
+        if len(ignore) > 0:
+            cmd = cmd + " {}".format(ignore_string)
+        if len(char_string) > 0:
+            cmd = cmd + " {}".format(char_string)
+        if len(zmap_string) > 0:
+            cmd = cmd + " {}".format(zmap_string)
 
         self.Logfile.insert(
             "running pandda.analyse with the following command:\n" + cmd
