@@ -1395,9 +1395,9 @@ class run_pandda_two_analyse(QtCore.QThread):
         )
         if len(ignore) > 0:
             cmd = cmd + " {}".format(ignore_string)
-        if len(char_string) > 0:
+        if len(char) > 0:
             cmd = cmd + " {}".format(char_string)
-        if len(zmap_string) > 0:
+        if len(zmap) > 0:
             cmd = cmd + " {}".format(zmap_string)
 
         self.Logfile.insert(
