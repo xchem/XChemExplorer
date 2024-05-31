@@ -6,6 +6,7 @@
 	},
 	"remoteEnv": {
 		"XChemExplorer_DIR": "${localWorkspaceFolder}",
+		"SLURM_USER": "${localEnv:USER",
 		"DISPLAY": "${localEnv:DISPLAY}"
 	},
 	"customizations": {

@@ -2,22 +2,60 @@ import os
 import ssl
 import json
 import httplib
+import paramiko
+import time
+import traceback
+from PyQt4 import QtGui
 from datetime import datetime
 from xce.lib.XChemLog import updateLog
 from uuid import uuid4
 
-CLUSTER_USER = os.getlogin()
-CLUSTER_TOKEN = os.environ.get("SLURM_JWT", "")
+CLUSTER_BASTION = "wilson.diamond.ac.uk"
+CLUSTER_USER = os.environ.get("CLUSTER_USER", os.getlogin())
 CLUSTER_HOST = "slurm-rest.diamond.ac.uk"
 CLUSTER_PORT = 8443
 CLUSTER_PARTITION = "cs04r"
 CLUSTER_ACCOUNT = "labxchem"
 
-HEADERS = {
-    "Content-Type": "application/json",
-    "X-SLURM-USER-NAME": CLUSTER_USER,
-    "X-SLURM-USER-TOKEN": CLUSTER_TOKEN,
-}
+
+def construct_headers():
+    return {
+        "Content-Type": "application/json",
+        "X-SLURM-USER-NAME": CLUSTER_USER,
+        "X-SLURM-USER-TOKEN": get_token(),
+    }
+
+
+TOKEN = None
+TOKEN_EXPIRY = None
+
+
+def get_token(error=None):
+    global TOKEN
+    global TOKEN_EXPIRY
+
+    if TOKEN is None or TOKEN_EXPIRY is None or TOKEN_EXPIRY < time.clock() + 60:
+        password_prompt = error + "\n" + "Password:" if error else "Password:"
+        password, ok = QtGui.QInputDialog.getText(
+            None, "SLURM Authentication", password_prompt
+        )
+        if not ok:
+            return None
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.load_system_host_keys()
+        try:
+            ssh.connect(CLUSTER_BASTION, username=CLUSTER_USER, password=str(password))
+        except paramiko.AuthenticationException:
+            print(traceback.format_exc())
+            return get_token(error="SSH Authentication Failed")
+        stdin, stdout, stderr = ssh.exec_command("scontrol token lifespan=3600")
+        if stdout.channel.recv_exit_status() != 0:
+            return get_token(error="Token Acquisition Failed")
+        TOKEN = stdout.next().split("=")[1]
+        TOKEN_EXPIRY = time.clock() + 3600
+    return TOKEN
 
 
 def submit_cluster_job(
@@ -53,7 +91,9 @@ def submit_cluster_job(
     connection = httplib.HTTPSConnection(
         CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
     )
-    connection.request("POST", "/slurm/v0.0.38/job/submit", body=body, headers=HEADERS)
+    connection.request(
+        "POST", "/slurm/v0.0.38/job/submit", body=body, headers=construct_headers()
+    )
     response = connection.getresponse().read()
     logfile.insert("Got response: {}".format(response))
 
@@ -64,7 +104,7 @@ def query_running_jobs(xce_logfile):
         CLUSTER_PORT,
         context=ssl._create_unverified_context(),
     )
-    connection.request("GET", "/slurm/v0.0.38/jobs", headers=HEADERS)
+    connection.request("GET", "/slurm/v0.0.38/jobs", headers=construct_headers())
     response = connection.getresponse()
     response_body = response.read()
 
