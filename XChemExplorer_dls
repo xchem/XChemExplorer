@@ -5,6 +5,7 @@ module load phenix/1.20
 module load ccp4/7.1.018
 
 export BDG_TOOL_MOGUL="/dls_sw/apps/ccdc/CSD_2020/bin/mogul"
-export XChemExplorer_DIR="/dls_sw/i04-1/software/XChemExplorer"
+export XChemExplorer_DIR=$(readlink -e $0 | xargs dirname)
 
-ccp4-python /dls_sw/i04-1/software/XChemExplorer/dls_launch.py
+
+ccp4-python $XChemExplorer_DIR/dls_launch.py
