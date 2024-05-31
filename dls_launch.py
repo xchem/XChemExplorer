@@ -1,7 +1,11 @@
+import os
 import sys
 
 if __name__ == "__main__":
-    sys.path.insert(0, "/dls_sw/i04-1/software/XChemExplorer/dist/xce-1.5.0-py2.7.egg")
+    dir_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), "dist", "xce-1.5.0-py2.7.egg"
+    )
+    sys.path.insert(0, dir_path)
     from xce.XChemExplorer import XChemExplorer
 
     XChemExplorer(sys.argv[1:])
