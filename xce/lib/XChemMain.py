@@ -5,7 +5,7 @@ from datetime import datetime
 
 from xce.lib import XChemDB
 from xce.lib import XChemLog
-from xce.lib.cluster import sge, slurm
+from xce.lib.cluster import slurm
 
 
 def space_group_list():
@@ -137,10 +137,7 @@ def get_jobs_running_on_cluster(external_software, xce_logfile):
     xia2_jobs = []
     others_jobs = []
 
-    if external_software["slurm"]:
-        running_jobs = slurm.query_running_jobs(xce_logfile)
-    elif external_software["qsub"]:
-        running_jobs = sge.query_running_jobs()
+    running_jobs = slurm.query_running_jobs(xce_logfile)
 
     for job_id, job_name, job_status, run_time in running_jobs:
         run_time_minutes = int(run_time.total_seconds() / 60)

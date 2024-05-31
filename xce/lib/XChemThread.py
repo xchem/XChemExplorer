@@ -11,7 +11,7 @@ from xce.lib import XChemDB
 from xce.lib import XChemLog
 from xce.lib import XChemMain
 from xce.lib import XChemUtils
-from xce.lib.cluster import sge, slurm
+from xce.lib.cluster import slurm
 from iotbx.reflection_file_reader import any_reflection_file
 
 
@@ -954,45 +954,16 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
-            if self.external_software["slurm"]:
-                Cmds = "./xce_%s_$SLURM_ARRAY_TASK_ID.sh\n" % self.restraints_program
-                f = open("%s_master.sh" % self.restraints_program, "w")
-                f.write(Cmds)
-                f.close()
-                slurm.submit_cluster_job(
-                    str(self.restraints_program),
-                    "{!s}_master.sh".format(self.restraints_program),
-                    self.xce_logfile,
-                    array="0-{}".format(counter),
-                )
-            if self.external_software["qsub"]:
-                Cmds = "./xce_%s_$SGE_TASK_ID.sh\n" % self.restraints_program
-                f = open("%s_master.sh" % self.restraints_program, "w")
-                f.write(Cmds)
-                f.close()
-                sge.submit_cluster_job(
-                    str(self.restraints_program),
-                    "{!s}_master.sh".format(self.restraints_program),
-                    self.xce_logfile,
-                    tasks="1:{!s}".format(counter - 1),
-                    concurrent=str(self.max_queue_jobs),
-                )
-            else:
-                self.Logfile.insert(
-                    "running %s consecutive %s jobs on your local machine"
-                    % (str(counter), self.restraints_program)
-                )
-                for i in range(counter):
-                    self.Logfile.insert(
-                        "starting xce_{0!s}_{1!s}.sh".format(
-                            self.restraints_program, (str(i + 1))
-                        )
-                    )
-                    os.system(
-                        "./xce_{0!s}_{1!s}.sh".format(
-                            self.restraints_program, (str(i + 1))
-                        )
-                    )
+            Cmds = "./xce_%s_$SLURM_ARRAY_TASK_ID.sh\n" % self.restraints_program
+            f = open("%s_master.sh" % self.restraints_program, "w")
+            f.write(Cmds)
+            f.close()
+            slurm.submit_cluster_job(
+                str(self.restraints_program),
+                "{!s}_master.sh".format(self.restraints_program),
+                self.xce_logfile,
+                array="0-{}".format(counter),
+            )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
 
@@ -1139,39 +1110,16 @@ class fit_ligands(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if self.external_software["slurm"]:
-            Cmds = "./xce_autofit_ligand_$SLURM_ARRAY_TASK_ID.sh\n"
-            f = open("autofit_ligand_master.sh", "w")
-            f.write(Cmds)
-            f.close()
-            slurm.submit_cluster_job(
-                "xce_autofit_ligand_master",
-                "autofit_ligand_master.sh",
-                self.xce_logfile,
-                array="1-{!s}".format(self.n - 1),
-            )
-        elif self.external_software["qsub"]:
-            Cmds = "./xce_autofit_ligand_$SGE_TASK_ID.sh\n"
-            f = open("autofit_ligand_master.sh", "w")
-            f.write(Cmds)
-            f.close()
-            sge.submit_cluster_job(
-                "xce_autofit_ligand_master",
-                "autofit_ligand_master.sh",
-                self.xce_logfile,
-                tasks="1:{!s}".format(self.n - 1),
-                concurrent=str(self.max_queue_jobs),
-            )
-        else:
-            self.Logfile.insert(
-                "running {0!s} consecutive autofit_ligand jobs on your"
-                " local machine".format(str(self.n - 1))
-            )
-            for i in range(1, self.n + 1):
-                self.Logfile.insert(
-                    "starting xce_autofit_ligand_{0!s}.sh".format(str(i))
-                )
-                os.system("./xce_autofit_ligand_{0!s}.sh".format(str(i)))
+        Cmds = "./xce_autofit_ligand_$SLURM_ARRAY_TASK_ID.sh\n"
+        f = open("autofit_ligand_master.sh", "w")
+        f.write(Cmds)
+        f.close()
+        slurm.submit_cluster_job(
+            "xce_autofit_ligand_master",
+            "autofit_ligand_master.sh",
+            self.xce_logfile,
+            array="1-{!s}".format(self.n - 1),
+        )
 
 
 class merge_cif_files(QtCore.QThread):
@@ -1793,46 +1741,16 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        if self.external_software["slurm"]:
-            Cmds = "./xce_{!s}{!s}_$SLURM_ARRAY_TASK_ID.sh\n".format(
-                self.pipeline, twin
-            )
-            f = open("{!s}{!s}_master.sh".format(self.pipeline, twin), "w")
-            f.write(Cmds)
-            f.close()
-            slurm.submit_cluster_job(
-                "xce_{!s}{!s}_master".format(self.pipeline, twin),
-                "{!s}{!s}_master.sh".format(self.pipeline, twin),
-                self.xce_logfile,
-                array="1-{!s}".format(self.n - 1),
-            )
-        elif self.external_software["qsub"]:
-            Cmds = "./xce_{0!s}{1!s}_$SGE_TASK_ID.sh\n".format(self.pipeline, twin)
-            f = open("{0!s}{1!s}_master.sh".format(self.pipeline, twin), "w")
-            f.write(Cmds)
-            f.close()
-            sge.submit_cluster_job(
-                "xce_{!s}{!s}_master".format(self.pipeline, twin),
-                "{!s}{!s}_master.sh".format(self.pipeline, twin),
-                self.xce_logfile,
-                tasks="1:{!s}".format(self.n - 1),
-                concurrent=str(self.max_queue_jobs),
-            )
-        else:
-            self.Logfile.insert(
-                "running {0!s} consecutive {1!s} jobs on your local machine".format(
-                    str(self.n - 1), self.pipeline
-                )
-            )
-            for i in range(1, self.n):
-                self.Logfile.insert(
-                    "starting xce_{0!s}{1!s}_{2!s}.sh".format(
-                        self.pipeline, twin, str(i)
-                    )
-                )
-                os.system(
-                    "./xce_{0!s}{1!s}_{2!s}.sh".format(self.pipeline, twin, str(i))
-                )
+        Cmds = "./xce_{!s}{!s}_$SLURM_ARRAY_TASK_ID.sh\n".format(self.pipeline, twin)
+        f = open("{!s}{!s}_master.sh".format(self.pipeline, twin), "w")
+        f.write(Cmds)
+        f.close()
+        slurm.submit_cluster_job(
+            "xce_{!s}{!s}_master".format(self.pipeline, twin),
+            "{!s}{!s}_master.sh".format(self.pipeline, twin),
+            self.xce_logfile,
+            array="1-{!s}".format(self.n - 1),
+        )
 
 
 class remove_selected_dimple_files(QtCore.QThread):
