@@ -3667,18 +3667,6 @@ class XChemExplorer(QtGui.QApplication):
             self.update_log.insert(
                 "preparing to run {0!s} DIMPLE jobs".format(len(job_list))
             )
-            if self.external_software["qsub"]:
-                self.update_log.insert(
-                    "we will be running an ARRAY job on the DLS computer cluster"
-                )
-                self.update_log.insert(
-                    "please note that the maximum number of jobs that will be running"
-                    " at once is {0!s}".format(self.max_queue_jobs)
-                )
-                self.update_log.insert(
-                    "you can change this in the PREFERENCES menu, but be warned that to"
-                    " high a number might break the cluster!"
-                )
             self.update_log.insert("preparing input files for DIMPLE...")
             self.work_thread = XChemThread.run_dimple_on_all_autoprocessing_files_new(
                 job_list,
@@ -4424,19 +4412,6 @@ class XChemExplorer(QtGui.QApplication):
                 + str(len(compound_list))
                 + " compounds using ACEDRG..."
             )
-            if self.external_software["qsub"]:
-                self.update_log.insert(
-                    "will try sending "
-                    + str(len(compound_list))
-                    + " jobs to your computer cluster!"
-                )
-            else:
-                self.update_log.insert(
-                    "apparently no cluster available, so will run "
-                    + str(len(compound_list))
-                    + " sequential jobs on one core of your local machine."
-                )
-                self.update_log.insert("this could take a while...")
             self.explorer_active = 1
             self.work_thread = XChemThread.create_png_and_cif_of_compound(
                 self.external_software,
@@ -4493,19 +4468,6 @@ class XChemExplorer(QtGui.QApplication):
                 + str(len(compound_list))
                 + " compounds..."
             )
-            if self.external_software["qsub"]:
-                self.update_log.insert(
-                    "will try sending "
-                    + str(len(compound_list))
-                    + " jobs to your computer cluster!"
-                )
-            else:
-                self.update_log.insert(
-                    "apparently no cluster available, so will run "
-                    + str(len(compound_list))
-                    + " sequential jobs on one core of your local machine."
-                )
-                self.update_log.insert("this could take a while...")
             self.explorer_active = 1
             self.work_thread = XChemThread.fit_ligands(
                 self.external_software,

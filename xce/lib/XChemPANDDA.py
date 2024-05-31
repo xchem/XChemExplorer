@@ -11,7 +11,7 @@ from xce.lib import XChemLog
 from xce.lib import XChemRefine
 from xce.lib import XChemToolTips
 from xce.lib import XChemUtils
-from xce.lib.cluster import sge, slurm
+from xce.lib.cluster import slurm
 
 try:
     import gemmi
@@ -1283,21 +1283,13 @@ class run_pandda_analyse(QtCore.QThread):
                 self.Logfile.insert("running PANDDA on local machine")
                 os.system("chmod +x pandda.sh")
                 os.system("./pandda.sh &")
-            elif self.external_software["slurm"]:
+            else:
                 slurm.submit_cluster_job(
                     "pandda",
                     "pannda.sh",
                     self.xce_logfile,
                     exclusive=True,
                     memory=100 * 1024 * 1024 * 1024,
-                )
-            elif self.external_software["qsub"]:
-                sge.submit_cluster_job(
-                    "pandda",
-                    "pandda.sh",
-                    self.xce_logfile,
-                    exclusive=True,
-                    memory="100G",
                 )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
@@ -1410,22 +1402,13 @@ class run_pandda_two_analyse(QtCore.QThread):
 
         self.Logfile.warning("ignoring selected submission option")
 
-        if self.external_software["slurm"]:
-            slurm.submit_cluster_job(
-                "pandda2",
-                "pandda2.sh",
-                self.xce_logfile,
-                memory=5 * 1024 * 1024 * 1024,
-                tasks=36,
-            )
-        elif self.external_software["qsub"]:
-            sge.submit_cluster_job(
-                "pandda2",
-                "pandda2.sh",
-                self.xce_logfile,
-                memory="5G",
-                parallel_environment="smp 36",
-            )
+        slurm.submit_cluster_job(
+            "pandda2",
+            "pandda2.sh",
+            self.xce_logfile,
+            memory=5 * 1024 * 1024 * 1024,
+            tasks=36,
+        )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
 

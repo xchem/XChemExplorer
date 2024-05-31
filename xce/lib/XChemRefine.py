@@ -8,7 +8,7 @@ import pygtk
 
 from xce.lib import XChemLog
 from xce.lib import XChemUtils
-from xce.lib.cluster import sge, slurm
+from xce.lib.cluster import slurm
 
 pygtk.require("2.0")
 
@@ -695,18 +695,9 @@ class Refine(object):
 
     def run_script(self, program, external_software, Serial, xce_logfile):
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
-        if external_software["slurm"]:
-            slurm.submit_cluster_job(
-                "xce_{!s}".format(program), "{!s}.sh".format(program), xce_logfile
-            )
-        elif external_software["qsub"]:
-            sge.submit_cluster_job(
-                "xce_{!s}".format(program), "{!s}.sh".format(program), xce_logfile
-            )
-        else:
-            self.Logfile.insert("starting refinement with command: ./%s.sh &" % program)
-            os.system("chmod +x %s.sh" % program)
-            os.system("./%s.sh &" % program)
+        slurm.submit_cluster_job(
+            "xce_{!s}".format(program), "{!s}.sh".format(program), xce_logfile
+        )
 
     def RunBuster(
         self, Serial, RefmacParams, external_software, xce_logfile, covLinkAtomSpec
@@ -1184,15 +1175,7 @@ class Refine(object):
             % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
         )
 
-        if external_software["slurm"]:
-            slurm.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
-        elif external_software["qsub"]:
-            sge.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
-        else:
-            os.system("chmod +x refmac.csh")
-            if os.path.isfile(xce_logfile):
-                Logfile.insert("starting refinement on local machine")
-            os.system("./refmac.csh &")
+        slurm.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile)
 
     def RefinementParams(self, RefmacParams):
         self.RefmacParams = RefmacParams
@@ -2157,15 +2140,7 @@ class panddaRefine(object):
             )
         )
 
-        if external_software["slurm"]:
-            slurm.submit_cluster_job("refmac", "refmac.csh", xce_logfile)
-        elif external_software["qsub"]:
-            sge.submit_cluster_job("refmac", "refmac.csh", xce_logfile)
-        else:
-            Logfile.insert("changing permission of refmac.csh: chmod +x refmac.csh")
-            os.system("chmod +x refmac.csh")
-            Logfile.insert("starting refinement on local machine")
-            os.system("./refmac.csh &")
+        slurm.submit_cluster_job("refmac", "refmac.csh", xce_logfile)
 
     def RefinementParams(self, RefmacParams):
         self.RefmacParams = RefmacParams
