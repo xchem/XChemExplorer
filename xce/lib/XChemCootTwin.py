@@ -12,6 +12,7 @@ from xce.lib import XChemDB
 from xce.lib import XChemLog
 from xce.lib import XChemRefine
 from xce.lib import XChemUtils
+from xce.lib.cluster.slurm import get_token
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
@@ -1370,6 +1371,7 @@ class GUI(object):
                 self.external_software,
                 self.xce_logfile,
                 self.covLinkAtomSpec,
+                get_token(),
             )
         self.index += 1
         if self.index >= len(self.Todo):
