@@ -27,7 +27,7 @@ def get_token(error=None):
     if TOKEN is None or TOKEN_EXPIRY is None or TOKEN_EXPIRY < time.clock() + 60:
         password_prompt = error + "\n" + "Password:" if error else "Password:"
         password, ok = QtGui.QInputDialog.getText(
-            None, "SLURM Authentication", password_prompt
+            None, "SLURM Authentication", password_prompt, mode=QtGui.QLineEdit.Password
         )
         if not ok:
             return None
