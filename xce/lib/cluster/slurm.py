@@ -14,8 +14,7 @@ CLUSTER_BASTION = "wilson.diamond.ac.uk"
 CLUSTER_USER = os.environ.get("CLUSTER_USER", os.getlogin())
 CLUSTER_HOST = "slurm-rest.diamond.ac.uk"
 CLUSTER_PORT = 8443
-CLUSTER_PARTITION = "cs04r"
-CLUSTER_ACCOUNT = "labxchem"
+CLUSTER_PARTITION = "cs05r"
 
 TOKEN = None
 TOKEN_EXPIRY = None
@@ -67,7 +66,7 @@ def submit_cluster_job(
         job=dict(
             partition=CLUSTER_PARTITION,
             name=str(name),
-            account=CLUSTER_ACCOUNT,
+            account=CLUSTER_USER,
             environment=dict(PLACE="HOLDER"),
             standard_output=os.path.join(os.getcwd(), "{}.stdout".format(name)),
             standard_error=os.path.join(os.getcwd(), "{}.stderr".format(name)),
