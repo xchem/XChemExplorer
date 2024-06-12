@@ -17,15 +17,6 @@ CLUSTER_PORT = 8443
 CLUSTER_PARTITION = "cs04r"
 CLUSTER_ACCOUNT = "labxchem"
 
-
-def construct_headers():
-    return {
-        "Content-Type": "application/json",
-        "X-SLURM-USER-NAME": CLUSTER_USER,
-        "X-SLURM-USER-TOKEN": get_token(),
-    }
-
-
 TOKEN = None
 TOKEN_EXPIRY = None
 
@@ -58,8 +49,16 @@ def get_token(error=None):
     return TOKEN
 
 
+def construct_headers(token):
+    return {
+        "Content-Type": "application/json",
+        "X-SLURM-USER-NAME": CLUSTER_USER,
+        "X-SLURM-USER-TOKEN": token,
+    }
+
+
 def submit_cluster_job(
-    name, file, xce_logfile, array=None, exclusive=False, memory=None, tasks=None
+    name, file, xce_logfile, token, array=None, exclusive=False, memory=None, tasks=None
 ):
     with open(file) as script_file:
         script = "\n".join(script_file.readlines())
@@ -92,19 +91,19 @@ def submit_cluster_job(
         CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
     )
     connection.request(
-        "POST", "/slurm/v0.0.38/job/submit", body=body, headers=construct_headers()
+        "POST", "/slurm/v0.0.38/job/submit", body=body, headers=construct_headers(token)
     )
     response = connection.getresponse().read()
     logfile.insert("Got response: {}".format(response))
 
 
-def query_running_jobs(xce_logfile):
+def query_running_jobs(xce_logfile, token):
     connection = httplib.HTTPSConnection(
         CLUSTER_HOST,
         CLUSTER_PORT,
         context=ssl._create_unverified_context(),
     )
-    connection.request("GET", "/slurm/v0.0.38/jobs", headers=construct_headers())
+    connection.request("GET", "/slurm/v0.0.38/jobs", headers=construct_headers(token))
     response = connection.getresponse()
     response_body = response.read()
 

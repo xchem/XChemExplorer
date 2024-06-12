@@ -22,7 +22,13 @@ except ImportError:
 
 class export_and_refine_ligand_bound_models(QtCore.QThread):
     def __init__(
-        self, PanDDA_directory, datasource, project_directory, xce_logfile, which_models
+        self,
+        PanDDA_directory,
+        datasource,
+        project_directory,
+        xce_logfile,
+        which_models,
+        slurm_token,
     ):
         QtCore.QThread.__init__(self)
         self.PanDDA_directory = PanDDA_directory
@@ -32,6 +38,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.xce_logfile = xce_logfile
         self.project_directory = project_directory
         self.which_models = which_models
+        self.slurm_token = slurm_token
         self.external_software = XChemUtils.external_software(xce_logfile).check()
 
     def run(self):
@@ -442,6 +449,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     RefmacParams,
                     self.external_software,
                     self.xce_logfile,
+                    self.slurm_token,
                     None,
                 )
             else:
@@ -466,6 +474,7 @@ class run_pandda_export(QtCore.QThread):
         xce_logfile,
         which_models,
         pandda_params,
+        slurm_token
     ):
         QtCore.QThread.__init__(self)
         self.panddas_directory = panddas_directory
@@ -479,6 +488,7 @@ class run_pandda_export(QtCore.QThread):
         self.which_models = which_models
         self.already_exported_models = []
         self.pandda_analyse_data_table = pandda_params["pandda_table"]
+        self.slurm_token = slurm_token
 
         self.RefmacParams = {
             "HKLIN": "",
@@ -609,6 +619,7 @@ class run_pandda_export(QtCore.QThread):
                         self.xce_logfile,
                         "pandda_refmac",
                         None,
+                        self.slurm_token
                     )
                 else:
                     self.Logfile.error(
@@ -1019,12 +1030,15 @@ class run_pandda_export(QtCore.QThread):
 
 
 class run_pandda_analyse(QtCore.QThread):
-    def __init__(self, pandda_params, xce_logfile, datasource, external_software):
+    def __init__(
+        self, pandda_params, xce_logfile, datasource, external_software, slurm_token
+    ):
         QtCore.QThread.__init__(self)
         self.data_directory = pandda_params["data_dir"]
         self.panddas_directory = pandda_params["out_dir"]
         self.submit_mode = pandda_params["submit_mode"]
         self.external_software = external_software
+        self.slurm_token = slurm_token
 
         self.pandda_analyse_data_table = pandda_params["pandda_table"]
         self.nproc = pandda_params["nproc"]
@@ -1288,6 +1302,7 @@ class run_pandda_analyse(QtCore.QThread):
                     "pandda",
                     "pannda.sh",
                     self.xce_logfile,
+                    self.slurm_token,
                     exclusive=True,
                     memory=100 * 1024 * 1024 * 1024,
                 )
@@ -1296,12 +1311,15 @@ class run_pandda_analyse(QtCore.QThread):
 
 
 class run_pandda_two_analyse(QtCore.QThread):
-    def __init__(self, pandda_params, xce_logfile, datasource, external_software):
+    def __init__(
+        self, pandda_params, xce_logfile, datasource, external_software, slurm_token
+    ):
         QtCore.QThread.__init__(self)
         self.data_directory = pandda_params["data_dir"]
         self.panddas_directory = pandda_params["out_dir"]
         self.submit_mode = pandda_params["submit_mode"]
         self.external_software = external_software
+        self.slurm_token = slurm_token
 
         self.pandda_analyse_data_table = pandda_params["pandda_table"]
         self.nproc = pandda_params["nproc"]
@@ -1406,6 +1424,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             "pandda2",
             "pandda2.sh",
             self.xce_logfile,
+            self.slurm_token,
             memory=5 * 1024 * 1024 * 1024,
             tasks=36,
         )

@@ -777,6 +777,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         xce_logfile,
         max_queue_jobs,
         restraints_program,
+        slurm_token
     ):
         QtCore.QThread.__init__(self)
         self.external_software = external_software
@@ -793,6 +794,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
             os.path.join(self.database_directory, self.data_source_file)
         )
         self.restraints_program = restraints_program
+        self.slurm_token = slurm_token
 
     def run(self):
         # first remove all ACEDRG input scripts in ccp4_scratch directory
@@ -962,6 +964,7 @@ class create_png_and_cif_of_compound(QtCore.QThread):
                 str(self.restraints_program),
                 "{!s}_master.sh".format(self.restraints_program),
                 self.xce_logfile,
+                self.slurm_token,
                 array="0-{}".format(counter),
             )
 
@@ -979,6 +982,7 @@ class fit_ligands(QtCore.QThread):
         ccp4_scratch_directory,
         xce_logfile,
         max_queue_jobs,
+        slurm_token,
     ):
         QtCore.QThread.__init__(self)
         self.external_software = external_software
@@ -990,6 +994,7 @@ class fit_ligands(QtCore.QThread):
         self.xce_logfile = xce_logfile
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.max_queue_jobs = max_queue_jobs
+        self.slurm_token = slurm_token
         self.db = XChemDB.data_source(
             os.path.join(self.database_directory, self.data_source_file)
         )
@@ -1118,6 +1123,7 @@ class fit_ligands(QtCore.QThread):
             "xce_autofit_ligand_master",
             "autofit_ligand_master.sh",
             self.xce_logfile,
+            self.slurm_token,
             array="1-{!s}".format(self.n - 1),
         )
 
@@ -1240,6 +1246,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         xce_logfile,
         dimple_twin_mode,
         pipeline,
+        slurm_token
     ):
         QtCore.QThread.__init__(self)
         self.sample_list = sample_list
@@ -1256,6 +1263,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         self.Logfile = XChemLog.updateLog(xce_logfile)
         self.pipeline = pipeline
         self.dimple_twin_mode = dimple_twin_mode
+        self.slurm_token = slurm_token
 
         self.n = 1
 
@@ -1749,6 +1757,7 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             "xce_{!s}{!s}_master".format(self.pipeline, twin),
             "{!s}{!s}_master.sh".format(self.pipeline, twin),
             self.xce_logfile,
+            self.slurm_token,
             array="1-{!s}".format(self.n - 1),
         )
 

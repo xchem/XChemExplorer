@@ -12,6 +12,7 @@ from xce.lib import coot_utils_XChem
 from xce.lib import XChemLog
 from xce.lib import XChemRefine
 from xce.lib import XChemUtils
+from xce.lib.cluster.slurm import get_token
 
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
@@ -20,7 +21,6 @@ from xce.lib import XChemUtils
 
 
 class GUI(object):
-
     """
     main class which opens the actual GUI
     """
@@ -487,6 +487,7 @@ class GUI(object):
             self.external_software,
             self.xce_logfile,
             None,
+            get_token(),
         )
         self.status_label.set_text("Refinement running...")
 
