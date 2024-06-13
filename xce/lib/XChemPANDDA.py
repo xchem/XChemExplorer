@@ -512,6 +512,7 @@ class run_pandda_export(QtCore.QThread):
         base = "/dls/science/groups/i04-1/software/update_event_map_headers"
         script = (
             "#!/bin/bash\n"
+            ". /etc/profile.d/modules.sh\n"
             "{}/env/bin/python "
             "{}/update_event_map_headers.py "
             "{}".format(base, base, self.panddas_directory)
@@ -1159,7 +1160,7 @@ class run_pandda_analyse(QtCore.QThread):
                 )
 
             Cmds = (
-                "#!/bin/bash\n"
+                "#!/bin/sh\n"
                 + "\n"
                 + "\n"
                 + dls
@@ -1389,7 +1390,7 @@ class run_pandda_two_analyse(QtCore.QThread):
         zmap_string = append_to_ignore_string(zmap, zmap_string)
 
         cmd = (
-            "#!/bin/bash\n"
+            "#!/bin/sh\n"
             "module load ccp4/7.1.018\n"
             "module load phenix/1.20\n"
             "module load buster/20240123\n"

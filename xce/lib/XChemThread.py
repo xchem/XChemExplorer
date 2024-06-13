@@ -955,8 +955,11 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         self.Logfile.insert("changing directory to " + self.ccp4_scratch_directory)
         if counter > 1:
-            Cmds = "#!/bin/bash\ncd {}\n./xce_{}_$SLURM_ARRAY_TASK_ID.sh\n".format(
-                self.ccp4_scratch_directory, self.restraints_program
+            Cmds = (
+                "#!/bin/bash\n"
+                + "cd {}\n".format(self.ccp4_scratch_directory)
+                + ". /etc/profile.d/modules.sh\n"
+                + "./xce_{}_$SLURM_ARRAY_TASK_ID.sh\n".format(self.restraints_program)
             )
             f = open("%s_master.sh" % self.restraints_program, "w")
             f.write(Cmds)
@@ -1117,9 +1120,10 @@ class fit_ligands(QtCore.QThread):
         )
         os.chdir(self.ccp4_scratch_directory)
         Cmds = (
-            "#!/bin/bash\ncd {}\n./xce_autofit_ligand_$SLURM_ARRAY_TASK_ID.sh\n".format(
-                self.ccp4_scratch_directory
-            )
+            "#!/bin/bash\n"
+            + "cd {}\n".format(self.ccp4_scratch_directory)
+            + ". /etc/profile.d/modules.sh\n"
+            + "./xce_autofit_ligand_$SLURM_ARRAY_TASK_ID.sh\n"
         )
         f = open("autofit_ligand_master.sh", "w")
         f.write(Cmds)
@@ -1212,6 +1216,7 @@ class merge_cif_files(QtCore.QThread):
         cmd = (
             "#!/bin/bash\n"
             "\n"
+            ". /etc/profile.d/modules.sh\n"
             "$CCP4/bin/libcheck << eof \n"
             "_Y\n"
             "_FILE_L compound/%s.cif\n" % compoundID
@@ -1754,8 +1759,11 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
             + self.ccp4_scratch_directory
         )
         os.chdir(self.ccp4_scratch_directory)
-        Cmds = "#!/bin/bash\ncd {}\n./xce_{!s}{!s}_$SLURM_ARRAY_TASK_ID.sh\n".format(
-            self.ccp4_scratch_directory, self.pipeline, twin
+        Cmds = (
+            "#!/bin/bash\n"
+            + "cd {}\n".format(self.ccp4_scratch_directory)
+            + ". /etc/profile.d/modules.sh\n"
+            + "./xce_{!s}{!s}_$SLURM_ARRAY_TASK_ID.sh\n".format(self.pipeline, twin)
         )
         f = open("{!s}{!s}_master.sh".format(self.pipeline, twin), "w")
         f.write(Cmds)
