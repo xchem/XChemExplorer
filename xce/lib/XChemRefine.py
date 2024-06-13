@@ -767,7 +767,7 @@ class Refine(object):
 
         self.write_refinement_in_progress()
 
-        cmd = "#!/bin/bash\ncd {}".format(os.getcwd())
+        cmd = "#!/bin/bash\ncd {}\n. /etc/profile.d/modules.sh".format(os.getcwd())
 
         cmd = self.load_modules(cmd)
 
@@ -1063,7 +1063,8 @@ class Refine(object):
 
         refmacCmds = (
             "#!/bin/bash\n"
-            + +'export XChemExplorer_DIR="'
+            + ". /etc/profile.d/modules.sh\n"
+            + 'export XChemExplorer_DIR="'
             + os.getenv("XChemExplorer_DIR")
             + '"\n'
             + "module load phenix/1.20\n"
@@ -2000,6 +2001,7 @@ class panddaRefine(object):
 
         refmacCmds = (
             "#!/bin/bash\n"
+            + ". /etc/profile.d/modules.sh\n"
             + module_load
             + "\n"
             + source
