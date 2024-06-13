@@ -510,9 +510,6 @@ class Refine(object):
             " refine_molprobity.log"
         )
 
-    def get_shebang(self):
-        return "#!/bin/sh\n"
-
     def load_modules(self, cmd):
         #######################################################
         # PHENIX stuff (if working at DLS)
