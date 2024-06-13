@@ -2,8 +2,6 @@ import glob
 import os
 import sys
 
-from XChemUtils import mtztools, parse
-
 # - select datasets with highest resolution
 # - select only those without an event map
 # - take the one with the lowest Rfree
@@ -200,6 +198,11 @@ def convert_mean_map_to_mtz(emap, mtz):
 
 
 if __name__ == "__main__":
+    sys.path.insert(
+        0, os.path.join(os.environ["XChemExplorer_DIR"], "dist", "xce-1.5.0-py2.7.egg")
+    )
+    from xce.lib.XChemUtils import mtztools, parse
+
     panddaDir = sys.argv[1]
     datasetList = find_highest_resolution_datasets(panddaDir)
     datasetListwithoutEvent = get_datasets_without_event_map(panddaDir, datasetList)

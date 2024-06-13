@@ -67,7 +67,10 @@ def submit_cluster_job(
             partition=CLUSTER_PARTITION,
             name=str(name),
             account=CLUSTER_USER,
-            environment=dict(USER=os.environ["USER"]),
+            environment=dict(
+                USER=os.environ["USER"],
+                XChemExplorer_DIR=os.environ["XChemExplorer_DIR"],
+            ),
             standard_output=os.path.join(os.getcwd(), "{}.stdout".format(name)),
             standard_error=os.path.join(os.getcwd(), "{}.stderr".format(name)),
         ),

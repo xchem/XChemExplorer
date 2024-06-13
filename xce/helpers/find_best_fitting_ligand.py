@@ -2,8 +2,6 @@ import glob
 import os
 import sys
 
-from xce.lib import XChemDB
-
 
 def parse_autofit_folder(sampleDir, compoundID):
     filenames = ["best.pdb", "ligand_fit_1.pdb"]
@@ -108,6 +106,11 @@ def updateDB(db, db_dict, xtal):
 
 
 if __name__ == "__main__":
+    sys.path.insert(
+        0, os.path.join(os.environ["XChemExplorer_DIR"], "dist", "xce-1.5.0-py2.7.egg")
+    )
+    from xce.lib import XChemDB
+
     compoundID = sys.argv[1]
     sampleDir = sys.argv[2]
     database = sys.argv[3]

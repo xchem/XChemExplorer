@@ -3,15 +3,6 @@ import glob
 import os
 import sys
 
-from xce.lib import XChemDB
-from xce.lib.XChemUtils import (
-    calculate_distance_between_coordinates,
-    maptools,
-    parse,
-    pdbtools,
-    pdbtools_gemmi,
-)
-
 
 def parse_pdb(inital_model_directory, xtal, db_dict):
     if os.path.isfile(os.path.join(inital_model_directory, xtal, "refine.pdb")):
@@ -202,12 +193,12 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
                                     residueFilename + ".png",
                                 )
                             ):
-                                db_pandda_dict[
-                                    "PANDDA_site_spider_plot"
-                                ] = os.path.join(
-                                    refinement_directory,
-                                    "residue_plots",
-                                    residueFilename + ".png",
+                                db_pandda_dict["PANDDA_site_spider_plot"] = (
+                                    os.path.join(
+                                        refinement_directory,
+                                        "residue_plots",
+                                        residueFilename + ".png",
+                                    )
                                 )
                             else:
                                 db_pandda_dict["PANDDA_site_spider_plot"] = ""
@@ -256,9 +247,9 @@ def update_ligand_information_in_panddaTable(inital_model_directory, xtal):
                 if distance < 7:
                     db_pandda_dict["PANDDA_site_ligand_resname"] = residue_name
                     db_pandda_dict["PANDDA_site_ligand_chain"] = residue_chain
-                    db_pandda_dict[
-                        "PANDDA_site_ligand_sequence_number"
-                    ] = residue_number
+                    db_pandda_dict["PANDDA_site_ligand_sequence_number"] = (
+                        residue_number
+                    )
                     db_pandda_dict["PANDDA_site_ligand_altLoc"] = residue_altLoc
                     db_pandda_dict["PANDDA_site_ligand_placed"] = "True"
                 if db_pandda_dict != {}:
@@ -350,6 +341,18 @@ def read_ligand_cc_from_edstats(xtal, db_dict):
 
 
 if __name__ == "__main__":
+    sys.path.insert(
+        0, os.path.join(os.environ["XChemExplorer_DIR"], "dist", "xce-1.5.0-py2.7.egg")
+    )
+    from xce.lib import XChemDB
+    from xce.lib.XChemUtils import (
+        calculate_distance_between_coordinates,
+        maptools,
+        parse,
+        pdbtools,
+        pdbtools_gemmi,
+    )
+
     db_file = sys.argv[1]
     xtal = sys.argv[2]
     inital_model_directory = sys.argv[3]
