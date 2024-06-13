@@ -3,10 +3,13 @@ import sys
 
 from iotbx import mtz
 
-from xce.lib import XChemDB
-from xce.lib.XChemUtils import parse
-
 if __name__ == "__main__":
+    sys.path.insert(
+        0, os.path.join(os.environ["XChemExplorer_DIR"], "dist", "xce-1.5.0-py2.7.egg")
+    )
+    from xce.lib import XChemDB
+    from xce.lib.XChemUtils import parse
+
     db_file = sys.argv[1]
     xtal = sys.argv[2]
     inital_model_directory = sys.argv[3]
