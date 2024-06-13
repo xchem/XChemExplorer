@@ -511,7 +511,7 @@ class Refine(object):
         )
 
     def get_shebang(self):
-        return "#!" + os.getenv("SHELL") + "\n"
+        return "#!/bin/sh\n"
 
     def load_modules(self, cmd):
         #######################################################
@@ -770,7 +770,7 @@ class Refine(object):
 
         self.write_refinement_in_progress()
 
-        cmd = self.get_shebang()
+        cmd = "#!/bin/bash\ncd {}".format(os.getcwd())
 
         cmd = self.load_modules(cmd)
 
@@ -1065,9 +1065,7 @@ class Refine(object):
                 )
 
         refmacCmds = (
-            "#!"
-            + os.getenv("SHELL")
-            + "\n"
+            "#!/bin/bash\n"
             + +'export XChemExplorer_DIR="'
             + os.getenv("XChemExplorer_DIR")
             + '"\n'
@@ -1509,7 +1507,7 @@ class panddaRefine(object):
         xce_logfile,
         refinementProtocol,
         covLinkAtomSpec,
-        slurm_token
+        slurm_token,
     ):
         Logfile = XChemLog.updateLog(xce_logfile)
         Logfile.insert("preparing files for giant.quick_refine")
@@ -2004,9 +2002,7 @@ class panddaRefine(object):
         user = getpass.getuser()
 
         refmacCmds = (
-            "#!"
-            + os.getenv("SHELL")
-            + "\n"
+            "#!/bin/bash\n"
             + module_load
             + "\n"
             + source
