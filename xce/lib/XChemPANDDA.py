@@ -474,7 +474,7 @@ class run_pandda_export(QtCore.QThread):
         xce_logfile,
         which_models,
         pandda_params,
-        slurm_token
+        slurm_token,
     ):
         QtCore.QThread.__init__(self)
         self.panddas_directory = panddas_directory
@@ -511,7 +511,7 @@ class run_pandda_export(QtCore.QThread):
     def update_event_map_headers(self):
         base = "/dls/science/groups/i04-1/software/update_event_map_headers"
         script = (
-            "#!/bin/sh\n"
+            "#!/bin/bash\n"
             "{}/env/bin/python "
             "{}/update_event_map_headers.py "
             "{}".format(base, base, self.panddas_directory)
@@ -619,7 +619,7 @@ class run_pandda_export(QtCore.QThread):
                         self.xce_logfile,
                         "pandda_refmac",
                         None,
-                        self.slurm_token
+                        self.slurm_token,
                     )
                 else:
                     self.Logfile.error(
@@ -1159,8 +1159,7 @@ class run_pandda_analyse(QtCore.QThread):
                 )
 
             Cmds = (
-                "#!"
-                + os.getenv("SHELL")
+                "#!/bin/bash\n"
                 + "\n"
                 + "\n"
                 + dls
@@ -1390,7 +1389,7 @@ class run_pandda_two_analyse(QtCore.QThread):
         zmap_string = append_to_ignore_string(zmap, zmap_string)
 
         cmd = (
-            "#/bin/sh\n"
+            "#!/bin/bash\n"
             "module load ccp4/7.1.018\n"
             "module load phenix/1.20\n"
             "module load buster/20240123\n"
