@@ -67,7 +67,7 @@ def submit_cluster_job(
             partition=CLUSTER_PARTITION,
             name=str(name),
             account=CLUSTER_USER,
-            environment=dict(PLACE="HOLDER"),
+            environment=dict(USER=os.environ["USER"]),
             standard_output=os.path.join(os.getcwd(), "{}.stdout".format(name)),
             standard_error=os.path.join(os.getcwd(), "{}.stderr".format(name)),
         ),
