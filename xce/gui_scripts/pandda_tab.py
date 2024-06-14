@@ -184,6 +184,16 @@ class PanddaTab:
         label.setFont(header_font)
         xce_object.pandda_analyse_input_params_vbox.addWidget(label)
 
+        # qstat or local machine
+        label = QtGui.QLabel("Submit via:")
+        xce_object.pandda_analyse_input_params_vbox.addWidget(label)
+        xce_object.pandda_submission_mode_selection_combobox = QtGui.QComboBox()
+        xce_object.pandda_submission_mode_selection_combobox.addItem("slurm")
+        xce_object.pandda_submission_mode_selection_combobox.addItem("local machine")
+        xce_object.pandda_analyse_input_params_vbox.addWidget(
+            xce_object.pandda_submission_mode_selection_combobox
+        )
+
         # number of processors section
         label = QtGui.QLabel("Number of processors:")
         xce_object.pandda_analyse_input_params_vbox.addWidget(label)
