@@ -3866,7 +3866,7 @@ class XChemExplorer(QtGui.QApplication):
         self.datasource_menu_reload_samples()
 
         cluster_dict = XChemMain.get_jobs_running_on_cluster(
-            self.external_software, self.xce_logfile
+            self.external_software, self.xce_logfile, get_token()
         )
 
         self.update_log.insert("getting status updates...")

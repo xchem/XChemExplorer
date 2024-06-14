@@ -127,7 +127,7 @@ def get_target_and_visit_list(beamline_directory, agamemnon):
     return target_list, visit_list
 
 
-def get_jobs_running_on_cluster(external_software, xce_logfile):
+def get_jobs_running_on_cluster(external_software, xce_logfile, token):
     out_dict = {}
 
     dimple_jobs = []
@@ -137,7 +137,7 @@ def get_jobs_running_on_cluster(external_software, xce_logfile):
     xia2_jobs = []
     others_jobs = []
 
-    running_jobs = slurm.query_running_jobs(xce_logfile)
+    running_jobs = slurm.query_running_jobs(xce_logfile, token)
 
     for job_id, job_name, job_status, run_time in running_jobs:
         run_time_minutes = int(run_time.total_seconds() / 60)
