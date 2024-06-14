@@ -1300,7 +1300,7 @@ class run_pandda_analyse(QtCore.QThread):
             else:
                 slurm.submit_cluster_job(
                     "pandda",
-                    "pannda.sh",
+                    "pandda.sh",
                     self.xce_logfile,
                     self.slurm_token,
                     exclusive=True,
