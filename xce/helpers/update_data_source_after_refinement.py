@@ -193,12 +193,12 @@ def parse_ligand_validation(inital_model_directory, refinement_directory, xtal):
                                     residueFilename + ".png",
                                 )
                             ):
-                                db_pandda_dict["PANDDA_site_spider_plot"] = (
-                                    os.path.join(
-                                        refinement_directory,
-                                        "residue_plots",
-                                        residueFilename + ".png",
-                                    )
+                                db_pandda_dict[
+                                    "PANDDA_site_spider_plot"
+                                ] = os.path.join(
+                                    refinement_directory,
+                                    "residue_plots",
+                                    residueFilename + ".png",
                                 )
                             else:
                                 db_pandda_dict["PANDDA_site_spider_plot"] = ""
@@ -247,9 +247,9 @@ def update_ligand_information_in_panddaTable(inital_model_directory, xtal):
                 if distance < 7:
                     db_pandda_dict["PANDDA_site_ligand_resname"] = residue_name
                     db_pandda_dict["PANDDA_site_ligand_chain"] = residue_chain
-                    db_pandda_dict["PANDDA_site_ligand_sequence_number"] = (
-                        residue_number
-                    )
+                    db_pandda_dict[
+                        "PANDDA_site_ligand_sequence_number"
+                    ] = residue_number
                     db_pandda_dict["PANDDA_site_ligand_altLoc"] = residue_altLoc
                     db_pandda_dict["PANDDA_site_ligand_placed"] = "True"
                 if db_pandda_dict != {}:

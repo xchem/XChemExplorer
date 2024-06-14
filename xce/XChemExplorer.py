@@ -3680,7 +3680,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.xce_logfile,
                 self.preferences["dimple_twin_mode"],
                 pipeline,
-                get_token()
+                get_token(),
             )
             self.explorer_active = 1
             self.connect(
@@ -4116,7 +4116,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.xce_logfile,
                 os.path.join(self.database_directory, self.data_source_file),
                 self.external_software,
-                get_token()
+                get_token(),
             )
         else:
             self.work_thread = XChemPANDDA.run_pandda_analyse(
@@ -4124,7 +4124,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.xce_logfile,
                 os.path.join(self.database_directory, self.data_source_file),
                 self.external_software,
-                get_token()
+                get_token(),
             )
         self.connect(
             self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
@@ -4353,7 +4353,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.xce_logfile,
                 which_models,
                 pandda_params,
-                get_token()
+                get_token(),
             )
             self.connect(
                 self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
@@ -4369,7 +4369,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.initial_model_directory,
                 self.xce_logfile,
                 which_models,
-                get_token()
+                get_token(),
             )
             self.connect(
                 self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
@@ -4430,7 +4430,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.xce_logfile,
                 self.max_queue_jobs,
                 self.restraints_program,
-                get_token()
+                get_token(),
             )
             self.connect(
                 self.work_thread,
@@ -4485,7 +4485,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.ccp4_scratch_directory,
                 self.xce_logfile,
                 self.max_queue_jobs,
-                get_token()
+                get_token(),
             )
             self.connect(
                 self.work_thread,

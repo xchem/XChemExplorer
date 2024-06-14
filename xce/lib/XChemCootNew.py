@@ -1463,7 +1463,7 @@ class GUI(object):
                 self.xce_logfile,
                 self.refinementProtocol,
                 self.covLinkAtomSpec,
-                get_token()
+                get_token(),
             )
         else:
             #######################################################
