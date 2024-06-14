@@ -957,7 +957,6 @@ class create_png_and_cif_of_compound(QtCore.QThread):
         if counter > 1:
             Cmds = (
                 "#!/bin/bash\n"
-                + "cd {}\n".format(self.ccp4_scratch_directory)
                 + ". /etc/profile.d/modules.sh\n"
                 + "./xce_{}_$SLURM_ARRAY_TASK_ID.sh\n".format(self.restraints_program)
             )
@@ -1121,7 +1120,6 @@ class fit_ligands(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         Cmds = (
             "#!/bin/bash\n"
-            + "cd {}\n".format(self.ccp4_scratch_directory)
             + ". /etc/profile.d/modules.sh\n"
             + "./xce_autofit_ligand_$SLURM_ARRAY_TASK_ID.sh\n"
         )
@@ -1761,7 +1759,6 @@ class run_dimple_on_all_autoprocessing_files_new(QtCore.QThread):
         os.chdir(self.ccp4_scratch_directory)
         Cmds = (
             "#!/bin/bash\n"
-            + "cd {}\n".format(self.ccp4_scratch_directory)
             + ". /etc/profile.d/modules.sh\n"
             + "./xce_{!s}{!s}_$SLURM_ARRAY_TASK_ID.sh\n".format(self.pipeline, twin)
         )
