@@ -85,9 +85,7 @@ def submit_cluster_job(
         payload["job"]["memory_per_node"]["set"] = True
         payload["job"]["memory_per_node"]["number"] = memory
     if tasks is not None:
-        payload["job"]["tasks_per_node"] = dict()
-        payload["job"]["tasks_per_node"]["set"] = True
-        payload["job"]["tasks_per_node"]["number"] = tasks
+        payload["job"]["tasks_per_node"] = tasks
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
     logfile.insert("Submitting job, '{}', to Slurm with body: {}".format(name, body))
@@ -95,7 +93,7 @@ def submit_cluster_job(
         CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
     )
     connection.request(
-        "POST", "/slurm/v0.0.38/job/submit", body=body, headers=construct_headers(token)
+        "POST", "/slurm/v0.0.40/job/submit", body=body, headers=construct_headers(token)
     )
     response = connection.getresponse().read()
     logfile.insert("Got response: {}".format(response))
@@ -107,7 +105,7 @@ def query_running_jobs(xce_logfile, token):
         CLUSTER_PORT,
         context=ssl._create_unverified_context(),
     )
-    connection.request("GET", "/slurm/v0.0.38/jobs", headers=construct_headers(token))
+    connection.request("GET", "/slurm/v0.0.40/jobs", headers=construct_headers(token))
     response = connection.getresponse()
     response_body = response.read()
 
