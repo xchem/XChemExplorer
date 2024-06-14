@@ -1351,7 +1351,7 @@ class GUI(object):
                 self.external_software,
                 self.xce_logfile,
                 self.refinementProtocol,
-                get_token()
+                get_token(),
             )
         else:
             #######################################################
