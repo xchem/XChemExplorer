@@ -81,6 +81,7 @@ def submit_cluster_job(
         payload["job"]["exclusive"] = "mcs"
         payload["job"]["mcs_label"] = str(uuid4())
     if memory is not None:
+        payload["job"]["memory_per_node"] = dict()
         payload["job"]["memory_per_node"]["set"] = True
         payload["job"]["memory_per_node"]["number"] = memory
     if tasks is not None:
