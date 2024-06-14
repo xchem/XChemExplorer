@@ -1304,7 +1304,7 @@ class run_pandda_analyse(QtCore.QThread):
                     self.xce_logfile,
                     self.slurm_token,
                     exclusive=True,
-                    memory=100 * 1024 * 1024 * 1024,
+                    memory=100 * 1024,
                 )
 
         self.emit(QtCore.SIGNAL("datasource_menu_reload_samples"))
@@ -1425,7 +1425,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             "pandda2.sh",
             self.xce_logfile,
             self.slurm_token,
-            memory=5 * 1024 * 1024 * 1024,
+            memory=5 * 1024,
             tasks=36,
         )
 
