@@ -85,6 +85,7 @@ def submit_cluster_job(
         payload["job"]["memory_per_node"]["set"] = True
         payload["job"]["memory_per_node"]["number"] = memory
     if tasks is not None:
+        payload["job"]["tasks_per_node"] = dict()
         payload["job"]["tasks_per_node"]["set"] = True
         payload["job"]["tasks_per_node"]["number"] = tasks
     body = json.dumps(payload)
