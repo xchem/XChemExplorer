@@ -1427,7 +1427,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             "pandda2.sh",
             self.xce_logfile,
             self.slurm_token,
-            memory=5 * 1024,
+            memory=36 * 5 * 1024,
             tasks=36,
         )
 
