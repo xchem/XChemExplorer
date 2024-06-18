@@ -69,10 +69,10 @@ def get_token(fetch_password, error=None):
             ssh.connect(CLUSTER_BASTION, username=CLUSTER_USER, password=str(password))
         except paramiko.AuthenticationException:
             print(traceback.format_exc())
-            return get_token(error="SSH Authentication Failed")
+            return get_token(fetch_password, error="SSH Authentication Failed")
         stdin, stdout, stderr = ssh.exec_command("scontrol token lifespan=3600")
         if stdout.channel.recv_exit_status() != 0:
-            return get_token(error="Token Acquisition Failed")
+            return get_token(fetch_password, error="Token Acquisition Failed")
         TOKEN = stdout.next().split("=")[1].strip()
         TOKEN_EXPIRY = time.clock() + 3600
     return TOKEN
