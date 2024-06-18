@@ -2058,7 +2058,7 @@ class start_COOT(QtCore.QThread):
         os.system(
             "cd {0!s}\ncoot --no-guano --no-state-script --script {1!s}".format(
                 os.getenv("HOME"),
-                os.path.join(os.getenv("XChemExplorer_DIR"), "xce", "coot", self.pylib),
+                os.path.join(os.getenv("XChemExplorer_DIR"), "coot", self.pylib),
             )
         )
 
