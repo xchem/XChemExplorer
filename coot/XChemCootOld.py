@@ -7,11 +7,6 @@ import gobject
 import gtk
 from matplotlib.figure import Figure
 
-from xce.lib import coot_utils_XChem
-from xce.lib import XChemDB
-from xce.lib import XChemRefine
-from xce.lib import XChemUtils
-
 # had to adapt the original coot_utils.py file
 # otherwise unable to import the original file without complaints about missing modules
 # etc.
@@ -1320,4 +1315,8 @@ if __name__ == "__main__":
     sys.path.insert(
         0, os.path.join(os.environ["XChemExplorer_DIR"], "dist", "xce-1.5.0-py2.7.egg")
     )
+    from xce.lib import coot_utils_XChem
+    from xce.lib import XChemDB
+    from xce.lib import XChemRefine
+    from xce.lib import XChemUtils
     GUI().StartGUI()
