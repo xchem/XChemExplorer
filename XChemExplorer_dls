@@ -8,4 +8,4 @@ export BDG_TOOL_MOGUL="/dls_sw/apps/ccdc/CSD_2020/bin/mogul"
 export XChemExplorer_DIR=$(readlink -e $0 | xargs dirname)
 export LD_PRELOAD="/usr/lib64/libfreetype.so:${LD_PRELOAD}"
 
-ccp4-python $XChemExplorer_DIR/dls_launch.py
+ccp4-python $XChemExplorer_DIR/launch.py
