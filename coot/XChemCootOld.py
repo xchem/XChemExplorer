@@ -1319,4 +1319,5 @@ if __name__ == "__main__":
     from xce.lib import XChemDB
     from xce.lib import XChemRefine
     from xce.lib import XChemUtils
+
     GUI().StartGUI()
