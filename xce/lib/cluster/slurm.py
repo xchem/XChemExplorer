@@ -5,6 +5,7 @@ import httplib
 import paramiko
 import time
 import traceback
+import gtk
 from PyQt4 import QtGui
 from datetime import datetime
 from xce.lib.XChemLog import updateLog
@@ -19,17 +20,46 @@ CLUSTER_PARTITION = "cs05r"
 TOKEN = None
 TOKEN_EXPIRY = None
 
+POPUP_TITLE = "SLURM Authentication"
 
-def get_token(error=None):
+
+def fetch_password_qt(password_prompt):
+    password, ok = QtGui.QInputDialog.getText(
+        None, POPUP_TITLE, password_prompt, mode=QtGui.QLineEdit.Password
+    )
+    if not ok:
+        return None
+
+
+def fetch_password_gtk(password_prompt):
+    dialog = gtk.MessageDialog(
+        None,
+        gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+        gtk.MESSAGE_QUESTION,
+        gtk.BUTTONS_OK_CANCEL,
+        None,
+    )
+    dialog.set_title(POPUP_TITLE)
+    dialog.set_markup(password_prompt)
+
+    entry = gtk.Entry()
+    dialog.vbox.pack_end(entry)
+    dialog.show_all()
+
+    dialog.run()
+    password = entry.get_text()
+    dialog.destroy()
+    return password
+
+
+def get_token(fetch_password, error=None):
     global TOKEN
     global TOKEN_EXPIRY
 
     if TOKEN is None or TOKEN_EXPIRY is None or TOKEN_EXPIRY < time.clock() + 60:
         password_prompt = error + "\n" + "Password:" if error else "Password:"
-        password, ok = QtGui.QInputDialog.getText(
-            None, "SLURM Authentication", password_prompt, mode=QtGui.QLineEdit.Password
-        )
-        if not ok:
+        password = fetch_password(password_prompt)
+        if password is None:
             return None
 
         ssh = paramiko.SSHClient()

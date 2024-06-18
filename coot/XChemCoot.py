@@ -1345,7 +1345,7 @@ class GUI(object):
                 self.external_software,
                 self.xce_logfile,
                 self.refinementProtocol,
-                get_token(),
+                get_token(fetch_password_gtk),
             )
         else:
             #######################################################
@@ -1422,7 +1422,7 @@ class GUI(object):
                 self.external_software,
                 self.xce_logfile,
                 None,
-                get_token(),
+                get_token(fetch_password_gtk),
             )
 
         self.index += 1
@@ -1673,6 +1673,6 @@ if __name__ == "__main__":
     from xce.lib import XChemLog
     from xce.lib import XChemRefine
     from xce.lib import XChemUtils
-    from xce.lib.cluster.slurm import get_token
+    from xce.lib.cluster.slurm import get_token, fetch_password_gtk
 
     GUI().StartGUI()
