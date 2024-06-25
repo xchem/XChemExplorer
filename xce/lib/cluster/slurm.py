@@ -27,8 +27,7 @@ def fetch_password_qt(password_prompt):
     password, ok = QtGui.QInputDialog.getText(
         None, POPUP_TITLE, password_prompt, mode=QtGui.QLineEdit.Password
     )
-    if not ok:
-        return None
+    return password if ok else None
 
 
 def fetch_password_gtk(password_prompt):
