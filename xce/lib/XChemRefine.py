@@ -767,7 +767,7 @@ class Refine(object):
 
         self.write_refinement_in_progress()
 
-        cmd = "#!/bin/bash\n. /etc/profile.d/modules.sh"
+        cmd = "#!/bin/bash\n. /etc/profile.d/modules.sh\n"
 
         cmd = self.load_modules(cmd)
 
