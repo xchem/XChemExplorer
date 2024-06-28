@@ -41,7 +41,8 @@ def fetch_password_gtk(password_prompt):
     dialog.set_title(POPUP_TITLE)
     dialog.set_markup(password_prompt)
 
-    entry = gtk.PasswordEntry()
+    entry = gtk.Entry()
+    entry.set_visibility(False)
     dialog.vbox.pack_end(entry)
     dialog.show_all()
 
