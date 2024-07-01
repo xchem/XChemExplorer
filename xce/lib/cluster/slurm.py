@@ -73,7 +73,10 @@ def get_token(fetch_password, error=None):
         stdin, stdout, stderr = ssh.exec_command("scontrol token lifespan=3600")
         if stdout.channel.recv_exit_status() != 0:
             return get_token(fetch_password, error="Token Acquisition Failed")
-        TOKEN = stdout.next().split("=")[1].strip()
+        final_line = stdout.next()
+        for final_line in stdout:
+            continue
+        TOKEN = final_line.split("=")[1].strip()
         TOKEN_EXPIRY = time.clock() + 3600
     return TOKEN
 
