@@ -449,8 +449,8 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     RefmacParams,
                     self.external_software,
                     self.xce_logfile,
-                    self.slurm_token,
                     None,
+                    self.slurm_token,
                 )
             else:
                 self.Logfile.error(
