@@ -56,7 +56,7 @@ def get_token(fetch_password, error=None):
     global TOKEN
     global TOKEN_EXPIRY
 
-    if TOKEN is None or TOKEN_EXPIRY is None or TOKEN_EXPIRY < time.clock() + 60:
+    if TOKEN is None or TOKEN_EXPIRY is None or TOKEN_EXPIRY < time.time() + 60:
         password_prompt = error + "\n" + "Password:" if error else "Password:"
         password = fetch_password(password_prompt)
         if password is None:
@@ -77,7 +77,7 @@ def get_token(fetch_password, error=None):
         for final_line in stdout:
             continue
         TOKEN = final_line.split("=")[1].strip()
-        TOKEN_EXPIRY = time.clock() + 3600
+        TOKEN_EXPIRY = time.time() + 3600
     return TOKEN
 
 
