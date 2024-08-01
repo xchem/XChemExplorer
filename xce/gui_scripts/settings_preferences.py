@@ -747,7 +747,6 @@ class setup:
             "Event Map -> SF",
             "apo -> mmcif",
             "check modelled ligands",
-            "------------------------------------------",
         ]
 
         xce_object.refine_file_tasks = [
