@@ -1081,14 +1081,22 @@ class Refine(object):
             + "\n"
             + findTLS
             + "refmac5 "
-            + RefmacParams["HKLIN"] + " "
-            + RefmacParams["HKLOUT"] + " "
-            + RefmacParams["XYZIN"] + " "
-            + RefmacParams["XYZOUT"] + " "
-            + RefmacParams["LIBIN"] + " "
-            + RefmacParams["LIBOUT"] + " "
-            + RefmacParams["TLSIN"] + " "
-            + RefmacParams["TLSOUT"] + " "
+            + RefmacParams["HKLIN"]
+            + " "
+            + RefmacParams["HKLOUT"]
+            + " "
+            + RefmacParams["XYZIN"]
+            + " "
+            + RefmacParams["XYZOUT"]
+            + " "
+            + RefmacParams["LIBIN"]
+            + " "
+            + RefmacParams["LIBOUT"]
+            + " "
+            + RefmacParams["TLSIN"]
+            + " "
+            + RefmacParams["TLSOUT"]
+            + " "
             + "<< EOF > refmac.log\n"
             + "make -hydrogen ALL"
             + "-hout NO "
@@ -1107,7 +1115,8 @@ class Refine(object):
             + "ncyc "
             + RefmacParams["NCYCLES"]
             + "scal -type SIMP -LSSC -ANISO -EXPE\n"
-            + weight + "solvent YES\n"
+            + weight
+            + "solvent YES\n"
             + "monitor MEDIUM -torsion 10.0 -distance 10.0 -angle 10.0 -plane 10.0 "
             + "-chiral 10.0 -bfactor 10.0 -bsphere 10.0 -rbond 10.0 -ncsr 10.0\n"
             + "labin FP=F SIGFP=SIGF FREE=FreeR_flag\n"
@@ -1115,7 +1124,8 @@ class Refine(object):
             + "FOM=FOM\n"
             + RefmacParams["TLSADD"]
             + "\n"
-            + "DNAME " + self.xtalID
+            + "DNAME "
+            + self.xtalID
             + "\n"
             + "END\n"
             + "EOF\n"
@@ -1153,7 +1163,8 @@ class Refine(object):
             + self.ProjectPath
             + "/"
             + self.xtalID
-            + "/Refine_" + Serial
+            + "/Refine_"
+            + Serial
             + "\n"
             + spider_plot
             + "\n"
