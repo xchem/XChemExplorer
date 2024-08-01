@@ -724,7 +724,11 @@ class setup:
         ]
 
         xce_object.panddas_file_tasks = [
+            "pre-run for ground state model",
+            "Build ground state model",
+            "------------------------------------------",
             "pandda.analyse",
+            "pandda.analyse (PanDDA2)",
             "pandda.inspect",
             "run pandda.inspect at home",
             "------------------------------------------",
@@ -732,22 +736,18 @@ class setup:
             "Export ALL PANDDA models",
             "Export SELECTED PANDDA models",
             "------------------------------------------",
-            "Show HTML summary",
-            "cluster datasets",
-            "Event Map -> SF",
-            "apo -> mmcif",
-            "check modelled ligands",
-            "------------------------------------------",
             "refine ALL bound-state models with BUSTER",
             "refine NEW bound-state models with BUSTER",
             "------------------------------------------",
             "refine ALL bound-state models with BUSTER (no sanity check)",
             "refine NEW bound-state models with BUSTER (no sanity check)",
             "------------------------------------------",
-            "pre-run for ground state model",
-            "Build ground state model",
-            "------------------------------------------",
-            "pandda.analyse (PanDDA2)",
+
+            "Show HTML summary",
+            "cluster datasets",
+            "Event Map -> SF",
+            "apo -> mmcif",
+            "check modelled ligands",
         ]
 
         xce_object.refine_file_tasks = [
