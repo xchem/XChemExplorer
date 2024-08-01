@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="xce",
-    version="2.0.1",
+    version="1.5.0",
     description="GUI tool for XChem",
     author="Tobias Krojer",
     packages=find_packages(),
