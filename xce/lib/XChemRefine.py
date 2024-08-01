@@ -1122,8 +1122,8 @@ class Refine(object):
             + "\n"
             + "phenix.molprobity refine_%s.pdb refine_%s.mtz\n" % (Serial, Serial)
             + "/bin/mv molprobity.out refine_molprobity.log\n"
-            + "mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG"
-            + " > validate_ligands.txt\n" % (Serial, Serial)
+            "mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG"
+            " > validate_ligands.txt\n" % (Serial, Serial)
             + "cd "
             + self.ProjectPath
             + "/"
