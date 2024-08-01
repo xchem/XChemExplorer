@@ -1070,17 +1070,17 @@ class Refine(object):
             + "module load phenix/1.20\n"
             + "module load buster/20240123\n"
             + "module load ccp4\n"
-            + "cd " 
-            + self.ProjectPath 
-            + "/" 
-            + self.xtalID 
-            + "/Refine_" 
-            + Serial 
+            + "cd "
+            + self.ProjectPath
+            + "/"
+            + self.xtalID
+            + "/Refine_"
+            + Serial
             + "\n"
-            + refinementStatus 
+            + refinementStatus
             + "\n"
             + findTLS
-            + "refmac5 " 
+            + "refmac5 "
             + RefmacParams["HKLIN"] + " "
             + RefmacParams["HKLOUT"] + " "
             + RefmacParams["XYZIN"] + " "
@@ -1090,7 +1090,15 @@ class Refine(object):
             + RefmacParams["TLSIN"] + " "
             + RefmacParams["TLSOUT"] + " "
             + "<< EOF > refmac.log\n"
-            + "make -hydrogen ALL -hout NO -peptide NO -cispeptide YES -ssbridge YES -symmetry YES -sugar YES -connectivity NO -link NO\n"
+            + "make -hydrogen ALL"
+            + "-hout NO "
+            + "-peptide NO "
+            + "-cispeptide YES "
+            + "-ssbridge YES "
+            + "-symmetry YES "
+            + "-sugar YES "
+            + "-connectivity NO "
+            + "-link NO\n"
             + RefmacParams["NCS"]
             + "refi -type REST -resi MLKF -meth CGMAT\n"
             + RefmacParams["BREF"]
@@ -1100,23 +1108,26 @@ class Refine(object):
             + RefmacParams["NCYCLES"]
             + "scal -type SIMP -LSSC -ANISO -EXPE\n"
             + weight + "solvent YES\n"
-            + "monitor MEDIUM -torsion 10.0 -distance 10.0 -angle 10.0 -plane 10.0 -chiral 10.0 -bfactor 10.0 -bsphere 10.0 -rbond 10.0 -ncsr 10.0\n"
+            + "monitor MEDIUM -torsion 10.0 -distance 10.0 -angle 10.0 -plane 10.0 "
+            + "-chiral 10.0 -bfactor 10.0 -bsphere 10.0 -rbond 10.0 -ncsr 10.0\n"
             + "labin FP=F SIGFP=SIGF FREE=FreeR_flag\n"
-            + "labout FC=FC FWT=FWT PHIC=PHIC PHWT=PHWT DELFWT=DELFWT PHDELWT=PHDELWT FOM=FOM\n"
-            + RefmacParams["TLSADD"] 
+            + "labout FC=FC FWT=FWT PHIC=PHIC PHWT=PHWT DELFWT=DELFWT PHDELWT=PHDELWT "
+            + "FOM=FOM\n"
+            + RefmacParams["TLSADD"]
             + "\n"
-            + "DNAME " + self.xtalID 
+            + "DNAME " + self.xtalID
             + "\n"
             + "END\n"
             + "EOF\n"
             + "\n"
             + "phenix.molprobity refine_%s.pdb refine_%s.mtz\n" % (Serial, Serial)
             + "/bin/mv molprobity.out refine_molprobity.log\n"
-            + "mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz LIG > validate_ligands.txt\n" % (Serial, Serial)
-            + "cd " 
-            + self.ProjectPath 
-            + "/" 
-            + self.xtalID 
+            + "mmtbx.validate_ligands refine_%s.pdb refine_%s.mtz "
+            + "LIG > validate_ligands.txt\n" % (Serial, Serial)"
+            + "cd "
+            + self.ProjectPath
+            + "/"
+            + self.xtalID
             + "\n"
             + "ln -s ./Refine_%s/refine_%s.pdb refine.pdb\n" % (Serial, Serial)
             + "ln -s ./Refine_%s/refine_%s.mtz refine.mtz\n" % (Serial, Serial)
@@ -1133,18 +1144,18 @@ class Refine(object):
             + "fft hklin refine.mtz mapout fofc.map << EOF\n"
             + "labin F1=DELFWT PHI=PHDELWT\n"
             + "EOF\n"
-            + "\n" 
-            + updateDB 
+            + "\n"
+            + updateDB
             + "\n"
             + "/bin/rm %s/%s/REFINEMENT_IN_PROGRESS\n" % (self.ProjectPath, self.xtalID)
             + "\n"
-            + "cd " 
-            + self.ProjectPath 
-            + "/" 
-            + self.xtalID 
-            + "/Refine_" + Serial 
+            + "cd "
+            + self.ProjectPath
+            + "/"
+            + self.xtalID
+            + "/Refine_" + Serial
             + "\n"
-            + spider_plot 
+            + spider_plot
             + "\n"
         )
 
