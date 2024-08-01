@@ -2,8 +2,9 @@ import os
 import subprocess
 import sys
 import QtCore
-from PyQt4 
+from PyQt4
 from xce.lib import XChemDB, XChemLog, XChemMain, XChemUtils
+
 
 class setup:
     def __init__(self):
