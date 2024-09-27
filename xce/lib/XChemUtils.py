@@ -216,6 +216,9 @@ class helpers:
                 )
             )
 
+        # add speech-marks to stop bash truncating the line at every semi-colon
+        compoundID_str = f'"{compoundID}"'
+
         # Removal of the hydrogen atoms in PDB files is required for REFMAC 5 run.
         # With hydrogens some ligands fail to pass the external restraints in
         # pandda.giant.make_restraints.
@@ -240,7 +243,7 @@ class helpers:
                     "create_png_of_compound.py",
                 ),
                 smiles,
-                compoundID.replace(" ", ""),
+                compoundID_str.replace(" ", ""),
                 sample,
                 initial_model_directory,
             )
@@ -251,9 +254,9 @@ class helpers:
             + software
             + "\n"
             "cd " + os.path.join(initial_model_directory, sample) + "\n"
-            "ln -s compound/%s.cif .\n" % compoundID.replace(" ", "")
-            + "ln -s compound/{0!s}.pdb .\n".format(compoundID.replace(" ", ""))
-            + "ln -s compound/{0!s}.png .\n".format(compoundID.replace(" ", ""))
+            "ln -s compound/%s.cif .\n" % compoundID_str.replace(" ", "")
+            + "ln -s compound/{0!s}.pdb .\n".format(compoundID_str.replace(" ", ""))
+            + "ln -s compound/{0!s}.png .\n".format(compoundID_str.replace(" ", ""))
             + "\n"
             "$CCP4/bin/ccp4-python "
             + os.path.join(
@@ -266,7 +269,7 @@ class helpers:
                 os.path.join(database_directory, data_source_file),
                 sample,
                 initial_model_directory,
-                compoundID.replace(" ", ""),
+                compoundID_str.replace(" ", ""),
             )
             + "\n"
             "/bin/rm -f compound/RESTRAINTS_IN_PROGRESS\n"
@@ -275,7 +278,7 @@ class helpers:
         os.chdir(ccp4_scratch_directory)
         Logfile.insert(
             "creating ACEDRG shell script for {0!s},{1!s} in {2!s}".format(
-                sample, compoundID, ccp4_scratch_directory
+                sample, compoundID_str, ccp4_scratch_directory
             )
         )
         f = open("xce_{0!s}_{1!s}.sh".format(restraints_program, str(counter)), "w")
