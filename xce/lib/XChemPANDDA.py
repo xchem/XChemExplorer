@@ -1305,6 +1305,7 @@ class run_pandda_analyse(QtCore.QThread):
                     self.xce_logfile,
                     self.slurm_token,
                     exclusive=True,
+                    tasks=self.nproc,
                     memory=100 * 1024,
                 )
 
