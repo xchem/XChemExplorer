@@ -748,8 +748,8 @@ class setup:
         ]
 
         xce_object.refine_file_tasks = [
-            "Open COOT - BUSTER refinement -",
             "Open COOT - REFMAC refinement -",
+            "Open COOT - BUSTER refinement -",
             "Open COOT - dimple_twin -",
             "",
         ]
