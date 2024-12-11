@@ -697,6 +697,7 @@ class Refine(object):
             "{!s}.sh".format(program),
             xce_logfile,
             slurm_token,
+            tasks=8,
         )
 
     def RunBuster(
@@ -1192,7 +1193,7 @@ class Refine(object):
             % (os.path.join(self.ProjectPath, self.xtalID, "Refine_" + Serial))
         )
 
-        slurm.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile, slurm_token)
+        slurm.submit_cluster_job("xce_refmac", "refmac.csh", xce_logfile, slurm_token, tasks=8)
 
     def RefinementParams(self, RefmacParams):
         self.RefmacParams = RefmacParams
@@ -2157,7 +2158,7 @@ class panddaRefine(object):
             )
         )
 
-        slurm.submit_cluster_job("refmac", "refmac.csh", xce_logfile, slurm_token)
+        slurm.submit_cluster_job("refmac", "refmac.csh", xce_logfile, slurm_token, tasks=8)
 
     def RefinementParams(self, RefmacParams):
         self.RefmacParams = RefmacParams
