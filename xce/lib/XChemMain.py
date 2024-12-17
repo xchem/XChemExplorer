@@ -784,6 +784,7 @@ def NCBI_taxonomy_ID():
         "1968826": "West Nile Virus",
         "37124": "Chikungunya Virus",
         "31704": "Coxsackievirus A16",
+        "3702": "Arabidopsis thaliana"
     }
 
     return taxonomy_dict
