@@ -603,7 +603,8 @@ class Refine(object):
                 )
                 buster_report += "cd " + self.ProjectPath + "/" + self.xtalID + "\n"
                 buster_report += (
-                    "export BDG_TOOL_MOGUL=/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
+                    "export BDG_TOOL_MOGUL="
+                    "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
                 )
                 buster_report += "buster-report -d Refine_%s\n" % cycle
 
