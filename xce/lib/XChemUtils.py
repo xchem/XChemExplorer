@@ -86,7 +86,8 @@ class helpers:
                         software += "module load buster/20240123\n"
                         software += (
                             "export BDG_TOOL_MOGUL="
-                            "/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
+                            "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul"
+                            "\n"
                         )
                     software += "export BDG_TOOL_OBABEL='none'\n"
 
@@ -184,7 +185,8 @@ class helpers:
                 software += "module load ccp4/7.1.018\n"
                 software += "module load buster/20240123\n"
                 software += (
-                    "export BDG_TOOL_MOGUL=/dls_sw/apps/ccdc/CSD_2020/bin/mogul\n"
+                    "export BDG_TOOL_MOGUL="
+                    "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
                 )
                 software += "export BDG_TOOL_OBABEL='none'\n"
                 if external_software["mogul"]:
