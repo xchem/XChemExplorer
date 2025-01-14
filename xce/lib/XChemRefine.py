@@ -516,6 +516,7 @@ class Refine(object):
         if os.getcwd().startswith("/dls"):
             cmd += "module load phenix/1.20\n"
             cmd += "module load buster/20240123\n"
+            cmd += "module load graphviz\n"
         return cmd
 
     def get_source_line(self, cmd):
