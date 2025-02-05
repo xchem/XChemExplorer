@@ -97,6 +97,8 @@ class helpers:
                         software += (
                             "export CSDHOME=/dls_sw/apps/CSDS/2024.1.0"
                             "\n"
+                        )
+                        software += (
                             "export BDG_TOOL_MOGUL="
                             "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul"
                             "\n"
