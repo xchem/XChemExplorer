@@ -90,6 +90,17 @@ class helpers:
                             "\n"
                         )
                     software += "export BDG_TOOL_OBABEL='none'\n"
+                elif restraints_program == "grade2":
+                    if os.getcwd().startswith("/dls"):
+                        software += "module load ccp4/7.1.018\n"
+                        software += "module load buster/20240123\n"
+                        software += (
+                            "export CSDHOME=/dls_sw/apps/CSDS/2024.1.0\n"
+                            "export BDG_TOOL_MOGUL="
+                            "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul"
+                            "\n"
+                        )
+                    software += "export BDG_TOOL_OBABEL='none'\n"
 
                 for i in range(len(compoundID.split(";"))):
                     Logfile.insert(
@@ -124,6 +135,17 @@ class helpers:
                                 cID, mogul, smiles.split(";")[i]
                             )
                             + " -ocif {0!s}.cif -opdb {1!s}.pdb\n".format(
+                                compoundID.split(";")[i].replace(" ", ""),
+                                compoundID.split(";")[i].replace(" ", ""),
+                            )
+                        )
+                    elif restraints_program == "grade2":
+                        software += (
+                            "grade2"
+                            + " --resname {0!s} '{2!s}'".format(
+                                cID, smiles.split(";")[i]
+                            )
+                            + " --ocif {0!s}.cif --out {1!s}\n".format(
                                 compoundID.split(";")[i].replace(" ", ""),
                                 compoundID.split(";")[i].replace(" ", ""),
                             )
@@ -181,6 +203,7 @@ class helpers:
                             productSmiles, compoundID.replace(" ", "")
                         )
                     )
+
             elif restraints_program == "grade":
                 software += "module load ccp4/7.1.018\n"
                 software += "module load buster/20240123\n"
@@ -205,6 +228,32 @@ class helpers:
                     software += 'grade -resname LIG {0!s} "{1!s}"'.format(
                         mogul, productSmiles
                     ) + " -ocif {0!s}.cif -opdb {1!s}.pdb\n".format(
+                        compoundID.replace(" ", ""),
+                        compoundID.replace(" ", ""),
+                    )
+
+            elif restraints_program == "grade2":
+                software += "module load ccp4/7.1.018\n"
+                software += "module load buster/20240123\n"
+                software += (
+                    "export CSDHOME=/dls_sw/apps/CSDS/2024.1.0\n
+                    "export BDG_TOOL_MOGUL="
+                    "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
+                )
+                software += "export BDG_TOOL_OBABEL='none'\n"
+                if external_software["mogul"]:
+                if os.path.isfile(
+                    os.path.join(initial_model_directory, sample, "old.cif")
+                ):
+                    software += "grade2 --resname LIG {0!s}".format(
+                        mogul
+                    ) + " --in ../old.cif --ocif {0!s}.cif --out {1!s}.pdb\n".format(
+                        compoundID.replace(" ", ""), compoundID.replace(" ", "")
+                    )
+                else:
+                    software += 'grade2 --resname LIG {0!s} "{1!s}"'.format(
+                        mogul, productSmiles
+                    ) + " --ocif {0!s}.cif --out {1!s}.pdb\n".format(
                         compoundID.replace(" ", ""),
                         compoundID.replace(" ", ""),
                     )
@@ -1597,6 +1646,9 @@ class external_software:
 
         self.available_programs["grade"] = find_executable("grade") is not None
         self.log_found_status("grade")
+
+        self.available_programs["grade2"] = find_executable("grade2") is not None
+        self.log_found_status("grade2")
 
         self.available_programs["giant.create_occupancy_params"] = (
             find_executable("giant.create_occupancy_params") is not None
