@@ -94,10 +94,7 @@ class helpers:
                     if os.getcwd().startswith("/dls"):
                         software += "module load ccp4/7.1.018\n"
                         software += "module load buster/20240123\n"
-                        software += (
-                            "export CSDHOME=/dls_sw/apps/CSDS/2024.1.0"
-                            "\n"
-                        )
+                        software += "export CSDHOME=/dls_sw/apps/CSDS/2024.1.0\n"
                         software += (
                             "export BDG_TOOL_MOGUL="
                             "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul"
