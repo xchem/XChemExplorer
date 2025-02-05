@@ -246,13 +246,12 @@ class helpers:
                 ):
                     software += "grade2 --resname LIG {0!s}".format(
                         mogul
-                    ) + " --in ../old.cif --ocif {0!s}.cif --out {1!s}.pdb\n".format(
+                    ) + " --in ../old.cif --ocif {0!s}.cif --out {1!s}\n".format(
                         compoundID.replace(" ", ""), compoundID.replace(" ", "")
                     )
                 else:
-                    software += 'grade2 --resname LIG {0!s} "{1!s}"'.format(
-                        mogul, productSmiles
-                    ) + " --ocif {0!s}.cif --out {1!s}.pdb\n".format(
+                    software += 'grade2 --resname LIG "{0!s}"'.format(productSmiles) 
+                    + " --ocif {0!s}.cif --out {1!s}\n".format(
                         compoundID.replace(" ", ""),
                         compoundID.replace(" ", ""),
                     )
