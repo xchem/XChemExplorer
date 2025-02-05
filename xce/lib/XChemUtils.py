@@ -241,7 +241,6 @@ class helpers:
                     "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
                 )
                 software += "export BDG_TOOL_OBABEL='none'\n"
-                if external_software["mogul"]:
                 if os.path.isfile(
                     os.path.join(initial_model_directory, sample, "old.cif")
                 ):
