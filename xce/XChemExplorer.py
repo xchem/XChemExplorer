@@ -3967,6 +3967,9 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == "pandda.inspect":
             self.run_pandda_inspect()
 
+        elif instruction == "pandda2.inspect":
+            self.run_pandda_2_inspect()
+
         elif instruction == "run pandda.inspect at home":
             self.run_pandda_inspect_at_home()
 
@@ -4172,6 +4175,19 @@ class XChemExplorer(QtGui.QApplication):
         )
         print("==> XCE: starting pandda.inspect")
         self.work_thread = XChemThread.start_pandda_inspect(
+            self.settings, self.xce_logfile
+        )
+        self.connect(
+            self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished
+        )
+        self.work_thread.start()
+
+    def run_pandda_2_inspect(self):
+        self.settings["panddas_directory"] = str(
+            self.pandda_output_data_dir_entry.text()
+        )
+        print("==> XCE: starting pandda2.inspect")
+        self.work_thread = XChemThread.start_pandda_2_inspect(
             self.settings, self.xce_logfile
         )
         self.connect(

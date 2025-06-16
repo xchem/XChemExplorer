@@ -728,6 +728,7 @@ class setup:
             "pandda.analyse",
             "pandda.analyse (PanDDA2)",
             "pandda.inspect",
+            "pandda2.inspect",
             "run pandda.inspect at home",
             "------------------------------------------",
             "Export NEW PANDDA models",

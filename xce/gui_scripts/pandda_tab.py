@@ -19,6 +19,7 @@ class PanddaTab:
             "Dataset Summary",
             "Processing Output",
             "pandda.inspect",
+            "pandda2.inspect",
             "Statistical Map Summaries",
         ]
 
