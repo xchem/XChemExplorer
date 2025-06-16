@@ -2,7 +2,6 @@ import csv
 import glob
 import math
 import os
-import pathlib
 import pickle
 from datetime import datetime
 
@@ -2101,10 +2100,9 @@ class start_pandda_2_inspect(QtCore.QThread):
         # Maybe XCE has a DLS settings file which would be a much nicer
         # solution to this? start_pandda_inspect calls the module system so this
         # doesn't seem any less portable
-        dls_pandda_2_inspect_path = pathlib.Path(
-            '/dls_sw/i04-1/software/PanDDA2Inspect/out/Moorhen-linux-x64/Moorhen')
+        dls_pandda_2_inspect_path = '/dls_sw/i04-1/software/PanDDA2Inspect/out/Moorhen-linux-x64/Moorhen'
 
-        if dls_pandda_2_inspect_path.exists():
+        if os.path.exists(dls_pandda_2_inspect_path):
             Cmds = (
                "#!" + os.getenv("SHELL") + "\n"
                "" + str(dls_pandda_2_inspect_path) + " " + self.panddas_directory + "\n"
