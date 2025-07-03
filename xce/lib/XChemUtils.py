@@ -142,7 +142,7 @@ class helpers:
                     elif restraints_program == "grade2":
                         software += (
                             "grade2"
-                            + " --resname {0!s} '{2!s}'".format(
+                            + " --resname {0!s} '{1!s}'".format(
                                 cID, smiles.split(";")[i]
                             )
                             + " --ocif {0!s}.cif --out {1!s}\n".format(
