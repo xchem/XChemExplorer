@@ -151,6 +151,8 @@ class helpers:
                             )
                         )
 
+                        software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb".format(
+                        compoundID.replace(" ", ""), compoundID.replace(" ", ""))
         else:
             # check if CompoundSMILEScovalent field is not Null
             # CompoundSMILESproduct can be used to create only a CIF file
@@ -250,8 +252,8 @@ class helpers:
                         compoundID.replace(" ", ""), compoundID.replace(" ", "")
                     )
 
-                    software += "os.rename({0!s}.xyz.pdb, {0!s}.pdb".format(
-                        compoundID.replace(" ", ""))
+                    software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb".format(
+                        compoundID.replace(" ", ""), compoundID.replace(" ", ""))
                 else:
                     software += 'grade2 --resname LIG "{0!s}"'.format(
                         productSmiles
@@ -260,8 +262,8 @@ class helpers:
                         compoundID.replace(" ", ""),
                     )
 
-                    software += "os.rename({0!s}.xyz.pdb, {0!s}.pdb".format(
-                        compoundID.replace(" ", ""))
+                    software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb".format(
+                        compoundID.replace(" ", ""), compoundID.replace(" ", ""))
 
             # merge all compound CIFs into 1 file called merged.cif
             software += (
