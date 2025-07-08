@@ -151,7 +151,7 @@ class helpers:
                             )
                         )
 
-                        software += ("os.rename({0!s}.xyz.pdb, {1!s}.pdb)".format(
+                        software += ("os.rename({0!s}.xyz.pdb, {1!s}.pdb)\n".format(
                             compoundID.replace(" ", ""), compoundID.replace(" ", ""))
                         )
         else:
@@ -253,7 +253,7 @@ class helpers:
                         compoundID.replace(" ", ""), compoundID.replace(" ", "")
                     )
 
-                    software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb)".format(
+                    software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb)\n".format(
                         compoundID.replace(" ", ""), compoundID.replace(" ", ""))
                 else:
                     software += 'grade2 --resname LIG "{0!s}"'.format(
@@ -263,7 +263,7 @@ class helpers:
                         compoundID.replace(" ", ""),
                     )
 
-                    software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb)".format(
+                    software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb)\n".format(
                         compoundID.replace(" ", ""), compoundID.replace(" ", ""))
 
             # merge all compound CIFs into 1 file called merged.cif
