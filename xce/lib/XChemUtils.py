@@ -151,8 +151,9 @@ class helpers:
                             )
                         )
 
-                        software += "os.rename({0!s}.xyz.pdb, {1!s}.pdb".format(
+                        software += ("os.rename({0!s}.xyz.pdb, {1!s}.pdb".format(
                             compoundID.replace(" ", ""), compoundID.replace(" ", ""))
+                        )
         else:
             # check if CompoundSMILEScovalent field is not Null
             # CompoundSMILESproduct can be used to create only a CIF file
