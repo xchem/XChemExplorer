@@ -151,8 +151,7 @@ class helpers:
                             )
                         )
 
-                        pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") 
-                        + compoundID.replace(" ", "")
+                        pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") + compoundID.replace(" ", "")
 
                         software += "mv {0!s}.xyz.pdb {1!s}.pdb\n".format(
                             pdb_prefix, pdb_prefix)
@@ -255,8 +254,7 @@ class helpers:
                         compoundID.replace(" ", ""), compoundID.replace(" ", "")
                     )
 
-                    pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") 
-                    + compoundID.replace(" ", "")
+                    pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") + compoundID.replace(" ", "")
 
                     software += "mv {0!s}.xyz.pdb {1!s}.pdb\n".format(
                         pdb_prefix, pdb_prefix)
@@ -268,8 +266,7 @@ class helpers:
                         compoundID.replace(" ", ""),
                     )
 
-                    pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") 
-                    + compoundID.replace(" ", "")
+                    pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") + compoundID.replace(" ", "")
 
                     software += "mv {0!s}.xyz.pdb {1!s}.pdb\n".format(
                         pdb_prefix, pdb_prefix)
