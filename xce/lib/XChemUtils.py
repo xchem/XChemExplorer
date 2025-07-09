@@ -153,7 +153,7 @@ class helpers:
 
                         pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") + compoundID.replace(" ", "")
 
-                        software += "mv {0!s}.xyz.pdb, {1!s}.pdb\n".format(
+                        software += "mv {0!s}.xyz.pdb {1!s}.pdb\n".format(
                             pdb_prefix, pdb_prefix)
         else:
             # check if CompoundSMILEScovalent field is not Null
@@ -256,7 +256,7 @@ class helpers:
 
                     pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") + compoundID.replace(" ", "")
 
-                    software += "mv {0!s}.xyz.pdb, {1!s}.pdb\n".format(
+                    software += "mv {0!s}.xyz.pdb {1!s}.pdb\n".format(
                         pdb_prefix, pdb_prefix)
                 else:
                     software += 'grade2 --resname LIG "{0!s}"'.format(
@@ -268,7 +268,7 @@ class helpers:
 
                     pdb_prefix = os.path.join(initial_model_directory, sample, "compound/") + compoundID.replace(" ", "")
 
-                    software += "mv {0!s}.xyz.pdb, {1!s}.pdb\n".format(
+                    software += "mv {0!s}.xyz.pdb {1!s}.pdb\n".format(
                         pdb_prefix, pdb_prefix)
 
             # merge all compound CIFs into 1 file called merged.cif
