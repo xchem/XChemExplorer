@@ -869,6 +869,8 @@ class XChemExplorer(QtGui.QApplication):
             program_list.append("phenix.elbow")
         if self.external_software["grade"]:
             program_list.append("grade")
+        if self.external_software["grade2"]:
+            program_list.append("grade2")
         for item in program_list:
             self.preferences_restraints_generation_combobox.addItem(item)
         self.preferences_restraints_generation_combobox.currentIndexChanged.connect(

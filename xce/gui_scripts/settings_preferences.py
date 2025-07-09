@@ -228,7 +228,7 @@ class setup:
 
         xce_object.second_cif_file = None
 
-        restraints_program_candidates = ["acedrg", "phenix.elbow", "grade"]
+        restraints_program_candidates = ["acedrg", "phenix.elbow", "grade", "grade2"]
 
         xce_object.restraints_program = ""
         for restraints_program_candidate in restraints_program_candidates:
