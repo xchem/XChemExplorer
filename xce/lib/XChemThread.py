@@ -2086,6 +2086,38 @@ class start_pandda_inspect(QtCore.QThread):
         )
         os.system(Cmds)
 
+class start_pandda_2_inspect(QtCore.QThread):
+    def __init__(self, settings, xce_logfile):
+        QtCore.QThread.__init__(self)
+        self.panddas_directory = settings["panddas_directory"]
+        self.xce_logfile = xce_logfile
+        self.Logfile = XChemLog.updateLog(xce_logfile)
+
+    def run(self):
+
+        # If running at DLS get the appropriate path, otherwise rely on the user
+        # having pandda2.inspect in path
+        # Maybe XCE has a DLS settings file which would be a much nicer
+        # solution to this? start_pandda_inspect calls the module system so this
+        # doesn't seem any less portable
+        dls_pandda_2_inspect_path = '/dls_sw/i04-1/software/PanDDA2Inspect/out/Moorhen-linux-x64/Moorhen'
+
+        if os.path.exists(dls_pandda_2_inspect_path):
+            Cmds = (
+               "#!" + os.getenv("SHELL") + "\n"
+               "" + str(dls_pandda_2_inspect_path) + " " + self.panddas_directory + "\n"
+            )
+        else:
+            Cmds = (
+                "#!" + os.getenv("SHELL") + "\n"
+                "pandda2.inspect " + self.panddas_directory + "\n"
+            )
+
+        self.Logfile.insert(
+            "starting pandda2.inspect with the following command:\n" + Cmds
+        )
+        os.system(Cmds)
+
 
 # --- new module from hell -------------------------------------------------------------
 
