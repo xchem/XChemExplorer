@@ -86,18 +86,18 @@ class helpers:
                         software += "module load buster/20240123\n"
                         software += (
                             "export BDG_TOOL_MOGUL="
-                            "/dls_sw/apps/CSDS/2025/2025.2/ccdc-software/mogul/bin/mogul"
+                            "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul"
                             "\n"
                         )
                     software += "export BDG_TOOL_OBABEL='none'\n"
                 elif restraints_program == "grade2":
                     if os.getcwd().startswith("/dls"):
                         software += "module load ccp4/7.1.018\n"
-                        software += "module load buster/20240123\n"
-                        software += "export CSDHOME=/dls_sw/apps/CSDS/2025/2025.2\n"
+                        software += "module load buster/20250717\n"
+                        software += "export CSDHOME=/dls_sw/apps/CSDS/2024.1.0\n"
                         software += (
                             "export BDG_TOOL_MOGUL="
-                            "/dls_sw/apps/CSDS/2025/2025.2/ccdc-software/mogul/bin/mogul"
+                            "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul"
                             "\n"
                         )
                     software += "export BDG_TOOL_OBABEL='none'\n"
@@ -213,7 +213,7 @@ class helpers:
                 software += "module load buster/20240123\n"
                 software += (
                     "export BDG_TOOL_MOGUL="
-                    "/dls_sw/apps/CSDS/2025/2025.2/ccdc-software/mogul/bin/mogul\n"
+                    "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
                 )
                 software += "export BDG_TOOL_OBABEL='none'\n"
                 if external_software["mogul"]:
@@ -238,11 +238,11 @@ class helpers:
 
             elif restraints_program == "grade2":
                 software += "module load ccp4/7.1.018\n"
-                software += "module load buster/20240123\n"
+                software += "module load buster/20250717\n"
                 software += (
-                    "export CSDHOME=/dls_sw/apps/CSDS/2025/2025.2\n"
+                    "export CSDHOME=/dls_sw/apps/CSDS/2024.1.0\n"
                     "export BDG_TOOL_MOGUL="
-                    "/dls_sw/apps/CSDS/2025/2025.2/ccdc-software/mogul/bin/mogul\n"
+                    "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
                 )
                 software += "export BDG_TOOL_OBABEL='none'\n"
                 if os.path.isfile(

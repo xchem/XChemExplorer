@@ -4,7 +4,7 @@ module load buster/20240123
 module load phenix/1.20
 module load ccp4/7.1.018
 
-export BDG_TOOL_MOGUL="/dls_sw/apps/CSDS/2025/2025.2/ccdc-software/mogul/bin/mogul"
+export BDG_TOOL_MOGUL="/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul"
 export XChemExplorer_DIR=$(readlink -e $0 | xargs dirname)
 export LD_PRELOAD="/usr/lib64/libfreetype.so:${LD_PRELOAD}"
 
