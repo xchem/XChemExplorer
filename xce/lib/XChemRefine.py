@@ -515,7 +515,7 @@ class Refine(object):
         # PHENIX stuff (if working at DLS)
         if os.getcwd().startswith("/dls"):
             cmd += "module load phenix/1.20\n"
-            cmd += "module load buster/20240123\n"
+            cmd += "module load buster/20250717\n"
             cmd += "module load graphviz\n"
         return cmd
 
@@ -1071,7 +1071,7 @@ class Refine(object):
             + os.getenv("XChemExplorer_DIR")
             + '"\n'
             + "module load phenix/1.20\n"
-            + "module load buster/20240123\n"
+            + "module load buster/20250717\n"
             + "module load ccp4\n"
             + "cd "
             + self.ProjectPath
@@ -1607,7 +1607,7 @@ class panddaRefine(object):
             )
             cmd = (
                 'export XChemExplorer_DIR="%s"\n' % os.getenv("XChemExplorer_DIR")
-                + "module load buster/20240123\n"
+                + "module load buster/20250717\n"
                 + "module load ccp4/7.1.018\n"
                 + "giant.make_restraints %s-ensemble-model.pdb" % self.xtalID
             )
