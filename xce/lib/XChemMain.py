@@ -989,13 +989,24 @@ def pdbx_country():
 
 
 def read_html(file_name):
-    source_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "html_fragments",
-        file_name + ".html",
-    )
-    with open(source_path) as file:
-        return file.read()
+    try:
+        import pkg_resources
+        # Use package-relative path (without 'xce/' prefix)
+        resource_path = "lib/html_fragments/" + file_name + ".html"
+        data = pkg_resources.resource_string("xce", resource_path)
+        return data.decode('utf-8')
+    except Exception as e:
+        # Fallback to direct filesystem access
+        source_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "html_fragments",
+            file_name + ".html",
+        )
+        try:
+            with open(source_path) as file:
+                return file.read()
+        except:
+            raise IOError("Cannot find HTML template '%s': tried pkg_resources and filesystem. Error: %s" % (file_name, str(e)))
 
 
 def html_header():

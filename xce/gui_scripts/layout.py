@@ -191,7 +191,7 @@ class LayoutObjects:
         )
 
         # define the combobox and buttons in dictionary key to determine behaviour
-        xce_object.workflow_widget_dict["PANDDAs"] = [
+        xce_object.workflow_widget_dict["PanDDA"] = [
             xce_object.panddas_file_tasks_combobox,
             xce_object.panddas_file_task_run_button,
             xce_object.panddas_file_task_status_button,
@@ -358,7 +358,7 @@ class LayoutObjects:
             "Overview",  # 0
             "Datasets",  # 1
             "Maps",  # 2
-            "PANDDAs",  # 3
+            "PanDDA",  # 3
             "Refinement",  # 4
             "Deposition",  # 6
             "Settings",
@@ -369,7 +369,7 @@ class LayoutObjects:
             xce_object.workflow[0]: "Overview",
             xce_object.workflow[1]: "Datasets",
             xce_object.workflow[2]: "Maps",
-            xce_object.workflow[3]: "PANDDAs",
+            xce_object.workflow[3]: "PanDDA",
             xce_object.workflow[4]: "Refinement",
             xce_object.workflow[6]: "Settings",
             xce_object.workflow[5]: "Deposition",

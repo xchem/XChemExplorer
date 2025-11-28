@@ -18,15 +18,16 @@ class DatasetsTab:
         # add a horizontal box to hold option to autocheck for new data
         xce_object.autocheck_hbox = QtGui.QHBoxLayout()
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         # checkbox for autocollect
-        xce_object.check_for_new_data_collection = QtGui.QCheckBox(
-            "Check for new data collection every two minutes"
-        )
-        layout_functions.add_checkbox(
-            xce_object,
-            xce_object.check_for_new_data_collection,
-            "xce_object.continously_check_for_new_data_collection",
-        )
+        # xce_object.check_for_new_data_collection = QtGui.QCheckBox(
+        #     "Check for new data collection every two minutes"
+        # )
+        # layout_functions.add_checkbox(
+        #     xce_object,
+        #     xce_object.check_for_new_data_collection,
+        #     "xce_object.continously_check_for_new_data_collection",
+        # )
 
         # select target dropdown
         select_target_label = QtGui.QLabel("<b>Select Target: </b>")
@@ -42,7 +43,7 @@ class DatasetsTab:
 
         # array defining order of xce_objects to add
         xce_object.autocheck_hbox_widgets = [
-            xce_object.check_for_new_data_collection,
+            # LEGACY: check_for_new_data_collection checkbox removed (2025-11-28)
             select_target_label,
             xce_object.target_selection_combobox,
         ]

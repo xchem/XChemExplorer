@@ -215,9 +215,8 @@ class PanddaTab:
         params_hbox.addWidget(label)
 
         url_html = (
-            '<a href="https://pandda.bitbucket.io/pandda/manual.html">'
-            "For docs: click here"
-            "</a>"
+            'For PanDDA docs <a href="https://pandda.bitbucket.io/pandda/manual.html#">click here</a>; '
+            'for PanDDA2 docs <a href="https://github.com/ConorFWild/pandda_2_gemmi/blob/master/README.md">click here</a>'
         )
         label = QtGui.QLabel()
         label.setText(url_html)
