@@ -778,6 +778,7 @@ def NCBI_taxonomy_ID():
         "837": "Porphyromonas gingivalis",
         "42789": "Human Enterovirus D68",
         "103922": "Human Enterovirus A71",
+        "5664": "Leishmania major",
         "1335626": "MERS-CoV",
         "64320": "Zika Virus",
         "11060": "Dengue Virus",
