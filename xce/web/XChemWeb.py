@@ -226,8 +226,34 @@ class export_to_html:
     def copy_jscss(self):
         os.chdir(self.htmlDir)
         self.Logfile.insert("copying css and js files to " + self.htmlDir)
-        os.system("/bin/cp -r %s/web/jscss/css ." % os.getenv("XChemExplorer_DIR"))
-        os.system("/bin/cp -r %s/web/jscss/js ." % os.getenv("XChemExplorer_DIR"))
+        try:
+            import pkg_resources
+            import shutil
+            # Try to extract from package resources
+            for subdir in ['css', 'js']:
+                resource_dir = 'web/jscss/' + subdir
+                target_dir = os.path.join(self.htmlDir, subdir)
+                if os.path.exists(target_dir):
+                    shutil.rmtree(target_dir)
+                os.makedirs(target_dir)
+                try:
+                    # List and copy all files in the resource directory
+                    filenames = pkg_resources.resource_listdir('xce', resource_dir)
+                    for filename in filenames:
+                        if filename.startswith('.'):
+                            continue
+                        resource_path = resource_dir + '/' + filename
+                        try:
+                            content = pkg_resources.resource_string('xce', resource_path)
+                            with open(os.path.join(target_dir, filename), 'wb') as f:
+                                f.write(content)
+                        except:
+                            pass  # Skip files that can't be read
+                    self.Logfile.insert("Copied %s files from package resources" % subdir)
+                except Exception as e:
+                    self.Logfile.warning("Cannot extract %s from package: %s" % (subdir, str(e)))
+        except Exception as e:
+            self.Logfile.error("Error copying jscss files: %s" % str(e))
 
     def make_thumbnail(self, xtal, x, y, z, ligID, eventMap):
         self.Logfile.insert(
@@ -404,19 +430,16 @@ class export_to_html:
                 self.Logfile.warning(
                     "%s: using %s instead" % (xtal, "NO_SPIDER_PLOT_AVAILABLE.png")
                 )
-                os.system(
-                    "/bin/cp %s %s_%s.png"
-                    % (
-                        os.path.join(
-                            os.getenv("XChemExplorer_DIR"),
-                            "xce",
-                            "image",
-                            "NO_SPIDER_PLOT_AVAILABLE.png",
-                        ),
-                        xtal,
-                        ligID,
-                    )
-                )
+                try:
+                    import pkg_resources
+                    # Try to get from package resources (works for both egg and filesystem)
+                    resource_path = "image/NO_SPIDER_PLOT_AVAILABLE.png"
+                    content = pkg_resources.resource_string('xce', resource_path)
+                    target_file = "%s_%s.png" % (xtal, ligID)
+                    with open(target_file, 'wb') as f:
+                        f.write(content)
+                except Exception as e:
+                    self.Logfile.error("%s: could not copy NO_SPIDER_PLOT_AVAILABLE.png: %s" % (xtal, str(e)))
                 #
         else:
             self.Logfile.error(

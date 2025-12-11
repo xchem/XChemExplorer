@@ -487,7 +487,8 @@ class setup:
                         "",
                         xce_object.create_new_data_source,
                     ],
-                    ["Export CSV for wonka", "", xce_object.export_data_for_WONKA],
+                    # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+                    # ["Export CSV for wonka", "", xce_object.export_data_for_WONKA],
                 ],
             ],
             "C: preferences": [
@@ -510,40 +511,27 @@ class setup:
                         xce_object.export_to_html_deposition_ready,
                     ],
                     ["Update DB with PDB codes", "", xce_object.enter_pdb_codes],
-                    ["Check SMILES", "", xce_object.check_smiles_in_db_and_pdb],
+                    # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+                    # ["Check SMILES", "", xce_object.check_smiles_in_db_and_pdb],
                 ],
             ],
             "F: help": [
                 "&Help",
                 [
                     [
-                        "Open XCE manual",
+                        "Open XChem Documentation",
                         "",
                         lambda: setup().openFile(
-                            "/dls/science/groups/i04-1/software/"
-                            "XCE_manual_2018-11-09.pdf"
-                        ),
-                    ],
-                    [
-                        "Open XCE tutorial",
-                        "",
-                        lambda: setup().openFile(
-                            "/dls/science/groups/i04-1/software/docs/XChemExplorer.pdf"
-                        ),
-                    ],
-                    [
-                        "Troubleshooting",
-                        "",
-                        lambda: setup().openFile(
-                            "/dls/science/groups/i04-1/software/xce_troubleshooting.pdf"
+                            "https://www.diamond.ac.uk/Instruments/Mx/Fragment-Screening/Manuals-and-documentation.html"
                         ),
                     ],
                 ],
             ],
-            "G: labels": [
-                "&Labels",
-                [["Edit label information", "", xce_object.add_label_information]],
-            ],
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "G: labels": [
+            #     "&Labels",
+            #     [["Edit label information", "", xce_object.add_label_information]],
+            # ],
         }
 
     def bottom_box_buttons(self, xce_object):
@@ -698,59 +686,69 @@ class setup:
         xce_object.dataset_tasks = [
             "Get New Results from Autoprocessing",
             "Rescore Datasets",
-            "Run xia2 on selected datasets",
-            "Run xia2 on selected datasets - overwrite",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "Run xia2 on selected datasets",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "Run xia2 on selected datasets - overwrite",
         ]
 
         xce_object.map_cif_file_tasks = [
             "Run DIMPLE on selected MTZ files",
             "Remove selected DIMPLE files",
-            "Set DIMPLE output",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "Set DIMPLE output",
             "------------------------------------------",
             "Create CIF/PDB/PNG file of SELECTED compounds",
             "Merge ligand CIF file with selected compounds",
             "Restore original CIF file of selected compounds",
-            "Fit ligands into maps after initial refinement",
-            "------------------------------------------",
-            "Run PIPEDREAM on selected MTZ files",
-            "Remove selected PIPEDREAM files",
-            "Set PIPEDREAM output",
-            "------------------------------------------",
-            "Run PHENIX.LIGAND_PIPELINE on selected MTZ files",
-            "Remove selected PHENIX.LIGAND_PIPELINE files",
-            "Set PHENIX.LIGAND_PIPELINE output",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "Fit ligands into maps after initial refinement",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "------------------------------------------",
+            # "Run PIPEDREAM on selected MTZ files",
+            # "Remove selected PIPEDREAM files",
+            # "Set PIPEDREAM output",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "------------------------------------------",
+            # "Run PHENIX.LIGAND_PIPELINE on selected MTZ files",
+            # "Remove selected PHENIX.LIGAND_PIPELINE files",
+            # "Set PHENIX.LIGAND_PIPELINE output",
         ]
 
         xce_object.panddas_file_tasks = [
-            "pre-run for ground state model",
+            "Pre-run for ground state model",
             "Build ground state model",
             "------------------------------------------",
-            "pandda.analyse",
-            "pandda.analyse (PanDDA2)",
-            "pandda.inspect",
-            "pandda2.inspect",
-            "run pandda.inspect at home",
+            "PanDDA.analyse",
+            "PanDDA.analyse (PanDDA2)",
+            "PanDDA.inspect",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "pandda2.inspect",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "run pandda.inspect at home",
             "------------------------------------------",
-            "Export NEW PANDDA models",
-            "Export ALL PANDDA models",
-            "Export SELECTED PANDDA models",
+            "Refine NEW PanDDA ensemble models with Refmac",
+            "Refine ALL PanDDA ensemble models with Refmac",
+            "Refine SELECTED PanDDA ensemble models with Refmac",
             "------------------------------------------",
-            "refine ALL bound-state models with BUSTER",
-            "refine NEW bound-state models with BUSTER",
+            "Refine ALL bound-state models with Buster",
+            "Refine NEW bound-state models with Buster",
             "------------------------------------------",
-            "refine ALL bound-state models with BUSTER (no sanity check)",
-            "refine NEW bound-state models with BUSTER (no sanity check)",
+            "Refine ALL bound-state models with Buster (no sanity check)",
+            "Refine NEW bound-state models with Buster (no sanity check)",
             "------------------------------------------",
             "Show HTML summary",
-            "cluster datasets",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "cluster datasets",
             "Event Map -> SF",
             "apo -> mmcif",
-            "check modelled ligands",
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
+            # "check modelled ligands",
         ]
 
         xce_object.refine_file_tasks = [
-            "Open COOT - REFMAC refinement -",
-            "Open COOT - BUSTER refinement -",
-            "Open COOT - dimple_twin -",
+            "Open COOT - ensemble refinement (Refmac)",
+            "Open COOT - bound state refinement (Buster)",
+            "Open COOT - twinned refinement",
             "",
         ]

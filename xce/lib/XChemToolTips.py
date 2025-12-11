@@ -127,17 +127,21 @@ def pandda_pre_run(reference_directory):
 
 
 def deposition_introduction():
-    msg = "Some background about batch deposition of PanDDA models can be found here: "
+    msg = (
+        "<b>DISCLAIMER:</b> The group deposition process in XCE is now partially deprecated. "
+        "You may still be able to assemble the required files using the steps below with some "
+        "additional patching, but please note that we are actively working on replacing this "
+        "part of the pipeline.<br><br>"
+        '<h3 style="margin-top: 10px; margin-bottom: 5px;">Uploading to Fragalysis</h3>'
+        "Instructions for uploading and sharing your data via Fragalysis can be found "
+        '<a href="https://xchem-align.readthedocs.io/en/latest/" style="color: blue;">here</a>.'
+    )
     return msg
 
 
 def deposition_introduction_link():
-    lnk = (
-        "<a href="
-        '"https://openlabnotebooks.org/update-on-batch-deposition-of-xchem-structures"'
-        ">'https://openlabnotebooks.org/update-on-batch-deposition-of-xchem-structures'"
-        "</a>"
-    )
+    # Deprecated - no longer used
+    lnk = ""
     return lnk
 
 
@@ -190,8 +194,8 @@ def pdb_group_deposition_instruction_one():
 def pdb_group_deposition_link():
     lnk = (
         "<a "
-        'href="https://deposit-group-1.rcsb.rutgers.edu/groupdeposit"'
-        ">'https://deposit-group-1.rcsb.rutgers.edu/groupdeposit'</a>"
+        'href="https://deposit-group.rcsb.rutgers.edu/groupdeposit/"'
+        ">'https://deposit-group.rcsb.rutgers.edu/groupdeposit/'</a>"
     )
     return lnk
 

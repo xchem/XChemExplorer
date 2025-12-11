@@ -238,7 +238,7 @@ def add_widgets_layouts(xce_object):
             xce_object.pandda_analyse_hbox,
         ],
         [
-            xce_object.tab_dict[xce_object.workflow_dict["PANDDAs"]][1],
+            xce_object.tab_dict[xce_object.workflow_dict["PanDDA"]][1],
             xce_object.panddas_results_vbox,
         ],
         [

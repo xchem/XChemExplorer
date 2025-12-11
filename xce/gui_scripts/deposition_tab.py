@@ -29,10 +29,9 @@ class DepositionTab:
         deposition_page_introduction = QtGui.QLabel(
             XChemToolTips.deposition_introduction()
         )
-        deposition_page_introduction_link = QtGui.QLabel(
-            XChemToolTips.deposition_introduction_link()
-        )
-        deposition_page_introduction_link.setOpenExternalLinks(True)
+        deposition_page_introduction.setWordWrap(True)
+        deposition_page_introduction.setStyleSheet("font: 16pt Arial")
+        deposition_page_introduction.setOpenExternalLinks(True)
 
         # bound-state depostion
 
@@ -215,7 +214,6 @@ class DepositionTab:
             deposition_page_heading,
             QtGui.QLabel(" \n "),
             deposition_page_introduction,
-            deposition_page_introduction_link,
             QtGui.QLabel(" \n "),
             deposition_bound_state_heading,
             QtGui.QLabel(" \n "),

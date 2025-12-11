@@ -3535,8 +3535,10 @@ class XChemExplorer(QtGui.QApplication):
     def remove_selected_dimple_files(self, instruction):
         if "dimple" in instruction.lower():
             pipeline = "dimple"
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif "pipedream" in instruction.lower():
             pipeline = "pipedream"
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif "phenix" in instruction.lower():
             pipeline = "phenix.ligand_pipeline"
 
@@ -3598,8 +3600,10 @@ class XChemExplorer(QtGui.QApplication):
     def set_results_from_selected_pipeline(self, instruction):
         if "dimple" in instruction.lower():
             pipeline = "dimple"
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif "pipedream" in instruction.lower():
             pipeline = "pipedream"
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif "phenix" in instruction.lower():
             pipeline = "phenix.ligand_pipeline"
 
@@ -3659,8 +3663,10 @@ class XChemExplorer(QtGui.QApplication):
         if reply == 0:
             if "dimple" in instruction.lower():
                 pipeline = "dimple"
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
             elif "pipedream" in instruction.lower():
                 pipeline = "pipedream"
+            # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
             elif "phenix" in instruction.lower():
                 pipeline = "phenix.ligand_pipeline"
 
@@ -3921,27 +3927,34 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == "Run DIMPLE on selected MTZ files":
             self.run_dimple_on_selected_autoprocessing_file(instruction)
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Run PIPEDREAM on selected MTZ files":
             self.run_dimple_on_selected_autoprocessing_file(instruction)
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Run PHENIX.LIGAND_PIPELINE on selected MTZ files":
             self.run_dimple_on_selected_autoprocessing_file(instruction)
 
         elif instruction == "Remove selected DIMPLE files":
             self.remove_selected_dimple_files(instruction)
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Remove selected PIPEDREAM files":
             self.remove_selected_dimple_files(instruction)
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Remove selected PHENIX.LIGAND_PIPELINE files":
             self.remove_selected_dimple_files(instruction)
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Set DIMPLE output":
             self.set_results_from_selected_pipeline(instruction)
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Set PIPEDREAM output":
             self.set_results_from_selected_pipeline(instruction)
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Set PHENIX.LIGAND_PIPELINE output":
             self.set_results_from_selected_pipeline(instruction)
 
@@ -3954,58 +3967,64 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == "Restore original CIF file of selected compounds":
             self.merge_cif_files("restore")
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "Fit ligands into maps after initial refinement":
             self.fit_ligands_into_dimple_maps()
 
-        elif instruction == "pandda.analyse":
+        elif instruction == "pandda.analyse" or instruction == "PanDDA.analyse":
             self.run_pandda_analyse("production_run")
 
-        elif instruction == "pandda.analyse (PanDDA2)":
+        elif instruction == "pandda.analyse (PanDDA2)" or instruction == "PanDDA.analyse (PanDDA2)":
             self.run_pandda_analyse("production_run_pandda_two")
 
-        elif instruction == "pre-run for ground state model":
+        elif instruction == "pre-run for ground state model" or instruction == "Pre-run for ground state model":
             self.run_pandda_analyse("pre_run")
 
-        elif instruction == "pandda.inspect":
+        elif instruction == "pandda.inspect" or instruction == "PanDDA.inspect":
             self.run_pandda_inspect()
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "pandda2.inspect":
             self.run_pandda_2_inspect()
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "run pandda.inspect at home":
             self.run_pandda_inspect_at_home()
 
-        elif instruction == "Export NEW PANDDA models":
+        elif instruction == "Export NEW PANDDA models" or instruction == "Refine NEW PanDDA ensemble models with Refmac":
             update_datasource_only = False
             which_models = "new"
             self.run_pandda_export(update_datasource_only, which_models)
 
-        elif instruction == "Export ALL PANDDA models":
+        elif instruction == "Export ALL PANDDA models" or instruction == "Refine ALL PanDDA ensemble models with Refmac":
             update_datasource_only = False
             which_models = "all"
             self.run_pandda_export(update_datasource_only, which_models)
 
-        elif instruction == "Export SELECTED PANDDA models":
+        elif instruction == "Export SELECTED PANDDA models" or instruction == "Refine SELECTED PanDDA ensemble models with Refmac":
             update_datasource_only = False
             which_models = "selected"
             self.run_pandda_export(update_datasource_only, which_models)
 
-        elif instruction == "refine ALL bound-state models with BUSTER":
+        elif instruction == "refine ALL bound-state models with BUSTER" or instruction == "Refine ALL bound-state models with Buster":
             self.run_refine_bound_state_with_buster("all")
 
-        elif instruction == "refine NEW bound-state models with BUSTER":
+        elif instruction == "refine NEW bound-state models with BUSTER" or instruction == "Refine NEW bound-state models with Buster":
             self.run_refine_bound_state_with_buster("new")
 
         elif (
             instruction == "refine ALL bound-state models with BUSTER (no sanity check)"
+            or instruction == "Refine ALL bound-state models with Buster (no sanity check)"
         ):
             self.run_refine_bound_state_with_buster("allnocheck")
 
         elif (
             instruction == "refine NEW bound-state models with BUSTER (no sanity check)"
+            or instruction == "Refine NEW bound-state models with Buster (no sanity check)"
         ):
             self.run_refine_bound_state_with_buster("newnocheck")
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "cluster datasets":
             self.cluster_datasets_for_pandda()
 
@@ -4023,6 +4042,7 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == "apo -> mmcif":
             self.convert_apo_to_mmcif()
 
+        # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "check modelled ligands":
             self.compare_modelled_ligands_and_panddaTable()
 
@@ -4034,7 +4054,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.update_log.insert("starting coot...")
                 if instruction == "Open COOT":
                     interface = "new"
-                elif instruction == "Open COOT - REFMAC refinement -":
+                elif instruction == "Open COOT - REFMAC refinement -" or instruction == "Open COOT - ensemble refinement (Refmac)":
                     interface = "new"
                 elif instruction == "Open COOT - test -":
                     interface = "test"
@@ -4042,9 +4062,9 @@ class XChemExplorer(QtGui.QApplication):
                     interface = "panddaV1"
                 elif instruction == "Build ground state model":
                     interface = "reference"
-                elif instruction == "Open COOT - BUSTER refinement -":
+                elif instruction == "Open COOT - BUSTER refinement -" or instruction == "Open COOT - bound state refinement (Buster)":
                     interface = "buster"
-                elif instruction == "Open COOT - dimple_twin -":
+                elif instruction == "Open COOT - dimple_twin -" or instruction == "Open COOT - twinned refinement":
                     interface = "dimple_twin"
                 else:
                     interface = "old"
