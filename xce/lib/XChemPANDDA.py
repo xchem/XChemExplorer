@@ -509,6 +509,7 @@ class run_pandda_export(QtCore.QThread):
         }
 
     def update_event_map_headers(self):
+        self.Logfile.insert('Running update event map headers')
         base = "/dls/science/groups/i04-1/software/update_event_map_headers"
         script = (
             "#!/bin/bash\n"
@@ -517,10 +518,14 @@ class run_pandda_export(QtCore.QThread):
             "{}/update_event_map_headers.py "
             "{}".format(base, base, self.panddas_directory)
         )
+        self.Logfile.insert(script)
         p = subprocess.Popen(
             script, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
         )
         stdout, stderr = p.communicate()
+        self.Logfile.insert(str(stdout))
+        self.Logfile.insert(str(stderr))
+        self.Logfile.insert('Ran update event map headers!')
 
     def run(self):
         self.update_event_map_headers()
