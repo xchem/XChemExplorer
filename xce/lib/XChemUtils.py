@@ -633,9 +633,12 @@ class parse:
         if (
             self.aimless["DataProcessingResolutionHigh"] == "n/a"
             or self.aimless["DataProcessingRmergeLow"] == "n/a"
+            or self.aimless["DataProcessingRmergeLow"] == "NA"
         ):
             self.aimless["DataProcessingAlert"] = "#FF0000"
         else:
+            print("RmergeLow:")
+            print(self.aimless["DataProcessingRmergeLow"])
             if (
                 float(self.aimless["DataProcessingResolutionHigh"]) > 3.5
                 or float(self.aimless["DataProcessingRmergeLow"]) > 0.1
