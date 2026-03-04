@@ -1200,7 +1200,7 @@ class run_pandda_analyse(QtCore.QThread):
                 print(append_string)
                 return append_string
 
-            ignore_string = 'ignore_datasets="'
+            ignore_string = '--ignore_datasets="'
             ignore_string = append_to_ignore_string(ignore, ignore_string)
 
             char_string = 'exclude_from_characterisation="'
