@@ -1200,7 +1200,7 @@ class run_pandda_analyse(QtCore.QThread):
                 print(append_string)
                 return append_string
 
-            ignore_string = '--ignore_datasets="'
+            ignore_string = 'ignore_datasets="'
             ignore_string = append_to_ignore_string(ignore, ignore_string)
 
             char_string = 'exclude_from_characterisation="'
@@ -1372,14 +1372,7 @@ class run_pandda_two_analyse(QtCore.QThread):
                 zmap.append(str(self.pandda_analyse_data_table.item(i, 0).text()))
 
         def append_to_ignore_string(datasets_list, append_string):
-            append_string = '{}"'.format(
-                ",".join(
-                    [
-                        append_string,
-                    ]
-                    + datasets_list
-                )
-            )
+            append_string = append_string + ",".join(datasets_list) + '"'
             return append_string
 
         ignore_string = '--ignore_datasets="'
