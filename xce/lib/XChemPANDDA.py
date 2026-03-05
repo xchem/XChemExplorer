@@ -1382,7 +1382,7 @@ class run_pandda_two_analyse(QtCore.QThread):
             )
             return append_string
 
-        ignore_string = 'ignore_datasets="'
+        ignore_string = '--ignore_datasets="'
         ignore_string = append_to_ignore_string(ignore, ignore_string)
 
         char_string = 'exclude_from_characterisation="'
