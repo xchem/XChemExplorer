@@ -111,9 +111,9 @@ def submit_cluster_job(
     )
     if array is not None:
         payload["job"]["array"] = array
-    if exclusive is True:
-        payload["job"]["exclusive"] = "mcs"
-        payload["job"]["mcs_label"] = str(uuid4())
+    # if exclusive is True:
+    #     payload["job"]["exclusive"] = "mcs"
+    #     payload["job"]["mcs_label"] = str(uuid4())
     if memory is not None:
         payload["job"]["memory_per_node"] = dict()
         payload["job"]["memory_per_node"]["set"] = True
@@ -127,7 +127,7 @@ def submit_cluster_job(
         CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
     )
     connection.request(
-        "POST", "/slurm/v0.0.40/job/submit", body=body, headers=construct_headers(token)
+        "POST", "/slurm/v0.0.44/job/submit", body=body, headers=construct_headers(token)
     )
     response = connection.getresponse().read()
     logfile.insert("Got response: {}".format(response))
@@ -139,7 +139,7 @@ def query_running_jobs(xce_logfile, token):
         CLUSTER_PORT,
         context=ssl._create_unverified_context(),
     )
-    connection.request("GET", "/slurm/v0.0.40/jobs", headers=construct_headers(token))
+    connection.request("GET", "/slurm/v0.0.44/jobs", headers=construct_headers(token))
     response = connection.getresponse()
     response_body = response.read()
 
