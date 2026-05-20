@@ -127,7 +127,7 @@ def submit_cluster_job(
         CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
     )
     connection.request(
-        "POST", "/slurm/v0.0.44/job/submit", body=body, headers=construct_headers(token)
+        "POST", "/slurm/v0.0.42/job/submit", body=body, headers=construct_headers(token)
     )
     response = connection.getresponse().read()
     logfile.insert("Got response: {}".format(response))
@@ -139,7 +139,7 @@ def query_running_jobs(xce_logfile, token):
         CLUSTER_PORT,
         context=ssl._create_unverified_context(),
     )
-    connection.request("GET", "/slurm/v0.0.44/jobs", headers=construct_headers(token))
+    connection.request("GET", "/slurm/v0.0.42/jobs", headers=construct_headers(token))
     response = connection.getresponse()
     response_body = response.read()
 
