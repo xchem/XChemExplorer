@@ -71,7 +71,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         progress = 0
         try:
             progress_step = float(1 / len(modelsDict))
-        except TypeError:
+        except (TypeError, ZeroDivisionError):
             self.Logfile.error("DID NOT FIND ANY MODELS TO EXPORT")
             return None
 
