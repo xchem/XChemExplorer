@@ -119,9 +119,7 @@ def submit_cluster_job(
         payload["job"]["memory_per_node"]["set"] = True
         payload["job"]["memory_per_node"]["number"] = memory
     if tasks is not None:
-        payload["job"]["tasks_per_node"] = dict()
-        payload["job"]["tasks_per_node"]["set"] = True
-        payload["job"]["tasks_per_node"]["number"] = tasks
+        payload["job"]["tasks_per_node"] = tasks
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
     logfile.insert("Submitting job, '{}', to Slurm with body: {}".format(name, body))
