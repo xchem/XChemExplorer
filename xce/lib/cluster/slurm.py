@@ -119,24 +119,39 @@ def submit_cluster_job(
         payload["job"]["memory_per_node"]["set"] = True
         payload["job"]["memory_per_node"]["number"] = memory
     if tasks is not None:
-        payload["job"]["tasks_per_node"] = tasks
+        payload["job"]["tasks_per_node"] = dict()
+        payload["job"]["tasks_per_node"]["set"] = True
+        payload["job"]["tasks_per_node"]["number"] = tasks
     body = json.dumps(payload)
     logfile = updateLog(xce_logfile)
     logfile.insert("Submitting job, '{}', to Slurm with body: {}".format(name, body))
     connection = httplib.HTTPSConnection(
-        CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
+        CLUSTER_HOST,
+        CLUSTER_PORT,
+        timeout=30,
+        context=ssl._create_unverified_context(),
     )
     connection.request(
         "POST", "/slurm/v0.0.42/job/submit", body=body, headers=construct_headers(token)
     )
-    response = connection.getresponse().read()
-    logfile.insert("Got response: {}".format(response))
+    http_response = connection.getresponse()
+    response_body = http_response.read()
+    logfile.insert(
+        "Got response ({}): {}".format(http_response.status, response_body)
+    )
+    if http_response.status != 200:
+        raise RuntimeError(
+            "Slurm submit failed for '{}' ({}): {}".format(
+                name, http_response.status, response_body
+            )
+        )
 
 
 def query_running_jobs(xce_logfile, token):
     connection = httplib.HTTPSConnection(
         CLUSTER_HOST,
         CLUSTER_PORT,
+        timeout=30,
         context=ssl._create_unverified_context(),
     )
     connection.request("GET", "/slurm/v0.0.42/jobs", headers=construct_headers(token))
@@ -144,8 +159,11 @@ def query_running_jobs(xce_logfile, token):
     response_body = response.read()
 
     if response.status != 200:
-        logifle = updateLog(xce_logfile)
-        logifle.insert("Got response: {}".format(response_body))
+        logfile = updateLog(xce_logfile)
+        logfile.insert(
+            "Got response ({}): {}".format(response.status, response_body)
+        )
+        return []
 
     jobs = []
     for job in json.loads(response_body)["jobs"]:
