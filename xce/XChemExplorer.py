@@ -4012,6 +4012,9 @@ class XChemExplorer(QtGui.QApplication):
         elif instruction == "refine NEW bound-state models with BUSTER" or instruction == "Refine NEW bound-state models with Buster":
             self.run_refine_bound_state_with_buster("new")
 
+        elif instruction == "Refine SELECTED bound-state models with Buster":
+            self.run_refine_bound_state_with_buster("selected")
+
         elif (
             instruction == "refine ALL bound-state models with BUSTER (no sanity check)"
             or instruction == "Refine ALL bound-state models with Buster (no sanity check)"
@@ -4023,6 +4026,9 @@ class XChemExplorer(QtGui.QApplication):
             or instruction == "Refine NEW bound-state models with Buster (no sanity check)"
         ):
             self.run_refine_bound_state_with_buster("newnocheck")
+
+        elif instruction == "Refine SELECTED bound-state models with Buster (no sanity check)":
+            self.run_refine_bound_state_with_buster("selectednocheck")
 
         # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)
         elif instruction == "cluster datasets":
@@ -4408,6 +4414,7 @@ class XChemExplorer(QtGui.QApplication):
                 self.xce_logfile,
                 which_models,
                 get_token(fetch_password_qt),
+                self.pandda_analyse_data_table,
             )
             self.connect(
                 self.work_thread, QtCore.SIGNAL("finished()"), self.thread_finished

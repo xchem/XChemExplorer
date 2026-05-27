@@ -515,8 +515,7 @@ class Refine(object):
         # PHENIX stuff (if working at DLS)
         if os.getcwd().startswith("/dls"):
             cmd += "module load phenix/1.20\n"
-            cmd += "module load buster/20240123\n"
-            cmd += "module load graphviz\n"
+            cmd += "module load buster/20260424\n"
         return cmd
 
     def get_source_line(self, cmd):
@@ -603,10 +602,6 @@ class Refine(object):
                     "corr -p refine.pdb -m refine.mtz -F 2FOFCWT -P PH2FOFCWT\n"
                 )
                 buster_report += "cd " + self.ProjectPath + "/" + self.xtalID + "\n"
-                buster_report += (
-                    "export BDG_TOOL_MOGUL="
-                    "/dls_sw/apps/CSDS/2024.1.0/ccdc-software/mogul/bin/mogul\n"
-                )
                 buster_report += "buster-report -d Refine_%s\n" % cycle
 
         cmd += (
@@ -1071,7 +1066,7 @@ class Refine(object):
             + os.getenv("XChemExplorer_DIR")
             + '"\n'
             + "module load phenix/1.20\n"
-            + "module load buster/20240123\n"
+            + "module load buster/20260424\n"
             + "module load ccp4\n"
             + "cd "
             + self.ProjectPath
@@ -1607,7 +1602,7 @@ class panddaRefine(object):
             )
             cmd = (
                 'export XChemExplorer_DIR="%s"\n' % os.getenv("XChemExplorer_DIR")
-                + "module load buster/20240123\n"
+                + "module load buster/20260424\n"
                 + "module load ccp4/7.1.018\n"
                 + "giant.make_restraints %s-ensemble-model.pdb" % self.xtalID
             )

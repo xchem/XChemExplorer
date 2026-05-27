@@ -733,9 +733,11 @@ class setup:
             "------------------------------------------",
             "Refine ALL bound-state models with Buster",
             "Refine NEW bound-state models with Buster",
+            "Refine SELECTED bound-state models with Buster",
             "------------------------------------------",
             "Refine ALL bound-state models with Buster (no sanity check)",
             "Refine NEW bound-state models with Buster (no sanity check)",
+            "Refine SELECTED bound-state models with Buster (no sanity check)",
             "------------------------------------------",
             "Show HTML summary",
             # LEGACY: This feature is disabled because it relies on unsupported functionality - removed from GUI to prevent issues(2025-11-28)

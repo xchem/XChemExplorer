@@ -111,9 +111,9 @@ def submit_cluster_job(
     )
     if array is not None:
         payload["job"]["array"] = array
-    if exclusive is True:
-        payload["job"]["exclusive"] = "mcs"
-        payload["job"]["mcs_label"] = str(uuid4())
+    # if exclusive is True:
+    #     payload["job"]["exclusive"] = "mcs"
+    #     payload["job"]["mcs_label"] = str(uuid4())
     if memory is not None:
         payload["job"]["memory_per_node"] = dict()
         payload["job"]["memory_per_node"]["set"] = True
@@ -124,28 +124,44 @@ def submit_cluster_job(
     logfile = updateLog(xce_logfile)
     logfile.insert("Submitting job, '{}', to Slurm with body: {}".format(name, body))
     connection = httplib.HTTPSConnection(
-        CLUSTER_HOST, CLUSTER_PORT, context=ssl._create_unverified_context()
+        CLUSTER_HOST,
+        CLUSTER_PORT,
+        timeout=30,
+        context=ssl._create_unverified_context(),
     )
     connection.request(
-        "POST", "/slurm/v0.0.40/job/submit", body=body, headers=construct_headers(token)
+        "POST", "/slurm/v0.0.42/job/submit", body=body, headers=construct_headers(token)
     )
-    response = connection.getresponse().read()
-    logfile.insert("Got response: {}".format(response))
+    http_response = connection.getresponse()
+    response_body = http_response.read()
+    logfile.insert(
+        "Got response ({}): {}".format(http_response.status, response_body)
+    )
+    if http_response.status != 200:
+        raise RuntimeError(
+            "Slurm submit failed for '{}' ({}): {}".format(
+                name, http_response.status, response_body
+            )
+        )
 
 
 def query_running_jobs(xce_logfile, token):
     connection = httplib.HTTPSConnection(
         CLUSTER_HOST,
         CLUSTER_PORT,
+        timeout=30,
         context=ssl._create_unverified_context(),
     )
-    connection.request("GET", "/slurm/v0.0.40/jobs", headers=construct_headers(token))
+    connection.request("GET", "/slurm/v0.0.42/jobs", headers=construct_headers(token))
     response = connection.getresponse()
     response_body = response.read()
 
     if response.status != 200:
-        logifle = updateLog(xce_logfile)
-        logifle.insert("Got response: {}".format(response_body))
+        logfile = updateLog(xce_logfile)
+        logfile.insert(
+            "Got response ({}): {}".format(response.status, response_body)
+        )
+        return []
 
     jobs = []
     for job in json.loads(response_body)["jobs"]:

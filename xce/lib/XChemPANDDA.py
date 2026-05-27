@@ -29,6 +29,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         xce_logfile,
         which_models,
         slurm_token,
+        pandda_analyse_data_table=None,
     ):
         QtCore.QThread.__init__(self)
         self.PanDDA_directory = PanDDA_directory
@@ -39,6 +40,7 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         self.project_directory = project_directory
         self.which_models = which_models
         self.slurm_token = slurm_token
+        self.pandda_analyse_data_table = pandda_analyse_data_table
         self.external_software = XChemUtils.external_software(xce_logfile).check()
 
     def run(self):
@@ -60,14 +62,16 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
         # find all folders with *-pandda-model.pdb
         modelsDict = self.find_modeled_structures_and_timestamps(inspect_csv)
 
-        # if only NEW models shall be exported, check timestamps
-        if not self.which_models.startswith("all"):
+        # if SELECTED models, filter by table checkboxes; if only NEW, check timestamps
+        if self.which_models.startswith("selected"):
+            modelsDict = self.find_selected_models(modelsDict)
+        elif not self.which_models.startswith("all"):
             modelsDict = self.find_new_models(modelsDict)
 
         progress = 0
         try:
             progress_step = float(1 / len(modelsDict))
-        except TypeError:
+        except (TypeError, ZeroDivisionError):
             self.Logfile.error("DID NOT FIND ANY MODELS TO EXPORT")
             return None
 
@@ -290,6 +294,24 @@ class export_and_refine_ligand_bound_models(QtCore.QThread):
                     )
             except (ValueError, IndexError) as e:
                 self.Logfile.error(str(e))
+        return samples_to_export
+
+    def find_selected_models(self, modelsDict):
+        samples_to_export = {}
+        if self.pandda_analyse_data_table is None:
+            self.Logfile.error(
+                "no PanDDA analyse table available; cannot determine selected models"
+            )
+            return samples_to_export
+        for xtal in modelsDict:
+            for i in range(0, self.pandda_analyse_data_table.rowCount()):
+                if str(self.pandda_analyse_data_table.item(i, 0).text()) == xtal:
+                    if self.pandda_analyse_data_table.cellWidget(i, 1).isChecked():
+                        self.Logfile.insert(
+                            "Dataset selected by user -> exporting " + xtal
+                        )
+                        samples_to_export[xtal] = modelsDict[xtal]
+                    break
         return samples_to_export
 
     def event_map_to_sf(self, resolution, emapLigandDict):
