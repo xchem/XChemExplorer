@@ -786,6 +786,7 @@ def NCBI_taxonomy_ID():
         "37124": "Chikungunya Virus",
         "31704": "Coxsackievirus A16",
         "3702": "Arabidopsis thaliana",
+        "186540": "Sudan ebolavirus",
     }
 
     return taxonomy_dict
