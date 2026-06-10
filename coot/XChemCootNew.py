@@ -1552,6 +1552,17 @@ class GUI(object):
         coot.user_defined_click_py(2, self.show_potential_link)
 
     def show_potential_link(self, *clicks):
+        # ---- COVLINK DEBUG ------------------------------------------------
+        # Diagnostics for the broken covalent-link workflow. If the current
+        # Coot hands this callback the two atoms as a single list argument
+        # (new coot.* API) rather than two positional args, len(clicks) will
+        # be 1 and the body below is skipped, so covLinkAtomSpec stays None.
+        print("==> XCE COVLINK DEBUG: show_potential_link called")
+        print("==> XCE COVLINK DEBUG: len(clicks) =", len(clicks))
+        print("==> XCE COVLINK DEBUG: repr(clicks) =", repr(clicks))
+        for n, c in enumerate(clicks):
+            print("==> XCE COVLINK DEBUG:   clicks[%d] = %r" % (n, c))
+        # -------------------------------------------------------------------
         # first find imol of protein molecule
         # it's a prerequisite that the ligand is merged into the protein
         imol_protein = None
@@ -1569,12 +1580,19 @@ class GUI(object):
                 break
 
         print("please click on the two atoms you want to link")
+        print("==> XCE COVLINK DEBUG: detected imol_protein =", imol_protein)
         if len(clicks) == 2:
             click_1 = clicks[0]
             click_2 = clicks[1]
             imol_1 = click_1[1]
             imol_2 = click_2[1]
             print("imolp", imol, "imo11", imol_1, "imol2", imol_2)
+            print(
+                "==> XCE COVLINK DEBUG: imol_1=%r imol_2=%r imol_protein=%r"
+                " -> match=%r" % (imol_1, imol_2,
+                                  imol_protein,
+                                  imol_1 == imol_2 and imol_1 == imol_protein)
+            )
             if imol_1 == imol_2 and imol_1 == imol_protein:
                 print("click_1", click_1)
                 self.covLinkAtomSpec = None
@@ -1625,15 +1643,32 @@ class GUI(object):
                     "error: both atoms must belong to the same object;"
                     " did you merge the ligand with your protein?"
                 )
+        print(
+            "==> XCE COVLINK DEBUG: end of show_potential_link;"
+            " covLinkAtomSpec = %r" % (self.covLinkAtomSpec,)
+        )
 
     def covalentLinkCreate(self, widget):
+        print(
+            "==> XCE COVLINK DEBUG: covalentLinkCreate called;"
+            " covLinkAtomSpec = %r" % (self.covLinkAtomSpec,)
+        )
         if self.covLinkAtomSpec is not None:
             imol = self.covLinkAtomSpec[0]
             atom1 = self.covLinkAtomSpec[1][1:]
             atom2 = self.covLinkAtomSpec[2][1:]
             residue_1 = self.covLinkAtomSpec[3]
             residue_2 = self.covLinkAtomSpec[4]
-            coot.make_link(imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7)
+            print(
+                "==> XCE COVLINK DEBUG: calling coot.make_link(imol=%r,"
+                " atom1=%r, atom2=%r, name=%r, 1.7)"
+                % (imol, atom1, atom2, residue_1 + "-" + residue_2)
+            )
+            try:
+                coot.make_link(imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7)
+                print("==> XCE COVLINK DEBUG: coot.make_link returned without error")
+            except Exception as e:
+                print("==> XCE COVLINK DEBUG: coot.make_link RAISED: %r" % (e,))
             coot.generic_object_clear(self.covLinkObject)
             self.start_refinement()
         else:
