@@ -1655,8 +1655,14 @@ class GUI(object):
         )
         if self.covLinkAtomSpec is not None:
             imol = self.covLinkAtomSpec[0]
-            atom1 = self.covLinkAtomSpec[1][1:]
-            atom2 = self.covLinkAtomSpec[2][1:]
+            # covLinkAtomSpec[1]/[2] are the raw user_defined_click_py specs:
+            # [valid_flag, imol, chain, resno, inscode, atom_name, altconf].
+            # coot.make_link() takes imol separately and wants a 5-element
+            # atom_spec_t [chain, resno, inscode, atom_name, altconf], so strip
+            # the leading flag AND imol ([2:]). The old [1:] left imol in the
+            # spec, which newer Coot rejects with a TypeError on atom_spec_t.
+            atom1 = self.covLinkAtomSpec[1][2:]
+            atom2 = self.covLinkAtomSpec[2][2:]
             residue_1 = self.covLinkAtomSpec[3]
             residue_2 = self.covLinkAtomSpec[4]
             print(
