@@ -1657,24 +1657,29 @@ class GUI(object):
             imol = self.covLinkAtomSpec[0]
             # covLinkAtomSpec[1]/[2] are the raw user_defined_click_py specs:
             # [valid_flag, imol, chain, resno, inscode, atom_name, altconf].
-            # coot.make_link() takes imol separately and wants a 5-element
-            # atom_spec_t [chain, resno, inscode, atom_name, altconf], so strip
-            # the leading flag AND imol ([2:]). The old [1:] left imol in the
-            # spec, which newer Coot rejects with a TypeError on atom_spec_t.
+            # Strip the leading flag AND imol ([2:]) to get the 5-element atom
+            # spec [chain, resno, inscode, atom_name, altconf]. This mirrors
+            # Coot's own "Make Link (click 2 atoms)" (extensions.scm), which
+            # uses (cddr m-spec) -> dropping the first two elements.
+            # Use make_link_py (the python list-accepting variant); the bare
+            # coot.make_link expects a SWIG atom_spec_t object and raises
+            # TypeError when handed a python list.
             atom1 = self.covLinkAtomSpec[1][2:]
             atom2 = self.covLinkAtomSpec[2][2:]
             residue_1 = self.covLinkAtomSpec[3]
             residue_2 = self.covLinkAtomSpec[4]
             print(
-                "==> XCE COVLINK DEBUG: calling coot.make_link(imol=%r,"
+                "==> XCE COVLINK DEBUG: calling coot.make_link_py(imol=%r,"
                 " atom1=%r, atom2=%r, name=%r, 1.7)"
                 % (imol, atom1, atom2, residue_1 + "-" + residue_2)
             )
             try:
-                coot.make_link(imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7)
-                print("==> XCE COVLINK DEBUG: coot.make_link returned without error")
+                coot.make_link_py(
+                    imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7
+                )
+                print("==> XCE COVLINK DEBUG: coot.make_link_py returned without error")
             except Exception as e:
-                print("==> XCE COVLINK DEBUG: coot.make_link RAISED: %r" % (e,))
+                print("==> XCE COVLINK DEBUG: coot.make_link_py RAISED: %r" % (e,))
             coot.generic_object_clear(self.covLinkObject)
             self.start_refinement()
         else:
