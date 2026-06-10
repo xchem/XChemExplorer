@@ -377,18 +377,28 @@ class Refine(object):
         residue_1 = covLinkAtomSpec[3]
         residue_2 = covLinkAtomSpec[4]
 
-        if residue_2 in residuesToModify:
-            bond_text = (
-                "LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1  %s  RES-NAME-2"
-                " %s ATOM-NAME-2  %s"
-                % (residue_1, self.compoundID, atom1, residue_2, atom2)
-            )
+        # Work out which clicked atom is the bound ligand and which is the
+        # Cys/Ser. The ligand carries its own restraint cif and MUST be FILE-1; 
+        # the Cys/Ser is read from acedrg's standard monomer library.
+        if residue_2 in residuesToModify and residue_1 not in residuesToModify:
+            lig_res, lig_atom = residue_1, atom1
+            prot_res, prot_atom = residue_2, atom2
+        elif residue_1 in residuesToModify and residue_2 not in residuesToModify:
+            lig_res, lig_atom = residue_2, atom2
+            prot_res, prot_atom = residue_1, atom1
         else:
-            bond_text = (
-                "LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1  %s  RES-NAME-2"
-                " %s ATOM-NAME-2  %s"
-                % (residue_2, self.compoundID, atom2, residue_1, atom1)
+            Logfile.error(
+                "covalent link is only supported through a Cys (SG) or Ser"
+                " (OG) residue; got residues '%s' and '%s' -- not creating"
+                " link restraints" % (residue_1, residue_2)
             )
+            return
+
+        bond_text = (
+            "LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1 %s"
+            " RES-NAME-2 %s ATOM-NAME-2 %s"
+            % (lig_res, self.compoundID, lig_atom, prot_res, prot_atom)
+        )
 
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
         f = open("covalent_bond.txt", "w")
@@ -1467,18 +1477,28 @@ class panddaRefine(object):
         residue_1 = covLinkAtomSpec[3]
         residue_2 = covLinkAtomSpec[4]
 
-        if residue_2 in residuesToModify:
-            bond_text = (
-                "LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1  %s  RES-NAME-2"
-                " %s ATOM-NAME-2  %s"
-                % (residue_1, self.compoundID, atom1, residue_2, atom2)
-            )
+        # Work out which clicked atom is the bound ligand and which is the
+        # Cys/Ser. The ligand carries its own restraint cif and MUST be FILE-1; 
+        # the Cys/Ser is read from acedrg's standard monomer library.
+        if residue_2 in residuesToModify and residue_1 not in residuesToModify:
+            lig_res, lig_atom = residue_1, atom1
+            prot_res, prot_atom = residue_2, atom2
+        elif residue_1 in residuesToModify and residue_2 not in residuesToModify:
+            lig_res, lig_atom = residue_2, atom2
+            prot_res, prot_atom = residue_1, atom1
         else:
-            bond_text = (
-                "LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1  %s  RES-NAME-2"
-                " %s ATOM-NAME-2  %s"
-                % (residue_2, self.compoundID, atom2, residue_1, atom1)
+            Logfile.error(
+                "covalent link is only supported through a Cys (SG) or Ser"
+                " (OG) residue; got residues '%s' and '%s' -- not creating"
+                " link restraints" % (residue_1, residue_2)
             )
+            return
+
+        bond_text = (
+            "LINK: RES-NAME-1 %s FILE-1 %s_acedrg.cif ATOM-NAME-1 %s"
+            " RES-NAME-2 %s ATOM-NAME-2 %s"
+            % (lig_res, self.compoundID, lig_atom, prot_res, prot_atom)
+        )
 
         os.chdir(os.path.join(self.ProjectPath, self.xtalID))
         f = open("covalent_bond.txt", "w")
