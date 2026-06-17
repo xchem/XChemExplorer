@@ -24,6 +24,24 @@ from xce.lib.cluster.slurm import get_token, fetch_password_qt
 from xce.web import XChemWeb
 
 
+class NoScrollComboBox(QtGui.QComboBox):
+    """A QComboBox that ignores mouse-wheel events.
+
+    When a plain QComboBox sits inside a scrollable table, scrolling while the
+    pointer is over the box (or after accidentally clicking into it) silently
+    changes its selected value. Ignoring the wheel event lets the scroll pass
+    through to the parent table instead of altering the selection.
+    """
+
+    def __init__(self, *args, **kwargs):
+        QtGui.QComboBox.__init__(self, *args, **kwargs)
+        # don't grab focus from a wheel scroll passing over the box
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+
+    def wheelEvent(self, event):
+        event.ignore()
+
+
 class XChemExplorer(QtGui.QApplication):
     def __init__(self, args):
         # init a QApplication object to hold XCE
@@ -5820,7 +5838,7 @@ class XChemExplorer(QtGui.QApplication):
 
                     elif header[0] == "Refinement\nOutcome":
                         if new_xtal:
-                            refinement_outcome_combobox = QtGui.QComboBox()
+                            refinement_outcome_combobox = NoScrollComboBox()
                             self.populate_refinement_outcome_combobox(
                                 refinement_outcome_combobox
                             )
