@@ -5025,7 +5025,7 @@ class XChemExplorer(QtGui.QApplication):
                         self.maps_table.setItem(current_row, column, cell_text)
                     elif header[0] == "Reference File":
                         if new_xtal:
-                            reference_file_selection_combobox = QtGui.QComboBox()
+                            reference_file_selection_combobox = NoScrollComboBox()
                             self.populate_reference_combobox(
                                 reference_file_selection_combobox
                             )
@@ -5257,7 +5257,7 @@ class XChemExplorer(QtGui.QApplication):
 
             elif header[0] == "DataCollection\nOutcome":
                 if xtal not in self.dataset_outcome_combobox_dict:
-                    dataset_outcome_combobox = QtGui.QComboBox()
+                    dataset_outcome_combobox = NoScrollComboBox()
                     for outcomeItem in self.dataset_outcome:
                         dataset_outcome_combobox.addItem(outcomeItem)
                     dataset_outcome_combobox.activated[str].connect(
