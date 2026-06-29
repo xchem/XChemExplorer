@@ -24,6 +24,24 @@ from xce.lib.cluster.slurm import get_token, fetch_password_qt
 from xce.web import XChemWeb
 
 
+class NoScrollComboBox(QtGui.QComboBox):
+    """A QComboBox that ignores mouse-wheel events.
+
+    When a plain QComboBox sits inside a scrollable table, scrolling while the
+    pointer is over the box (or after accidentally clicking into it) silently
+    changes its selected value. Ignoring the wheel event lets the scroll pass
+    through to the parent table instead of altering the selection.
+    """
+
+    def __init__(self, *args, **kwargs):
+        QtGui.QComboBox.__init__(self, *args, **kwargs)
+        # don't grab focus from a wheel scroll passing over the box
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+
+    def wheelEvent(self, event):
+        event.ignore()
+
+
 class XChemExplorer(QtGui.QApplication):
     def __init__(self, args):
         # init a QApplication object to hold XCE
@@ -5007,7 +5025,7 @@ class XChemExplorer(QtGui.QApplication):
                         self.maps_table.setItem(current_row, column, cell_text)
                     elif header[0] == "Reference File":
                         if new_xtal:
-                            reference_file_selection_combobox = QtGui.QComboBox()
+                            reference_file_selection_combobox = NoScrollComboBox()
                             self.populate_reference_combobox(
                                 reference_file_selection_combobox
                             )
@@ -5239,7 +5257,7 @@ class XChemExplorer(QtGui.QApplication):
 
             elif header[0] == "DataCollection\nOutcome":
                 if xtal not in self.dataset_outcome_combobox_dict:
-                    dataset_outcome_combobox = QtGui.QComboBox()
+                    dataset_outcome_combobox = NoScrollComboBox()
                     for outcomeItem in self.dataset_outcome:
                         dataset_outcome_combobox.addItem(outcomeItem)
                     dataset_outcome_combobox.activated[str].connect(
@@ -5820,7 +5838,7 @@ class XChemExplorer(QtGui.QApplication):
 
                     elif header[0] == "Refinement\nOutcome":
                         if new_xtal:
-                            refinement_outcome_combobox = QtGui.QComboBox()
+                            refinement_outcome_combobox = NoScrollComboBox()
                             self.populate_refinement_outcome_combobox(
                                 refinement_outcome_combobox
                             )
