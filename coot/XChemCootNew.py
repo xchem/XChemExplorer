@@ -1574,9 +1574,7 @@ class GUI(object):
             click_2 = clicks[1]
             imol_1 = click_1[1]
             imol_2 = click_2[1]
-            print("imolp", imol, "imo11", imol_1, "imol2", imol_2)
             if imol_1 == imol_2 and imol_1 == imol_protein:
-                print("click_1", click_1)
                 self.covLinkAtomSpec = None
                 xyz_1 = coot.atom_info_string_py(
                     click_1[1],
@@ -1629,11 +1627,20 @@ class GUI(object):
     def covalentLinkCreate(self, widget):
         if self.covLinkAtomSpec is not None:
             imol = self.covLinkAtomSpec[0]
-            atom1 = self.covLinkAtomSpec[1][1:]
-            atom2 = self.covLinkAtomSpec[2][1:]
+            # covLinkAtomSpec[1]/[2] are the raw user_defined_click_py specs:
+            # [valid_flag, imol, chain, resno, inscode, atom_name, altconf].
+            # Strip the leading flag AND imol ([2:]) to get the 5-element atom
+            # spec [chain, resno, inscode, atom_name, altconf]. This mirrors
+            # Coot's own "Make Link (click 2 atoms)" (extensions.scm), which
+            # uses (cddr m-spec) -> dropping the first two elements.
+            # Use make_link_py (the python list-accepting variant); the bare
+            # coot.make_link expects a SWIG atom_spec_t object and raises
+            # TypeError when handed a python list.
+            atom1 = self.covLinkAtomSpec[1][2:]
+            atom2 = self.covLinkAtomSpec[2][2:]
             residue_1 = self.covLinkAtomSpec[3]
             residue_2 = self.covLinkAtomSpec[4]
-            coot.make_link(imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7)
+            coot.make_link_py(imol, atom1, atom2, residue_1 + "-" + residue_2, 1.7)
             coot.generic_object_clear(self.covLinkObject)
             self.start_refinement()
         else:
