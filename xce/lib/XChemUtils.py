@@ -137,7 +137,7 @@ class helpers:
                             + " --resname {0!s} '{1!s}'".format(
                                 cID, smiles.split(";")[i]
                             )
-                            + " --ocif {0!s}.cif --out {1!s}\n".format(
+                            + " --ocif {0!s}.cif --out {1!s} -N\n".format(
                                 compoundID.split(";")[i].replace(" ", ""),
                                 compoundID.split(";")[i].replace(" ", ""),
                             )
@@ -235,7 +235,7 @@ class helpers:
                 ):
                     software += "grade2 --resname LIG {0!s}".format(
                         mogul
-                    ) + " --in ../old.cif --ocif {0!s}.cif --out {1!s}\n".format(
+                    ) + " --in ../old.cif --ocif {0!s}.cif --out {1!s} -N\n".format(
                         compoundID.replace(" ", ""), compoundID.replace(" ", "")
                     )
 
@@ -246,7 +246,7 @@ class helpers:
                 else:
                     software += 'grade2 --resname LIG "{0!s}"'.format(
                         productSmiles
-                    ) + " --ocif {0!s}.cif --out {1!s}\n".format(
+                    ) + " --ocif {0!s}.cif --out {1!s} -N\n".format(
                         compoundID.replace(" ", ""),
                         compoundID.replace(" ", ""),
                     )
